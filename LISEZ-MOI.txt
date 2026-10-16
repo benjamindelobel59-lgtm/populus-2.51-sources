@@ -1,0 +1,104 @@
+SOURCES DU SERVEUR POPULUS 2.51 (16/10/2026)
+================================================
+
+Contenu : toutes les sources C# de l'émulateur (Stump) : solution Populus.sln, server, core, gui, DofusProtocol, Library, Tools, lib.
+Pas inclus : bases de données, dossier run (configs et données du serveur), binaires compilés (bin/obj), packages NuGet.
+
+Compiler :
+ - Ouvrir Populus.sln avec Visual Studio (.NET Framework 4.8).
+ - Clic droit sur la solution > Restaurer les packages NuGet, puis Générer.
+ - En ligne de commande (le / final de SolutionDir est obligatoire, sinon Fody échoue) :
+   MSBuild gui\Stump.GUI.WorldConsole\Stump.GUI.WorldConsole.csproj -p:Configuration=Debug "-p:SolutionDir=<dossier des sources>/"
+
+Nouveautés récentes : panel admin en jeu (.admin, dossier server\stump.server.worldserver\game\Admin),
+journal / surveillance, dialogues PNJ avec identifiants larges, rechargement à chaud des cartes, panoplies, sorts, monstres.
+
+MODIFICATIONS NEKFEU DU 16/10/2026 (soir) - fichiers modifies
+=============================================================
+Serveur (C#) :
+ - server/Stump.Server.BaseServer/Network/BaseClient.cs : LastActivity = heure de connexion si aucun message recu
+   (un client qui se connecte sans rien envoyer, ex. sonde de port, faisait planter DisconnectAfkClient).
+ - Database/Monsters/MonsterDungeonSpawn.cs + game/Maps/Spawns/DungeonSpawningPool.cs : colonnes facultatives
+   RewardItemId / RewardMax de monsters_spawns_dungeons : objet donne a chaque gagnant de la salle (reliques du Kolosso).
+ - game/Conditions/Criterions/HasManyItemsCriterion.cs : POQ<objet-quantite = moins de N exemplaires.
+ - game/Maps/Map.cs : apercu des placements (touche L) avec challengers = cases rouges comme en combat ;
+   GetArrivalCell (arrivee a cote d'une porte / d'un declencheur, -1 = centre) ; LiveCells (cases modifiees dans le panel
+   envoyees au client comme obstacles) ; journal [Interactif] (diagnostic) dans UseInteractiveObject.
+ - game/Interactives/Skills/SkillTeleport.cs + game/Maps/Cells/Triggers/TeleportTrigger.cs : arrivee via GetArrivalCell ;
+   pas de passage « marcher dessus » quand un interactif a plusieurs destinations (portails, statues de classe).
+ - game/Interactives/InteractiveObject.cs : ReloadSkills (rechargement a chaud des actions d'un interactif).
+ - game/Admin/AdminPanelBridge.cs : map_reload recharge aussi les actions des interactifs et les cases « en direct »
+   (table nekfeu_map_cells_live, MapObstacleUpdateMessage aux joueurs de la map).
+Panel web (panel-web/populus-admin, sans config.local.php) :
+ - inc/mod_maps.php : teleportations des interactifs (liste, inter_tp_save / inter_tp_delete, copie si action partagee),
+   cases enregistrees -> nekfeu_map_cells_live ; inc/lib.php : UNDO_TABLES + tables d'interactifs ;
+   assets/lot4.js : interactifs en violet, PNJ en rose, formulaire de destination des interactifs, aides.
+ - game/Dialogs/Interactives/ZaapDialog.cs : les zaaps des havre-sacs (sous-zone 851) ne sont plus proposes comme destinations.
+ - game/actors/RolePlay/Characters/MultiLeader.cs : One Window : a l activation, seuls les persos de la meme map sont regroupes ; en changeant de map, seuls suivent ceux qui etaient sur la map quittee.
+ - Handlers/Shortcuts/ShortcutHandler.cs : One Window : pendant le tour d un esclave, deplacer / ajouter / retirer un sort de la barre modifie la barre de l esclave (et met a jour l affichage du maitre).
+ - game/Achievements/PlayerAchievement.cs : challenge de succes de boss ajoute seulement par les joueurs qui n ont pas encore le succes.
+ - game/Maps/Spawns/DungeonSpawningPool.cs : un groupe dont le combat ne teleporte pas (salle du boss = salle de sortie) ne reapparait pas tant qu un joueur est sur la map.
+
+MODIFICATIONS NEKFEU DU 16/10/2026 (nuit) - panneau One Window en icones, echange auto, Sasa, Passe-tour, donjons 8v8
+==================================================================================================================
+Serveur (C#) :
+ - Handlers/Inventory/InventoryExchangesHandler.cs : echange entre personnages de la meme IP ouvert directement (chaque fenetre recoit une demande « d elle-meme », plus de fenetre Accepter / Refuser qui reste affichee).
+ - game/Exchanges/Trades/Players/PlayerTrade.cs : meme IP -> quand le maitre (One Window, sinon celui qui propose) valide,
+   l autre personnage valide aussi.
+ - Commands/Commands/PassCommand.cs (.pass / .passturn) : simple interrupteur ; le tour est passe dans Fight.OnTurnStarted
+   (game/fights/Fight.cs, 400 ms apres le debut du tour). Message « Passe-tour auto active / desactive ».
+ - Commands/Commands/SasaCommand.cs (NOUVEAU, .sasa, ajoute au .csproj) + Character.AutoWisdom / ApplyAutoWisdom :
+   points de caracteristique -> sagesse, tout de suite puis a chaque niveau (hors combat, sinon en sortie de combat).
+ - Handlers/Context/RolePlay/ContextRoleplayStatsHandler.cs : calcul des paliers sorti dans BoostStat() (reutilise par .sasa).
+ - Commands/Commands/OneWindowCommand.cs + IpDropCommand.cs : messages « One Window / IP Drop active / desactive »
+   (lus par la barre du client pour colorer les boutons) ; un seul IP Drop par IP, l ancien est prevenu.
+Base (world) : salles de donjon 8 contre 8 (script _OUTILS/serveur/donjons/donjons_8v8.sql cote Nekfeu) :
+   8 cases joueurs + 8 cases monstres, et autant de monstres que de joueurs (paliers 5 a 8) dans les salles AVANT le boss.
+   Les salles de boss ne changent pas (sauf des cases joueurs en plus quand il y en avait moins de 8).
+Client : barre One Window (module Ankama_Config, ui::PopulusButtons + populus.PopulusBoot, ui/populusButtons.xml) en icones
+   avec cadre gris (desactive) / vert (active), boutons Sasa auto et Passe-tour auto, infobulles.
+
+MODIFICATIONS MYSTIC DU 17/10/2026 - recherches (avis de recherche) sans quete
+=============================================================================
+ - game/Recherches/RecherchesManager.cs (NOUVEAU, ajoute au .csproj) : table nekfeu_recherches ; 1 exemplaire de chaque recherche
+   (seul) sur une map a monstres de sa zone, reapparition 4 a 6 h apres sa mort (ProchainSpawn en base), 3 min si les joueurs perdent ;
+   a la victoire, succes du recherche (achievements 6001+) pour chaque perso du combat ayant le niveau requis (NiveauMin).
+ - game/Maps/Spawns/MonsterGroupPersistence.cs : les recherches sont retires des groupes sauvegardes au redemarrage.
+ - Base : script recherches.sql cote Mystic (_OUTILS/serveur/recherches/generer_recherches.py) ; client : Achievement*.d2o.
+
+MODIFICATIONS MYSTIC DU 17/10/2026 - IA des monstres
+====================================================
+ - AI/Fights/Brain/Brain.cs : boucle de sorts refaite (tant qu il reste des PA et un sort lancable ; un sort qui echoue est ecarte
+   pour le tour et on essaie les autres ; avant : 1 seul sort ou rien) ; ligne [IA] par tour dans le log (variable Brain.LogTurns).
+ - AI/Fights/Spells/SpellSelector.cs : effets « lance le sort X » evalues avec les vrais effets du sous-sort (avant : le n° du sous-sort
+   comptait comme des degats) ; un effet non applicable n exclut plus tout le sort ; FindFirstSpellCast(exclus).
+ - AI/Fights/Spells/SpellIdentifier.cs : sous-sort introuvable = plus de plantage de l IA ; garde-fou de profondeur.
+ - AI/Fights/Spells/SpellSelector.cs : soins « rend X % des PV » comptes en % des PV max ; soin d urgence (monstre ou allie sous
+   HealUrgencyPercent = 50 % de ses PV (defaut) → les soins passent avant les degats).
+ - AI/Fights/Spells/SeuilsSoinManager.cs (NOUVEAU) + Commands/Commands/SeuilSoinCommand.cs (NOUVEAU, .seuilsoin <id monstre> [%|defaut], staff) :
+   seuil de soin d urgence par monstre (table nekfeu_ia_soins creee au demarrage ; 0 = jamais en priorite ; absent = 50 %).
+ - AI/Fights/Brain/EnvironmentAnalyser.cs (GetNearestEnemy, IsPlayerSummon) + SpellSelector.cs : les invocations de joueur visent d abord
+   les monstres / personnages (invocations adverses : valeur /10 au lieu de /2, deplacement vers le plus proche non-invocation).
+
+MODIFICATIONS MYSTIC DU 17/10/2026 - controle des invocations
+=============================================================
+ - game/actors/RolePlay/Characters/Character.cs : ControleInvocations (true par defaut) ; Commands/Commands/InvoCommand.cs (NOUVEAU) : .invo on|off.
+ - game/effects/handlers/Spells/Summon/Summon.cs : invocation d un personnage avec ControleInvocations → SetController (hors tourelles,
+   coffre anime et invocations qui ne jouent pas).
+ - One Window : l invocation d un esclave se joue depuis la fenetre du maitre (SummonedFighter.OnTurnStopped, Fight.OnTurnStarted,
+   CharacterFighter.GetSlave, ContextFightHandler.SendSlaveSwitchContextMessage(client, maitre, invocation)).
+ - Client : bouton « Controle invocations » sur la barre One Window (vert par defaut).
+ - game/actors/Fight/SummonedFighter.cs (GetSlaveCharacteristicsInformations) : la fiche envoyee pour une invocation controlee
+   reprend toutes les caracteristiques de l invocation (avant : portee, dommages, resistances... de l invocateur → PO fausse).
+
+MODIFICATIONS MYSTIC DU 17/10/2026 - drop, kamas, One Window
+============================================================
+ - game/actors/Fight/MonsterFighter.cs (RollLoot) : 1 seul tirage par objet (le taux de drop multipliait aussi les quantites).
+ - game/fights/FightPvM.cs : kamas de combat = hasard 0..MaxKamasCombat (250) par personnage, sans taux / VIP / prospection.
+ - Handlers/Context/ContextFightHandler.cs (SendOneWindowGlobalCooldowns) : relance initiale des sorts de l esclave envoyee au maitre.
+ - Trousseau de clefs : game/items/player/Custom/TrousseauManager.cs (NOUVEAU, table nekfeu_trousseau creee au demarrage) ; plus de panneau
+   (Trousseau.cs affiche l etat) ; DungeonEnterReply : entree gratuite 1 fois par donjon a clef, avant la vraie clef ; reset 7 jours
+   (variable ResetJours) depuis la 1re utilisation, conserve au redemarrage ; Character.cs : trousseau non echangeable donne a la
+   connexion, ancien reset 3 jours (qui modifiait CreationDate) retire.
+ - DungeonEnterReply.cs : plus d utilisation automatique ; nouvelle reponse DungeonEnterTrousseau (« Utiliser le trousseau de clefs »,
+   texte officiel du client, visible seulement si le trousseau a encore la clef) ; TrousseauManager.CanUse.

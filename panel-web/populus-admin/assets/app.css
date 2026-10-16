@@ -1,0 +1,201 @@
+:root{--bg:#0d0a08;--s1:#16110d;--s2:#1f1813;--s3:#2a2019;--line:#3a2c22;--text:#f4e9df;--muted:#a8968a;--acc:#ff8a3d;--acc2:#ffb547;--ok:#7bd88f;--err:#ff6b6b;--blue:#6aa8ff}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font:14px/1.45 "Segoe UI",Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:var(--text);background:var(--s2);border:1px solid var(--line);border-radius:7px;padding:6px 10px}
+button{cursor:pointer;transition:border-color .15s,background .15s;white-space:nowrap}
+button:hover{border-color:var(--acc)}
+button.pri{background:linear-gradient(135deg,#c2501d,#ff8a3d);border-color:#ff8a3d;color:#1a0b03;font-weight:600}
+button.danger{border-color:#7a2e2e;color:#ffb3b3}
+button.danger:hover{border-color:var(--err);background:#3a1414}
+button.small{padding:2px 8px;font-size:12.5px}
+button:disabled{opacity:.5;cursor:default}
+input,select,textarea{width:100%}
+input[type=radio],input[type=checkbox]{width:auto}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc)}
+textarea{min-height:56px;resize:vertical;font-family:Consolas,monospace;font-size:12.5px}
+code{background:var(--s3);padding:1px 6px;border-radius:5px;font-family:Consolas,monospace;font-size:12.5px}
+.muted{color:var(--muted)}
+.err{color:var(--err)}
+
+.gate{max-width:560px;margin:12vh auto;padding:28px;background:var(--s1);border:1px solid var(--line);border-radius:14px}
+.gate h1{color:var(--acc2);margin-bottom:12px;font-size:22px}
+.gate p{margin-top:10px}
+
+#app{display:flex;flex-direction:column;height:100vh}
+header{display:flex;align-items:center;gap:14px;padding:8px 14px;background:linear-gradient(180deg,#24150c,#16110d);border-bottom:1px solid var(--line)}
+.brand{font-weight:700;color:var(--acc2);font-size:17px}
+.brand span{color:var(--muted);font-weight:400}
+.who{color:var(--muted);font-size:13px}
+.who b{color:var(--text)}
+.status{flex:1;font-size:13px;color:var(--muted);text-align:right}
+.status.ok{color:var(--ok)}
+.status.err{color:var(--err)}
+.layout{flex:1;display:grid;grid-template-columns:320px 1fr;min-height:0}
+aside{border-right:1px solid var(--line);background:var(--s1);display:flex;flex-direction:column;padding:10px;gap:8px;min-height:0}
+.filters{display:flex;gap:10px;font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.filters label{display:flex;gap:4px;align-items:center;cursor:pointer}
+.list{overflow:auto;flex:1;display:flex;flex-direction:column;gap:2px}
+.list .it{padding:6px 8px;border-radius:7px;cursor:pointer;display:flex;justify-content:space-between;gap:8px;border:1px solid transparent}
+.list .it:hover{background:var(--s2)}
+.list .it.on{background:var(--s3);border-color:var(--line)}
+.list .it small{color:var(--muted);white-space:nowrap}
+.list .it .tags{font-size:11px;color:var(--acc2)}
+main{overflow:auto;padding:16px 20px}
+.empty{color:var(--muted);margin-top:30vh;text-align:center}
+
+.npc-head{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.npc-head h2{font-size:20px;color:var(--acc2)}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.tabs button{border:0;border-radius:8px 8px 0 0;background:transparent;color:var(--muted);padding:8px 14px}
+.tabs button.on{background:var(--s1);color:var(--acc2);box-shadow:inset 0 2px 0 var(--acc)}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+.card h3{font-size:14px;color:var(--acc2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px 12px;align-items:end}
+.grid label,.field{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--muted)}
+.help{font-size:12px;color:var(--muted);margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500;font-size:12px}
+td.act{white-space:nowrap;text-align:right}
+.badge{display:inline-block;padding:0 7px;border-radius:9px;background:var(--s3);border:1px solid var(--line);font-size:11.5px;color:var(--acc2)}
+.badge.blue{color:var(--blue)}
+.badge.ok{color:var(--ok)}
+.msg{border-left:3px solid var(--acc);padding:8px 10px;background:var(--s2);border-radius:0 8px 8px 0;margin-bottom:8px}
+.msg.unused{border-left-color:var(--line);opacity:.75}
+.msg .txt{white-space:pre-wrap}
+.msg .meta{font-size:11.5px;color:var(--muted);margin-bottom:4px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.reply{margin:6px 0 0 18px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--s1);display:flex;gap:10px;align-items:flex-start}
+.reply .body{flex:1}
+.reply .rt{font-weight:500}
+.reply .rp{font-size:12px;color:var(--muted);margin-top:2px}
+.form{margin-top:10px;padding:10px;border:1px dashed var(--acc);border-radius:9px;background:var(--bg)}
+.form .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+.suggest{position:relative}
+.suggest .drop{position:absolute;z-index:5;left:0;right:0;top:100%;background:var(--s2);border:1px solid var(--line);border-radius:8px;max-height:240px;overflow:auto}
+.suggest .drop div{padding:5px 8px;cursor:pointer;font-size:13px}
+.suggest .drop div:hover{background:var(--s3)}
+#toast{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:6px;z-index:20}
+#toast div{background:var(--s2);border:1px solid var(--line);border-left:4px solid var(--ok);padding:8px 12px;border-radius:8px;max-width:420px;box-shadow:0 6px 20px #0008}
+#toast div.err{border-left-color:var(--err)}
+@media (max-width:800px){.layout{grid-template-columns:1fr}aside{max-height:40vh}}
+
+/* --- onglets globaux (comme le panel 1.29) --- */
+#app{display:grid;grid-template-rows:auto auto 1fr auto;height:100vh}
+.where{flex:1;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.where b{color:var(--text)}
+.status{flex:none;max-width:40%}
+.hbtn{display:flex;gap:6px}
+nav{display:flex;gap:2px;padding:6px 10px 0;background:var(--s1);border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{border:0;border-radius:8px 8px 0 0;background:transparent;color:var(--muted);padding:8px 13px}
+nav button.on{background:var(--bg);color:var(--acc2);box-shadow:inset 0 2px 0 var(--acc)}
+#main{overflow:auto;padding:14px;min-height:0}
+#main .layout{height:100%;grid-template-columns:320px 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+#main .layout main{padding:14px 18px}
+footer{border-top:1px solid var(--line);background:var(--s1);max-height:150px;display:flex;flex-direction:column}
+.outh{display:flex;justify-content:space-between;align-items:center;padding:4px 12px;color:var(--muted);font-size:12px}
+#outBody{overflow:auto;padding:0 12px 8px;font:12.5px Consolas,monospace;white-space:pre-wrap}
+#outBody .l{border-left:3px solid var(--line);padding-left:8px;margin:3px 0}
+#outBody .l.ok{border-color:var(--ok)}
+#outBody .l.err{border-color:var(--err)}
+.cols{display:grid;grid-template-columns:340px 1fr;gap:14px;align-items:start}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13px}
+.kv span:nth-child(odd){color:var(--muted)}
+.btns{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.btns .fit{display:flex;gap:4px}
+.btns .fit input{width:90px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--line);margin-right:6px}
+.dot.on{background:var(--ok)}
+.pill{font-size:11px;border:1px solid var(--acc);color:var(--acc2);border-radius:9px;padding:0 6px;margin-left:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.stat{background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:22px;color:var(--acc2)}
+.stat span{color:var(--muted);font-size:12px}
+.soon{color:var(--muted);text-align:center;margin-top:18vh;font-size:15px}
+.undone{opacity:.5;text-decoration:line-through}
+@media (max-width:900px){.cols{grid-template-columns:1fr}}
+table.grades input{width:58px;padding:3px 5px;font-size:12.5px}
+table.grades td{padding:3px 2px}
+input.chg{border-color:var(--acc2);background:#3a2a12}
+.badge a{color:var(--err);text-decoration:none;margin-left:4px}
+.ltabs{display:flex;gap:2px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ltabs button{border:0;border-radius:8px 8px 0 0;background:transparent;color:var(--muted);padding:6px 12px}
+.ltabs button.on{background:var(--s2);color:var(--acc2);box-shadow:inset 0 2px 0 var(--acc)}
+.lg{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-2px;border:1px solid #0006}
+#mapCv{cursor:crosshair;background:#0a0806;border-radius:8px}
+
+/* --- onglets sur plusieurs lignes (pas de barre de défilement) --- */
+nav#tabs{flex-wrap:wrap;overflow:visible;row-gap:2px}
+nav#tabs button{padding:7px 11px}
+
+/* --- panel ouvert dans le jeu : barre de fenêtre (déplacer / réduire / redimensionner / fermer) --- */
+body.ingame{overflow:hidden}
+body.ingame #app > header{cursor:move;user-select:none;touch-action:none}
+body.ingame #app > header button,body.ingame #app > header input{cursor:pointer}
+.winbtns{display:flex;gap:4px;margin-left:6px}
+.winbtns button{width:32px;padding:4px 0;font-weight:700}
+.winbtns #wClose:hover{background:#3a1414;border-color:var(--err)}
+body.mini nav,body.mini #main,body.mini footer,body.mini .wh,body.mini #status{display:none}
+body.mini #app{height:auto}
+
+/* poignées de redimensionnement (bords et coins) */
+.wh{position:fixed;z-index:60;touch-action:none}
+.wh:hover,.wh:active{background:rgba(255,138,61,.35)}
+.wh-r{top:10px;bottom:10px;right:0;width:7px;cursor:ew-resize}
+.wh-l{top:10px;bottom:10px;left:0;width:7px;cursor:ew-resize}
+.wh-b{left:10px;right:10px;bottom:0;height:7px;cursor:ns-resize}
+.wh-t{left:10px;right:10px;top:0;height:5px;cursor:ns-resize}
+.wh-br,.wh-bl,.wh-tr,.wh-tl{width:16px;height:16px}
+.wh-br{right:0;bottom:0;cursor:nwse-resize;background:linear-gradient(135deg,transparent 45%,var(--acc) 45%,var(--acc) 55%,transparent 55%,transparent 68%,var(--acc) 68%,var(--acc) 78%,transparent 78%)}
+.wh-bl{left:0;bottom:0;cursor:nesw-resize}
+.wh-tr{right:0;top:0;cursor:nesw-resize}
+.wh-tl{left:0;top:0;cursor:nwse-resize}
+body.ingame #app{border:1px solid var(--acc);box-sizing:border-box}
+
+/* --- fenêtre étroite (panel réduit dans le jeu) : tout se replie au lieu d'être coupé --- */
+#app > *{min-width:0}
+header{flex-wrap:wrap;row-gap:6px}
+.where{min-width:0;flex:1 1 180px}
+.status{min-width:0}
+.hbtn,.winbtns{flex:none}
+body.ingame{overflow-x:hidden;overflow-y:hidden}
+.card{min-width:0}
+.card table{display:block;overflow-x:auto}
+@media (max-width:700px){
+  header{padding:6px 8px;gap:8px}
+  .brand{font-size:15px}
+  .where{order:10;flex-basis:100%;font-size:12px}
+  .status{order:11;flex-basis:100%;max-width:none;text-align:left}
+  .hbtn button{padding:4px 8px;font-size:12.5px}
+  #main{padding:8px}
+  .stats{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  .grid{grid-template-columns:1fr}
+}
+
+/* vue d'une zone : vignettes des maps placées selon leurs coordonnées */
+.zonegrid .zm { position: absolute; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; cursor: pointer; background: var(--s2);
+    display: flex; align-items: center; justify-content: center; }
+.zonegrid .zm img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.zonegrid .zm small { position: absolute; left: 0; right: 0; bottom: 0; padding: 1px 4px; background: #000a; color: #fff; font-size: 11px; }
+.zonegrid .zm:hover, .zonegrid .zm.on { outline: 2px solid var(--acc); z-index: 1; }
+
+/* choix d'une case sur une autre map */
+.pickov { position: fixed; inset: 0; background: #000a; z-index: 50; display: flex; align-items: center; justify-content: center; }
+
+/* aide : encadré « Comment ça marche ? » et onglet Aide */
+#tabhelp { margin: 0 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--s1); }
+#tabhelp > summary { cursor: pointer; padding: 8px 12px; font-weight: 600; color: var(--acc2); list-style-position: inside; }
+#tabhelp .tabhelpbody { padding: 0 14px 12px; line-height: 1.5; }
+#tabhelp ul, .helpdoc ul { margin: 4px 0 8px 18px; }
+#tabhelp li, .helpdoc li { margin: 3px 0; }
+.hwarn { border-left: 3px solid var(--err); padding: 4px 10px; margin: 6px 0; background: #ff6b6b14; }
+.htip { border-left: 3px solid var(--ok); padding: 4px 10px; margin: 6px 0; background: #7bd88f14; }
+.helpdoc .kv { grid-template-columns: minmax(110px, 160px) 1fr; }
+.helpdoc a.hl { text-decoration: none; cursor: pointer; }
+details.faq { border-bottom: 1px solid var(--line); padding: 6px 0; }
+details.faq summary { cursor: pointer; font-weight: 600; }
+details.faq p { margin: 6px 0 2px 16px; color: var(--muted); }
+/* l'encadré d'aide a sa propre rangée entre les onglets et le contenu */
+#app{grid-template-rows:auto auto auto 1fr auto}
+#app>header{grid-row:1}#app>nav{grid-row:2}#tabhelp{grid-row:3;margin:10px 14px 0;max-height:38vh;overflow:auto}#app>main{grid-row:4}#app>footer{grid-row:5}
+body.mini #tabhelp{display:none}
