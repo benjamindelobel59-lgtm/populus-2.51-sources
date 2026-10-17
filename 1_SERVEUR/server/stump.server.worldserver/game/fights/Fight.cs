@@ -538,6 +538,9 @@ namespace Stump.Server.WorldServer.Game.Fights
             ChallengersTeam.FighterRemoved += OnFighterRemoved;
             PortalsManager = new FightPortalsManager(this);
             CreationTime = DateTime.Now;
+
+            // MYSTIC 17/10 : journal du combat pour le bouton « Signaler un bug »
+            Bugs.JournalCombat.Suivre(this);
         }
 
         #endregion Constructor

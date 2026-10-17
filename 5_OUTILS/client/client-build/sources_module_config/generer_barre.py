@@ -9,7 +9,8 @@ B = [("groupe", "[config.ui.skin]texture/btnIcon/btnIcon_invite.png"),
      ("ipdrop", "[config.ui.skin]texture/btnIcon/btnIcon_chest.png"),
      ("sasa", "[config.ui.skin]texture/Characteristics/tx_wisdom.png"),
      ("pass", "[config.ui.skin]texture/Quetes_tx_PictoSablier.png"),
-     ("invo", "[config.ui.skin]texture/Characteristics/tx_summonableCreaturesBoost.png")]
+     ("invo", "[config.ui.skin]texture/Characteristics/tx_summonableCreaturesBoost.png"),
+     ("bug", "[config.ui.skin]texture/btnIcon/btnIcon_bug.png")]  # Mystic : Signaler un bug (.bug)
 
 
 def bouton(n, icon, suf, x, y):

@@ -292,12 +292,15 @@
     <Compile Include="Commands\Commands\AdminPanelCommand.cs" />
     <Compile Include="Game\Admin\AdminPanelBridge.cs" />
     <Compile Include="Game\Recherches\RecherchesManager.cs" />
+    <Compile Include="Game\Bugs\JournalCombat.cs" />
+    <Compile Include="Game\Bugs\SignalementsBugs.cs" />
     <Compile Include="Game\Admin\AdminPanelData.cs" />
     <Compile Include="Game\Admin\AdminJournal.cs" />
     <Compile Include="Commands\Trigger\PanelTrigger.cs" />
     <Compile Include="Commands\Commands\MobsCommands.cs" />
     <Compile Include="Commands\Commands\PassCommand.cs" />
     <Compile Include="Commands\Commands\SasaCommand.cs" />
+    <Compile Include="Commands\Commands\BugCommand.cs" />
     <Compile Include="Commands\Commands\RecherchesCommand.cs" />
     <Compile Include="Commands\Commands\SeuilSoinCommand.cs" />
     <Compile Include="Commands\Commands\InvoCommand.cs" />

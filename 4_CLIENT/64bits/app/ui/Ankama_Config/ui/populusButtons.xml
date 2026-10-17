@@ -12,11 +12,11 @@
 		<Anchors>
 			<Anchor relativePoint="TOP" point="TOP"><AbsDimension x="0" y="90" /></Anchor>
 		</Anchors>
-		<Size><AbsDimension x="254" y="36" /></Size>
+		<Size><AbsDimension x="288" y="36" /></Size>
 		<visible>true</visible>
 
 		<Container name="ctr_h_bg">
-			<Size><AbsDimension x="254" y="36" /></Size>
+			<Size><AbsDimension x="288" y="36" /></Size>
 			<bgColor>[colors.gamemenu.background]</bgColor>
 			<alpha>[colors.gamemenu.background.alpha]</alpha>
 		</Container>
@@ -158,17 +158,36 @@
 			</iconAnchors>
 		</themeIconButton>
 
+		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
+		<Container name="f_bug">
+			<Anchors><Anchor><AbsDimension x="254" y="2" /></Anchor></Anchors>
+			<Size><AbsDimension x="32" y="32" /></Size>
+			<bgColor>0x5A5A5A</bgColor>
+			<bgAlpha>1</bgAlpha>
+		</Container>
+		<themeIconButton name="btn_bug">
+			<Anchors><Anchor><AbsDimension x="256" y="4" /></Anchor></Anchors>
+			<Size><AbsDimension x="28" y="28" /></Size>
+			<smooth>true</smooth>
+			<bgThemeDataId>button_thin_border</bgThemeDataId>
+			<iconUri>[config.ui.skin]texture/btnIcon/btnIcon_bug.png</iconUri>
+			<iconAnchors>
+				<Anchor relativePoint="TOPLEFT"><AbsDimension x="3" y="3" /></Anchor>
+				<Anchor relativePoint="BOTTOMRIGHT"><AbsDimension x="-3" y="-3" /></Anchor>
+			</iconAnchors>
+		</themeIconButton>
+
 	</Container>
 
 	<Container name="ctr_v">
 		<Anchors>
 			<Anchor relativePoint="TOPLEFT" point="TOPLEFT"><AbsDimension x="10" y="150" /></Anchor>
 		</Anchors>
-		<Size><AbsDimension x="62" y="238" /></Size>
+		<Size><AbsDimension x="62" y="272" /></Size>
 		<visible>false</visible>
 
 		<Container name="ctr_v_bg">
-			<Size><AbsDimension x="62" y="238" /></Size>
+			<Size><AbsDimension x="62" y="272" /></Size>
 			<bgColor>[colors.gamemenu.background]</bgColor>
 			<alpha>[colors.gamemenu.background.alpha]</alpha>
 		</Container>
@@ -304,6 +323,25 @@
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
 			<iconUri>[config.ui.skin]texture/Characteristics/tx_summonableCreaturesBoost.png</iconUri>
+			<iconAnchors>
+				<Anchor relativePoint="TOPLEFT"><AbsDimension x="3" y="3" /></Anchor>
+				<Anchor relativePoint="BOTTOMRIGHT"><AbsDimension x="-3" y="-3" /></Anchor>
+			</iconAnchors>
+		</themeIconButton>
+
+		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
+		<Container name="f_bug2">
+			<Anchors><Anchor><AbsDimension x="15" y="238" /></Anchor></Anchors>
+			<Size><AbsDimension x="32" y="32" /></Size>
+			<bgColor>0x5A5A5A</bgColor>
+			<bgAlpha>1</bgAlpha>
+		</Container>
+		<themeIconButton name="btn_bug2">
+			<Anchors><Anchor><AbsDimension x="17" y="240" /></Anchor></Anchors>
+			<Size><AbsDimension x="28" y="28" /></Size>
+			<smooth>true</smooth>
+			<bgThemeDataId>button_thin_border</bgThemeDataId>
+			<iconUri>[config.ui.skin]texture/btnIcon/btnIcon_bug.png</iconUri>
 			<iconAnchors>
 				<Anchor relativePoint="TOPLEFT"><AbsDimension x="3" y="3" /></Anchor>
 				<Anchor relativePoint="BOTTOMRIGHT"><AbsDimension x="-3" y="-3" /></Anchor>

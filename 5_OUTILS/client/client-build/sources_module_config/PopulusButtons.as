@@ -24,7 +24,7 @@ package ui
       private static const OR:uint = 13148746;
 
       // nom du bouton, commande, debut du message serveur, infobulle
-      private static const BOUTONS:Array = [["groupe",".groupe",null,"Groupe : invite tous vos personnages"],["onewindow",".onewindow","One Window","One Window : vos personnages vous suivent et vous jouez leurs tours"],["ipdrop",".ipdrop","IP Drop","IP Drop : ce personnage reçoit le drop de tous vos personnages"],["sasa",".sasa","Sasa auto","Sasa auto : les points de caractéristique vont dans la sagesse"],["pass",".passturn","Passe-tour auto","Passe-tour auto : les tours de ce personnage sont passés automatiquement"],["invo",".invo","Contrôle invocations","Contrôle des invocations : vous jouez vous-même vos invocations"]];
+      private static const BOUTONS:Array = [["groupe",".groupe",null,"Groupe : invite tous vos personnages"],["onewindow",".onewindow","One Window","One Window : vos personnages vous suivent et vous jouez leurs tours"],["ipdrop",".ipdrop","IP Drop","IP Drop : ce personnage reçoit le drop de tous vos personnages"],["sasa",".sasa","Sasa auto","Sasa auto : les points de caractéristique vont dans la sagesse"],["pass",".passturn","Passe-tour auto","Passe-tour auto : les tours de ce personnage sont passés automatiquement"],["invo",".invo","Contrôle invocations","Contrôle des invocations : vous jouez vous-même vos invocations"],["bug",".bug",null,"Signaler un bug : titre, description, logs du combat et du client"]];
 
       private var _store:SharedObject;
 
@@ -68,6 +68,8 @@ package ui
       
       public var btn_invo:*;
 
+      public var btn_bug:*;
+
       public var btn_groupe2:*;
 
       public var btn_onewindow2:*;
@@ -79,6 +81,8 @@ package ui
       public var btn_pass2:*;
       
       public var btn_invo2:*;
+
+      public var btn_bug2:*;
 
       public var f_groupe:*;
 
@@ -92,6 +96,8 @@ package ui
       
       public var f_invo:*;
 
+      public var f_bug:*;
+
       public var f_groupe2:*;
 
       public var f_onewindow2:*;
@@ -103,6 +109,8 @@ package ui
       public var f_pass2:*;
       
       public var f_invo2:*;
+
+      public var f_bug2:*;
 
       public function PopulusButtons()
       {
@@ -124,6 +132,14 @@ package ui
          {
             _loc6_ = this.ctr_h || this.ctr_v;
             PanelWindow.open(_loc6_ ? _loc6_.stage : null,_loc5_[1]);
+         }
+         // Mystic : « Signaler un bug » : formulaire du panel (bug.php) + envoi de la fin du log du client
+         var _bug:Array = param1.match(/(https?:\/\/[^\s,{}]+\/populus-admin\/bug\.php\?t=[a-f0-9]{48})/);
+         if(_bug)
+         {
+            _loc6_ = this.ctr_h || this.ctr_v;
+            PanelWindow.open(_loc6_ ? _loc6_.stage : null,_bug[1]);
+            PanelWindow.envoyerLog(_bug[1] + "&log=1");
          }
          // etat des boutons : « <nom> active » -> vert, « <nom> desactive » -> gris
          for each(_loc7_ in BOUTONS)
