@@ -338,6 +338,9 @@ namespace Stump.Core.Pool
 
         #endregion
 
+        /// <summary>Trace d'utilisation des segments (diagnostic de fuites uniquement, très coûteux).</summary>
+        public static bool TraceSegments = false;
+
         private static int lastValue;
         /// <summary>
         ///     Checks out a segment, creating more if the pool is empty.
@@ -378,9 +381,14 @@ namespace Stump.Core.Pool
             //Debug.WriteLineIf(UsedSegmentCount != lastValue, string.Format("Used:{0} Last:{1} Stack:{2}", UsedSegmentCount, lastValue, new StackTrace()));
             lastValue = UsedSegmentCount;
 #if DEBUG
-            m_segmentsInUse.TryAdd(segment.Number, segment);
-            segment.LastUserTrace = new StackTrace().ToString();
-            segment.LastUsage = DateTime.Now;
+            // capturer une pile d'appels à CHAQUE envoi (build Debug) coûtait énormément dès qu'une carte
+            // était chargée (centaines de joueurs) ; traçage désormais désactivé par défaut
+            if (TraceSegments)
+            {
+                m_segmentsInUse.TryAdd(segment.Number, segment);
+                segment.LastUserTrace = new StackTrace().ToString();
+                segment.LastUsage = DateTime.Now;
+            }
 #endif
             return segment;
         }

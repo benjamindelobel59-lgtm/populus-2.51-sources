@@ -51,7 +51,7 @@ namespace Stump.Server.WorldServer
             Name = "Jiva",
             Address = "localhost",
             Port = 3467,
-            Capacity = 2000,
+            Capacity = 5000,
             RequiredRole = RoleEnum.Player,
             RequireSubscription = false,
         };

@@ -121,7 +121,49 @@ namespace Stump.Server.BaseServer.Network
             OnMessageSent(message);
         }
 
-        // a bit dirty. only used by WorldClientCollection
+        /// <summary>
+        /// Envoie un message déjà encodé (diffusion : le message est encodé une seule fois pour tous les joueurs d'une carte)
+        /// </summary>
+        public void SendPacked(byte[] data, int length, Message message)
+        {
+            // le tableau est partagé entre tous les destinataires (lecture seule) : aucune copie par joueur
+            Enqueue(new OutgoingData(data, 0, length, null));
+
+            OnMessageSent(message);
+        }
+
+        // File d'envoi par client. Avant, chaque message faisait son propre Socket.SendAsync directement sur le fil
+        // de la zone (un appel système par message ET par joueur de la carte : ~40 000/s avec 400 joueurs sur une carte).
+        // Maintenant la zone ne fait que déposer le message ; un fil du pool regroupe tout ce qui attend et l'envoie en un appel.
+        private struct OutgoingData
+        {
+            public readonly byte[] Data;
+            public readonly int Offset;
+            public readonly int Length;
+            public readonly SegmentStream Owner; // rendu au pool une fois copié
+
+            public OutgoingData(byte[] data, int offset, int length, SegmentStream owner)
+            {
+                Data = data;
+                Offset = offset;
+                Length = length;
+                Owner = owner;
+            }
+        }
+
+        /// <summary>
+        /// Retard d'envoi maximal toléré pour un client (octets en attente). Au-delà, le client ne lit plus assez vite
+        /// (connexion trop lente ou figée) : il est déconnecté au lieu de faire grossir la mémoire du serveur.
+        /// </summary>
+        [Variable(DefinableRunning = true)]
+        public static int MaxPendingSendBytes = 16 * 1024 * 1024;
+
+        private readonly System.Collections.Concurrent.ConcurrentQueue<OutgoingData> m_sendQueue = new System.Collections.Concurrent.ConcurrentQueue<OutgoingData>();
+        private int m_sending;
+        private long m_pendingBytes;
+        private int m_overflowed;
+        private const int MaxBatchSize = 64 * 1024;
+
         public void Send(SegmentStream stream)
         {
             if (Socket == null || !Connected)
@@ -130,38 +172,148 @@ namespace Stump.Server.BaseServer.Network
                 return;
             }
 
-            var args = ObjectPoolMgr.ObtainObject<PoolableSocketArgs>();
+            Enqueue(new OutgoingData(stream.Segment.Buffer.Array, stream.Segment.Offset, (int)stream.Position, stream));
+        }
 
-            try
+        private void Enqueue(OutgoingData data)
+        {
+            if (Socket == null || !Connected)
             {
-                args.Completed += OnSendCompleted;
-                args.SetBuffer(stream.Segment.Buffer.Array, stream.Segment.Offset, (int)(stream.Position));
-                args.UserToken = stream;
-
-                if (!Socket.SendAsync(args))
-                {
-                    args.Completed -= OnSendCompleted;
-                    stream.Dispose();
-                    ObjectPoolMgr.ReleaseObject(args);
-                }
+                data.Owner?.Dispose();
+                return;
             }
-            catch
+
+            if (Interlocked.Add(ref m_pendingBytes, data.Length) > MaxPendingSendBytes)
             {
-                args.Dispose();
-                stream.Dispose();
-                // args could be disposed if an error occured
-                throw;
+                data.Owner?.Dispose();
+                if (Interlocked.Exchange(ref m_overflowed, 1) == 0)
+                {
+                    logger.Warn("Client {0} ne lit plus assez vite ({1} Mo en attente) : déconnexion", this, Interlocked.Read(ref m_pendingBytes) / (1024 * 1024));
+                    DisconnectLater();
+                }
+                return;
+            }
+
+            m_sendQueue.Enqueue(data);
+
+            if (Interlocked.CompareExchange(ref m_sending, 1, 0) == 0)
+                ThreadPool.UnsafeQueueUserWorkItem(FlushSendCallback, this);
+        }
+
+        private static void FlushSendCallback(object state)
+        {
+            ((BaseClient)state).FlushSend();
+        }
+
+        private void FlushSend()
+        {
+            while (true)
+            {
+                var batch = new List<OutgoingData>();
+                var size = 0;
+                OutgoingData next;
+                while (size < MaxBatchSize && m_sendQueue.TryDequeue(out next))
+                {
+                    batch.Add(next);
+                    size += next.Length;
+                }
+
+                if (batch.Count == 0)
+                {
+                    Interlocked.Exchange(ref m_sending, 0);
+                    // un message a pu arriver entre le dernier TryDequeue et la remise à zéro
+                    if (!m_sendQueue.IsEmpty && Interlocked.CompareExchange(ref m_sending, 1, 0) == 0)
+                        continue;
+                    return;
+                }
+
+                var data = new byte[size];
+                var offset = 0;
+                foreach (var item in batch)
+                {
+                    Buffer.BlockCopy(item.Data, item.Offset, data, offset, item.Length);
+                    offset += item.Length;
+                    item.Owner?.Dispose();
+                }
+                Interlocked.Add(ref m_pendingBytes, -size);
+
+                var socket = Socket;
+                if (socket == null || !socket.Connected)
+                {
+                    DropSendQueue();
+                    return;
+                }
+
+                var args = new SocketAsyncEventArgs();
+                args.SetBuffer(data, 0, size);
+                args.UserToken = this;
+                args.Completed += OnBatchSent;
+
+                try
+                {
+                    if (socket.SendAsync(args))
+                        return; // OnBatchSent reprendra la file
+
+                    args.Completed -= OnBatchSent;
+                    args.Dispose();
+                }
+                catch
+                {
+                    args.Dispose();
+                    DropSendQueue();
+                    return;
+                }
             }
         }
 
-        private static void OnSendCompleted(object sender, SocketAsyncEventArgs args)
+        private static void OnBatchSent(object sender, SocketAsyncEventArgs args)
         {
-            args.Completed -= OnSendCompleted;
-            var stream = args.UserToken as SegmentStream;
-            if (stream != null)
-                stream.Dispose();
+            args.Completed -= OnBatchSent;
+            var client = (BaseClient)args.UserToken;
+            var failed = args.SocketError != SocketError.Success;
+            args.Dispose();
 
-            ObjectPoolMgr.ReleaseObject((PoolableSocketArgs)args);
+            if (failed)
+                client.DropSendQueue();
+            else
+                client.FlushSend();
+        }
+
+        private void DropSendQueue()
+        {
+            OutgoingData item;
+            while (m_sendQueue.TryDequeue(out item))
+                item.Owner?.Dispose();
+            Interlocked.Exchange(ref m_pendingBytes, 0);
+            Interlocked.Exchange(ref m_sending, 0);
+        }
+
+        /// <summary>
+        /// Envoie tout de suite ce qui reste en file (appelé juste avant la fermeture du socket : messages d'erreur/de kick)
+        /// </summary>
+        private void FlushSendSync()
+        {
+            // laisse un envoi en cours se terminer (ordre des messages)
+            var wait = System.Diagnostics.Stopwatch.StartNew();
+            while (Volatile.Read(ref m_sending) == 1 && wait.ElapsedMilliseconds < 200)
+                Thread.Sleep(1);
+
+            OutgoingData item;
+            while (m_sendQueue.TryDequeue(out item))
+            {
+                try
+                {
+                    if (Socket != null && Socket.Connected)
+                        Socket.Send(item.Data, item.Offset, item.Length, SocketFlags.None);
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    item.Owner?.Dispose();
+                }
+            }
         }
 
         #endregion
@@ -438,6 +590,8 @@ namespace Stump.Server.BaseServer.Network
         {
             if (Socket != null && Socket.Connected)
             {
+                if (disposing)
+                    FlushSendSync();
                 Socket.Shutdown(SocketShutdown.Both);
                 Socket.Close();
             }

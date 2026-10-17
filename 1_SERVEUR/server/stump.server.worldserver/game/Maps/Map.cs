@@ -1670,7 +1670,10 @@ namespace Stump.Server.WorldServer.Game.Maps
             else
                 ContextHandler.SendGameMapMovementMessage(Clients, movementsKey, actor);
 
-            BasicHandler.SendBasicNoOperationMessage(Clients);
+            // accusé de réception destiné au seul joueur qui bouge (avant : diffusé à toute la carte, trafic doublé)
+            var mover = actor as Character;
+            if (mover != null && mover.Client != null)
+                BasicHandler.SendBasicNoOperationMessage(mover.Client);
 
             actor.IsInMovement = true;
             actor.LastEmoteUsed = null;

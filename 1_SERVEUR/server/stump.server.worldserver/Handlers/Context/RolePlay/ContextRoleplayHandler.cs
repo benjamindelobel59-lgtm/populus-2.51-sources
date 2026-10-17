@@ -170,6 +170,9 @@ namespace Stump.Server.WorldServer.Handlers.Context.RolePlay
 
         public static void SendMapComplementaryInformationsDataMessage(WorldClient client)
         {
+            // personnage entre deux cartes (fin de combat en cours) : le client redemandera la carte une fois arrivé
+            if (client.Character?.Map == null)
+                return;
             var cm = client.Character.Map.GetMapComplementaryInformationsDataMessage(client.Character);
             client.Send(cm);
             if (cm is MapComplementaryInformationsDataInHavenBagMessage)

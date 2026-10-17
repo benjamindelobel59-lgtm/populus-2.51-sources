@@ -21,13 +21,13 @@ namespace Stump.Server.BaseServer.Network
         /// Max number of clients connected
         /// </summary>
         [Variable]
-        public static int MaxConcurrentConnections = 2000;
+        public static int MaxConcurrentConnections = 6000;
 
         /// <summary>
         /// Max number of clients waiting for a connection
         /// </summary>
         [Variable]
-        public static int MaxPendingConnections = 100;
+        public static int MaxPendingConnections = 1000;
 
         /// <summary>
         /// Max number of clients connected on the same IP or NULL for unlimited

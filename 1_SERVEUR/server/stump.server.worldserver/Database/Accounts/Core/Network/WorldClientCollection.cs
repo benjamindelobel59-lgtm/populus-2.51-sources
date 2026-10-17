@@ -54,19 +54,24 @@ namespace Stump.Server.WorldServer.Core.Network
                         return;
 
                     var disconnectedClients = new List<WorldClient>();
-                    // SegmentStream stream = BufferManager.Default.CheckOutStream();
                     try
                     {
-                        //var writer = new BigEndianWriter();
-                        //message.Pack(writer);
-                        // stream.Segment.Uses = m_underlyingList.Count(x => x != null && x.Connected);
+                        // le message est encodé UNE fois puis partagé entre tous les joueurs
+                        // (avant : réencodé pour chacun des N joueurs de la carte à chaque déplacement)
+                        byte[] packed;
+                        int length;
+                        using (var writer = new BigEndianWriter())
+                        {
+                            message.Pack(writer);
+                            packed = writer.Data;
+                            length = packed.Length;
+                        }
 
                         foreach (WorldClient worldClient in m_underlyingList)
                         {
                             if (worldClient != null)
                             {
-                                worldClient.Send(message);
-                                //worldClient.OnMessageSent(message);
+                                worldClient.SendPacked(packed, length, message);
                             }
 
                             if (worldClient == null || !worldClient.Connected)

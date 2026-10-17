@@ -4633,17 +4633,19 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
 
             if (IsLoggedIn)
             {
-                if (!NextMap.Area.IsRunning)
-                    NextMap.Area.Start();
+                // NextMap peut être déjà consommé (fin de combat traitée deux fois, déconnexion en masse) : on garde une copie locale
+                var next = NextMap ?? Map;
+                if (!next.Area.IsRunning)
+                    next.Area.Start();
 
-                NextMap.Area.ExecuteInContext(() =>
+                next.Area.ExecuteInContext(() =>
                 {
-                    if (IsLoggedIn)
+                    if (IsLoggedIn && NextMap != null)
                     {
                         LastMap = Map;
                         Map = NextMap;
-                        Map.Enter(this);
                         NextMap = null;
+                        Map.Enter(this);
                     }
                 });
             }
@@ -5207,6 +5209,10 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
             else
             {
                 Area.AddMessage(PerformLoggout);
+                // une zone s'arrête quand tous ses joueurs sont partis (ex. tous en combat) : sans ce redémarrage la déconnexion
+                // ne serait jamais traitée et le personnage resterait « en ligne » (fantôme)
+                if (!Area.IsRunning)
+                    Area.Start();
             }
         }
 
