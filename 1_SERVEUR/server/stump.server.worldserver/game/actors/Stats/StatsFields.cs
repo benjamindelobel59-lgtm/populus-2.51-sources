@@ -145,7 +145,7 @@ namespace Stump.Server.WorldServer.Game.Actors.Stats
             Fields.Add(PlayerFields.MP, new StatsMP(Owner, (short)record.MP, MPLimit));
             Fields.Add(PlayerFields.Strength, new StatsData(Owner, PlayerFields.Strength, record.Strength) { Additional = record.PermanentAddedStrength });
             Fields.Add(PlayerFields.Vitality, new StatsData(Owner, PlayerFields.Vitality, record.Vitality) { Additional = record.PermanentAddedVitality });
-            Fields.Add(PlayerFields.Health, new StatsHealth(Owner, (short)record.BaseHealth, (short)record.DamageTaken));
+            Fields.Add(PlayerFields.Health, new StatsHealth(Owner, record.BaseHealth, record.DamageTaken));
             Fields.Add(PlayerFields.Wisdom, new StatsData(Owner, PlayerFields.Wisdom, record.Wisdom) { Additional = record.PermanentAddedWisdom });
             Fields.Add(PlayerFields.Chance, new StatsData(Owner, PlayerFields.Chance, record.Chance) { Additional = record.PermanentAddedChance });
             Fields.Add(PlayerFields.Agility, new StatsData(Owner, PlayerFields.Agility, record.Agility) { Additional = record.PermanentAddedAgility });

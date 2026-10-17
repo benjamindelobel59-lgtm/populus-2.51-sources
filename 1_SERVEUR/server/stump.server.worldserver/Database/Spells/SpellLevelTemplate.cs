@@ -227,7 +227,7 @@ namespace Stump.Server.WorldServer.Database.Spells
             set
             {
                 m_effectsBin = value;
-                m_effects = EffectManager.Instance.DeserializeEffects(EffectsBin).Cast<EffectDice>().ToList();
+                m_effects = CasesFixesSorts.Appliquer(Id, false, EffectManager.Instance.DeserializeEffects(EffectsBin).Cast<EffectDice>().ToList());
             }
         }
 
@@ -237,7 +237,7 @@ namespace Stump.Server.WorldServer.Database.Spells
             get
             {
                 return m_effects ??
-                       (m_effects = EffectManager.Instance.DeserializeEffects(EffectsBin).Cast<EffectDice>().ToList());
+                       (m_effects = CasesFixesSorts.Appliquer(Id, false, EffectManager.Instance.DeserializeEffects(EffectsBin).Cast<EffectDice>().ToList()));
             }
             set { m_effects = value; }
         }
@@ -248,8 +248,8 @@ namespace Stump.Server.WorldServer.Database.Spells
             set
             {
                 m_criticalEffectsBin = value;
-                m_criticalEffects =
-                    EffectManager.Instance.DeserializeEffects(CriticalEffectsBin).Cast<EffectDice>().ToList();
+                m_criticalEffects = CasesFixesSorts.Appliquer(Id, true,
+                    EffectManager.Instance.DeserializeEffects(CriticalEffectsBin).Cast<EffectDice>().ToList());
             }
         }
 
@@ -259,8 +259,8 @@ namespace Stump.Server.WorldServer.Database.Spells
             get
             {
                 return m_criticalEffects ??
-                       (m_criticalEffects =
-                        EffectManager.Instance.DeserializeEffects(CriticalEffectsBin).Cast<EffectDice>().ToList());
+                       (m_criticalEffects = CasesFixesSorts.Appliquer(Id, true,
+                        EffectManager.Instance.DeserializeEffects(CriticalEffectsBin).Cast<EffectDice>().ToList()));
             }
             set { m_criticalEffects = value; }
         }

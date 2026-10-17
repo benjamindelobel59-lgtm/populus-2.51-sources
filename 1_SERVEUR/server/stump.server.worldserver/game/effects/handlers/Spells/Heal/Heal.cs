@@ -11,6 +11,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Heal
     [EffectHandler(EffectsEnum.Effect_HealHP_108)]
     [EffectHandler(EffectsEnum.Effect_HealHP_143)]
     [EffectHandler(EffectsEnum.Effect_HealHP_81)]
+    [EffectHandler(EffectsEnum.Effect_407)] // MYSTIC 17/10 : « #1 à #2 (PV rendus) » (Phossile, Ombre, Baleine…)
     public class Heal : SpellEffectHandler
     {
         public Heal(EffectDice effect, FightActor caster, SpellCastHandler castHandler, Cell targetedCell, bool critical)
@@ -34,6 +35,14 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Heal
 
                 if (Effect.Duration != 0 || Effect.Delay != 0)
                 {
+                    // MYSTIC 17/10 : un soin avec ses propres declencheurs (D, APA, MPA, DE|DN...) part a chaque declenchement ;
+                    // avant, il etait force en « Instant » et partait une seule fois au lancement (Ougah, Rat Noir : audit des donjons)
+                    if (!string.IsNullOrEmpty(Effect.Triggers) && Effect.Triggers != "I" && Spell.Id != (int)SpellIdEnum.SPORK_2687)
+                    {
+                        AddTriggerBuff(actor, HealBuffTrigger);
+                        continue;
+                    }
+
                     var triggerType = BuffTriggerType.Instant;
 
                     switch (Spell.Id)

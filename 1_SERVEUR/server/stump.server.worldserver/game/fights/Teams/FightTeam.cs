@@ -381,7 +381,8 @@ namespace Stump.Server.WorldServer.Game.Fights.Teams
                     return m_deadFighters[i];
                 i--;
             }
-            return m_deadFighters.LastOrDefault(x => x.IsDead());
+            // MYSTIC 17/10 : une Pougnette (Obsidiantre) n'est jamais ressuscitee (demande utilisateur)
+            return m_deadFighters.LastOrDefault(x => x.IsDead() && !(x is SummonedMonster s && s.Monster.Template.Id == (int)MonsterIdEnum.POUGNETTE));
         }
 
         public Party GetTeamParty()

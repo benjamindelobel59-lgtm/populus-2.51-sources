@@ -25,6 +25,8 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom
         public KralamoureBrain(AIFighter fighter) : base(fighter)
         {
             fighter.Fight.FightStarted += Fight_FightStarted;
+            // MYSTIC 17/10 : passif officiel Kraken (coup élémentaire → état « Envie de… » → tentacule), jamais lancé avant
+            Boss.SortPassif.Poser(fighter, 1103);
         }
 
         private void Fight_FightStarted(IFight obj)

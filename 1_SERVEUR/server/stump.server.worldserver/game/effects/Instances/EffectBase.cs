@@ -60,6 +60,14 @@ namespace Stump.Server.WorldServer.Game.Effects.Instances
         int m_zoneEfficiencyPercent;
         int m_zoneMaxEfficiency;
 
+        // MYSTIC 17/10 : zone « ;NNN » = une case précise de la carte (invocations / téléportations des boss : Chalœil, Nidas, Meno...)
+        [NonSerialized]
+        int m_caseFixe = -1;
+
+        public int CaseFixe => m_caseFixe;
+
+        public void DefinirCaseFixe(int cellule) => m_caseFixe = cellule;
+
         [NonSerialized]
         int m_priority;
 
@@ -87,6 +95,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Instances
             m_zoneShape = effect.ZoneShape;
             m_zoneMaxEfficiency = effect.ZoneMaxEfficiency;
             m_zoneEfficiencyPercent = effect.ZoneEfficiencyPercent;
+            m_caseFixe = effect.m_caseFixe;
 
             m_spellId = effect.SpellId;
             m_forClientOnly = effect.ForClientOnly;
@@ -421,6 +430,16 @@ namespace Stump.Server.WorldServer.Game.Effects.Instances
             byte minSize = 0;
             int zoneEfficiency = 0;
             int zoneMaxEfficiency = 0;
+
+            if (shape == SpellShapeEnum.semicolon)
+            {
+                var morceaux = rawZone.Remove(0, 1).Split(',');
+                m_zoneShape = shape;
+                m_zoneSize = 0;
+                m_zoneMinSize = 0;
+                m_caseFixe = int.TryParse(morceaux[0], out var caseFixe) ? caseFixe : -1;
+                return;
+            }
 
             var data = rawZone.Remove(0, 1).Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             var hasMinSize = shape == SpellShapeEnum.C || shape == SpellShapeEnum.X || shape == SpellShapeEnum.Q || shape == SpellShapeEnum.plus || shape == SpellShapeEnum.sharp;

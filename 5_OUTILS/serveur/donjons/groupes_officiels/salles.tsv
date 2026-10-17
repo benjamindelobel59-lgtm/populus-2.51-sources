@@ -1,0 +1,505 @@
+spawn	map	donjon_d2o	nom_carte	descr	nb_groupes
+1	152829952	Crypte de Kardorim	Crypte de Kardorim - Première Salle	kardo 1-2	30
+2	152830976	Crypte de Kardorim	Crypte de Kardorim - Deuxième Salle	kardo 2-3	30
+3	152832000	Crypte de Kardorim	Crypte de Kardorim - Troisième Salle	kardo 3-4	30
+4	152833024	Crypte de Kardorim	Crypte de Kardorim - Quatrième Salle	kardo 4-5	30
+5	152834048	Crypte de Kardorim	Crypte de Kardorim - Tombe de Kardorim	kardo 5-sortie	30
+6	190449664	Grange du Tournesol Affamé	Grange du Tournesol Affamé - Première salle	Champs 1-2	30
+7	190448640	Grange du Tournesol Affamé	Grange du Tournesol Affamé - Deuxième salle	Champs 2-3	30
+8	190316544	Grange du Tournesol Affamé	Grange du Tournesol Affamé - Troisième salle	Champs 3-4	30
+9	190317568	Grange du Tournesol Affamé	Grange du Tournesol Affamé - Quatrième salle	Champs 4-5	30
+10	190318592	Grange du Tournesol Affamé	Grange du Tournesol Affamé - Cinquième salle	Champs 5-sortie	30
+11	193725440	Château Ensablé	Château Ensablé - Première salle	Ensabl├® 1-2	30
+12	193726464	Château Ensablé	Château Ensablé - Deuxième salle	Ensabl├® 2-3	30
+13	193727488	Château Ensablé	Château Ensablé - Troisième salle	Ensabl├® 3-4	30
+14	193728512	Château Ensablé	Château Ensablé - Quatrième salle	Ensabl├® 4-5	30
+15	193729536	Château Ensablé	Château Ensablé - Cinquième salle	Ensabl├® 5-sortie	30
+16	121373185	Cour du Bouftou Royal	Cour du Bouftou Royal - Première salle	Bouftou 1-2	30
+17	121374209	Cour du Bouftou Royal	Cour du Bouftou Royal - Deuxième salle	Bouftou 2-3	30
+18	121375233	Cour du Bouftou Royal	Cour du Bouftou Royal - Troisième salle	Bouftou 3-4	30
+19	121373187	Cour du Bouftou Royal	Cour du Bouftou Royal - Quatrième salle	Bouftou 4-5	30
+20	121374211	Cour du Bouftou Royal	Cour du Bouftou Royal - Cinquième salle	Bouftou 5-sortie	30
+21	163578368	Maison Fantôme	Maison Fantôme - Première salle	Maison hant├® 1-2	31
+22	163579392	Maison Fantôme	Maison Fantôme - Deuxième salle	Maison hant├® 2-3	30
+23	163580416	Maison Fantôme	Maison Fantôme - Troisième salle	Maison hant├® 3-4	30
+24	163581440	Maison Fantôme	Maison Fantôme - Quatrième salle	Maison hant├® 4-5	30
+25	163582464	Maison Fantôme	Maison Fantôme - Cinquième salle	Maison hant├® 5-sortie	30
+26	94110720	Donjon des Scarafeuilles	Donjon des Scarafeuilles - Première salle	Scarafeuille 1-2	30
+27	94112768	Donjon des Scarafeuilles	Donjon des Scarafeuilles - Troisième salle	Scarafeuille 2-3	30
+28	94113792	Donjon des Scarafeuilles	Donjon des Scarafeuilles - Quatrième salle	Scarafeuille 3-4	30
+29	94114816	Donjon des Scarafeuilles	Donjon des Scarafeuilles - Cinquième salle	Scarafeuille 4-5	30
+30	94115840	Donjon des Scarafeuilles	Donjon des Scarafeuilles - Sixième salle	Scarafeuille 5-sortie	30
+31	87033344	Donjon des Squelettes	Donjon des Squelettes - Première salle	Squelette 1-2	30
+32	87034368	Donjon des Squelettes	Donjon des Squelettes - Deuxième salle	Squelette 2-3	30
+33	87035392	Donjon des Squelettes	Donjon des Squelettes - Troisième salle	Squelette 3-4	30
+34	87032322	Donjon des Squelettes	Donjon des Squelettes - Quatrième salle	Squelette 4-5	30
+35	87033346	Donjon des Squelettes	Donjon des Squelettes - Cinquième salle	Squelette 5-sortie	30
+36	96338946	Donjon des Tofus	Donjon des Tofus - Première salle	Batofu 1-3	30
+37	96206848	Donjon des Tofus	Donjon des Tofus - Troisième salle	Batofu 3-4	30
+38	96207874	Donjon des Tofus	Donjon des Tofus - Quatrième salle	Batofu 4-5	30
+39	96208898	Donjon des Tofus	Donjon des Tofus - Cinquième salle	Batofu 5-6	30
+40	96209922	Donjon des Tofus	Donjon des Tofus - Sixième salle	Batofu 6-sortie	30
+41	146675712	Cache de Kankreblath	Cache de Kankreblath - Première salle	Kankreblath 1-2	30
+42	146674688	Cache de Kankreblath	Cache de Kankreblath - Deuxième salle	Kankreblath 2-3	30
+43	146673664	Cache de Kankreblath	Cache de Kankreblath - Troisième salle	Kankreblath 3-4	30
+44	146671616	Cache de Kankreblath	Cache de Kankreblath - Quatrième salle	Kankreblath 4-5	30
+45	146670592	Cache de Kankreblath	Cache de Kankreblath - Cinquième salle	Kankreblath 5-sortie	30
+46	17564931	Caverne des Bulbes	Caverne des Bulbes - Première salle	Bulbes 1-2	30
+47	17565955	Caverne des Bulbes	Caverne des Bulbes - Deuxième salle	Bulbes 2-3	30
+48	17568003	Caverne des Bulbes	Caverne des Bulbes - Troisième salle	Bulbes 3-4	28
+49	17563905	Caverne des Bulbes	Caverne des Bulbes - Quatrième salle	Bulbes 4-6	30
+50	17565953	Caverne des Bulbes	Caverne des Bulbes - Sixième salle	Bulbes 6-sortie	30
+51	104595969	Donjon des Bworks	Donjon des Bworks - Première salle	Bworks 1-2	30
+52	104596993	Donjon des Bworks	Donjon des Bworks - Deuxième salle	Bworks 2-3	30
+53	104598017	Donjon des Bworks	Donjon des Bworks - Troisième salle	Bworks 3-4	30
+54	104595971	Donjon des Bworks	Donjon des Bworks - Quatrième salle	Bworks 4-5	30
+55	104596995	Donjon des Bworks	Donjon des Bworks - Cinquième salle	Bworks 5-sortie	30
+56	87295489	Donjon des Forgerons	Donjon des Forgerons - Première salle	Forgerons 1-2	30
+57	87296513	Donjon des Forgerons	Donjon des Forgerons - Deuxième salle	Forgerons 2-5	30
+58	87294467	Donjon des Forgerons	Donjon des Forgerons - Quatrième salle	Forgerons 5-7	30
+59	87295493	Donjon des Forgerons	Donjon des Forgerons - Septième salle	Forgerons 7-10	30
+60	87296515	Donjon des Forgerons	Donjon des Forgerons - Salle finale	Forgerons 10-sortie	30
+61	5243139	Grotte Hesque	Grotte Hesque - Première salle	Grotte Hesk 1-2	30
+62	5244416	Grotte Hesque	Grotte Hesque - Deuxième salle	Grotte Hesk 2-3	30
+63	5242883	Grotte Hesque	Grotte Hesque - Troisième salle	Grotte Hesk 3-4	30
+64	5244419	Grotte Hesque	Grotte Hesque - Quatrième salle	Grotte Hesk 4-5	30
+65	5242886	Grotte Hesque	Grotte Hesque - Cinquième salle	Grotte Hesk 5-sortie	30
+66	64749568	Nid du Kwakwa	Nid du Kwakwa - Première salle	Kwakwa 1-2	30
+67	64750592	Nid du Kwakwa	Nid du Kwakwa - Deuxième salle	Kwakwa 2-3	30
+68	64751616	Nid du Kwakwa	Nid du Kwakwa - Troisième salle	Kwakwa 3-4	30
+69	64752640	Nid du Kwakwa	Nid du Kwakwa - Quatrième salle	Kwakwa 4-5	30
+70	64753664	Nid du Kwakwa	Nid du Kwakwa - Cinquième salle	Kwakwa 5-sortie	30
+71	96994817	Donjon des Larves	Donjon des Larves - Première salle	Larves 1-5	30
+72	96998913	Donjon des Larves	Donjon des Larves - Cinquième salle	Larves 5-6	28
+73	96993797	Donjon des Larves	Donjon des Larves - Sixième salle	Larves 6-9	30
+74	96996869	Donjon des Larves	Donjon des Larves - Neuvième salle	Larves 9-11	28
+75	96998917	Donjon des Larves	Donjon des Larves - Onzième salle	Larves 11-sortie	30
+76	66585088	Donjon de Nowel	Donjon de Nowel - Première salle	Nowel Sapik 1-2	30
+77	66586112	Donjon de Nowel	Donjon de Nowel - Deuxième salle	Nowel Sapik 2-3	30
+78	66587136	Donjon de Nowel	Donjon de Nowel - Troisième salle	Nowel Sapik 3-4	30
+79	66588160	Donjon de Nowel	Donjon de Nowel - Quatrième salle	Nowel Sapik 4-5	30
+80	66589184	Donjon de Nowel	Donjon de Nowel - Cinquième salle	Nowel Sapik 5-sortie	30
+81	166986752	Clos des Blops	Clos des Blops - Première salle	Blops 1-2	30
+82	166987776	Clos des Blops	Clos des Blops - Deuxième salle	Blops 2-3	30
+83	166988800	Clos des Blops	Clos des Blops - Troisième salle	Blops 3-4	30
+84	166989824	Clos des Blops	Clos des Blops - Quatrième salle	Blops 4-5 (opcion)	30
+85	166987778	Clos des Blops	Clos des Blops - Salle du Blop Reinette Royal	Blops - Reinette	30
+86	166986754	Clos des Blops	Clos des Blops - Salle du Blop Griotte Royal	Blops - Griotte	30
+87	166985730	Clos des Blops	Clos des Blops - Salle du Blop Indigo Royal	Blops - Indigo	30
+88	166988802	Clos des Blops	Clos des Blops - Salle du Blop Coco Royal	Blops - Coco	30
+89	166990850	Antre du Blop Multicolore Royal	Antre du Blop Multicolore Royal - Grande salle	Blop Multicolor	31
+90	98566657	Gelaxième Dimension	La Gelaxième Dimension - Première salle	Gel├®es 1-2	30
+91	98567681	Gelaxième Dimension	La Gelaxième Dimension - Deuxième salle	Gel├®es 2-3	30
+92	98566659	Gelaxième Dimension	La Gelaxième Dimension - Troisième salle	Gel├®es 3-4	30
+93	98567683	Gelaxième Dimension	La Gelaxième Dimension - Quatrième salle	Gel├®es 4-5	30
+94	98567687	Gelaxième Dimension	La Gelaxième Dimension - Gelées Royales	Gel├®es 5-sortie	30
+95	157548544	Village Kanniboul	Village Kanniboul - Première salle	Kaniboule 1-2	30
+96	157549568	Village Kanniboul	Village Kanniboul - Deuxième Salle	Kaniboule 2-3	30
+97	157550592	Village Kanniboul	Village Kanniboul - Troisième Salle	Kaniboule 3-4	30
+98	157551616	Village Kanniboul	Village Kanniboul - Quatrième Salle	Kaniboule 4-5	30
+99	157552640	Village Kanniboul	Village Kanniboul - Cinquième Salle	Kaniboule 5-sortie	30
+100	116392448	Château du Wa Wabbit	Château du Wa Wabbit - Première salle	Wa Wabbit 1-2	30
+101	116393472	Château du Wa Wabbit	Château du Wa Wabbit - Deuxième salle	Wa Wabbit 2-3	30
+102	116394496	Château du Wa Wabbit	Château du Wa Wabbit - Troisième salle	Wa Wabbit 3-4	30
+103	116395520	Château du Wa Wabbit	Château du Wa Wabbit - Quatrième salle	Wa Wabbit 4-5	30
+104	116392450	Château du Wa Wabbit	Château du Wa Wabbit - Salle du trône	Wa Wabbit 5-sortie	30
+105	106954752	Pitons Rocheux des Craqueleurs	Pitons Rocheux des Craqueleurs - Première salle	Craqueleurs 1-2	30
+106	106955776	Pitons Rocheux des Craqueleurs	Pitons Rocheux des Craqueleurs - Deuxième salle	Craqueleurs 2-3	28
+107	106956800	Pitons Rocheux des Craqueleurs	Pitons Rocheux des Craqueleurs - Troisième salle	Craqueleurs 3-4	28
+108	106957824	Pitons Rocheux des Craqueleurs	Pitons Rocheux des Craqueleurs - Quatrième salle	Craqueleurs 4-7	30
+109	106960896	Pitons Rocheux des Craqueleurs	Pitons Rocheux des Craqueleurs - Septième salle	Craqueleurs 7-sortie	30
+110	176947200	Laboratoire de Brumen Tinctorias	Laboratoire de Brumen Tinctorias - Première salle	Nelween 1-2	30
+111	176948224	Laboratoire de Brumen Tinctorias	Laboratoire de Brumen Tinctorias - Deuxième salle	Nelween 2-3	30
+112	176949248	Laboratoire de Brumen Tinctorias	Laboratoire de Brumen Tinctorias - Troisième salle	Nelween 3-4	30
+113	176950272	Laboratoire de Brumen Tinctorias	Laboratoire de Brumen Tinctorias - Quatrième salle	Nelween 4-5	30
+114	176951296	Laboratoire de Brumen Tinctorias	Laboratoire de Brumen Tinctorias - Cinquième salle	Nelween 5-sortie	30
+115	22282240	Cale de l'Arche d'Otomaï	Cale de l'Arche d'Otomai - Première salle	Arche otomai 1-2	30
+116	22283264	Cale de l'Arche d'Otomaï	Cale de l'Arche d'Otomai - Deuxième salle	Arche otomai 2-3	30
+117	22282242	Cale de l'Arche d'Otomaï	Cale de l'Arche d'Otomai - Troisième salle	Arche otomai 3-4	30
+118	22283266	Cale de l'Arche d'Otomaï	Cale de l'Arche d'Otomai - Quatrième salle	Arche otomai 4-5	30
+119	22284290	Cale de l'Arche d'Otomaï	Cale de l'Arche d'Otomai - Cinquième salle	Arche otomai 5-sortie	30
+120	116654593	Terrier du Wa Wabbit	Terrier du Wa Wabbit - Première salle	Wa Wobot 1-2	30
+121	116655617	Terrier du Wa Wabbit	Terrier du Wa Wabbit - Deuxième salle	Wa Wobot 2-3	30
+122	116656641	Terrier du Wa Wabbit	Terrier du Wa Wabbit - Troisième salle	Wa Wobot 3-4	30
+123	116657665	Terrier du Wa Wabbit	Terrier du Wa Wabbit - Quatrième salle	Wa Wobot 4-5	30
+124	116654595	Terrier du Wa Wabbit	Terrier du Wa Wabbit - Salle du Dofus Cawotte	Wa Wobot 5-sortie	30
+125	79430145	Repaire de Daïgoro	Repaire de Daïgoro - Première salle	Daigoro 1-2	30
+126	79431169	Repaire de Daïgoro	Repaire de Daïgoro - Deuxième salle	Daigoro 2-3	30
+127	79432193	Repaire de Daïgoro	Repaire de Daïgoro - Troisième salle	Daigoro 3-4	30
+128	79433217	Repaire de Daïgoro	Repaire de Daïgoro - Quatrième salle	Daigoro 4-5	30
+129	79434241	Repaire de Daïgoro	Repaire de Daïgoro - Cinquième salle	Daigoro 5-sortie	30
+130	174326272	Cimetière des Mastodontes	Cimetière des Mastodontes - Première Salle	Masto 1-2	30
+131	174327296	Cimetière des Mastodontes	Cimetière des Mastodontes - Deuxième Salle	Masto 2-3	30
+132	174328320	Cimetière des Mastodontes	Cimetière des Mastodontes - Troisième Salle	Masto 3-4	30
+133	174329344	Cimetière des Mastodontes	Cimetière des Mastodontes - Quatrième Salle	Masto 4-5	30
+134	174330368	Cimetière des Mastodontes	Cimetière des Mastodontes - Dernière Salle	Masto 5-sortie	30
+135	149684224	Domaine Ancestral	Domaine Ancestral - Première salle	Ancestral 1-2	30
+136	149685248	Domaine Ancestral	Domaine Ancestral - Deuxième salle	Ancestral 2-3	30
+137	149686272	Domaine Ancestral	Domaine Ancestral - Troisième salle	Ancestral 3-4	30
+138	149687296	Domaine Ancestral	Domaine Ancestral - Quatrième salle	Ancestral 4-5	30
+139	149688320	Domaine Ancestral	Domaine Ancestral - Cinquième salle	Ancestral 5-sortie	30
+140	149160960	Antre de la Reine Nyée	Antre de la Reine Nyée - Première salle	Reine Ny├®e 1-2	30
+141	149161984	Antre de la Reine Nyée	Antre de la Reine Nyée - Deuxième salle	Reine Ny├®e 2-3	30
+142	149163008	Antre de la Reine Nyée	Antre de la Reine Nyée - Troisième salle	Reine Ny├®e 3-4	30
+143	149164032	Antre de la Reine Nyée	Antre de la Reine Nyée - Quatrième salle	Reine Ny├®e 4-5	30
+144	149165056	Antre de la Reine Nyée	Antre de la Reine Nyée - Cinquième salle	Reine Ny├®e 5-sortie	30
+145	157024256	Bateau du Chouque	Bateau du Chouque - Première Salle	Chouque 1-2	30
+146	157025280	Bateau du Chouque	Bateau du Chouque - Deuxième Salle	Chouque 2-3	30
+147	157026304	Bateau du Chouque	Bateau du Chouque - Troisième Salle	Chouque 3-4	30
+148	157027328	Bateau du Chouque	Bateau du Chouque - Quatrième Salle	Chouque 4-5	30
+149	157028352	Bateau du Chouque	Bateau du Chouque - Cabine du Chouque	Chouque 5-sortie	30
+150	181665792	Chapiteau des Magik Riktus	Chapiteau des Magik Riktus - Première salle	Magik Riktus 1-2	30
+151	181666816	Chapiteau des Magik Riktus	Chapiteau des Magik Riktus - Deuxième salle	Magik Riktus 2-3	30
+152	181667840	Chapiteau des Magik Riktus	Chapiteau des Magik Riktus - Troisième salle	Magik Riktus 3-4	30
+153	181668864	Chapiteau des Magik Riktus	Chapiteau des Magik Riktus - Quatrième salle	Magik Riktus 4-5	30
+154	181669888	Chapiteau des Magik Riktus	Chapiteau des Magik Riktus - Cinquième salle	Magik Riktus 5-sortie	30
+155	72351744	Antre du Dragon Cochon	Antre du Dragon Cochon - Première salle	Dragon Cochon 1-2	30
+156	72352768	Antre du Dragon Cochon	Antre du Dragon Cochon - Deuxième salle	Dragon Cochon 2-3	30
+157	72353792	Antre du Dragon Cochon	Antre du Dragon Cochon - Troisième salle	Dragon Cochon 3-4	30
+158	72354816	Antre du Dragon Cochon	Antre du Dragon Cochon - Quatrième salle	Dragon Cochon 4-5	30
+159	72355840	Antre du Dragon Cochon	Antre du Dragon Cochon - Cinquième salle	Dragon Cochon 5-6	5
+160	155713536	Tanière du Meulou	Tanière du Meulou - Première salle	Meulou 1-2	30
+161	155714560	Tanière du Meulou	Tanière du Meulou - Deuxième salle	Meulou 2-3	30
+162	155715584	Tanière du Meulou	Tanière du Meulou - Troisième salle	Meulou 3-4	30
+163	155716608	Tanière du Meulou	Tanière du Meulou - Quatrième salle	Meulou 4-5	30
+164	155718656	Tanière du Meulou	Tanière du Meulou - Sixième salle	Meulou 5-sortie	30
+165	107216896	Caverne du Koulosse	Caverne du Koulosse - Première salle	Koulosse 1-2	30
+166	107217920	Caverne du Koulosse	Caverne du Koulosse - Deuxième salle	Koulosse 2-3	30
+167	107225088	Caverne du Koulosse	Caverne du Koulosse - Troisième salle	Koulosse 3-4	30
+168	107226112	Caverne du Koulosse	Caverne du Koulosse - Quatrième salle	Koulosse 4-5	30
+169	107227136	Caverne du Koulosse	Caverne du Koulosse - Cinquième salle	Koulosse 5-sortie	30
+170	101188608	Potager d'Halouine	Potager d'Halouine - Marais	Halouine 1-2	30
+171	101189632	Potager d'Halouine	Potager d'Halouine - Cimetière	Halouine 2-3	30
+172	101190656	Potager d'Halouine	Potager d'Halouine - Antre de la Sorcière	Halouine 3-4	30
+173	101191680	Potager d'Halouine	Potager d'Halouine - Coin des Citwouilles	Halouine 4-5	30
+174	101193728	Potager d'Halouine	Potager d'Halouine - Potager Maléfique	Halouine 5-sortie	30
+175	118226944	Théâtre de Dramak	Théâtre de Dramak - Salle 1	Dramak 1-2	30
+176	118227968	Théâtre de Dramak	Théâtre de Dramak - Salle 2	Dramak 2-3	30
+177	118228992	Théâtre de Dramak	Théâtre de Dramak - Salle 3	Dramak 3-4	30
+178	118230016	Théâtre de Dramak	Théâtre de Dramak - Salle 4	Dramak 4-5	30
+179	118231040	Théâtre de Dramak	Théâtre de Dramak - Salle 5	Dramak 5-sortie	5
+180	130286592	Fabrique de Malléfisk	Fabrique de Mallefisk - Salle des machines	Mal├®fisk	30
+181	157286400	Arbre de Moon	Arbre de Moon - Première Salle	Moon 1-2	30
+182	157287424	Arbre de Moon	Arbre de Moon - Deuxième Salle	Moon 2-3	30
+183	157288448	Arbre de Moon	Arbre de Moon - Troisième Salle	Moon 3-4	30
+184	157289472	Arbre de Moon	Arbre de Moon - Quatrième Salle	Moon 4-5	30
+185	157290496	Arbre de Moon	Arbre de Moon - Cinquième Salle	Moon 5-sortie	30
+186	159125512	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Salle du trône	Maitre Corbac	20
+187	66846720	Caverne de Nowel	Caverne de Nowel - Première salle	P├¿re Nowel 1-2	30
+188	66847744	Caverne de Nowel	Caverne de Nowel - Deuxième salle	P├¿re Nowel 2-3	30
+189	66848768	Caverne de Nowel	Caverne de Nowel - Troisième salle	P├¿re Nowel 3-4	30
+190	66849792	Caverne de Nowel	Caverne de Nowel - Quatrième salle	P├¿re Nowel 4-5	30
+191	66850816	Caverne de Nowel	Caverne de Nowel - Cinquième salle	P├¿re Nowel 5-sortie	30
+192	22808576	Goulet du Rasboul	Goulet du Rasboul - Première salle	Rasboul 1-2	30
+193	22806530	Goulet du Rasboul	Goulet du Rasboul - Deuxième salle	Rasboul 2-3	30
+194	22807554	Goulet du Rasboul	Goulet du Rasboul - Troisième salle	Rasboul 3-4	30
+195	22808578	Goulet du Rasboul	Goulet du Rasboul - Quatrième salle	Rasboul 4-5	30
+196	22809602	Goulet du Rasboul	Goulet du Rasboul - Cinquième salle	Rasboul 5-sortie	30
+197	27000832	Donjon des Rats de Bonta	Donjon des Rats de Bonta - Première salle	Rat Bonta 1-2	30
+198	27003904	Donjon des Rats de Bonta	Donjon des Rats de Bonta - Deuxième salle	Rat Bonta 2-3	30
+199	27001858	Donjon des Rats de Bonta	Donjon des Rats de Bonta - Troisième salle	Rat Bonta 3-4	30
+200	27003906	Donjon des Rats de Bonta	Donjon des Rats de Bonta - Quatrième salle	Rat Bonta 4-5	30
+201	27000836	Donjon des Rats de Bonta	Donjon des Rats de Bonta - Cinquième salle	Rat Bonta 5-sortie	30
+202	40108544	Donjon des Rats de Brâkmar	Donjon des Rats de Brâkmar - Première salle	Rat Brak 1-2	30
+203	40109568	Donjon des Rats de Brâkmar	Donjon des Rats de Brâkmar - Deuxième salle	Rat Brak 2-3	30
+204	40111616	Donjon des Rats de Brâkmar	Donjon des Rats de Brâkmar - Troisième salle	Rat Brak 3-4	30
+205	40110594	Donjon des Rats de Brâkmar	Donjon des Rats de Brâkmar - Quatrième salle	Rat Brak 4-5	30
+206	40110085	Donjon des Rats de Brâkmar	Donjon des Rats de Brâkmar - Cinquième salle	Rat Brak 5-sortie	30
+207	161743872	Miausolée du Pounicheur	Miausolée du Pounicheur - Crypte infestée	Pounicheur	30
+208	34473474	Centre du Labyrinthe du Minotoror	Salle du Minotoror	Centre Labyrinthe Minotor	30
+209	27787264	Donjon des Dragoeufs	Donjon des Dragoeufs - Première salle	Crocabulia 1-2	30
+210	27789312	Donjon des Dragoeufs	Donjon des Dragoeufs - Deuxième salle	Crocabulia 2-3	30
+211	27788290	Donjon des Dragoeufs	Donjon des Dragoeufs - Troisième salle	Crocabulia 3-4	30
+212	27788292	Donjon des Dragoeufs	Donjon des Dragoeufs - Quatrième salle	Crocabulia 4-5	30
+213	27789316	Donjon des Dragoeufs	Donjon des Dragoeufs - Cinquième salle	Crocabulia 5-sortie	32
+214	17302528	Repaire des Pandikazes	Repaire des Pandikazes - Première plate-forme	Pandikazes 1-2	30
+215	17304576	Repaire des Pandikazes	Repaire des Pandikazes - Deuxième plate-forme	Pandikazes 2-3	30
+216	17307648	Repaire des Pandikazes	Repaire des Pandikazes - Troisième plate-forme	Pandikazes 3-4	30
+217	17308672	Repaire des Pandikazes	Repaire des Pandikazes - Quatrième plate-forme	Pandikazes 4-5	30
+218	17309696	Repaire des Pandikazes	Repaire des Pandikazes - Cinquième plate-forme	Pandikazes 5-sortie	30
+219	107481088	Repaire de Skeunk	Repaire de Skeunk - Première salle	Skeunk 1-2	27
+220	107482112	Repaire de Skeunk	Repaire de Skeunk - Deuxième salle	Skeunk 2-3	30
+221	107483136	Repaire de Skeunk	Repaire de Skeunk - Troisième salle	Skeunk 3-4	30
+222	107484160	Repaire de Skeunk	Repaire de Skeunk - Quatrième salle	Skeunk 4-5	30
+223	107485184	Repaire de Skeunk	Repaire de Skeunk - Cinquième salle	Skeunk 5-sortie	30
+224	96338948	Tofulailler Royal	Tofulailler Royal - Première salle	Tofu Royal 1-2	30
+225	96338950	Tofulailler Royal	Tofulailler Royal - Deuxième salle	Tofu Royal 2-3	30
+226	96207878	Tofulailler Royal	Tofulailler Royal - Quatrième salle	Tofu Royal 3-4	30
+227	96208902	Tofulailler Royal	Tofulailler Royal - Cinquième salle	Tofu Royal 4-5	30
+228	96209926	Tofulailler Royal	Tofulailler Royal - Sixième salle	Tofu Royal 5-sortie	30
+229	55050240	Serre du Royalmouth	Serre du Royalmouth - Première salle	Royalmouth 1-2	30
+230	55050242	Serre du Royalmouth	Serre du Royalmouth - Deuxième salle	Royalmouth 2-3	30
+231	55052290	Serre du Royalmouth	Serre du Royalmouth - Troisième salle	Royalmouth 3-4	30
+232	55052288	Serre du Royalmouth	Serre du Royalmouth - Quatrième salle	Royalmouth 4-5	30
+233	55053312	Serre du Royalmouth	Serre du Royalmouth - Sixième salle	Royalmouth 5-sortie	30
+234	143138823	Mégalithe de Fraktale	Mégalithe de Fraktale - Cercle de pierre	Fraktal	30
+235	18088960	Donjon des Kitsounes	Donjon des Kitsounes - Première salle	Kitsun 1-2	30
+236	18089984	Donjon des Kitsounes	Donjon des Kitsounes - Deuxième salle	Kitsun 2-3	30
+237	18091008	Donjon des Kitsounes	Donjon des Kitsounes - Troisième salle	Kitsun 3-4	30
+238	18088962	Donjon des Kitsounes	Donjon des Kitsounes - Quatrième salle annexe 1	Kitsun 4-5	30
+239	18087940	Donjon des Kitsounes	Donjon des Kitsounes - Cinquième salle annexe 1	Kitsun 5-sortie	30
+240	132907008	Volière de la Haute Truche	Volière de la Haute Truche - Première salle	Truche 1-2	30
+241	132908032	Volière de la Haute Truche	Volière de la Haute Truche - Deuxième salle	Truche 2-3	30
+242	132909056	Volière de la Haute Truche	Volière de la Haute Truche - Troisième salle	Truche 3-4	30
+243	132910080	Volière de la Haute Truche	Volière de la Haute Truche - Quatrième salle	Truche 4-5	30
+244	132911104	Volière de la Haute Truche	Volière de la Haute Truche - Cinquième salle	Truche 5-sortie	30
+245	136578048	Ring du Capitaine Ekarlatte	Ring du Capitaine Ekarlatte	Captaine ekarlate	30
+246	174064128	Caverne d'El Piko	Caverne d'El Piko - Première salle	El piko 1-2	30
+247	174065664	Caverne d'El Piko	Caverne d'El Piko - Deuxième salle	El piko 2-3	30
+248	174067200	Caverne d'El Piko	Caverne d'El Piko - Troisième salle	El piko 3-4	30
+249	174068736	Caverne d'El Piko	Caverne d'El Piko - Quatrième salle	El piko 4-5	30
+250	174070272	Caverne d'El Piko	Caverne d'El Piko - Cinquième salle	El piko 5-sortie	30
+251	149423104	Clairière du Chêne Mou	Clairière du Chêne Mou - Première salle	Ch├¬ne Moue 1-2	30
+252	149424128	Clairière du Chêne Mou	Clairière du Chêne Mou - Deuxième salle	Ch├¬ne Moue 2-3	30
+253	149425152	Clairière du Chêne Mou	Clairière du Chêne Mou - Troisième salle	Ch├¬ne Moue 3-4	30
+254	149426176	Clairière du Chêne Mou	Clairière du Chêne Mou - Quatrième salle	Ch├¬ne Moue 4-5	30
+255	149427200	Clairière du Chêne Mou	Clairière du Chêne Mou - Cinquième salle	Ch├¬ne Moue 5-sortie	30
+256	16516867	Donjon des Firefoux	Donjon des Firefoux - Salle du Péki Péki	Firefoux	30
+257	89391104	Laboratoire du Tynril	Laboratoire du Tynril - Première salle	Tynril 1-2	30
+258	89392128	Laboratoire du Tynril	Laboratoire du Tynril - Deuxième salle	Tynril 2-3	30
+259	89391106	Laboratoire du Tynril	Laboratoire du Tynril - Troisième salle	Tynril 3-4	30
+260	89394178	Laboratoire du Tynril	Laboratoire du Tynril - Quatrième salle	Tynril 4-5	30
+261	89392130	Laboratoire du Tynril	Laboratoire du Tynril - Cinquième salle	Tynril 5-sortie	20
+262	56098816	Excavation du Mansot Royal	Excavation du Mansot Royal - Première salle	Mansot 1-2	30
+263	56099840	Excavation du Mansot Royal	Excavation du Mansot Royal - Deuxième salle	Mansot 2-3	30
+264	56100864	Excavation du Mansot Royal	Excavation du Mansot Royal - Troisième salle	Mansot 3-4	30
+265	56101888	Excavation du Mansot Royal	Excavation du Mansot Royal - Quatrième salle	Mansot 4-5	30
+266	56102912	Excavation du Mansot Royal	Excavation du Mansot Royal - Cinquième salle	Mansot 5-sortie	30
+267	102760961	Donjon des Rats du Château d'Amakna	Donjon des Rats du Chateau d'Amakna - Première salle	Sphincter Cell 1-2	30
+268	102761985	Donjon des Rats du Château d'Amakna	Donjon des Rats du Chateau d'Amakna - Deuxième salle	Sphincter Cell 2-3	30
+269	102763009	Donjon des Rats du Château d'Amakna	Donjon des Rats du Chateau d'Amakna - Troisième salle	Sphincter Cell 3-4	30
+270	102764033	Donjon des Rats du Château d'Amakna	Donjon des Rats du Chateau d'Amakna - Quatrième salle	Sphincter Cell 4-5	30
+271	102760963	Donjon des Rats du Château d'Amakna	Donjon des Rats du Chateau d'Amakna - Cinquième salle	Sphincter Cell 5-sortie	30
+272	56360960	Épave du Grolandais violent	Épave du Grolandais violent - Première salle	Ben 1-2	30
+273	56361984	Épave du Grolandais violent	Épave du Grolandais violent - Deuxième salle	Ben 2-3	30
+274	56363008	Épave du Grolandais violent	Épave du Grolandais violent - Troisième salle	Ben 3-4	30
+275	56364032	Épave du Grolandais violent	Épave du Grolandais violent - Quatrième salle	Ben 4-5	30
+276	56365056	Épave du Grolandais violent	Épave du Grolandais violent - Cinquième salle	Ben 5-sortie	30
+277	130548736	Galerie du Phossile	Galerie du Phossile - Salle des pépites	Phossile	30
+278	21495808	Canopée du Kimbo	Canopée du Kimbo - Première salle	Kimbo 1-2	30
+279	21499904	Canopée du Kimbo	Canopée du Kimbo - Deuxième salle	Kimbo 2-3	30
+280	21497856	Canopée du Kimbo	Canopée du Kimbo - Troisième salle	Kimbo 3-4	30
+281	21496834	Canopée du Kimbo	Canopée du Kimbo - Quatrième salle	Kimbo 4-5	30
+282	21497858	Canopée du Kimbo	Canopée du Kimbo - Cinquième salle	Kimbo 5-sortie	30
+283	34472450	Salle du Minotot	Salle du Minotot	Minotot	30
+284	57149697	Hypogée de l'Obsidiantre	Hypogée de l'Obsidiantre - Deuxième salle	Obsidiantre 1-2	30
+285	57151233	Hypogée de l'Obsidiantre	Hypogée de l'Obsidiantre - Troisième salle	Obsidiantre 2-3	30
+286	57152769	Hypogée de l'Obsidiantre	Hypogée de l'Obsidiantre - Quatrième salle	Obsidiantre 3-4	30
+287	57154305	Hypogée de l'Obsidiantre	Hypogée de l'Obsidiantre - Cinquième salle	Obsidiantre 4-5	30
+288	57155841	Hypogée de l'Obsidiantre	Hypogée de l'Obsidiantre - Sixième salle	Obsidiantre 5-sortie	30
+289	125831681	Grotte de Kanigroula	Grotte de Kanigroula - Prison	Kanigrula 1-2	30
+290	125830659	Grotte de Kanigroula	Grotte de Kanigroula - Salle de la tribune	Kanigrula 2-3	31
+291	125830657	Grotte de Kanigroula	Grotte de Kanigroula - Salle des pièges	Kanigrula 3-4	30
+292	125829635	Grotte de Kanigroula	Grotte de Kanigroula - Salle de banquet	Kanigrula 4-5	30
+293	125831683	Grotte de Kanigroula	Grotte de Kanigroula - Chambre matriarcale	Kanigrula 5-sortie	30
+294	162004992	Plateau de Ush	Plateau de Ush	Ush	30
+295	59511808	Tanière Givrefoux	Tanière Givrefoux - Première salle	Givrefoux 1-2	30
+296	59512832	Tanière Givrefoux	Tanière Givrefoux - Deuxième salle	Givrefoux 2-3	30
+297	59513856	Tanière Givrefoux	Tanière Givrefoux - Troisième salle	Givrefoux 3-4	30
+298	59514880	Tanière Givrefoux	Tanière Givrefoux - Quatrième salle	Givrefoux 4-5	30
+300	59516162	Tanière Givrefoux	Tanière Givrefoux - Sixième salle bis	Givrefoux Tengu (Sixieme salle bis)	30
+301	59515904	Tanière Givrefoux	Tanière Givrefoux - Sixième salle	Givrefoux Tengu + Fuji (Sixieme salle)	30
+302	143917569	Horologium de XLII	Horologium de XLII - Salle des rouages	XLII	30
+303	176030208	Boyau du Père Ver	Boyau du Père Ver - Première salle	P├¿re Ver 1-2	30
+304	175899136	Boyau du Père Ver	Boyau du Père Ver - Deuxième salle	P├¿re Ver 2-3	30
+305	175900160	Boyau du Père Ver	Boyau du Père Ver - Troisième salle	P├¿re Ver 3-4	30
+306	175901184	Boyau du Père Ver	Boyau du Père Ver - Quatrième salle	P├¿re Ver 4-5	30
+307	175902208	Boyau du Père Ver	Boyau du Père Ver - Cinquième salle	P├¿re Ver 5-sortie	30
+308	104333825	Grotte du Bworker	Grotte du Bworker - Première salle	Bworker 1-2	30
+309	104334849	Grotte du Bworker	Grotte du Bworker - Deuxième salle	Bworker 2-3	30
+310	104335873	Grotte du Bworker	Grotte du Bworker - Troisième salle	Bworker 3-4	30
+311	104336897	Grotte du Bworker	Grotte du Bworker - Quatrième salle	Bworker 4-5	30
+312	104333827	Grotte du Bworker	Grotte du Bworker - Cinquième salle	Bworker 5-sortie	30
+313	182327297	Temple du Grand Ougah	Temple du Grand Ougah - Première salle	Templo del Gran Ugah - Sala 1 - Sala 2	30
+314	182326273	Temple du Grand Ougah	Temple du Grand Ougah - Deuxième salle	Templo del Gran Ugah - Sala 2 - Sala 3	30
+315	182325249	Temple du Grand Ougah	Temple du Grand Ougah - Troisième salle	Templo del Gran Ugah - Sala 3 - Sala 4	30
+316	182324225	Temple du Grand Ougah	Temple du Grand Ougah - Quatrième salle	Templo del Gran Ugah - Sala 4 - Sala 5	30
+317	182323201	Temple du Grand Ougah	Temple du Grand Ougah - Cinquième salle	Templo del Gran Ugah - Sala 5 - Sala 6	30
+318	182322177	Temple du Grand Ougah	Temple du Grand Ougah - Sixième salle	Templo del Gran Ugah - Sala 6 - Sala 9	30
+319	182192129	Temple du Grand Ougah	Temple du Grand Ougah - Neuvième salle	Templo del Gran Ugah  - Sala 9 - Salida	30
+320	26738688	Antre du Kralamoure Géant	L'Antre du Kralamoure - Première salle	Antro del Kralamar Gigante - Sala 1 - Sala 2	30
+321	26739712	Antre du Kralamoure Géant	L'Antre du Kralamoure - Deuxième salle	Antro del Kralamar Gigante - Sala 2 - Sala 3	30
+322	26740736	Antre du Kralamoure Géant	L'Antre du Kralamoure - Troisième salle	Antro del Kralamar Gigante - Sala 3 - Salida	5
+323	66322432	Maison du Papa Nowel	Maison du Papa Nowel - Première salle	Casa de Chanta Klaus - Sala 1 - Sala 2	30
+324	66323456	Maison du Papa Nowel	Maison du Papa Nowel - Deuxième salle	Casa de Chanta Klaus - Sala 2 - Sala 3	30
+325	66324480	Maison du Papa Nowel	Maison du papa Nowel - Troisième salle	Casa de Chanta Klaus - Sala 3 - Sala 4	30
+326	66325504	Maison du Papa Nowel	Maison du Papa Nowel - Quatrième salle	Casa de Chanta Klaus - Sala 4 - Sala 5	30
+327	66326528	Maison du Papa Nowel	Maison du Papa Nowel - Cinquième salle	Casa de Chanta Klaus - Sala 5 - Salida	30
+328	62915584	Antre du Korriandre	Antre du Korriandre - Première salle	Antro del Cil - Sala 1 - Sala 2	30
+329	62916608	Antre du Korriandre	Antre du Korriandre - Deuxième salle	Antro del Cil - Sala 2 - Sala 3	30
+330	62917632	Antre du Korriandre	Antre du Korriandre - Troisième salle	Antro del Cil - Sala 3 - Sala 4	30
+331	62918656	Antre du Korriandre	Antre du Korriandre - Quatrième salle	Antro del Cil - Sala 4 - Sala 5	30
+332	62919680	Antre du Korriandre	Antre du Korriandre - Cinquième salle	Antro del Cil - Sala 5 - Salida	30
+333	136840192	Cave du Toxoliath	Cave du Toxoliath - Salle des pontes	Cueva de Toxoliat	30
+334	182453248	Temple Maudit d'Araknas	Temple Maudit d'Araknas - Première salle	Templo Maldito de Araknas - Sala 1 - Sala 2	30
+335	182454272	Temple Maudit d'Araknas	Temple Maudit d'Araknas - Deuxième salle	Templo Maldito de Araknas - Sala 2 - Sala 3	30
+336	182455296	Temple Maudit d'Araknas	Temple Maudit d'Araknas - Troisième salle	Templo Maldito de Araknas - Sala 3 - Salida	30
+339	61868036	Cavernes du Kolosso	Cavernes du Kolosso - Cinquième salle	Cavernas de Tejossus - Sala 3 - Salida	30
+341	62131720	Antichambre des Gloursons	Antichambre des Gloursons - Deuxième salle	Antec├ímara de los Golosotes - Sala 2 - Sala 3	30
+342	62132744	Antichambre des Gloursons	Antichambre des Gloursons - Troisième salle	Antec├ímara de los Golosotes - Sala 3- Sala 4	30
+343	62133768	Antichambre des Gloursons	Antichambre des Gloursons - Quatrième salle	Antec├ímara de los Golosotes - Sala 4 - Sala 5	30
+344	62134792	Antichambre des Gloursons	Antichambre des Gloursons- Cinquième salle	Antec├ímara de los Golosotes - Sala 5 - Salida	30
+345	57934593	Donjon de la mine de Sakaï	Donjon de la mine de Sakaï - Première salle	Mazmorra de la Mina de K├®friho - Sala 1 - Sala 2	30
+346	57935617	Donjon de la mine de Sakaï	Donjon de la mine de Sakaï - Deuxième salle	Mazmorra de la Mina de K├®friho - Sala 2 - Sala 3	30
+347	57936641	Donjon de la mine de Sakaï	Donjon de la mine de Sakaï - Troisième salle	Mazmorra de la Mina de K├®friho - Sala 3 - Sala 4	30
+348	57937665	Donjon de la mine de Sakaï	Donjon de la mine de Sakaï - Quatrième salle	Mazmorra de la Mina de K├®friho - Sala 4 - Sala 5	30
+349	57938689	Donjon de la mine de Sakaï	Donjon de la mine de Sakaï - Cinquième salle	Mazmorra de la Mina de K├®friho - Sala 5 - Salida	30
+350	123207680	Pyramide d'Ombre	Pyramide d'Ombre - Première Salle	Pir├ímide de Sombra - Sala 1 - Sala 2	30
+351	123208704	Pyramide d'Ombre	Pyramide d'Ombre - Deuxième Salle	Pir├ímide de Sombra - Sala 2 - Sala 3	30
+352	123209728	Pyramide d'Ombre	Pyramide d'Ombre - Troisième Salle	Pir├ímide de Sombra - Sala 3 - Sala 4	30
+353	123210752	Pyramide d'Ombre	Pyramide d'Ombre - Quatrième Salle	Pir├ímide de Sombra - Sala 4 - Sala 5	30
+354	123212800	Pyramide d'Ombre	Pyramide d'Ombre - Cinquième Salle	Pir├ímide de Sombra - Sala 5 - Salida	30
+355	179568640	Camp du Comte Razof	Camp du Comte Razof - Première salle	Campamento del Conde Razof - Sala 1 - Sala 2	30
+356	179569664	Camp du Comte Razof	Camp du Comte Razof - Deuxième salle	Campamento del Conde Razof - Sala 2 - Sala 3	30
+357	179570688	Camp du Comte Razof	Camp du Comte Razof - Troisième salle	Campamento del Conde Razof - Sala 3 - Sala 4	30
+358	179571712	Camp du Comte Razof	Camp du Comte Razof - Quatrième salle	Campamento del Conde Razof - Sala 4 - Sala 5	30
+359	179572736	Camp du Comte Razof	Camp du Comte Razof - Cinquième salle	Campamento del Conde Razof - Sala 5 - Salida	30
+360	110100480	Transporteur de Sylargh	Transporteur de Sylargh - Première Salle	Transportador de Sylargh - Sala 1 - Sala 2	30
+361	110101504	Transporteur de Sylargh	Transporteur de Sylargh - Deuxième Salle	Transportador de Sylargh - Sala 2 - Sala 3	30
+362	110103552	Transporteur de Sylargh	Transporteur de Sylargh - Troisième Salle	Transportador de Sylargh - Sala 3 - Sala 4	30
+363	110100482	Transporteur de Sylargh	Transporteur de Sylargh - Quatrième Salle	Transportador de Sylargh - Sala 4 - Sala 5	30
+364	110101506	Transporteur de Sylargh	Transporteur de Sylargh - Salle de Sylargh	Transportador de Sylargh - Sala 5 - Salida	30
+365	110362624	Salons privés de Klime	Salons privés de Klime - Première Salle	Sala Privada de Klim - Sala 1 - Sala 2	30
+366	110363648	Salons privés de Klime	Salons privés de Klime - Deuxième Salle	Sala Privada de Klim - Sala 2 - Sala 3	30
+367	110364672	Salons privés de Klime	Salons privés de Klime - Troisième Salle	Sala Privada de Klim - Sala 3 - Sala 4	30
+368	110362626	Salons privés de Klime	Salons privés de Klime - Quatrième Salle	Sala Privada de Klim - Sala 4 - Sala 5	30
+369	110363650	Salons privés de Klime	Salons privés de Klime - Salle de Klime	Sala Privada de Klim - Sala 5 - Salida	30
+370	109838849	Forgefroide de Missiz Frizz	Forgefroide de Missiz Frizz - Première Salle	Forjafr├¡a de Mizz Frizz - Sala 1 - Sala 2	30
+371	109839873	Forgefroide de Missiz Frizz	Forgefroide de Missiz Frizz - Deuxième Salle	Forjafr├¡a de Mizz Frizz - Sala 2 - Sala 3	30
+372	109840897	Forgefroide de Missiz Frizz	Forgefroide de Missiz Frizz - Troisième Salle	Forjafr├¡a de Mizz Frizz - Sala 3 - Sala 4	30
+373	109841921	Forgefroide de Missiz Frizz	Forgefroide de Missiz Frizz - Quatrième Salle	Forjafr├¡a de Mizz Frizz - Sala 4 - Sala 5	30
+374	109840899	Forgefroide de Missiz Frizz	Forgefroide de Missiz Frizz - Salle de Missiz Frizz	Forjafr├¡a de Mizz Frizz - Sala 5 - Salida	30
+375	109576705	Laboratoire de Nileza	Laboratoire de Nileza - Première Salle	Laboratorio de Nileza - Sala 1 - Sala 2	30
+376	109577729	Laboratoire de Nileza	Laboratoire de Nileza - Deuxième Salle	Laboratorio de Nileza - Sala 2 - Sala 3	30
+377	109578753	Laboratoire de Nileza	Laboratoire de Nileza - Troisième Salle	Laboratorio de Nileza - Sala 3 - Sala 4	30
+378	109579777	Laboratoire de Nileza	Laboratoire de Nileza - Quatrième Salle	Laboratorio de Nileza - Sala 4 - Sala 5	30
+379	109576707	Laboratoire de Nileza	Laboratoire de Nileza - Salle de Nileza	Laboratorio de Nileza - Sala 5 - Salida	30
+380	112201217	Donjon du Comte Harebourg	Donjon du Comte - Atelier d'horlogerie	Mazmorra del Conde Kontatr├ís - Sala 1 - Sala 2	30
+381	112202241	Donjon du Comte Harebourg	Donjon du Comte - Salle de la Tocante	Mazmorra del Conde Kontatr├ís - Sala 2 - Sala 3	30
+382	112199169	Donjon du Comte Harebourg	Donjon du Comte - Salle de Banquet	Mazmorra del Conde Kontatr├ís - Sala 3 - Sala 4	30
+383	112200193	Donjon du Comte Harebourg	Donjon du Comte - Galerie des glaçons	Mazmorra del Conde Kontatr├ís - Sala 4 - Sala 5	30
+384	112203523	Donjon du Comte Harebourg	Donjon du Comte - Grande aiguille	Mazmorra del Conde Kontatr├ís - Sala 5 - Salida	30
+385	119277057	Aquadôme de Merkator	Aquadôme – Salle des Bulles	Acuadomo de Merkator - Sala 1 - Sala 2	30
+386	119276035	Aquadôme de Merkator	Aquadôme – Salle du Périscope	Acuadomo de Merkator - Sala 2 - Sala 3	30
+387	119276033	Aquadôme de Merkator	Aquadôme – Salle du Bathyscaphe	Acuadomo de Merkator - Sala 3 - Sala 4	30
+388	119278081	Aquadôme de Merkator	Aquadôme – Salle des Globes	Acuadomo de Merkator - Sala 4 - Sala 5	30
+389	119277059	Aquadôme de Merkator	Aquadôme – Salle des Trésors	Acuadomo de Merkator - Sala 5 - Salida	30
+390	129500160	Palais du roi Nidas	Palais du roi Nidas - Salle des coffres	Palacio del Rey Nidas	30
+391	137102336	Trône de la Cour Sombre	Trône de la Cour Sombre - Transition	Trono de la Corte Tenebrosa	30
+392	140771328	Ventre de la Baleine	Ventre de la baleine - Première Salle	Vientre de la Ballena - Sala 1 - Sala 2	30
+393	140772352	Ventre de la Baleine	Ventre de la baleine - Deuxième Salle	Vientre de la Ballena - Sala 2 - Sala 3	30
+394	140774400	Ventre de la Baleine	Ventre de la baleine - Troisième Salle	Vientre de la Ballena - Sala 3 - Sala 4	30
+395	140775424	Ventre de la Baleine	Ventre de la baleine - Quatrième Salle	Vientre de la Ballena - Sala 4 - Sala 5	30
+396	140776448	Ventre de la Baleine	Ventre de la baleine - Salle du cœur	Vientre de la Ballena - Sala 5 - Salida	30
+397	143393281	Œil de Vortex	Œil de Vortex - Salle des heures perdues	Ojo de V├│rtex	30
+398	160564224	Défi du Chalœil	Défi du Chalœil - Salle de jeu	Reto de Miauvizor	30
+399	169869312	Vaisseau du Capitaine Meno	Vaisseau du Capitaine Meno - Première Salle	Nave del Capit├ín Meno - Sala 1 - Sala 2	30
+400	169870336	Vaisseau du Capitaine Meno	Vaisseau du Capitaine Meno - Deuxième salle	Nave del Capit├ín Meno - Sala 2 - Sala 3	30
+401	169871360	Vaisseau du Capitaine Meno	Vaisseau du Capitaine Meno - Troisième salle	Nave del Capit├ín Meno - Sala 3 - Sala 4	30
+402	169872384	Vaisseau du Capitaine Meno	Vaisseau du Capitaine Meno - Quatrième salle	Nave del Capit├ín Meno - Sala 4 - Sala 5	30
+403	169873408	Vaisseau du Capitaine Meno	Vaisseau du Capitaine Meno - Dernière salle	Nave del Capit├ín Meno - Sala 5 - Salida	30
+404	169345024	Temple de Koutoulou	Temple de Koutoulou - Première salle	Templo de Kutul├║ - Sala 1 - Sala 2	30
+405	169346048	Temple de Koutoulou	Temple de Koutoulou - Deuxième salle	Templo de Kutul├║ - Sala 2 - Sala 3	30
+406	169347072	Temple de Koutoulou	Temple de Koutoulou - Troisième salle	Templo de Kutul├║ - Sala 3 - Sala 4	31
+407	169348096	Temple de Koutoulou	Temple de Koutoulou - Quatrième salle	Templo de Kutul├║ - Sala 4 - Sala 5	30
+408	169349120	Temple de Koutoulou	Temple de Koutoulou - Dernière salle	Templo de Kutul├║ - Sala 5 - Salida	30
+409	169607168	Palais de Dantinéa	Palais de Dantinéa - Première Salle	Palacio de Dientinea - Sala 1 - Sala 2	30
+410	169608192	Palais de Dantinéa	Palais de Dantinéa - Deuxième Salle	Palacio de Dientinea - Sala 2 - Sala 3	30
+411	169609216	Palais de Dantinéa	Palais de Dantinéa - Troisième Salle	Palacio de Dientinea - Sala 3 - Sala 4	30
+412	169610240	Palais de Dantinéa	Palais de Dantinéa - Quatrième Salle	Palacio de Dientinea - Sala 4 - Sala 5	30
+413	169611264	Palais de Dantinéa	Palais de Dantinéa - Dernière Salle	Palacio de Dientinea - Sala 5 - Salida	30
+414	176160768	Chambre de Tal Kasha	Chambre de Tal Kasha - Première salle	C├ímara de Tal Kasha - Sala 1 - Sala 2	30
+415	176161792	Chambre de Tal Kasha	Chambre de Tal Kasha - Deuxième salle	C├ímara de Tal Kasha - Sala 2 - Sala 3	30
+416	176162816	Chambre de Tal Kasha	Chambre de Tal Kasha - Troisième salle	C├ímara de Tal Kasha - Sala 3 - Sala 4	30
+417	176163840	Chambre de Tal Kasha	Chambre de Tal Kasha - Quatrième salle	C├ímara de Tal Kasha - Sala 4 - Sala 5	30
+418	176164864	Chambre de Tal Kasha	Chambre de Tal Kasha - Cinquième salle	C├ímara de Tal Kasha - Sala 5 - Salida	30
+419	182714368	Manoir des Katrepat	Manoir des Katrepat - Première salle	Mansi├│n de Kuatropatas - Sala 1 - Sala 2	30
+420	182715392	Manoir des Katrepat	Manoir des Katrepat - Deuxième salle	Mansi├│n de Kuatropatas - Sala 2 - Sala 3	30
+421	182716416	Manoir des Katrepat	Manoir des Katrepat - Troisième salle	Mansi├│n de Kuatropatas - Sala 3 - Sala 4	30
+422	182717440	Manoir des Katrepat	Manoir des Katrepat - Quatrième salle	Mansi├│n de Kuatropatas - Sala 4 - Sala 5	30
+423	182718464	Manoir des Katrepat	Manoir des Katrepat - Cinquième salle	Mansi├│n de Kuatropatas - Sala 5 - Salida	30
+424	184690945	Belvédère d'Ilyzaelle	Belvédère d'Ilyzaelle - Première salle	Mirador de Ilyzaelle - Sala 1 - Sala 2	30
+425	184689921	Belvédère d'Ilyzaelle	Belvédère d'Ilyzaelle - Deuxième salle	Mirador de Ilyzaelle - Sala 2 - Sala 3	30
+426	184688385	Belvédère d'Ilyzaelle	Belvédère d'Ilyzaelle - Troisième salle	Mirador de Ilyzaelle - Sala 3 - Sala 4	30
+427	184687361	Belvédère d'Ilyzaelle	Belvédère d'Ilyzaelle - Quatrième salle	Mirador de Ilyzaelle - Sala 4 - Sala 5	30
+428	184686337	Belvédère d'Ilyzaelle	Belvédère d'Ilyzaelle - Blessure d'Erazal	Mirador de Ilyzaelle - Sala 5 - Salida	29
+429	187432960	Tour de Bethel	Tour de Bethel - Première salle	Torre de Bethel - Sala 1 - Sala 2	30
+430	187433984	Tour de Bethel	Tour de Bethel - Deuxième salle	Torre de Bethel - Sala 2 - Sala 3	30
+431	187435008	Tour de Bethel	Tour de Bethel - Troisième salle	Torre de Bethel - Sala 3 - Sala 4	30
+432	187436032	Tour de Bethel	Tour de Bethel - Quatrième salle	Torre de Bethel - Sala 4 - Sala 5	30
+433	187437056	Tour de Bethel	Tour de Bethel - Cinquième salle	Torre de Bethel - Sala 5 - Salida	31
+434	187957506	Tour de Solar	Tour de Solar - Première salle	Torre de Solar - Sala 1 - Sala 2	30
+435	187957508	Tour de Solar	Tour de Solar - Deuxième salle	Torre de Solar - Sala 2 - Sala 3	30
+436	187957248	Tour de Solar	Tour de Solar - Troisième salle	Torre de Solar - Sala 3 - Sala 4	30
+437	187957510	Tour de Solar	Tour de Solar - Quatrième salle	Torre de Solar - Sala 4 - Sala 5	30
+438	187957512	Tour de Solar	Tour de Solar - Cinquième salle	Torre de Solar - Sala 5 - Salida	30
+439	195035136	Brasserie du roi Dazak	Brasserie du roi Dazak - Première salle	Cervecer├¡a del Rey Dazahk - Sala 1 - Sala 2	30
+440	195036160	Brasserie du roi Dazak	Brasserie du roi Dazak - Deuxième salle	Cervecer├¡a del Rey Dazahk - Sala 2 - Sala 3	30
+441	195037184	Brasserie du roi Dazak	Brasserie du roi Dazak - Troisième salle	Cervecer├¡a del Rey Dazahk - Sala 3 - Sala 4	30
+442	195038208	Brasserie du roi Dazak	Brasserie du roi Dazak - Quatrième salle	Cervecer├¡a del Rey Dazahk - Sala 4 - Sala 5	30
+443	195039232	Brasserie du roi Dazak	Brasserie du roi Dazak - Cinquième salle	Cervecer├¡a del Rey Dazahk - Sala 5 - Salida	30
+444	72361984	Antre du Dragon Cochon	Antre du Dragon Cochon - Treizième salle	Dragon Cochon Boss - Sortie	30
+445	94111744	Donjon des Scarafeuilles	Donjon des Scarafeuilles - Deuxième salle	Mazmorra de los Escarahojas 2-3	30
+446	57148161	Hypogée de l'Obsidiantre	Hypogée de l'Obsidiantre - Première salle	Hipogeo del Obsidiantre - Sala 1 - Sala 2	30
+447	61998082	Cavernes du Kolosso	Cavernes du Kolosso - Salle des Bléroms	Caverna de los Tejossus - Sala 2	30
+448	61998084	Cavernes du Kolosso	Cavernes du kolosso - Salle des Blérices	Caverna de los Tejossus - Sala 1	30
+450	159383552			Reto de Miauvizor	30
+451	197398528	Croquanterie	La Croquanterie - Cinquième Salle	Crocantería - Sala 5 - Salida	30
+452	197397504	Croquanterie	La Croquanterie - Quatrième Salle	Crocantería - Sala 4 - Sala 5	30
+453	197396480	Croquanterie	La Croquanterie - Troisième Salle	Crocantería - Sala 3 - Sala 4	30
+454	197395456	Croquanterie	La Croquanterie - Deuxième Salle	Crocantería - Sala 2 - Sala 3	30
+455	197394432	Croquanterie	La Croquanterie - Première Salle	Crocantería - Sala 1 - Sala 2	30
+456	106430464	Fonderie des Waddicts	Fonderie des Waddicts - Première Salle	Fundición de los Waddictos - Sala 1 - Sala 2	30
+457	106431488	Fonderie des Waddicts	Fonderie des Waddicts - Deuxième Salle	Fundición de los Waddictos - Sala 2 - Sala 3	30
+458	106432512	Fonderie des Waddicts	Fonderie des Waddicts - Troisième Salle	Fundición de los Waddictos - Sala 3 - Sala 4	30
+459	106433536	Fonderie des Waddicts	Fonderie des Waddicts - Quatrième Salle	Fundición de los Waddictos - Sala 4 - Sala 5	30
+460	106434560	Fonderie des Waddicts	Fonderie des Waddicts - Cinquième Salle	Fundición de los Waddictos - Sala 5 - Salida	30
+461	197656576	Temple du dieu Kao	Temple du dieu Kao - Première Salle	Templo del Dios Kaos - Sala 1 - Sala 2	30
+462	197657600	Temple du dieu Kao	Temple du dieu Kao - Deuxième Salle	Templo del Dios Kaos - Sala 2 - Sala 3	30
+463	197658624	Temple du dieu Kao	Temple du dieu Kao - Troisième Salle	Templo del Dios Kaos - Sala 3 - Sala 4	30
+464	197659648	Temple du dieu Kao	Temple du dieu Kao - Quatrième Salle	Templo del Dios Kaos - Sala 4 - Sala 5	30
+465	197660672	Temple du dieu Kao	Temple du dieu Kao - Cinquième Salle	Templo del Dios Kaos - Sala 5 - Salida	30
+466	159121408	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Première salle	Biblioteca del maestro kuerbok Sala 1 - Sala 2 (Zorrowapo)	30
+467	159122432	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Deuxième salle	Biblioteca del maestro kuerbok Sala 2 - Sala 3 (Zorrowapo)	30
+468	159123456	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Troisième salle	Biblioteca del maestro kuerbok Sala 3 - Sala 4 (Zorrowapo)	30
+469	159124480	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Quatrième salle	Biblioteca del maestro kuerbok Sala 4 - Sala 1 (Zorrowapo)	30
+470	159121410	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Cinquième salle	Biblioteca del maestro kuerbok Sala 5 - Sala 6 (Zorrowapo)	30
+471	159122434	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Sixième salle	Biblioteca del maestro kuerbok Sala 6 - Sala 7 (Zorrowapo)	30
+472	159123458	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Septième salle	Biblioteca del maestro kuerbok Sala 7 - Sala 8 (Zorrowapo)	30
+473	159124482	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Huitième salle	Biblioteca del maestro kuerbok Sala 8 - Sala 5 (Zorrowapo)	30
+474	159121412	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Neuvième salle	Biblioteca del maestro kuerbok Sala 9 - Sala 10 (Zorrowapo)	30
+475	159122436	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Dixième salle	Biblioteca del maestro kuerbok Sala 10 - Sala 11 (Zorrowapo)	30
+476	159123460	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Onzième salle	Biblioteca del maestro kuerbok Sala 11 - Sala 12 (Zorrowapo)	33
+477	159124484	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Douzième salle	Biblioteca del maestro kuerbok Sala 12 - Sala 9 (Zorrowapo)	30
+478	159121414	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Treizième salle	Biblioteca del maestro kuerbok Sala 13 - Sala 14 (Zorrowapo)	30
+479	159122438	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Quatorzième salle	Biblioteca del maestro kuerbok Sala 14 - Sala 15 (Zorrowapo)	30
+480	159123462	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Quinzième salle	Biblioteca del maestro kuerbok Sala 15 - Sala 16 (Zorrowapo)	30
+481	159124486	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Seizième salle	Biblioteca del maestro kuerbok Sala 16 - Sala 13 (Zorrowapo)	30
+482	159121408	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Première salle	Biblioteca del maestro kuerbok Sala 1 - Sala 5 (Bebedor)	30
+483	159121410	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Cinquième salle	Biblioteca del maestro kuerbok Sala 5 - Sala 9 (Bebedor)	30
+484	159121412	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Neuvième salle	Biblioteca del maestro kuerbok Sala 9 - Sala 13 (Bebedor)	30
+485	159121414	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Treizième salle	Biblioteca del maestro kuerbok Sala 13 - Sala 1 (Bebedor)	30
+486	159122432	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Deuxième salle	Biblioteca del maestro kuerbok Sala 2 - Sala 6 (Bebedor)	30
+487	159122434	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Sixième salle	Biblioteca del maestro kuerbok Sala 6 - Sala 10 (Bebedor)	30
+488	159122436	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Dixième salle	Biblioteca del maestro kuerbok Sala 10 - Sala 14 (Bebedor)	30
+489	159122438	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Quatorzième salle	Biblioteca del maestro kuerbok Sala 14- Sala 2(Bebedor)	30
+490	159123456	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Troisième salle	Biblioteca del maestro kuerbok Sala 3 - Sala 7 (Bebedor)	30
+491	159123458	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Septième salle	Biblioteca del maestro kuerbok Sala 7 - Sala 11 (Bebedor)	30
+492	159123460	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Onzième salle	Biblioteca del maestro kuerbok Sala 11 - Sala 15 (Bebedor)	33
+493	159123462	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Quinzième salle	Biblioteca del maestro kuerbok Sala 15 - Sala 3 (Bebedor)	30
+494	159124480	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Quatrième salle	Biblioteca del maestro kuerbok Sala 4 - Sala 8 (Bebedor)	30
+495	159124482	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Huitième salle	Biblioteca del maestro kuerbok Sala 8 - Sala 12 (Bebedor)	30
+496	159124484	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Douzième salle	Biblioteca del maestro kuerbok Sala 12 - Sala 16 (Bebedor)	30
+497	159124486	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Seizième salle	Biblioteca del maestro kuerbok Sala 16 - Sala 4(Bebedor)	30
+498	159123460	Bibliothèque du Maître Corbac	Bibliothèque du Maitre Corbac - Onzième salle	Biblioteca del maestro kuerbok Sala 11 - Sala Final(Capslocke)	33
+499	74977793		Antre de Grozilla et Grasmera	Grasmera y Grozilla nivel 200	2
+500	74977797		Antre de Grozilla et Grasmera	Grasmera y Grozilla nivel 150	2
+501	74975745		Antre de guerre	Grasmera y Grozilla nivel 100	2
+502	74976771		Antre de guerre	Grasmera y Grozilla nivel 50	2
+503	61998338	Cavernes du Kolosso	Cavernes du Kolosso - Salle des Blérauves	Caverna de los Tejossus - Sala 3	30
+504	61998340	Cavernes du Kolosso	Cavernes du Kolosso - Salle des Fleuros	Caverna de los Tejossus - Sala 4	30
+505	195822592			Salle 6	4
+506	195821568			Salle 4	4
+507	152324			Repaire des Recrues - Salle 3	4
+508	154142209		Dimension Abyssale	Repaire des Recrues - Salle 1	4
+510	62135816	Antichambre des Gloursons	Antichambre des Gloursons - Chambre du Glourséleste	NEKFEU glourseleste boss	30

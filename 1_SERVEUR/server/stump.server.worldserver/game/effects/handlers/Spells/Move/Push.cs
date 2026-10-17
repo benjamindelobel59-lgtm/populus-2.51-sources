@@ -18,14 +18,16 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
     [EffectHandler(EffectsEnum.Effect_PushBack)]
     [EffectHandler(EffectsEnum.Effect_PushBack_1103)]
     [EffectHandler(EffectsEnum.Effect_PullForward)]
+    [EffectHandler(EffectsEnum.Effect_1021)] // MYSTIC 17/10 : « Repousse de #1 case(s) » (Merkator, totems…)
+    [EffectHandler(EffectsEnum.Effect_1022)] // MYSTIC 17/10 : « Attire de #1 case(s) »
     public class Push : SpellEffectHandler
     {
         public Push(EffectDice effect, FightActor caster, SpellCastHandler castHandler, Cell targetedCell, bool critical)
             : base(effect, caster, castHandler, targetedCell, critical)
         {
             DamagesDisabled = effect.EffectId == EffectsEnum.Effect_PushBack_1103 ||
-                effect.EffectId == EffectsEnum.Effect_PullForward;
-            Pull = effect.EffectId == EffectsEnum.Effect_PullForward;
+                effect.EffectId == EffectsEnum.Effect_PullForward || effect.EffectId == EffectsEnum.Effect_1022;
+            Pull = effect.EffectId == EffectsEnum.Effect_PullForward || effect.EffectId == EffectsEnum.Effect_1022;
         }
 
         public bool DamagesDisabled

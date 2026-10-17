@@ -37,6 +37,9 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells
             Caster = caster;
             CastHandler = castHandler;
             TargetedCell = targetedCell;
+            // MYSTIC 17/10 : zone « ;NNN » → l'effet vise toujours cette case de la carte
+            if (effect.CaseFixe >= 0 && caster?.Fight?.Map != null && effect.CaseFixe < caster.Fight.Map.Cells.Length)
+                TargetedCell = caster.Fight.Map.Cells[effect.CaseFixe];
             TargetedPoint = new MapPoint(TargetedCell);
             Critical = critical;
             Targets = effect.Targets;

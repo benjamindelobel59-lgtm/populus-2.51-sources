@@ -1,0 +1,83 @@
+using Stump.Server.WorldServer.Game.Actors.Fight;
+
+namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
+{
+    // MYSTIC 17/10 : audit des donjons (AUDIT_MECANIQUES.md) — les passifs officiels de ces monstres existent dans le client 2.51
+    // mais n'étaient lancés par rien (pas de cerveau). Chaque cerveau pose le passif au début du combat, ou à l'arrivée du monstre
+    // s'il est invoqué / arrive en vague (SortPassif). Le reste du jeu est l'IA normale. Règle validée : on suit les données 2.51.
+
+    public abstract class BrainPassif : Brain
+    {
+        protected BrainPassif(AIFighter fighter, params int[] passifs)
+            : base(fighter)
+        {
+            foreach (var passif in passifs)
+                SortPassif.Poser(fighter, passif);
+        }
+    }
+
+    /// <summary>Toxoliath : Toxmose (dégâts eau par PM sur coup reçu).</summary>
+    [BrainIdentifier(3752)] public class ToxoliathBrain : BrainPassif { public ToxoliathBrain(AIFighter f) : base(f, 4796) { } }
+
+    /// <summary>Lucrane (vague du Toxoliath) : Carapace gardée.</summary>
+    [BrainIdentifier(3737)] public class LucraneBrain : BrainPassif { public LucraneBrain(AIFighter f) : base(f, 4746) { } }
+
+    /// <summary>Malléfisk : Ofranor (+puissance sur coup reçu, bouclier sous 50 % PV).</summary>
+    [BrainIdentifier(3652)] public class MallefiskBrain : BrainPassif { public MallefiskBrain(AIFighter f) : base(f, 4505) { } }
+
+    /// <summary>Kanigroula : Phéromones bestiales.</summary>
+    [BrainIdentifier(3556)] public class KanigroulaBrain : BrainPassif { public KanigroulaBrain(AIFighter f) : base(f, 4093) { } }
+
+    /// <summary>Missiz Frizz : Congère (invulnérabilité glaciale des monstres, pièges, Antigel quand on pousse).</summary>
+    [BrainIdentifier(3391)] public class MissizFrizzBrain : BrainPassif { public MissizFrizzBrain(AIFighter f) : base(f, 3517) { } }
+
+    /// <summary>Daïgoro : Corps de Dolomite (états Pandawush qui débloquent ses sorts).</summary>
+    [BrainIdentifier(3208)] public class DaigoroBrain : BrainPassif { public DaigoroBrain(AIFighter f) : base(f, 3037) { } }
+
+    /// <summary>Capitaine Ekarlatte : Kutcha Libre.</summary>
+    [BrainIdentifier(3753)] public class EkarlatteBrain : BrainPassif { public EkarlatteBrain(AIFighter f) : base(f, 4804) { } }
+
+    /// <summary>Tromblion (vague d'Ekarlatte) : Isolement (pièges en fin de tour).</summary>
+    [BrainIdentifier(3733)] public class TromblionBrain : BrainPassif { public TromblionBrain(AIFighter f) : base(f, 4730) { } }
+
+    /// <summary>Haute Truche : Struchthio.</summary>
+    [BrainIdentifier(3618)] public class HauteTrucheBrain : BrainPassif { public HauteTrucheBrain(AIFighter f) : base(f, 4367) { } }
+
+    [BrainIdentifier(3619)] public class GrucheBrain : BrainPassif { public GrucheBrain(AIFighter f) : base(f, 4376) { } }
+    [BrainIdentifier(3620)] public class TruchmucheBrain : BrainPassif { public TruchmucheBrain(AIFighter f) : base(f, 4388) { } }
+    [BrainIdentifier(3621)] public class TruchideurBrain : BrainPassif { public TruchideurBrain(AIFighter f) : base(f, 4394) { } }
+    [BrainIdentifier(3622)] public class TruchtineBrain : BrainPassif { public TruchtineBrain(AIFighter f) : base(f, 4399) { } }
+    [BrainIdentifier(3623)] public class TruchonBrain : BrainPassif { public TruchonBrain(AIFighter f) : base(f, 4404) { } }
+
+    /// <summary>Meulou : Fureur (version 2.51 : invulnérable au début du tour de chaque joueur jusqu'au 1er coup ; +30 puissance aux monstres frappés).</summary>
+    [BrainIdentifier(232)] public class MeulouBrain : BrainPassif { public MeulouBrain(AIFighter f) : base(f, 305) { } }
+
+    /// <summary>Phossile : Phorreur de Gloire.</summary>
+    [BrainIdentifier(3651)] public class PhossileBrain : BrainPassif { public PhossileBrain(AIFighter f) : base(f, 4497) { } }
+
+    /// <summary>XLII : Buff heure (invoque son Auroraire 3850).</summary>
+    [BrainIdentifier(3849)] public class XliiBrain : BrainPassif { public XliiBrain(AIFighter f) : base(f, 5106) { } }
+
+    /// <summary>Auroraire de XLII : Heure du temps 5104 (multiplicateur de dégâts selon l'heure) ; ne joue pas.</summary>
+    [BrainIdentifier(3850)]
+    public class AuroraireXliiBrain : BrainPassif
+    {
+        public AuroraireXliiBrain(AIFighter f) : base(f, 5104) { }
+
+        public override void Play()
+        {
+        }
+    }
+
+    /// <summary>Sylargh : Chambranle (invulnérable, Nécromignon / Zombidule).</summary>
+    [BrainIdentifier(3409)] public class SylarghBrain : BrainPassif { public SylarghBrain(AIFighter f) : base(f, 3606) { } }
+
+    /// <summary>Reine des Voleurs : Péché Mignon (Bonbombe au début du tour de chaque joueur).</summary>
+    [BrainIdentifier(3726)] public class ReineDesVoleursBrain : BrainPassif { public ReineDesVoleursBrain(AIFighter f) : base(f, 4693) { } }
+
+    /// <summary>Reine Nyée : Appel de la Reine.</summary>
+    [BrainIdentifier(3996)] public class ReineNyeeBrain : BrainPassif { public ReineNyeeBrain(AIFighter f) : base(f, 5520) { } }
+
+    /// <summary>Oeuf de Trégénaire (invoqué par la Reine Nyée) : Incubation accélérée (éclosion).</summary>
+    [BrainIdentifier(3997)] public class OeufTregenaireBrain : BrainPassif { public OeufTregenaireBrain(AIFighter f) : base(f, 5515) { } }
+}

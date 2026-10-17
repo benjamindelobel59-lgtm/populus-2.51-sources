@@ -149,7 +149,7 @@ namespace Stump.Server.WorldServer.Game.Actors.Stats
             if (m_damageTaken > TotalMaxWithoutPermanentDamages)
             {
                 m_realDamageTaken = m_damageTaken;
-                m_damageTaken = (short)TotalMaxWithoutPermanentDamages; // hp cannot be lesser than 0
+                m_damageTaken = TotalMaxWithoutPermanentDamages; // hp cannot be lesser than 0 (MYSTIC : plus de (short), faux au-dela de 32 767 PV)
             }
             else if (m_realDamageTaken > m_damageTaken)
             {

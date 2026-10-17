@@ -102,3 +102,114 @@ MODIFICATIONS MYSTIC DU 17/10/2026 - drop, kamas, One Window
    connexion, ancien reset 3 jours (qui modifiait CreationDate) retire.
  - DungeonEnterReply.cs : plus d utilisation automatique ; nouvelle reponse DungeonEnterTrousseau (« Utiliser le trousseau de clefs »,
    texte officiel du client, visible seulement si le trousseau a encore la clef) ; TrousseauManager.CanUse.
+
+MODIFICATIONS MYSTIC DU 17/10/2026 - Antichambre des Gloursons (Glourseleste)
+============================================================================
+ - AI/Fights/Brain/Custom/Boss/GlourselesteBrain.cs (NOUVEAU) : lance au debut du combat le sort passif officiel Gloursongeur (2511).
+ - game/fights/Buffs/TriggerBuff.cs : declencheurs DCAC (frappe au corps a corps) et CT (tacle) (avant : inconnus, jamais declenches).
+ - game/effects/handlers/Spells/Damage/DamagePercentTargetLife.cs (NOUVEAU) : effets 1070 / 1071 (% des PV de la cible, Terre / Neutre).
+ - AI/Fights/Spells/SpellSelector.cs + SpellIdentifier.cs : les sorts qui posent un buff declenche sont evalues comme des buffs.
+ - Base : entree chez Willy La Bille (dungeons_entries donjon 57, clef 11181, reponses 8476 / 8477).
+ - GlourselesteBrain.cs : tout ennemi du boss (personnages et invocations, meme arrivees en cours de combat) qui subit des dommages
+   de poussee meurt, meme apres la mort du Glourseleste (le passif ne le posait qu aux presents au debut, et pas de facon fiable).
+
+MODIFICATIONS MYSTIC DU 17/10/2026 - Antre du Korriandre et Taniere Givrefoux
+============================================================================
+ - AI/Fights/Brain/Custom/Boss/SortPassif.cs (NOUVEAU) : pose le passif officiel d'un monstre au debut du combat, ou des son
+   arrivee s'il est invoque / arrive en cours de combat (FightStarted ne parvient jamais aux invocations).
+ - KorriandreBrain.cs : reecrit (classes imbriquees mal fermees) ; Sporakne (Haimji 2495) et Merulette (Merule Tracon 2697) ont
+   enfin leur passif quand elles sont invoquees.
+ - AI/Fights/Brain/Custom/Boss/GivrefouxBrains.cs (NOUVEAU) : Tengu (Croquette 2677), Yokai (Fourrure 668), Yomi (Foudre 669),
+   Fuji et Fuji Nourriciere (Instinct maternel 2676).
+ - game/fights/Fight.cs : ligne [Buff] dans le log du World (diagnostic des buffs declenches absents du chat), si Brain.LogTurns.
+ - Base (SQL 16_korriandre_givrefoux.sql) : entrees clef / trousseau donjons 55 (Sylvie Barbe, clef 11179) et 54 (Givrihaltes,
+   clef 11178) ; dialogues de Givrihaltes sur les vraies cartes ; « Rendre hommage a Tengu » -> salle Tengu (59515904),
+   « Deranger Tengu et Fuji » -> salle Tengu + Fuji (59516162, Kami remplace par Tengu).
+ - game/actors/Stats/StatsHealth.cs + StatsFields.cs : plus de conversion (short) des PV (faux au-dela de 32 767 PV : PV au-dessus
+   du maximum). FightActor.Heal : un soin ne retire jamais de PV (Mot de Reconstitution affichait -16264 PV).
+ - game/effects/handlers/Spells/States/ChangeSkin.cs : apparences 969 (Yokai Givrefoux, Floutage -> os 1247) et 970 (Yomi
+   Givrefoux, Fulguration -> os 1243), absentes du client 2.51 (avant : effet ignore). Os a confirmer en jeu.
+ - Base (SQL 17_groupes_givrefoux_korriandre.sql) : groupes officiels des salles 295-301 (Givrefoux) et 328-332 (Korriandre),
+   paliers 1/5/6/7/8 (4 monstres de base + ajouts dans l'ordre officiel) ; avant : « NEKFEU remplissage » genere.
+ - Glyphes du Korriandre : GlyphSpawn.cs (une couleur par joueur pour Daipipay / LOAD_HEADICE 2699), CastSpell.cs (buff Kete
+   non retire a la mort du Korriandre : les joueurs continuent de poser leurs glyphes), KorriandreBrain.cs (message des couleurs
+   au debut du combat).
+ - AI/Fights/Brain/Brain.cs : StayInRange qui ne bouge pas (case visee inaccessible, ex. rocher central) -> repli MoveNearTo.
+   Log [IA] : liste « ecartes [...] » (pourquoi chaque sort n'est pas lancable). SpellSelector.cs : SpellSelector.Exclusions.
+ - Base (SQL 18_givrefoux_salles_boss.sql) : Sixieme salle bis (59516162) = Tengu seul, Sixieme salle (59515904) = Tengu + Fuji,
+   teleportations d'origine remises, plus de « Sortir des cavernes » au PNJ du choix.
+ - game/fights/Fight.cs (OnDead) : glyphes / pieges d'un combattant mort retires dans la sequence de mort (le client gardait leur visuel).
+ - AI/Fights/Spells/SpellSelector.cs (FindFirstSpellCast) : si le meilleur sort demande un deplacement, le sort qui demande le
+   moins de PM passe en premier (ex. Fuji : Foufoux en diagonale avant d'aller au contact pour Progeniture).
+ - GivrefouxBrains.cs : le Tengu lance « Toison givree » (2684) au debut de son tour s'il a Floutage + Fulguration (l'IA la jugeait
+   sans effet -> deblocage impossible). ChangeSkin.cs : apparence 971 (Tengu qui grossit, echelle 140).
+ - Tengu Givrefoux : 2 invocations max (GivrefouxBrains.cs) ; « Foux d'amour » (2683) invoque toujours 1 Yokai puis 1 Yomi, jamais
+   au hasard (Summon.cs).
+ - game/actors/RolePlay/Characters/MultiLeader.cs : plus de teleportation des personnages sur la case du meneur a l'activation
+   du One Window (ils passaient de l'autre cote des obstacles) ; ils suivent au prochain changement de map.
+
+MODIFICATIONS MYSTIC DU 17/10/2026 - Oeil de Vortex (Dimension Xelorium 3)
+==========================================================================
+ - AI/Fights/Brain/Custom/Boss/VortexBrain.cs (NOUVEAU) : VortexBrain (3835) + VortexControleur : Auroraire 3833 invoquee
+   (horloge, avance d'une heure au debut du tour de chaque personnage, cases officielles 215..255), resurrection des monstres au
+   tour du Vortex (50 % PV, Zombi, bonus des heures de mort, Vortex : 1 fois par heure), corrompu si tue 2 fois a la meme heure
+   (regle 2.51 : immobile, inebranlable, ne joue plus), message + etat « Meme heure », glyphe de chaque monstre (echange de
+   place + heure + bonus), vague suivante quand tout est corrompu, fin : tour a vide puis Vortex vulnerable + Heurage / 3 tours.
+ - game/fights/Fight.cs : IFight.DefinirToursDeVagues / LancerVagueSuivante / ResteDesVagues.
+ - Base (SQL 19_vortex_vagues.sql) : groupe de depart et 4 vagues officielles (salle 397).
+ - Vortex : toujours sur la case 268 au placement (IFight.PlacementRandomise, evenement apres le placement aleatoire).
+ - Vortex : elimination definitive (2e mort a la meme heure) -> le Vortex prend le bonus de cette heure (1 fois par heure) ; le
+   monstre revient a cote du Vortex, invulnerable, inebranlable, sans jouer. Plus de bonus au Vortex a la 1re resurrection.
+ - Base (SQL 20_vortex_trousseau.sql) : « Utiliser le trousseau de clefs » chez le gardien du Vortex (PNJ 2662, reponse 8450) ;
+   client : reponse ajoutee au PNJ 2662 dans Npcs.d2o (_OUTILS/serveur/trousseau/trousseau_pnj_client.py).
+ - Vortex : bonus d'heure cumulables a chaque elimination definitive (meme heure comprise).
+ - Vortex : plus aucun bonus d'heure pour un monstre ressuscite apres sa 1re mort (seul le Vortex, a l'elimination definitive).
+ - Vortex : resurrection sur les cases de placement (comme les vagues), plus de monstre perdu faute de case ; les corrompus meurent quand le Vortex devient vulnerable.
+
+MODIFICATIONS MYSTIC DU 17/10/2026 - Mecaniques Obsidiantre, Ben le Ripate, Mansot Royal, Royalmouth, Grolloum
+=============================================================================================================
+ - SortPassif.cs : EtatsBoss (etat permanent, retrait des desactivations) + VulnerableJusquAuTourDuDeclencheur (boss vulnerable
+   jusqu'au tour suivant du joueur qui l'a declenche).
+ - ObsidiantreBrain.cs : seul un PERSONNAGE pousse contre lui le rend vulnerable (declencheur retire aux invocations) ; Pougnette :
+   passif pose a l'invocation, rien avant son 5e tour, puis tue tout a plus de 8 cases et explose (Pikette).
+ - FightTeam.GetLastDeadFighter : une Pougnette n'est jamais ressuscitee.
+ - HamrackBrain.cs : va vers Ben en priorite, ou qu'il soit (Gouverne ail) ; au 4e tour il perime (Gite).
+ - MansotRoyalBrain.cs : ressuscite, il redevient invulnerable (sans relancer le passif).
+ - RoyalMouthBrain.cs : pousse, vulnerable jusqu'au tour suivant du pousseur.
+ - GrolloumBrain.cs (NOUVEAU) : invulnerable au debut, resurrection tous les 2 tours (dernier vrai monstre tue, 25 % PV, Zombi),
+   Gelee blanche + zombi tue au contact = vulnerable jusqu'au tour suivant du tueur, retrait de PM = invulnerable le reste du tour.
+ - ChangeSkin.cs : apparence 953 (Grolloum, Instant) sans changement visible.
+
+MODIFICATIONS MYSTIC DU 17/10/2026 - Etape 1 de l'audit des donjons (AUDIT_MECANIQUES.md)
+=======================================================================================
+ - Heal.cs : un soin avec ses propres declencheurs (D, APA, MPA, DE|DN...) part a chaque declenchement (avant : une fois au lancement).
+ - DamagePercentTargetLife.cs : effets 1067 (Air), 1068 (Eau), 1069 (Feu) en plus de 1070/1071.
+ - StatsBuff.cs : effets 220 (renvoi), 240-244 (reductions fixes), 418/420 (dommages / resistances critiques) geres pour les sorts.
+ - ReviveLastDeadAlly.cs (NOUVEAU) : effet 1034 « invoque le dernier allie mort ».
+ - PassifsDonjonsBrains.cs (NOUVEAU) : passifs officiels jamais lances (Toxoliath, Lucrane, Mallefisk, Kanigroula, Missiz Frizz,
+   Daigoro, Ekarlatte, Tromblion, Haute Truche + 5 Truches, Meulou, Phossile, XLII + son Auroraire, Sylargh, Reine des Voleurs,
+   Reine Nyee, Oeuf de Tregenaire). KralamoureBrain : passif Kraken 1103. FraktaleBrain : l'Auroraire lance 5111 (et plus 5104).
+
+MODIFICATIONS MYSTIC DU 17/10/2026 - Gros chantiers des donjons (Frigost / Otomai, dimensions, donjons recents)
+=============================================================================================================
+Moteur :
+ - EffectBase.cs / Zone.cs / SpellEffectHandler.cs / Database/Spells/CasesFixesSorts.cs (NOUVEAU) / SpellLevelTemplate.cs : zones
+   « ;NNN » (case fixe de la carte). L'import avait perdu les cases > 255 : elles sont relues depuis cases_fixes.tsv (a cote des DLL,
+   genere par OUTILS/serveur/donjons/generer_cases_fixes.py depuis SpellLevels.d2o).
+ - Maps/Cells/Shapes/CercleInverse.cs (NOUVEAU) : zone « Z » (toute la carte a distance >= rayon du centre).
+ - Others/Confusion.cs (NOUVEAU) : effets 770-775 (confusion horaire / contre horaire en degres, Pi/2, Pi/4) ; FightActor.CastSpell
+   fait tourner la case visee autour du lanceur. Effets visuels 333/666/2018/2019 declares sans action.
+ - Targets/CaseInvalideCriterion.cs (NOUVEAU) + SymetricTeleport.cs + FightActor.TeleporteSurCaseInvalide : masque de cible « W »
+   (teleporte vers une case invalide).
+ - Effets branches sur les gestionnaires existants : 1019 (CastSpell), 1021/1022 (Push : repousse / attire), 407 (Heal),
+   1024 (Illusions), 1189 (Double), 1063 (FixedNeutralDamage, ecole Terre).
+Cerveaux (passifs officiels 2.51 poses par SortPassif) :
+ - FrigostOtomaiBrains.cs : Comte Harebourg 3642, Nocturlabe 3639, Merkator 4009 (+ invulnerable), Maitre des Pantins 3875
+   (grade du monstre), Marionnettes 3873 (grades 1-5), Dramak 3861, Totems du Darkli Moon (6163/6165/6166/6167).
+ - DimensionsBrains.cs : Chaloeil 6231 + Routourne 6301 (variante au hasard), Ush rouge 6264 + 6604, Ombre 4104, Silhouette 4117,
+   Roi Nidas 4920 + 4485, Boubourses 4482 / 4484, Kamasterisk 4514, Pilozter 4529, Restaurations de la Baleine (4936, 4941,
+   4946, 4951, 4956, Protozorreur 4972).
+ - DonjonsRecentsBrains.cs : Dantinea 6709, Poulpee 6690, Trydes 6695, Tourthon 6689, Koutoulou 6749 + 6820,
+   Capitaine Meno 6793 (grade du monstre) + 6758, Gorgouille 2932.
+SQL 26_gros_chantiers_donjons.sql : Tynril (Hiffe / Helse au niveau de l'element du Tynril), Ush noir ajoute dans la salle d'Ush.
+Non geres (notes) : effets 1124, 1125, declencheur « MA ».

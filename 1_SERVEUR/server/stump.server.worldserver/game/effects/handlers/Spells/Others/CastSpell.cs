@@ -20,6 +20,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
     [EffectHandler(EffectsEnum.Effect_2792)]
     [EffectHandler(EffectsEnum.Effect_2794)]
     [EffectHandler(EffectsEnum.Effect_1018)]
+    [EffectHandler(EffectsEnum.Effect_1019)] // MYSTIC 17/10 : lance un sort (Aquadôme, Comte…), comme 792
     public class CastSpellEffect : SpellEffectHandler
     {
         public CastSpellEffect(EffectDice effect, FightActor caster, SpellCastHandler castHandler, Cell targetedCell, bool critical)
@@ -45,7 +46,9 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
 
                     var spell = new Spell(Dice.DiceNum, (byte)Dice.DiceFace);
 
-                    var buff = new TriggerBuff(buffId, affectedActor, Caster, this, spell, Spell, false, FightDispellableEnum.DISPELLABLE_BY_DEATH, Priority, DefaultBuffTrigger);
+                    // MYSTIC 17/10 : Kete du Korriandre : les joueurs continuent de poser leurs glyphes apres la mort du Korriandre (officiel)
+                    var dispellable = Spell.Id == (int)SpellIdEnum.KWEST ? FightDispellableEnum.REALLY_NOT_DISPELLABLE : FightDispellableEnum.DISPELLABLE_BY_DEATH;
+                    var buff = new TriggerBuff(buffId, affectedActor, Caster, this, spell, Spell, false, dispellable, Priority, DefaultBuffTrigger);
                     affectedActor.AddBuff(buff);
                 }
                 else

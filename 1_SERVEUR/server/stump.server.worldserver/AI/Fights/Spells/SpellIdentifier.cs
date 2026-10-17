@@ -231,6 +231,9 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
                 case EffectsEnum.Effect_2794:
                     // MYSTIC : sort lancé par le sort (2.51 : beaucoup de sorts de monstres) → catégories du sous-sort ;
                     // sous-sort introuvable ou chaîne trop longue → aucune catégorie (avant : plantage de l'IA → le monstre passait son tour)
+                    // MYSTIC : buff declenche (duree + declencheur) = buff, quelle que soit la nature du sous-sort
+                    if (effect.Duration != 0 && !string.IsNullOrEmpty(effect.Triggers) && effect.Triggers != "I")
+                        return SpellCategory.Buff;
                     var spell = SpellManager.Instance.GetSpellLevel(effect.DiceNum, effect.DiceFace);
                     if (spell == null || spell.Effects == null || m_depth >= 3)
                         return SpellCategory.None;

@@ -3,6 +3,9 @@ package ui
    import com.ankamagames.berilia.api.UiApi;
    import com.ankamagames.dofus.uiApi.SystemApi;
    import d2hooks.TextInformation;
+   import com.ankamagames.dofus.uiApi.FightApi;
+   import flash.events.TimerEvent;
+   import flash.utils.Timer;
    import flash.display.Stage;
    import flash.net.SharedObject;
    import populus.ChatTextOutput;
@@ -30,6 +33,19 @@ package ui
       private var _hidden:Boolean;
 
       public var sysApi:SystemApi;
+
+      // Mystic : horloge de l'Oeil de Vortex (etat « Xe heure » 221..232 de l'Auroraire 3833), affichee en haut de l'ecran
+      public var fightApi:FightApi;
+
+      public var ctr_horloge:*;
+
+      public var lbl_horloge:*;
+
+      private static const AURORAIRE:int = 3833;
+
+      private var _minuteur:Timer;
+
+      private static const HEURES:Array = ["","1re","2e","3e","4e","5e","6e","7e","8e","9e","10e","11e","12e"];
 
       public var ctr_h:*;
 
@@ -287,6 +303,71 @@ package ui
          catch(e:Error)
          {
          }
+         // horloge relue toutes les 500 ms (pas de nouveau hook : le module ne contient que ceux qu'il utilisait deja)
+         try
+         {
+            this._minuteur = new Timer(500);
+            this._minuteur.addEventListener(TimerEvent.TIMER,this.onMinuteur);
+            this._minuteur.start();
+         }
+         catch(e:Error)
+         {
+         }
+         this.horloge();
+      }
+
+      public function onMinuteur(param1:* = null) : void
+      {
+         this.horloge();
+      }
+
+      // cherche l'Auroraire dans le combat et son etat d'heure ; rien trouve -> bandeau cache
+      private function horloge() : void
+      {
+         var heure:int = 0;
+         var id:* = undefined;
+         var buff:* = undefined;
+         var etat:int = 0;
+         try
+         {
+            if(this.fightApi)
+            {
+               for each(id in this.fightApi.getFighters())
+               {
+                  if(this.fightApi.getMonsterId(id) == AURORAIRE)
+                  {
+                     for each(buff in this.fightApi.getBuffList(id))
+                     {
+                        etat = 0;
+                        try
+                        {
+                           etat = int(buff.stateId);
+                        }
+                        catch(e2:Error)
+                        {
+                        }
+                        if(etat >= 221 && etat <= 232)
+                        {
+                           heure = etat - 220;
+                        }
+                     }
+                  }
+               }
+            }
+         }
+         catch(e:Error)
+         {
+            heure = 0;
+         }
+         if(!this.ctr_horloge)
+         {
+            return;
+         }
+         this.ctr_horloge.visible = heure > 0;
+         if(heure > 0 && this.lbl_horloge)
+         {
+            this.lbl_horloge.text = "Auroraire : " + HEURES[heure] + " heure";
+         }
       }
 
       private function apply() : void
@@ -303,6 +384,12 @@ package ui
 
       public function unload() : void
       {
+         if(this._minuteur)
+         {
+            this._minuteur.stop();
+            this._minuteur.removeEventListener(TimerEvent.TIMER,this.onMinuteur);
+            this._minuteur = null;
+         }
       }
    }
 }

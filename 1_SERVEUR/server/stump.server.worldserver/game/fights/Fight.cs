@@ -290,6 +290,9 @@ namespace Stump.Server.WorldServer.Game.Fights
 
         bool RandomnizePosition(FightActor fighter);
 
+        /// <summary>MYSTIC : apres le placement aleatoire du debut, avant l'affichage (case fixe d'un boss, ex. le Vortex).</summary>
+        event Action<IFight> PlacementRandomise;
+
         void RandomnizePositions(FightTeam team);
 
         DirectionsEnum FindPlacementDirection(FightActor fighter);
@@ -317,6 +320,15 @@ namespace Stump.Server.WorldServer.Game.Fights
         void StartTurn();
 
         event Action<IFight, FightActor> TurnStarted;
+
+        /// <summary>MYSTIC : tours d'arrivee des vagues pour ce combat (defaut : 6, 11, 16...).</summary>
+        void DefinirToursDeVagues(int[] tours);
+
+        /// <summary>MYSTIC : fait arriver la vague suivante tout de suite (comme quand tout est mort) ; false s'il n'y en a plus.</summary>
+        bool LancerVagueSuivante();
+
+        /// <summary>MYSTIC : reste-t-il une vague a venir pour ce nombre de joueurs ?</summary>
+        bool ResteDesVagues();
         event Action<IFight, FightActor> SwitchCompanion;
 
         void StopTurn();
@@ -1104,6 +1116,7 @@ namespace Stump.Server.WorldServer.Game.Fights
 
             RandomnizePositions(ChallengersTeam);
             RandomnizePositions(DefendersTeam);
+            PlacementRandomise?.Invoke(this);
 
             ShowBlades();
             Map.AddFight(this);
@@ -1780,6 +1793,32 @@ namespace Stump.Server.WorldServer.Game.Fights
 
         public event Action<IFight, FightActor> TurnStarted;
 
+        public event Action<IFight> PlacementRandomise;
+
+        // MYSTIC 17/10 : vagues pilotees par un cerveau de boss (Oeil de Vortex : monstres ressuscites, jamais « tous morts »)
+        public void DefinirToursDeVagues(int[] tours) => WaveTurns = tours;
+
+        private List<MonsterFighter> ProchaineVague()
+        {
+            var joueurs = ChallengersTeam.Fighters.OfType<CharacterFighter>().Count();
+            var palier = joueurs < 5 ? 1 : joueurs;
+            var vague = DefendersTeam.m_wavesFighters.Where(x => x.WaveNumber == NextWaveNumber && x.MinPlayerLevel == palier).ToList();
+            return joueurs < 4 ? vague.Take(4).ToList() : vague.Take(joueurs).ToList();
+        }
+
+        public bool ResteDesVagues() => ProchaineVague().Count > 0;
+
+        public bool LancerVagueSuivante()
+        {
+            var vague = ProchaineVague();
+            if (vague.Count == 0)
+                return false;
+
+            PrematuredWave = true;
+            SpawnWaveFighters(vague);
+            return true;
+        }
+
         public void SpawnWaveFighters(List<MonsterFighter> fighters)
         {
             // NEKFEU : avant, les monstres de vague prenaient toujours les cases de placement bleues (defenseurs) dans le meme ordre
@@ -2258,11 +2297,13 @@ namespace Stump.Server.WorldServer.Game.Fights
                 fighter.RemoveAllCastedBuffs(FightDispellableEnum.DISPELLABLE_BY_DEATH);
 
                 ActionsHandler.SendGameActionFightDeathMessage(Clients, fighter, killedBy);
-            }
 
-            foreach (var trigger in m_triggers.Where(trigger => trigger.Caster == fighter).ToArray())
-            {
-                RemoveTrigger(trigger);
+                // MYSTIC 17/10 : glyphes / pieges du mort retires DANS la sequence de mort, sinon le client gardait leur visuel
+                // (test Korriandre : glyphes d'un joueur mort encore affichees mais inactives)
+                foreach (var trigger in m_triggers.Where(trigger => trigger.Caster == fighter).ToArray())
+                {
+                    RemoveTrigger(trigger);
+                }
             }
 
             if (DefendersTeam.AreAllDead() && !PrematuredStartWaveOccured)
@@ -2531,6 +2572,10 @@ namespace Stump.Server.WorldServer.Game.Fights
         {
             m_buffs.Add(buff);
             ContextHandler.SendGameActionFightDispellableEffectMessage(Clients, buff);
+
+            // MYSTIC (diagnostic, meme interrupteur que les lignes [IA] : Brain.LogTurns) : buffs envoyes au client, pour comprendre pourquoi un buff declenche n'apparait pas dans le chat
+            if (AI.Fights.Brain.Brain.LogTurns)
+                logger.Info("[Buff] {0} -> {1} : sort {2}, effet {3} (uid {4}), action {5}, duree {6}, declenche {7}", buff.Caster, target, buff.Spell?.Id, buff.Effect?.EffectId, buff.Effect?.Id, buff.GetActionId(), buff.Duration, buff.BuffTriggered);
 
             // One window : bonus de portée / PA / ligne de vue d'un sort de l'esclave → aussi au client du maître
             if (buff is SpellBuff spellBuff)

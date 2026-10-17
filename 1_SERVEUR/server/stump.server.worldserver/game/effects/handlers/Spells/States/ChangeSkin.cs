@@ -145,6 +145,22 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.States
                         scale = 145;
                         driverLook = null;
                         break;
+                    // MYSTIC 17/10 : Taniere Givrefoux, absent des Appearances du client 2.51 (avant : effet ignore, pas de changement).
+                    // Os voisins non utilises par d'autres monstres ; a confirmer en jeu (.look {1247|||100} / {1243|||100}).
+                    case 969: // Yokai Givrefoux - Floutage
+                        bonesId = 1247;
+                        driverLook = null;
+                        break;
+                    case 970: // Yomi Givrefoux - Fulguration
+                        bonesId = 1243;
+                        driverLook = null;
+                        break;
+                    case 971: // MYSTIC 17/10 : Tengu Givrefoux - Toison givree (il grossit quand il perd son invulnerabilite)
+                        scale = 140;
+                        driverLook = null;
+                        break;
+                    case 953: // MYSTIC 17/10 : Grolloum - Instant (apparence absente du client 2.51, pas de changement visible)
+                        break;
                     case 1326: // Bambou panda
                         bonesId = 4576;
                         driverLook = null;

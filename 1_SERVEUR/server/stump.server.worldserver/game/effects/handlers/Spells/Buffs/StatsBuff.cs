@@ -56,6 +56,15 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Buffs
     [EffectHandler(EffectsEnum.Effect_SpellDamageBonusPercent)]
     [EffectHandler(EffectsEnum.Effect_SpellResistence)]
     [EffectHandler(EffectsEnum.Effect_AddTrapBonusPercent)]
+    // MYSTIC 17/10 : effets geres seulement pour les objets jusqu'ici (audit des donjons : Crocabulia, Tanuki chan, Skeunk)
+    [EffectHandler(EffectsEnum.Effect_AddDamageReflection_220)]
+    [EffectHandler(EffectsEnum.Effect_AddEarthElementReduction)]
+    [EffectHandler(EffectsEnum.Effect_AddWaterElementReduction)]
+    [EffectHandler(EffectsEnum.Effect_AddAirElementReduction)]
+    [EffectHandler(EffectsEnum.Effect_AddFireElementReduction)]
+    [EffectHandler(EffectsEnum.Effect_AddNeutralElementReduction)]
+    [EffectHandler(EffectsEnum.Effect_AddCriticalDamageBonus)]
+    [EffectHandler(EffectsEnum.Effect_AddCriticalDamageReduction)]
 
     public class StatsBuff : SpellEffectHandler
     {
@@ -109,7 +118,22 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Buffs
                 case EffectsEnum.Effect_AddHealBonus:
                     return PlayerFields.HealBonus;
                 case EffectsEnum.Effect_AddDamageReflection:
+                case EffectsEnum.Effect_AddDamageReflection_220:
                     return PlayerFields.DamageReflection;
+                case EffectsEnum.Effect_AddEarthElementReduction:
+                    return PlayerFields.EarthElementReduction;
+                case EffectsEnum.Effect_AddWaterElementReduction:
+                    return PlayerFields.WaterElementReduction;
+                case EffectsEnum.Effect_AddAirElementReduction:
+                    return PlayerFields.AirElementReduction;
+                case EffectsEnum.Effect_AddFireElementReduction:
+                    return PlayerFields.FireElementReduction;
+                case EffectsEnum.Effect_AddNeutralElementReduction:
+                    return PlayerFields.NeutralElementReduction;
+                case EffectsEnum.Effect_AddCriticalDamageBonus:
+                    return PlayerFields.CriticalDamageBonus;
+                case EffectsEnum.Effect_AddCriticalDamageReduction:
+                    return PlayerFields.CriticalDamageReduction;
                 case EffectsEnum.Effect_AddPhysicalDamage_137:
                 case EffectsEnum.Effect_AddPhysicalDamage_142:
                     return PlayerFields.PhysicalDamage;

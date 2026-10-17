@@ -11,6 +11,7 @@ using Stump.Server.WorldServer.Game.Spells.Casts;
 namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
 {
     [EffectHandler(EffectsEnum.Effect_Double)]
+    [EffectHandler(EffectsEnum.Effect_1189)] // MYSTIC 17/10 : double du lanceur
     public class Double : SpellEffectHandler
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();

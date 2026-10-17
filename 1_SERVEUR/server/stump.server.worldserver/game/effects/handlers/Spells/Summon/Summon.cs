@@ -28,6 +28,8 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
         {
         }
 
+        public const int FouxDamourSpellId = 2683;
+
         protected override bool InternalApply()
         {
             var monster = MonsterManager.Instance.GetMonsterGrade(Dice.DiceNum, Dice.DiceFace);
@@ -36,6 +38,17 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
             {
                 logger.Error("Cannot summon monster {0} grade {1} (not found)", Dice.DiceNum, Dice.DiceFace);
                 return false;
+            }
+
+            // MYSTIC 17/10 : Tengu Givrefoux, « Foux d'amour » : jamais au hasard, toujours 1 Yokaï puis 1 Yomi (2 invocations max)
+            if (Spell.Id == FouxDamourSpellId)
+            {
+                var vivants = Caster.Summons.Where(x => x.IsAlive()).OfType<SummonedMonster>().Select(x => x.Monster.Template.Id).ToList();
+                var voulu = !vivants.Contains((int)MonsterIdEnum.YOKAI_GIVREFOUX) ? (int)MonsterIdEnum.YOKAI_GIVREFOUX :
+                            !vivants.Contains((int)MonsterIdEnum.YOMI_GIVREFOUX) ? (int)MonsterIdEnum.YOMI_GIVREFOUX : 0;
+                if (voulu == 0)
+                    return false;
+                monster = MonsterManager.Instance.GetMonsterGrade(voulu, Dice.DiceFace) ?? monster;
             }
 
             if (monster.Template.UseSummonSlot && !Caster.CanSummon())

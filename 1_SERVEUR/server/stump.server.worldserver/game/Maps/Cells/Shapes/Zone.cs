@@ -178,6 +178,9 @@ namespace Stump.Server.WorldServer.Game.Maps.Cells.Shapes
                         AllDirections = true
                     };
                     break;
+                case SpellShapeEnum.Z: // MYSTIC 17/10 : cercle inverse (toute la carte sauf le rayon autour du centre)
+                    m_shape = new CercleInverse(Radius);
+                    break;
                 case SpellShapeEnum.slash:
                     m_shape = new Line(Radius, false);
                     break;
@@ -189,6 +192,7 @@ namespace Stump.Server.WorldServer.Game.Maps.Cells.Shapes
                     m_shape = new Lozenge(0, 63);
                     break;
                 case SpellShapeEnum.P:
+                case SpellShapeEnum.semicolon: // MYSTIC 17/10 : case fixe (la case visée est remplacée par le gestionnaire d'effet)
                     m_shape = new Single();
                     break;
                 case SpellShapeEnum.minus:

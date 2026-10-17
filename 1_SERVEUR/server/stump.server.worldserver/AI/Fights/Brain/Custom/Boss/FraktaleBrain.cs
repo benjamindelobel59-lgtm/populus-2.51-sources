@@ -41,7 +41,8 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
             if (fighter != Fighter)
                 return;
 
-            Fighter.CastAutoSpell(new Spell((int)SpellIdEnum.ZEITGEIST_5104, 1), Fighter.Cell);
+            // MYSTIC 17/10 : horloge propre à Fraktale (5111) ; 5104 est celle de XLII (audit des donjons)
+            Fighter.CastAutoSpell(new Spell((int)SpellIdEnum.ZEITGEIST_5111, 1), Fighter.Cell);
         }
     }
 }

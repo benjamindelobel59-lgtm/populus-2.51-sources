@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Linq;
 using NLog;
 using Stump.DofusProtocol.Enums;
 using Stump.Server.WorldServer.Database.World;
@@ -62,8 +63,28 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Marks
             return true;
         }
 
-        static Color GetGlyphColorBySpell(Spell spell)
+        // MYSTIC 17/10 : glyphes Daipipay du Korriandre (Kete) : une couleur par joueur (avant : toutes blanches)
+        public static readonly Color[] KorriandreColors =
         {
+            Color.White, Color.FromArgb(255, 221, 0), Color.FromArgb(230, 40, 40), Color.FromArgb(40, 110, 255),
+            Color.FromArgb(40, 200, 70), Color.FromArgb(170, 70, 230), Color.FromArgb(255, 140, 0), Color.FromArgb(255, 120, 200)
+        };
+
+        public static readonly string[] KorriandreColorNames = { "blanches", "jaunes", "rouges", "bleues", "vertes", "violettes", "orange", "roses" };
+
+        /// <summary>Rang du joueur dans son equipe (personnages tries par id), stable pendant tout le combat.</summary>
+        public static int GetKorriandreColorIndex(FightActor caster)
+        {
+            var players = caster.Team.Fighters.OfType<CharacterFighter>().OrderBy(x => x.Id).ToList();
+            var index = caster is CharacterFighter ? players.IndexOf((CharacterFighter)caster) : -1;
+            return index < 0 ? 0 : index % KorriandreColors.Length;
+        }
+
+        Color GetGlyphColorBySpell(Spell spell)
+        {
+            if (spell.Id == (int)SpellIdEnum.LOAD_HEADICE)
+                return KorriandreColors[GetKorriandreColorIndex(Caster)];
+
             switch (spell.Id)
             {
                 case (int)SpellIdEnum.BURNING_GLYPH_10:

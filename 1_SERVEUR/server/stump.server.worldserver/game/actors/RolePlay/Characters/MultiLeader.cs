@@ -32,11 +32,8 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
             leader.EnterFight += OnEnterFight;
             leader.ReadyStatusChanged += OnReadyStatusChanged;
 
-            // NEKFEU : a l'activation, on ne regroupe QUE les personnages deja sur la meme map (sur la case du meneur) ;
-            // ceux qui sont ailleurs (autre map, autre donjon) ne sont jamais teleportes
-            if (!leader.IsFighting() && leader.Map != null)
-                foreach (var follower in GetFollowers(leader).Where(x => !x.IsFighting() && x.Map == leader.Map))
-                    follower.Teleport(leader.Map, leader.Cell);
+            // MYSTIC 17/10 : plus de teleportation a l'activation (avant : les personnages de la map etaient poses sur la case du
+            // meneur, meme de l'autre cote d'un obstacle qu'il fallait contourner). Ils suivent au prochain changement de map.
         }
 
         public static void Disable(Character leader)

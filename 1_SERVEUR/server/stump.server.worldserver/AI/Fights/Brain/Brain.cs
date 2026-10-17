@@ -88,7 +88,7 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
 
             if (LogTurns)
             {
-                logger.Info("[IA] {0} (monstre {1}) PA {2}->{3} PM {4}->{5} case {6}->{7} | sorts {8} | possibles [{9}] | {10}",
+                logger.Info("[IA] {0} (monstre {1}) PA {2}->{3} PM {4}->{5} case {6}->{7} | sorts {8} | possibles [{9}] | {10} | ecartes [" + string.Join(" ; ", SpellSelector.Exclusions) + "]",
                     Fighter, (Fighter as MonsterFighter)?.Monster.Template.Id ?? 0, startAP, Fighter.AP, startMP, Fighter.MP, startCell, Fighter.Cell.Id,
                     Fighter.Spells.Count, possibles, string.Join(" ; ", m_turnLog));
             }
@@ -135,6 +135,19 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
                     break;
             }
             m_turnLog.Add(string.Format("deplacement {0} {1}->{2}", action.GetType().Name, before, Fighter.Cell.Id));
+
+            // MYSTIC 17/10 : StayInRange vise une case a portee « a vol d'oiseau » ; si un obstacle (rocher central du Korriandre)
+            // la rend inaccessible, le monstre restait sur place tous les tours. Il se rapproche alors de l'ennemi le plus proche.
+            if (action is StayInRange && Fighter.Cell.Id == before && Fighter.CanMove() && Environment.GetNearestEnemy() != null)
+            {
+                var repli = new MoveNearTo(Fighter, Environment.GetNearestEnemy());
+                foreach (var result in repli.Execute(this))
+                {
+                    if (result == RunStatus.Failure)
+                        break;
+                }
+                m_turnLog.Add(string.Format("repli MoveNearTo {0}->{1}", before, Fighter.Cell.Id));
+            }
         }
 
         /// <summary>

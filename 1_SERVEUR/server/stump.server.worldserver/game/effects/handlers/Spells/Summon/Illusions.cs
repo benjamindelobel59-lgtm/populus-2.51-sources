@@ -11,6 +11,7 @@ using Stump.Server.WorldServer.Game.Spells.Casts;
 namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
 {
     [EffectHandler(EffectsEnum.Effect_Illusions)]
+    [EffectHandler(EffectsEnum.Effect_1024)] // MYSTIC 17/10 : illusions (Bunshin du Chafer Rōnin)
     public class Illusions : SpellEffectHandler
     {
         public Illusions(EffectDice effect, FightActor caster, SpellCastHandler castHandler, Cell targetedCell, bool critical)

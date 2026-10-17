@@ -44,16 +44,27 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
 
                 var cell = new MapPoint((2 * targetPoint.X - casterPoint.X), (2 * targetPoint.Y - casterPoint.Y));
 
+                // MYSTIC 17/10 : celui qui devait bouger et n'a pas pu (hors carte / case non marchable) est repéré pour le masque « W »
+                var deplace = Effect.EffectId == EffectsEnum.Effect_SymetricTargetTeleport ? Caster : target;
+                deplace.TeleporteSurCaseInvalide = false;
+
                 if (!cell.IsInMap())
+                {
+                    deplace.TeleporteSurCaseInvalide = true;
                     continue;
+                }
 
                 var dstCell = Map.GetCell(cell.CellId);
 
                 if (dstCell == null)
+                {
+                    deplace.TeleporteSurCaseInvalide = true;
                     continue;
+                }
 
                 if (!dstCell.Walkable && !dstCell.NonWalkableDuringFight)
                 {
+                    deplace.TeleporteSurCaseInvalide = true;
                     continue;
                 }
 

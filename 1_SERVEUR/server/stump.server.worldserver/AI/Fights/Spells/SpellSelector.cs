@@ -147,9 +147,15 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
 
         public event Action<AIFighter> AnalysePossibilitiesFinished;
 
+        /// <summary>MYSTIC : sorts ecartes au dernier calcul et pourquoi (diagnostic du log [IA]).</summary>
+        public List<string> Exclusions { get; } = new List<string>();
+
+        private void Exclure(Spell spell, string raison) => Exclusions.Add(spell.Template.Id + ":" + raison);
+
         public void AnalysePossibilities()
         {
             Possibilities = new List<SpellCastImpact>();
+            Exclusions.Clear();
             foreach (var spell in Fighter.Spells.Values)
             {
                 var category = SpellIdentifier.GetSpellCategories(spell);
@@ -157,16 +163,18 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
                 var cast = new SpellCastImpact(spell);
 
                 if (Fighter.AP < spellLevel.ApCost)
-                    continue;
+                { Exclure(spell, "PA"); continue; }
 
                 if (spellLevel.StatesForbidden.Any(Fighter.HasState))
-                    continue;
+                { Exclure(spell, "etat interdit"); continue; }
 
                 if (spellLevel.StatesRequired.Any(state => !Fighter.HasState(state)))
-                    continue;
+                { Exclure(spell, "etat requis"); continue; }
 
                 if (!Fighter.SpellHistory.CanCastSpell(spell.CurrentSpellLevel))
-                    continue;
+                { Exclure(spell, "relance"); continue; }
+
+                var horsPortee = 0; var refus = new Dictionary<SpellCastResult, int>(); var sansEffet = 0;
 
                 // summoning is the priority
                 if ((category & SpellCategory.Summoning) != 0 &&
@@ -193,15 +201,16 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
                     {
                         Cell cell;
                         if (!CanReach(target, spell, out cell))
-                            continue;
+                        { horsPortee++; continue; }
                         
-                        if (Fighter.CanCastSpell(new SpellCastInformations(Fighter, spell, target.Cell) {CastCell = cell}) != SpellCastResult.OK)
-                            continue;
+                        var resultat = Fighter.CanCastSpell(new SpellCastInformations(Fighter, spell, target.Cell) {CastCell = cell});
+                        if (resultat != SpellCastResult.OK)
+                        { refus[resultat] = refus.TryGetValue(resultat, out var n) ? n + 1 : 1; continue; }
 
                         var impact = ComputeSpellImpact(spell, target.Cell, cell);
 
                         if (impact == null)
-                            continue;
+                        { sansEffet++; continue; }
 
                         impact.CastCell = cell;
                         impact.Target = target;
@@ -212,6 +221,10 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
                         cast.Impacts.Add(impact);
                     }
                 }
+
+                if (cast.Impacts.Count == 0 && !cast.IsSummoningSpell)
+                    Exclure(spell, string.Format("cibles: hors portee {0}, refus {1}, sans effet {2}", horsPortee,
+                        refus.Count == 0 ? "0" : string.Join("/", refus.Select(x => x.Key + "x" + x.Value)), sansEffet));
 
                 if (cast.Impacts.Count > 0 || cast.IsSummoningSpell)
                 {
@@ -302,6 +315,16 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
                         break;
                     }
                 }
+            }
+
+            // MYSTIC 17/10 : le meilleur sort demande de se deplacer → on lance d'abord celui qui demande le moins de PM
+            // (0 = sans bouger), puis tout est recalcule avec les PM restants. Avant : la Fuji allait au contact pour Progeniture
+            // et ne pouvait plus lancer Foufoux (diagonale a distance), meme quand il etait lancable.
+            if (casts.Count > 1 && casts[0].MoveBefore != null)
+            {
+                var moinsDeDeplacement = casts.OrderBy(x => x.MoveBefore?.MPCost ?? 0).First();
+                if ((moinsDeDeplacement.MoveBefore?.MPCost ?? 0) < casts[0].MoveBefore.MPCost)
+                    return moinsDeDeplacement;
             }
 
             if (casts.Count > 1)
@@ -398,6 +421,24 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
             {
                 if (depth >= 3)
                     return;
+
+                // MYSTIC : buff déclenché (durée + déclencheur, ex. « attire quand il est frappé », « soigne si frappé au CàC ») :
+                // c'est un buff posé sur la cible, pas un effet immédiat → valeur de buff sur un allié / soi, de malus sur un ennemi
+                // (avant : ses effets comptaient comme lancés tout de suite sur le monstre lui-même → sort jamais lancé)
+                if (effect.Duration != 0 && !string.IsNullOrEmpty(effect.Triggers) && effect.Triggers != "I")
+                {
+                    var buffResult = new SpellTarget();
+                    if (Fighter.Team.Id == target.Team.Id)
+                        buffResult.Boost += spell.CurrentLevel * 2;
+                    else
+                        buffResult.Curse += spell.CurrentLevel;
+
+                    if (spellImpact != null)
+                        spellImpact.Add(buffResult);
+                    else
+                        spellImpact = buffResult;
+                    return;
+                }
                 var sub = SpellManager.Instance.GetSpellLevel(effect.DiceNum, effect.DiceFace);
                 if (sub?.Effects == null)
                     return;

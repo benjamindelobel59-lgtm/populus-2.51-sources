@@ -10,6 +10,7 @@ using Stump.Server.WorldServer.Game.Spells.Casts;
 namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Heal
 {
     [EffectHandler(EffectsEnum.Effect_FixedNeutralDamage)]
+    [EffectHandler(EffectsEnum.Effect_1063)] // MYSTIC 17/10 : « dommages Terre fixes » (Comte, XLII, Ombre…)
     public class FixedNeutralDamage : SpellEffectHandler
     {
         public FixedNeutralDamage(EffectDice effect, FightActor caster, SpellCastHandler castHandler, Cell targetedCell, bool critical)
@@ -32,7 +33,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Heal
                 }
                 else
                 {
-                    var damages = new Fights.Damage(Dice, EffectSchoolEnum.Neutral, Caster, Spell, TargetedCell, EffectZone)
+                    var damages = new Fights.Damage(Dice, Effect.EffectId == EffectsEnum.Effect_1063 ? EffectSchoolEnum.Earth : EffectSchoolEnum.Neutral, Caster, Spell, TargetedCell, EffectZone)
                     {
                         IsCritical = Critical,
                         IgnoreDamageBoost = true,

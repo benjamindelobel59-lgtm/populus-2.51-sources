@@ -396,6 +396,13 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             set;
         }
 
+        // MYSTIC 17/10 : masque de cible « W » (client 2.51 : wasTeleportedInInvalidCellThisTurn), Fuseau / Gousset du Comte Harebourg
+        public bool TeleporteSurCaseInvalide
+        {
+            get;
+            set;
+        }
+
         public override bool BlockSight => IsAlive() && VisibleState != VisibleStateEnum.INVISIBLE;
 
         public virtual bool IsVisibleInTimeline => CanPlay();
@@ -800,6 +807,10 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                 return false;
             }
 
+            // MYSTIC 17/10 : confusion (Comte Harebourg) : la case visee tourne autour du lanceur
+            if (!cast.Triggered && !cast.Force)
+                cast.TargetedCell = Game.Effects.Handlers.Spells.Others.ConfusionBuff.CaseConfuse(this, cast.TargetedCell);
+
             using (Fight.StartSequence(SequenceTypeEnum.SEQUENCE_SPELL))
             {
                 cast.Critical = RollCriticalDice(spellLevel);
@@ -1142,6 +1153,10 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
             if (LifePoints + damage.Amount > MaxLifePoints)
                 damage.Amount = MaxLifePoints - LifePoints;
+
+            // MYSTIC : PV deja au-dessus du maximum -> un soin ne retire jamais de PV (test du 17/10 : Mot de Reconstitution a -16264 PV)
+            if (damage.Amount < 0)
+                damage.Amount = 0;
 
             DamageTaken -= damage.Amount;
 

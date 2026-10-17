@@ -76,6 +76,8 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Targets
                         return new NoPortalCriterion();
                     case 'T':
                         return new TelefragCriterion();
+                    case 'W':
+                        return new CaseInvalideCriterion();
                     case 'P':
                         return new SummonerCriterion(true);
                     case 'p':

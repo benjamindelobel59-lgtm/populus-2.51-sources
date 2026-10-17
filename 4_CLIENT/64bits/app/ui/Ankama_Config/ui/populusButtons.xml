@@ -311,4 +311,24 @@
 		</themeIconButton>
 
 	</Container>
+
+	<!-- Mystic : horloge de l'Oeil de Vortex, en haut de l'écran (sur la bande noire), visible seulement quand l'Auroraire
+	     est dans le combat ; texte mis à jour par PopulusButtons (état « Xe heure » 221..232 de l'Auroraire). -->
+	<Container name="ctr_horloge">
+		<Anchors>
+			<Anchor relativePoint="TOP" point="TOP"><AbsDimension x="0" y="2" /></Anchor>
+		</Anchors>
+		<Size><AbsDimension x="280" y="30" /></Size>
+		<visible>false</visible>
+		<bgColor>0x000000</bgColor>
+		<bgAlpha>0.75</bgAlpha>
+
+		<Label name="lbl_horloge">
+			<Anchors><Anchor><AbsDimension x="0" y="3" /></Anchor></Anchors>
+			<Size><AbsDimension x="280" y="24" /></Size>
+			<css>[config.ui.skin]css/title.css</css>
+			<cssClass>whitecenter</cssClass>
+			<text>Auroraire</text>
+		</Label>
+	</Container>
 </Definition>

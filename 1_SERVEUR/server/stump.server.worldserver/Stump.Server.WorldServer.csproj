@@ -217,7 +217,16 @@
     <Compile Include="AI\Fights\Brain\Custom\Boss\IlyzaelleBrain.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\KlimeBrain.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\KolossoBrain.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\GlourselesteBrain.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\KorriandreBrain.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\SortPassif.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\GivrefouxBrains.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\VortexBrain.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\GrolloumBrain.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\PassifsDonjonsBrains.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\FrigostOtomaiBrains.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\DimensionsBrains.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\DonjonsRecentsBrains.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\KralamoureBrain.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\KwakwaBrain.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\MansotRoyalBrain.cs" />
@@ -718,6 +727,7 @@
     <Compile Include="Game\Effects\Handlers\Spells\Debuffs\SubVitalityPercent.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Others\CarryActor.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Others\ReviveActor.cs" />
+    <Compile Include="Game\Effects\Handlers\Spells\Others\ReviveLastDeadAlly.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Others\TriggerBomb.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Summon\Bomb.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Summon\Illusions.cs" />
@@ -771,6 +781,7 @@
     <Compile Include="Game\Effects\Handlers\Spells\Damage\DamagePerMPUsed.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Damage\DamagePerAPUsed.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Damage\DamagePercent.cs" />
+    <Compile Include="Game\Effects\Handlers\Spells\Damage\DamagePercentTargetLife.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Damage\PunishmentDamage.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Debuffs\Erosion.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Debuffs\SkipTurn.cs" />
@@ -989,6 +1000,8 @@
     <Compile Include="Game\Maps\Area.cs" />
     <Compile Include="Game\Maps\Cells\DirectionFlagEnum.cs" />
     <Compile Include="Game\Maps\Cells\MapPoint.cs" />
+    <Compile Include="Game\Effects\Handlers\Spells\Others\Confusion.cs" />
+    <Compile Include="Game\Effects\Handlers\Spells\Targets\CaseInvalideCriterion.cs" />
     <Compile Include="Game\Maps\Cells\ObjectPosition.cs" />
     <Compile Include="Game\Maps\Cells\Shapes\Cone.cs" />
     <Compile Include="Game\Maps\Cells\Shapes\Cross.cs" />
@@ -1009,6 +1022,7 @@
     <Compile Include="Game\Maps\Cells\Shapes\Single.cs" />
     <Compile Include="Game\Maps\Cells\Shapes\Square.cs" />
     <Compile Include="Game\Maps\Cells\Shapes\Zone.cs" />
+    <Compile Include="Game\Maps\Cells\Shapes\CercleInverse.cs" />
     <Compile Include="Game\Maps\Cells\Triggers\AnimateTrigger.cs" />
     <Compile Include="Game\Maps\Cells\Triggers\CellTrigger.cs" />
     <Compile Include="Game\Maps\Cells\Triggers\CellTriggerManager.cs" />
@@ -1161,6 +1175,7 @@
     <Compile Include="Database\Shortcuts\SpellShortcut.cs" />
     <Compile Include="Database\Spells\SpellBombTemplate.cs" />
     <Compile Include="Database\Spells\SpellLevelTemplate.cs" />
+    <Compile Include="Database\Spells\CasesFixesSorts.cs" />
     <Compile Include="Database\Spells\SpellTemplate.cs" />
     <Compile Include="Database\Spells\SpellState.cs" />
     <Compile Include="Database\Spells\SpellType.cs" />

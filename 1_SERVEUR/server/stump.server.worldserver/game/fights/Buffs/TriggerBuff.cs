@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Stump.DofusProtocol.Types;
@@ -66,6 +66,9 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
             {"CMP", BuffTriggerType.HaveMoveDuringTurn},
             {"PPD", BuffTriggerType.OnInderctlyPush},
             {"PMD", BuffTriggerType.OnPushDamagedInMelee},
+            // MYSTIC : declencheurs des sorts 2.51 manquants (ex. Gloursons) : DCAC = frappe au corps a corps, CT = tacle quelqu'un
+            {"DCAC", BuffTriggerType.OnDamagedInCloseRange},
+            {"CT", BuffTriggerType.OnTackle},
         };
 
         private FightSequence m_lastTriggeredSequence;
