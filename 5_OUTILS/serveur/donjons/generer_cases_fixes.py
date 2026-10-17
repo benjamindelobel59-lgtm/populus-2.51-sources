@@ -14,11 +14,11 @@ for lid, l in sorted(L.items()):
         for i, e in enumerate(l.get(cle) or []):
             z = e['rawZone']
             if z.startswith(';'):
-                try:
-                    case = int(z[1:].split(',')[0])
-                except ValueError:
+                cases = [c.strip() for c in z[1:].split(',') if c.strip().isdigit()]
+                if not cases:
                     continue
-                lignes.append(f"{lid}\t{crit}\t{i}\t{e['effectId']}\t{case}")
+                # MYSTIC 17/10 : toutes les cases (avant : seulement la 1re -> Dés / glyphes du Chalœil sur une seule case)
+                lignes.append(f"{lid}\t{crit}\t{i}\t{e['effectId']}\t{','.join(cases)}")
 sortie = os.path.join(RACINE, 'SERVEUR_Emu', 'run', 'debug', 'WorldServer', 'cases_fixes.tsv')
 open(sortie, 'w', encoding='utf-8', newline='\n').write('\n'.join(lignes) + '\n')
 print(len(lignes), 'effets ->', sortie)

@@ -100,6 +100,26 @@ namespace Stump.Server.WorldServer.Game.Spells.Casts
                     handler.Efficiency = Informations.Efficiency;
 
                     handlers.Add(handler);
+
+                    // MYSTIC 17/10 : zone « ;A,B,C… » : une copie de l'effet sur chaque autre case fixe
+                    var cases = effect.CasesFixes;
+                    if (cases != null && cases.Length > 1 && Caster.Fight?.Map != null)
+                    {
+                        foreach (var c in cases.Skip(1))
+                        {
+                            if (c < 0 || c >= Caster.Fight.Map.Cells.Length)
+                                continue;
+
+                            var copie = EffectManager.Instance.GetSpellEffectHandler(effect, Caster, this, TargetedCell, Critical);
+                            copie.ViserCase(Caster.Fight.Map.Cells[c]);
+                            if (MarkTrigger != null)
+                                copie.MarkTrigger = MarkTrigger;
+                            if (!CheckWhenExecute && copie.Targets.All(x => !x.CheckWhenExecute))
+                                copie.SetAffectedActors(copie.GetAffectedActors());
+                            copie.Efficiency = Informations.Efficiency;
+                            handlers.Add(copie);
+                        }
+                    }
                 }
             }
 

@@ -70,34 +70,10 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
                 results.Add(item, result);
                 for (int i = 0; i < item.Stack; i++)
                 {
-                    RuneManager.Instance.RegisterDecraft(item.Template);
-                    var coeff = RuneManager.Instance.GetDecraftCoefficient(item.Template);
-
-                    foreach (var effect in item.Effects.OfType<EffectInteger>())
-                    {
-                        var runes = RuneManager.Instance.GetEffectRunes(effect.EffectId);
-
-                        if (runes.Length <= 0)
-                            continue;
-
-                        var prop = coeff * effect.Value * Math.Min(2 / 3d, 1.5 * item.Template.Level * item.Template.Level / Math.Pow(EffectManager.Instance.GetEffectBasePower(effect), 5 / 4d));
-
-                        var random = new CryptoRandom();
-                        prop *= random.NextDouble() * 0.2 + 0.9;
-
-                        var amount = (int)Math.Floor(prop);
-                        if (random.NextDouble() < prop - Math.Floor(prop))
-                            amount++;
-
-                        var rune = runes.OrderBy(x => x.Amount).First();
-
-                        var runeAmount = rune.Amount == 0 ? 1 : (int)Math.Floor((double)amount / rune.Amount);
-
-                        if (result.Runes.ContainsKey(rune.Item))
-                            result.Runes[rune.Item] += runeAmount;
-                        else
-                            result.Runes.Add(rune.Item, runeAmount);
-                    }
+                    // MYSTIC 17/10 : brisage officiel (BrisageOfficiel) : coefficient propre a l'objet, formule 0,015, focus 50 %
+                    var coeff = BrisageOfficiel.Instance.Coefficient(item.Template);
+                    BrisageOfficiel.Instance.Calculer(item.Template, item.Effects, coeff, Trader.Focus, result.Runes);
+                    BrisageOfficiel.Instance.Briser(item.Template);
 
                     if (!result.MinCoeff.HasValue || coeff < result.MinCoeff)
                         result.MinCoeff = coeff;
@@ -128,6 +104,7 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
                 Character.Inventory.AddItem(rune, amount);
             }
             m_decrafting = false;
+            Trader.Focus = 0;
         }
 
 

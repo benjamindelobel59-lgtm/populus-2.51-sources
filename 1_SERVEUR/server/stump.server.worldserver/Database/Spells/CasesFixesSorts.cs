@@ -15,10 +15,10 @@ namespace Stump.Server.WorldServer.Database.Spells
     public static class CasesFixesSorts
     {
         static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        static Dictionary<(uint, int, int), (int effet, int cellule)> m_cases;
+        static Dictionary<(uint, int, int), (int effet, int[] cellules)> m_cases;
         static readonly object m_verrou = new object();
 
-        static Dictionary<(uint, int, int), (int, int)> Cases
+        static Dictionary<(uint, int, int), (int, int[])> Cases
         {
             get
             {
@@ -30,7 +30,7 @@ namespace Stump.Server.WorldServer.Database.Spells
                     if (m_cases != null)
                         return m_cases;
 
-                    var cases = new Dictionary<(uint, int, int), (int, int)>();
+                    var cases = new Dictionary<(uint, int, int), (int, int[])>();
                     try
                     {
                         var chemin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cases_fixes.tsv");
@@ -41,7 +41,8 @@ namespace Stump.Server.WorldServer.Database.Spells
                                 var p = ligne.Split('\t');
                                 if (p.Length < 5)
                                     continue;
-                                cases[(uint.Parse(p[0]), int.Parse(p[1]), int.Parse(p[2]))] = (int.Parse(p[3]), int.Parse(p[4]));
+                                // 5e colonne : une case ou plusieurs séparées par des virgules
+                                cases[(uint.Parse(p[0]), int.Parse(p[1]), int.Parse(p[2]))] = (int.Parse(p[3]), Array.ConvertAll(p[4].Split(','), int.Parse));
                             }
                         }
                         else
@@ -66,7 +67,7 @@ namespace Stump.Server.WorldServer.Database.Spells
             for (var i = 0; i < effets.Count; i++)
             {
                 if (cases.TryGetValue((levelId, critique ? 1 : 0, i), out var c) && (int)effets[i].EffectId == c.Item1)
-                    effets[i].DefinirCaseFixe(c.Item2);
+                    effets[i].DefinirCasesFixes(c.Item2);
             }
 
             return effets;

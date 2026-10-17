@@ -68,6 +68,18 @@ namespace Stump.Server.WorldServer.Game.Effects.Instances
 
         public void DefinirCaseFixe(int cellule) => m_caseFixe = cellule;
 
+        // MYSTIC 17/10 : zone « ;A,B,C… » = plusieurs cases fixes (Dés et glyphes du Chalœil…) : l'effet est appliqué sur chacune
+        [NonSerialized]
+        int[] m_casesFixes;
+
+        public int[] CasesFixes => m_casesFixes;
+
+        public void DefinirCasesFixes(int[] cellules)
+        {
+            m_casesFixes = cellules != null && cellules.Length > 0 ? cellules : null;
+            m_caseFixe = m_casesFixes != null ? m_casesFixes[0] : -1;
+        }
+
         [NonSerialized]
         int m_priority;
 
@@ -96,6 +108,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Instances
             m_zoneMaxEfficiency = effect.ZoneMaxEfficiency;
             m_zoneEfficiencyPercent = effect.ZoneEfficiencyPercent;
             m_caseFixe = effect.m_caseFixe;
+            m_casesFixes = effect.m_casesFixes;
 
             m_spellId = effect.SpellId;
             m_forClientOnly = effect.ForClientOnly;
@@ -437,7 +450,11 @@ namespace Stump.Server.WorldServer.Game.Effects.Instances
                 m_zoneShape = shape;
                 m_zoneSize = 0;
                 m_zoneMinSize = 0;
-                m_caseFixe = int.TryParse(morceaux[0], out var caseFixe) ? caseFixe : -1;
+                var liste = new System.Collections.Generic.List<int>();
+                foreach (var morceau in morceaux)
+                    if (int.TryParse(morceau, out var c))
+                        liste.Add(c);
+                DefinirCasesFixes(liste.ToArray());
                 return;
             }
 

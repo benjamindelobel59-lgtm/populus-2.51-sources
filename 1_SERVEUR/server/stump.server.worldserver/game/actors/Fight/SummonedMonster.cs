@@ -188,7 +188,13 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
         public override bool CanPlay() => base.CanPlay() && Monster.Template.CanPlay;
 
-        public override bool CanMove() => base.CanMove() && MonsterGrade.MovementPoints > 0;
+        // MYSTIC 17/10 : un monstre à 0 PM de base ne bouge jamais, sauf le Disciple du Kimbo qui gagne 1 PM avec sa glyphe
+        // et doit s'en servir pour se décaler d'une case (mécanique officielle)
+        /// <summary>MYSTIC 17/10 : combattant après lequel l'invocation joue (null = son invocateur).</summary>
+        public FightActor JoueApres { get; set; }
+
+        public override bool CanMove() => base.CanMove() &&
+            (MonsterGrade.MovementPoints > 0 || MonsterGrade.MonsterId == (int)MonsterIdEnum.DISCIPLE_DU_KIMBO);
 
         public override bool CanTackle(FightActor fighter) => base.CanTackle(fighter) && Monster.Template.CanTackle;
 

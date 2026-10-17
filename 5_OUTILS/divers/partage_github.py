@@ -108,10 +108,18 @@ def secrets(dossier):
 
 def main():
     paquet = dernier_paquet()
+    # MYSTIC 17/10 : 3_SQL_WORLD cumulatif (les SQL déjà partagés restent, ceux du paquet sont ajoutés / remplacés)
+    sql_deja = {}
+    if os.path.isdir(os.path.join(DEST, '3_SQL_WORLD')):
+        for f in os.listdir(os.path.join(DEST, '3_SQL_WORLD')):
+            if f.endswith('.sql'):
+                sql_deja[f] = open(os.path.join(DEST, '3_SQL_WORLD', f), 'rb').read()
     vider(DEST)
     shutil.copytree(SRC, os.path.join(DEST, '1_SERVEUR'), ignore=IGNORE_SRC)
     shutil.copytree(os.path.join(SRC, 'panel-web'), os.path.join(DEST, '2_PANEL_WEB'), ignore=shutil.ignore_patterns('config.local.php'))
     os.makedirs(os.path.join(DEST, '3_SQL_WORLD'))
+    for f, contenu in sql_deja.items():
+        open(os.path.join(DEST, '3_SQL_WORLD', f), 'wb').write(contenu)
     for f in sorted(os.listdir(os.path.join(paquet, '2_BDD'))):
         shutil.copy2(os.path.join(paquet, '2_BDD', f), os.path.join(DEST, '3_SQL_WORLD', f))
     for src, dst in (('6_CLIENT_64bits', '64bits'), ('7_CLIENT_32bits', '32bits')):

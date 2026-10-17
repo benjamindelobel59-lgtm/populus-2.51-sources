@@ -52,6 +52,9 @@ namespace Stump.Server.WorldServer.Game.Items.Player
             Owner.Inventory.RemoveItem(item, amount, sendMessage: sendMessage);
 
             var mountItem = ItemManager.Instance.CreateMountItem(Owner, item, amount);
+
+            // MYSTIC 17/10 : reliquat de forgemagie (effet 351) perdu dans l'inventaire de la monture (officiel)
+            mountItem.Effects.RemoveAll(x => x.EffectId == EffectsEnum.Effect_PowerSink);
             mountItem = AddItem(mountItem, sendMessage);
 
             return mountItem;

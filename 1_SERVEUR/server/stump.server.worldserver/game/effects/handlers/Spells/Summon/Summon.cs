@@ -54,6 +54,24 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
             if (monster.Template.UseSummonSlot && !Caster.CanSummon())
                 return false;
 
+            // MYSTIC 17/10 : Bonbombe (Péché Mignon de la Reine des Voleurs) : « invoquée malgré lui à 2 PO », toujours sur la case à
+            // DROITE du personnage à l'écran (X+1, Y+1 : X+1 descend à droite, Y+1 monte à droite), décalée si la case est prise
+            // (capture de l'utilisateur) ; avant : 1re case libre trouvée, placement au hasard
+            if (monster.Template.Id == (int)MonsterIdEnum.BONBOMBE)
+            {
+                var centre = Caster.Position.Point;
+                var voulu = new Maps.Cells.MapPoint(centre.X + 1, centre.Y + 1);
+                bool Libre(Maps.Cells.MapPoint p) => p.IsInMap() && Map.Cells[p.CellId].Walkable && Fight.GetOneFighter(Map.Cells[p.CellId]) == null;
+                Maps.Cells.MapPoint choisi = Libre(voulu) ? voulu : null;
+                for (var distance = 2; choisi == null && distance <= 4; distance++)
+                    choisi = Map.Cells.Select(c => new Maps.Cells.MapPoint(c))
+                        .Where(p => p.ManhattanDistanceTo(centre) == distance && Libre(p))
+                        .OrderBy(p => p.ManhattanDistanceTo(voulu)).FirstOrDefault();
+                if (choisi == null)
+                    return false;
+                TargetedCell = Map.Cells[choisi.CellId];
+            }
+
             if (Fight.GetOneFighter(TargetedCell) != null)
             {
                 if (AffectedCells.Count <= 1)
@@ -95,7 +113,8 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
 
             // MYSTIC : contrôle des invocations (par défaut pour tous, .invo on/off) : le joueur joue ses invocations qui peuvent jouer
             if (!summon.IsControlled() && Caster is CharacterFighter controleur && controleur.Character.ControleInvocations &&
-                !(summon is SummonedTurret) && !(summon is LivingChest) && summon.CanPlay())
+                !(summon is SummonedTurret) && !(summon is LivingChest) && summon.CanPlay() &&
+                monster.Template.Id != (int)MonsterIdEnum.BONBOMBE) // MYSTIC 17/10 : la Bonbombe n'est jamais jouée par le joueur
                 summon.SetController(controleur);
 
 

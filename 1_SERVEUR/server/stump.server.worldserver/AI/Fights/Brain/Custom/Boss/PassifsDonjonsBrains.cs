@@ -1,4 +1,6 @@
+using Stump.DofusProtocol.Enums;
 using Stump.Server.WorldServer.Game.Actors.Fight;
+using Stump.Server.WorldServer.Game.Fights;
 
 namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
 {
@@ -75,9 +77,59 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     /// <summary>Reine des Voleurs : Péché Mignon (Bonbombe au début du tour de chaque joueur).</summary>
     [BrainIdentifier(3726)] public class ReineDesVoleursBrain : BrainPassif { public ReineDesVoleursBrain(AIFighter f) : base(f, 4693) { } }
 
+    /// <summary>
+    /// MYSTIC 17/10 : Bonbombe (invoquée par chaque joueur au début de son tour, Péché Mignon) : passif Nova (4690) jamais posé
+    /// -> elle n'explosait jamais. Nova tue la bombe au bout de 1 tour (tours 1-3 du combat), 2 tours (4-7) ou 3 tours (8+) ; à sa
+    /// mort elle explose (4689) : tue ses alliés (les joueurs) à 10 PO en ligne, fait exploser / désamorce les autres bombes.
+    /// </summary>
+    [BrainIdentifier(3725)]
+    public class BonbombeBrain : Brain
+    {
+        public BonbombeBrain(AIFighter fighter)
+            : base(fighter)
+        {
+            var tour = fighter.Fight?.TimeLine?.RoundNumber ?? 1;
+            SortPassif.Poser(fighter, 4690, tour <= 3 ? 1 : tour <= 7 ? 2 : 3);
+        }
+
+        public override void Play()
+        {
+        }
+    }
+
     /// <summary>Reine Nyée : Appel de la Reine.</summary>
     [BrainIdentifier(3996)] public class ReineNyeeBrain : BrainPassif { public ReineNyeeBrain(AIFighter f) : base(f, 5520) { } }
 
     /// <summary>Oeuf de Trégénaire (invoqué par la Reine Nyée) : Incubation accélérée (éclosion).</summary>
     [BrainIdentifier(3997)] public class OeufTregenaireBrain : BrainPassif { public OeufTregenaireBrain(AIFighter f) : base(f, 5515) { } }
+
+    /// <summary>
+    /// MYSTIC 17/10 : Boostache inébranlable (demande utilisateur, écart avec les données 2.51) : ni poussé ni attiré (Inébranlable
+    /// 157), ni porté (Lourd 63), ni échangé de place (CanSwitchPos = 0 en base, 35_boostache_inebranlable.sql). États permanents.
+    /// </summary>
+    [BrainIdentifier(2975)]
+    public class BoostacheBrain : Brain
+    {
+        public BoostacheBrain(AIFighter fighter)
+            : base(fighter)
+        {
+            if (fighter.Fight.State == FightState.Fighting)
+                Poser();
+            else
+                fighter.Fight.FightStarted += OnFightStarted;
+        }
+
+        void OnFightStarted(IFight fight)
+        {
+            fight.FightStarted -= OnFightStarted;
+            using (fight.StartSequence(SequenceTypeEnum.SEQUENCE_TRIGGERED))
+                Poser();
+        }
+
+        void Poser()
+        {
+            EtatsBoss.Ajouter(Fighter, Fighter, (int)SpellStatesEnum.INEBRANLABLE_157, 2444);
+            EtatsBoss.Ajouter(Fighter, Fighter, (int)SpellStatesEnum.LOURD_63, 2444);
+        }
+    }
 }

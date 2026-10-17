@@ -9,6 +9,13 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
     {
         public const int MAX_ITEMS_COUNT = 50;
 
+        /// <summary>MYSTIC 17/10 : effet focalisé au prochain brisage (0 = aucun), envoyé par FocusedExchangeReadyMessage.</summary>
+        public int Focus
+        {
+            get;
+            set;
+        }
+
         public RuneTrader(Character character, RuneTrade trade)
             : base(character, trade)
         {

@@ -294,6 +294,8 @@
     <Compile Include="Game\Recherches\RecherchesManager.cs" />
     <Compile Include="Game\Bugs\JournalCombat.cs" />
     <Compile Include="Game\Bugs\SignalementsBugs.cs" />
+    <Compile Include="Game\Donjons\RepriseDonjons.cs" />
+    <Compile Include="Game\Exchanges\Craft\Runes\BrisageOfficiel.cs" />
     <Compile Include="Game\Admin\AdminPanelData.cs" />
     <Compile Include="Game\Admin\AdminJournal.cs" />
     <Compile Include="Commands\Trigger\PanelTrigger.cs" />

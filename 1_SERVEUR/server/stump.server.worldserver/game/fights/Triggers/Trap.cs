@@ -92,6 +92,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Triggers
         {
             switch (spell.Id)
             {
+                case (int)SpellIdEnum.ICEN_MAIDEN: // MYSTIC 17/10 : congères de Missiz Frizz (Vergladiateur) en noir
                 case (int)SpellIdEnum.LETHAL_TRAP_80:
                     return Color.FromArgb(0, 0, 0, 0);
                 case (int)SpellIdEnum.REPELLING_TRAP_73:

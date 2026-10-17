@@ -3728,6 +3728,9 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
         {
             ContextRoleplayHandler.SendCurrentMapMessage(Client, map.Id);
 
+            // MYSTIC 17/10 : dernière salle de donjon atteinte (« Reprendre le donjon où vous l'avez quitté »)
+            Donjons.RepriseDonjons.Instance.SurArrivee(this, map);
+
             // send actor actions
             foreach (var actor in map.Actors)
             {

@@ -189,6 +189,9 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
             return 1;
         }
 
+        /// <summary>MYSTIC 17/10 : l'objet a une recette (sinon coefficient de brisage fixe à 50 %).</summary>
+        public bool EstCraftable(ItemTemplate item) => IsItemCraftable(item);
+
         private bool IsItemCraftable(ItemTemplate item)
         {
             return m_craftedItemsIds.Contains(item.Id);

@@ -103,6 +103,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Marks
                 case (int)SpellIdEnum.CAWWOT_367:
                     return Color.White;
                 default:
+                    // MYSTIC 17/10 : couleur donnée par le client (valeur de l'effet, ex. 16777215 = blanc pour les glyphes
+                    // paire / impaire du Disciple du Kimbo) ; rouge seulement si le client n'en donne pas
+                    if (Dice.Value > 0)
+                        return Color.FromArgb(255, (Dice.Value >> 16) & 0xFF, (Dice.Value >> 8) & 0xFF, Dice.Value & 0xFF);
                     return Color.Red;
             }
         }

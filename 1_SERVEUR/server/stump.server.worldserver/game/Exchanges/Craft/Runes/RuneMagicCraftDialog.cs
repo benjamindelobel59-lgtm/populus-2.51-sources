@@ -44,6 +44,16 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
 
         public IEnumerable<EffectInteger> ItemEffects => ItemToImprove.Effects.OfType<EffectInteger>();
 
+        // MYSTIC 17/10 : lignes de caractéristiques de l'objet, sans le reliquat (effet 351, qui n'est pas une caractéristique :
+        // avant, il était compté dans le poids de l'objet et pouvait « tomber » comme un exo)
+        IEnumerable<EffectInteger> LignesEffets => ItemEffects.Where(x => x.EffectId != EffectsEnum.Effect_PowerSink);
+
+        /// <summary>MYSTIC 17/10 : poids maximum d'une ligne (officiel : 101, sauf si le jet théorique de l'objet le permet).</summary>
+        public const double LIMITE_POIDS_LIGNE = 101;
+
+        /// <summary>MYSTIC 17/10 : une rune d'exo de ce poids ou plus n'a que 1 % de succès critique (officiel).</summary>
+        public const double POIDS_EXO_DIFFICILE = 30;
+
         public PlayerTradeItem Rune
         {
             get;
@@ -572,72 +582,36 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
 
         private EffectInteger GetEffectToImprove(EffectInteger runeEffect)
         {
-            return ItemEffects.FirstOrDefault(x => x.EffectId == runeEffect.EffectId || (x.Template.OppositeId != 0 && x.Template.OppositeId == runeEffect.Id));
+            return LignesEffets.FirstOrDefault(x => x.EffectId == runeEffect.EffectId || (x.Template.OppositeId != 0 && x.Template.OppositeId == runeEffect.Id));
         }
 
         private EffectInteger GetEffectToDown(EffectInteger runeEffect)
         {
             var effectToImprove = GetEffectToImprove(runeEffect);
-            // recherche de jet exotique
-            var exoticEffect = ItemEffects.Where(x => IsExotic(x) && x != effectToImprove).RandomElementOrDefault();
+            // MYSTIC 17/10 : ordre officiel des lignes qui tombent : d'abord un exo, puis un over, puis une ligne au hasard (plus la
+            // rune est lourde par rapport au poids d'un point de la ligne, plus la ligne a de chances d'être touchée). Le reliquat
+            // (effet 351) n'est jamais une ligne. Les anciens seuils par niveau d'objet (25/50/75/100) sont retirés.
+            var exoticEffect = LignesEffets.Where(x => IsExotic(x) && x != effectToImprove).RandomElementOrDefault();
 
             if (exoticEffect != null)
                 return exoticEffect;
 
-            // recherche de jet overmax
-            var overmaxEffect = ItemEffects.Where(x => IsOverMax(x, runeEffect) && x != effectToImprove).RandomElementOrDefault();
+            var overmaxEffect = LignesEffets.Where(x => IsOverMax(x) && x != effectToImprove).RandomElementOrDefault();
 
             if (overmaxEffect != null)
                 return overmaxEffect;
 
             var rand = new CryptoRandom();
+            var candidats = LignesEffets.Where(x => x != effectToImprove && x.Value != 0).ToArray();
 
-            if (ItemToImprove.Template.Level >= 1 && ItemToImprove.Template.Level <= 50)
+            foreach (var effect in candidats.ShuffleLinq())
             {
-                foreach (var effect in ItemEffects.ShuffleLinq().Where(x => x != effectToImprove))
-                {
-                    if (EffectManager.Instance.GetEffectPower(effect) - EffectManager.Instance.GetEffectPower(runeEffect) < MAX_STAT_POWER_25)
-                        continue;
-
-                    if (rand.NextDouble() <= EffectManager.Instance.GetEffectPower(runeEffect) / Math.Abs(EffectManager.Instance.GetEffectBasePower(effect)))
-                        return effect;
-                }
-            }
-            else if (ItemToImprove.Template.Level >= 51 && ItemToImprove.Template.Level <= 100)
-            {
-                foreach (var effect in ItemEffects.ShuffleLinq().Where(x => x != effectToImprove))
-                {
-                    if (EffectManager.Instance.GetEffectPower(effect) - EffectManager.Instance.GetEffectPower(runeEffect) < MAX_STAT_POWER_50)
-                        continue;
-
-                    if (rand.NextDouble() <= EffectManager.Instance.GetEffectPower(runeEffect) / Math.Abs(EffectManager.Instance.GetEffectBasePower(effect)))
-                        return effect;
-                }
-            }
-            else if (ItemToImprove.Template.Level >= 101 && ItemToImprove.Template.Level <= 150)
-            {
-                foreach (var effect in ItemEffects.ShuffleLinq().Where(x => x != effectToImprove))
-                {
-                    if (EffectManager.Instance.GetEffectPower(effect) - EffectManager.Instance.GetEffectPower(runeEffect) < MAX_STAT_POWER_75)
-                        continue;
-
-                    if (rand.NextDouble() <= EffectManager.Instance.GetEffectPower(runeEffect) / Math.Abs(EffectManager.Instance.GetEffectBasePower(effect)))
-                        return effect;
-                }
-            }
-            else if (ItemToImprove.Template.Level >= 151)
-            {
-                foreach (var effect in ItemEffects.ShuffleLinq().Where(x => x != effectToImprove))
-                {
-                    if (EffectManager.Instance.GetEffectPower(effect) - EffectManager.Instance.GetEffectPower(runeEffect) < MAX_STAT_POWER_100)
-                        continue;
-
-                    if (rand.NextDouble() <= EffectManager.Instance.GetEffectPower(runeEffect) / Math.Abs(EffectManager.Instance.GetEffectBasePower(effect)))
-                        return effect;
-                }
+                var poidsPoint = Math.Abs(EffectManager.Instance.GetEffectBasePower(effect));
+                if (poidsPoint <= 0 || rand.NextDouble() <= EffectManager.Instance.GetEffectPower(runeEffect) / poidsPoint)
+                    return effect;
             }
 
-            return ItemEffects.FirstOrDefault(x => x != effectToImprove);
+            return candidats.RandomElementOrDefault();
         }
 
         private bool IsExotic(EffectBase effect)
@@ -682,45 +656,28 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
             if (effectToImprove != null && !IsExotic(effectToImprove))
                 max = EffectManager.Instance.GetEffectPower(runeEffect.Template) * GetTemplateEffect(effectToImprove).Max;
 
-            if (ItemToImprove.Template.Level >= 1 && ItemToImprove.Template.Level <= 50)
+            // MYSTIC 17/10 : limite officielle : une ligne ne peut pas dépasser 101 de poids, sauf si son jet théorique le permet
+            // (ex. 33 sagesse, 101 force, 404 pods). Au-delà, la rune ne peut pas passer.
+            var poidsApres = (effectToImprove != null ? EffectManager.Instance.GetEffectPower(effectToImprove) : 0) + EffectManager.Instance.GetEffectPower(runeEffect);
+            var limite = parentEffect != null
+                ? Math.Max(LIMITE_POIDS_LIGNE, EffectManager.Instance.GetEffectPower(runeEffect.Template) * Math.Max(parentEffect.Max, parentEffect.Min))
+                : LIMITE_POIDS_LIGNE;
+
+            if (poidsApres > limite)
             {
-                if (effectToImprove != null && (!IsExotic(effectToImprove) ? EffectManager.Instance.GetEffectPower(effectToImprove) + EffectManager.Instance.GetEffectPower(runeEffect) > max + MAX_STAT_POWER_25 : EffectManager.Instance.GetEffectPower(effectToImprove) + EffectManager.Instance.GetEffectPower(runeEffect) > MAX_STAT_POWER_25 && EffectManager.Instance.GetEffectPower(effectToImprove) + EffectManager.Instance.GetEffectPower(runeEffect) > MAX_STAT_POWER_100 || GetExoticPower() > MAX_STAT_POWER_25))
-                {
-                    neutralSuccess = 0;
-                    criticalSuccess = 0;
-                    criticalFailure = 100;
-                    return;
-                }
+                neutralSuccess = 0;
+                criticalSuccess = 0;
+                criticalFailure = 100;
+                return;
             }
-            else if (ItemToImprove.Template.Level >= 51 && ItemToImprove.Template.Level <= 100)
+
+            // MYSTIC 17/10 : exo (ligne absente du jet théorique) avec une rune de poids 30 ou plus (PA, PM, PO, Invo, Cri…) : 1 % de succès
+            if (parentEffect == null && EffectManager.Instance.GetEffectPower(runeEffect) >= POIDS_EXO_DIFFICILE)
             {
-                if (effectToImprove != null && (!IsExotic(effectToImprove) ? EffectManager.Instance.GetEffectPower(effectToImprove) + EffectManager.Instance.GetEffectPower(runeEffect) > max + MAX_STAT_POWER_50 : EffectManager.Instance.GetEffectPower(effectToImprove) + EffectManager.Instance.GetEffectPower(runeEffect) > MAX_STAT_POWER_50 && EffectManager.Instance.GetEffectPower(effectToImprove) + EffectManager.Instance.GetEffectPower(runeEffect) > MAX_STAT_POWER_100 || GetExoticPower() > MAX_STAT_POWER_50))
-                {
-                    neutralSuccess = 0;
-                    criticalSuccess = 0;
-                    criticalFailure = 100;
-                    return;
-                }
-            }
-            else if (ItemToImprove.Template.Level >= 101 && ItemToImprove.Template.Level <= 150)
-            {
-                if (effectToImprove != null && (!IsExotic(effectToImprove) ? EffectManager.Instance.GetEffectPower(effectToImprove) + EffectManager.Instance.GetEffectPower(runeEffect) > max + MAX_STAT_POWER_75 : EffectManager.Instance.GetEffectPower(effectToImprove) + EffectManager.Instance.GetEffectPower(runeEffect) > MAX_STAT_POWER_75 && EffectManager.Instance.GetEffectPower(effectToImprove) + EffectManager.Instance.GetEffectPower(runeEffect) > MAX_STAT_POWER_100 || GetExoticPower() > MAX_STAT_POWER_75))
-                {
-                    neutralSuccess = 0;
-                    criticalSuccess = 0;
-                    criticalFailure = 100;
-                    return;
-                }
-            }
-            else if (ItemToImprove.Template.Level >= 151)
-            {
-                if (effectToImprove != null && (EffectManager.Instance.GetEffectPower(effectToImprove) + EffectManager.Instance.GetEffectPower(runeEffect) > MAX_STAT_POWER_100 || GetExoticPower() > MAX_STAT_POWER_100))
-                {
-                    neutralSuccess = 0;
-                    criticalSuccess = 0;
-                    criticalFailure = 100;
-                    return;
-                }
+                criticalSuccess = 1;
+                neutralSuccess = 0;
+                criticalFailure = 99;
+                return;
             }
 
             double effectStatus;

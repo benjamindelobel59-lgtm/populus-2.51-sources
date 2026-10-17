@@ -34,12 +34,12 @@ namespace Stump.Server.WorldServer.Game.Effects
             { CharacteristicEnum.AP, 100 },
             { CharacteristicEnum.MP, 90 },
             { CharacteristicEnum.RANGE, 51 },
-            { CharacteristicEnum.REFLECT, 30 },
+            { CharacteristicEnum.REFLECT, 5 }, // MYSTIC 17/10 : poids officiel « Do Ren » (était 30)
             { CharacteristicEnum.SUMMONS, 30 },
             { CharacteristicEnum.CRITICAL_HITS, 10 },
             { CharacteristicEnum.HEALS, 10 },
             { CharacteristicEnum.DAMAGE, 20 },
-            { CharacteristicEnum.TRAPS_BONUS_FIXED, 15 },
+            { CharacteristicEnum.TRAPS_BONUS_FIXED, 5 }, // MYSTIC 17/10 : poids officiel « Pi » (était 15)
             { CharacteristicEnum.AP_REDUCTION, 7 },
             { CharacteristicEnum.MP_REDUCTION, 7 },
             { CharacteristicEnum.AP_LOSS_RES, 7 },
@@ -487,12 +487,17 @@ namespace Stump.Server.WorldServer.Game.Effects
 
         public double GetEffectPower(EffectTemplate effect)
         {
+            // MYSTIC 17/10 : arme de chasse (rune Chasse), poids officiel 5
+            if (effect.Id == (int)EffectsEnum.Effect_795)
+                return 5;
+
             return POWER_PER_STAT.ContainsKey((CharacteristicEnum) effect.Characteristic) ? POWER_PER_STAT[(CharacteristicEnum) effect.Characteristic] : DEFAULT_STAT_POWER;
         }
 
         public double GetItemPower(IItem item)
         {
-            return item.Effects.OfType<EffectInteger>().Sum(x => GetEffectPower(x));
+            // MYSTIC 17/10 : le reliquat (effet 351) n'est pas une caractéristique de l'objet
+            return item.Effects.OfType<EffectInteger>().Where(x => x.EffectId != EffectsEnum.Effect_PowerSink).Sum(x => GetEffectPower(x));
         }
 
         public double GetItemMinPower(IItem item)

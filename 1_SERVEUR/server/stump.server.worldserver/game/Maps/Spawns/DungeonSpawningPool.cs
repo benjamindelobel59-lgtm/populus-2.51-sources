@@ -182,6 +182,12 @@ namespace Stump.Server.WorldServer.Game.Maps.Spawns
             // NEKFEU : toujours arriver sur une case utilisable de la salle suivante (case de la base praticable et reliee au reste de la map)
             var cell = nextMap.GetUsableCell(spawn.TeleportCell);
 
+            // MYSTIC 17/10 : la salle suivante n'est plus dans le donjon (boss battu) -> plus de reprise pour les gagnants
+            var donjon = Donjons.RepriseDonjons.Instance.DonjonDe(Map.Id);
+            if (donjon != null && Donjons.RepriseDonjons.Instance.DonjonDe(nextMap.Id) != donjon)
+                foreach (var gagnant in winners.GetAllFighters<CharacterFighter>())
+                    Donjons.RepriseDonjons.Instance.Effacer(gagnant.Character, donjon.Value);
+
             foreach (var fighter in winners.GetAllFighters<CharacterFighter>())
             {
                 fighter.Character.NextMap = nextMap;

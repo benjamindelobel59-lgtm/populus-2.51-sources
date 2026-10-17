@@ -160,4 +160,43 @@ namespace Stump.Server.WorldServer.Database.Npcs.Replies
             return character.Teleport(room, room.GetUsableCell(entry.FirstRoomCellId));
         }
     }
+
+    /// <summary>
+    /// MYSTIC 17/10 : « Reprendre le donjon où vous l'avez quitté » (réponse officielle des gardiens) : visible si le personnage a
+    /// une salle sauvegardée dans ce donjon (RepriseDonjons) ; l'y ramène gratuitement.
+    /// </summary>
+    [Discriminator("DungeonResume", typeof(NpcReply), typeof(NpcReplyRecord))]
+    public class DungeonResumeReply : NpcReply
+    {
+        public DungeonResumeReply(NpcReplyRecord record)
+            : base(record)
+        {
+        }
+
+        public override bool CanShow(Npc npc, Character character)
+        {
+            if (!base.CanShow(npc, character))
+                return false;
+
+            var entry = DungeonEnterReply.GetEntry(npc, Record);
+            return entry != null && Game.Donjons.RepriseDonjons.Instance.Obtenir(character, entry.DungeonId) != null;
+        }
+
+        public override bool Execute(Npc npc, Character character)
+        {
+            if (!base.Execute(npc, character))
+                return false;
+
+            var entry = DungeonEnterReply.GetEntry(npc, Record);
+            var sauvegarde = entry == null ? null : Game.Donjons.RepriseDonjons.Instance.Obtenir(character, entry.DungeonId);
+            var salle = sauvegarde == null ? null : Game.World.Instance.GetMap(sauvegarde.Value.carte);
+            if (salle == null)
+            {
+                character.SendServerMessage("Aucune salle à reprendre dans ce donjon.");
+                return false;
+            }
+
+            return character.Teleport(salle, salle.GetUsableCell(sauvegarde.Value.cellule));
+        }
+    }
 }

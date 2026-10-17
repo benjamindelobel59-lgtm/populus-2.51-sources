@@ -35,6 +35,9 @@ namespace Stump.Server.WorldServer.Game.Fights
         private bool m_started;
         private TimedTimerEntry m_timer;
 
+        // MYSTIC 17/10 : attente maximale après la fin des animations (fin de combat : plus courte)
+        private int m_delaiMax = CheckTimeout;
+
         public ReadyChecker(IFight fight, IEnumerable<CharacterFighter> actors)
         {
             m_fight = fight;
@@ -59,7 +62,7 @@ namespace Stump.Server.WorldServer.Game.Fights
                 ContextHandler.SendGameFightTurnReadyRequestMessage(fighter.Character.Client, m_fight.TimeLine.Current);
             }
 
-            m_timer = m_fight.Map.Area.CallDelayed(Math.Max(0, (int)(m_fight.LastSequenceEndTime - DateTime.Now).TotalMilliseconds) + CheckTimeout, TimedOut);
+            m_timer = m_fight.Map.Area.CallDelayed(Math.Max(0, (int)(m_fight.LastSequenceEndTime - DateTime.Now).TotalMilliseconds) + m_delaiMax, TimedOut);
         }
 
         public void Cancel()
@@ -102,11 +105,19 @@ namespace Stump.Server.WorldServer.Game.Fights
                 NotifyTimeout(m_fighters.ToArray());
         }
 
-        public static ReadyChecker RequestCheck(IFight fight, Action success, Action<CharacterFighter[]> fail)
+        public static ReadyChecker RequestCheck(IFight fight, Action success, Action<CharacterFighter[]> fail) =>
+            RequestCheck(fight, success, fail, CheckTimeout);
+
+        /// <summary>
+        /// MYSTIC 17/10 : délai d'attente au choix. Fin de combat : un joueur mort au début de son tour (poison, glyphe, Bonbombe)
+        /// ne renvoie pas « prêt » -> on attendait 5 s avant de clore le combat (signalé : 4-5 s de latence).
+        /// </summary>
+        public static ReadyChecker RequestCheck(IFight fight, Action success, Action<CharacterFighter[]> fail, int delaiMax)
         {
             // Nekfeu : en one window, la fenêtre d'un perso contrôlé est en arrière-plan (ralentie par Windows)
             // et ses tours sont joués depuis la fenêtre maître → on ne l'attend plus (sinon ~5 s d'attente à chaque tour)
             var checker = new ReadyChecker(fight, fight.GetAllFighters<CharacterFighter>(entry => !entry.HasLeft() && entry.GetOneWindowMaster() == null).ToList());
+            checker.m_delaiMax = delaiMax;
             checker.Success += chk => success();
             checker.Timeout += (chk, laggers) => fail(laggers);
             checker.Start();

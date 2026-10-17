@@ -910,7 +910,8 @@ namespace Stump.Server.WorldServer.Game.Fights
                 ReadyChecker.Cancel();
             }
 
-            ReadyChecker = ReadyChecker.RequestCheck(this, OnFightEnded, actors => OnFightEnded());
+            // MYSTIC 17/10 : 0,8 s après la fin des animations au lieu de 5 s (mort au début de son tour : latence de fin de combat)
+            ReadyChecker = ReadyChecker.RequestCheck(this, OnFightEnded, actors => OnFightEnded(), 800);
         }
 
         public event Action<IFight> FightStarted;
@@ -1434,7 +1435,10 @@ namespace Stump.Server.WorldServer.Game.Fights
 
         protected virtual void OnSummonAdded(SummonedFighter fighter)
         {
-            TimeLine.InsertFighter(fighter, TimeLine.Fighters.IndexOf(fighter.Summoner) + 1);
+            // MYSTIC 17/10 : une invocation peut jouer juste après un autre combattant que son invocateur (Bonbombe : équipe de
+            // la Reine des Voleurs, mais joue juste après le joueur qui l'a fait apparaître)
+            var apres = (fighter as SummonedMonster)?.JoueApres ?? fighter.Summoner;
+            TimeLine.InsertFighter(fighter, TimeLine.Fighters.IndexOf(apres) + 1);
             BindFighterEvents(fighter);
             fighter.OnGetAlive();
 

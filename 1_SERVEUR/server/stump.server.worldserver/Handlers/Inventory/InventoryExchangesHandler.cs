@@ -229,6 +229,10 @@ namespace Stump.Server.WorldServer.Handlers.Inventory
         [WorldHandler(FocusedExchangeReadyMessage.Id)]
         public static void HandleFocusedExchangeReadyMessage(WorldClient client, FocusedExchangeReadyMessage message)
         {
+            // MYSTIC 17/10 : focus du concasseur (avant, ignore)
+            if (client?.Character?.Trader is Game.Exchanges.Craft.Runes.RuneTrader runeTrader)
+                runeTrader.Focus = (int)message.FocusActionId;
+
             HandleExchangeReadyMessage(client, message);
         }
 

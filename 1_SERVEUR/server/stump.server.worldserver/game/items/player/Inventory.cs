@@ -969,6 +969,9 @@ namespace Stump.Server.WorldServer.Game.Items.Player
 
             var copy = ItemManager.Instance.CreatePlayerItem(newOwner, item, amount);
 
+            // MYSTIC 17/10 : comme sur l'officiel, le reliquat de forgemagie (effet 351) est perdu quand l'objet change de propriétaire
+            copy.Effects.RemoveAll(x => x.EffectId == EffectsEnum.Effect_PowerSink);
+
             if (item.Template.TypeId == 97 && (item as MountCertificate).Mount.Behaviors.Contains((int)MountBehaviorEnum.Caméléone))
             {
                 var m_copymount = copy as MountCertificate;

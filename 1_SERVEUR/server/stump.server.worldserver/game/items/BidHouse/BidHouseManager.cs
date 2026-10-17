@@ -56,7 +56,8 @@ namespace Stump.Server.WorldServer.Game.Items.BidHouse
                 SellDate = DateTime.Now,
                 Template = item.Template,
                 Stack = (uint)amount,
-                Effects = new List<EffectBase>(item.Effects),
+                // MYSTIC 17/10 : reliquat de forgemagie (effet 351) perdu à la mise en vente (officiel)
+                Effects = new List<EffectBase>(item.Effects.Where(x => x.EffectId != EffectsEnum.Effect_PowerSink)),
                 IsNew = true
             };
 

@@ -191,6 +191,19 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
                     Database.Insert(itemRecord);
                 }
 
+                // MYSTIC 17/10 : tous les métiers niveau 200 dès la création du personnage
+                var experienceMetier200 = ExperienceManager.Instance.GetJobLevelExperience(200);
+                foreach (var metier in Jobs.JobManager.Instance.EnumerateJobTemplates().Where(x => x.Id != (int)JobEnum.BASE))
+                {
+                    Database.Insert(new Stump.Server.WorldServer.Database.Jobs.JobRecord
+                    {
+                        OwnerId = record.Id,
+                        TemplateId = metier.Id,
+                        Experience = experienceMetier200,
+                        MinLevelCraftSetting = 1
+                    });
+                }
+
                 OnCreatingCharacter(record);
 
                 if (client.Characters == null)

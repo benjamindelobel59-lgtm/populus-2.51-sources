@@ -92,6 +92,13 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells
             protected set;
         }
 
+        /// <summary>MYSTIC 17/10 : vise une autre case (copies d'un effet à plusieurs cases fixes).</summary>
+        public void ViserCase(Cell cellule)
+        {
+            TargetedCell = cellule;
+            TargetedPoint = new MapPoint(cellule);
+        }
+
         public bool Critical
         {
             get;
