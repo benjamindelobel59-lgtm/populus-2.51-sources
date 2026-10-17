@@ -256,7 +256,11 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
                 if(Fight.Fighters.Any(x => actor.Position.Point.IsAdjacentTo(x.Position.Point)))
                     actor.TriggerBuffs(Caster, BuffTriggerType.OnPushDamagedInMelee);
 
-                if (Effect.EffectId != EffectsEnum.Effect_PullForward)
+                // MYSTIC 17/10 : attiree (6, 1022, Attract) = declencheur « MA », poussee = « P » (avant : « MA » inconnu, et une
+                // attirance 1022 / Attract comptait comme une poussee)
+                if (Pull)
+                    actor.TriggerBuffs(Caster, BuffTriggerType.OnPulled);
+                else
                     actor.TriggerBuffs(Caster, BuffTriggerType.OnPushed);
                 actor.TriggerBuffs(Caster, BuffTriggerType.OnMoved);
             }

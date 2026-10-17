@@ -396,6 +396,13 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             set;
         }
 
+        // MYSTIC 17/10 : derniers dommages bruts subis (client 2.51 : lastRawDamageTaken), effets 1124 / 1125
+        public int DernierDommageBrut
+        {
+            get;
+            set;
+        }
+
         // MYSTIC 17/10 : masque de cible « W » (client 2.51 : wasTeleportedInInvalidCellThisTurn), Fuseau / Gousset du Comte Harebourg
         public bool TeleporteSurCaseInvalide
         {
@@ -1009,6 +1016,9 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
                 damage.Amount = (int) (damage.Amount * efficiency);
             }
+
+            // MYSTIC 17/10 : dommages bruts subis (avant reductions), pour les effets 1124 / 1125 (renvoi d'un % de ces dommages)
+            DernierDommageBrut = damage.Amount;
 
             var permanentDamages = CalculateErosionDamage(damage.Amount);
 

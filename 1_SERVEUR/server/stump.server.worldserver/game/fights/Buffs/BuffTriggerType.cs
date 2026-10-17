@@ -67,6 +67,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
         OnTackled, //tF
         OnTackle, //tS
         HaveMoveDuringTurn, // CMP
+        OnPulled, //MA (MYSTIC 17/10 : cible attiree, client 2.51 isPulled)
 
         /* UNKNOWN */
         Unknown_3, //mA

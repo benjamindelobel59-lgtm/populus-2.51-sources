@@ -213,3 +213,9 @@ Cerveaux (passifs officiels 2.51 poses par SortPassif) :
    Capitaine Meno 6793 (grade du monstre) + 6758, Gorgouille 2932.
 SQL 26_gros_chantiers_donjons.sql : Tynril (Hiffe / Helse au niveau de l'element du Tynril), Ush noir ajoute dans la salle d'Ush.
 Non geres (notes) : effets 1124, 1125, declencheur « MA ».
+ - Declencheur « MA » (cible attiree) : BuffTriggerType.OnPulled, TriggerBuff ("MA"), Push.cs envoie OnPulled quand la cible est
+   attiree (effets 6, 1022, Attract) et OnPushed seulement quand elle est poussee. Utilise par Ex Nihilo / Detachement (Ombre),
+   Phorreur de Gloire (Phossile), Injustice, Reves de la Bonta / Brakmar...
+ - Effets 1124 / 1125 (client : SPLASH_RAW_TAKEN_DAMAGE_NEUTRAL / _AIR) : Damage/RenvoiDommagesBruts.cs (NOUVEAU) renvoie #1 % des
+   derniers dommages bruts subis par le lanceur (FightActor.DernierDommageBrut, note avant les reductions) en Neutre / Air sur la
+   zone ; resistances des cibles appliquees, sans bonus du lanceur, sans relancer d'autres renvois.

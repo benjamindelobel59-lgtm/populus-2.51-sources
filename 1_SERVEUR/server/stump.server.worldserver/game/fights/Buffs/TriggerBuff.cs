@@ -52,6 +52,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
             {"mA", BuffTriggerType.Unknown_3},
             {"ML", BuffTriggerType.Unknown_4},
             {"MP", BuffTriggerType.OnPushed},
+            {"MA", BuffTriggerType.OnPulled}, // MYSTIC 17/10 : attiree (Ombre, Silhouette, Phossile...)
             {"MS", BuffTriggerType.Unknown_6},
             {"PT", BuffTriggerType.UsedPortal},
             {"R", BuffTriggerType.OnRangeLost},

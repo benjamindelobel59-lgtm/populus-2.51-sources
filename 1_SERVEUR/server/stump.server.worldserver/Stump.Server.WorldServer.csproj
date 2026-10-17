@@ -1002,6 +1002,7 @@
     <Compile Include="Game\Maps\Cells\MapPoint.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Others\Confusion.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Targets\CaseInvalideCriterion.cs" />
+    <Compile Include="Game\Effects\Handlers\Spells\Damage\RenvoiDommagesBruts.cs" />
     <Compile Include="Game\Maps\Cells\ObjectPosition.cs" />
     <Compile Include="Game\Maps\Cells\Shapes\Cone.cs" />
     <Compile Include="Game\Maps\Cells\Shapes\Cross.cs" />
