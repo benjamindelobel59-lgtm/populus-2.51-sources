@@ -48,7 +48,7 @@ namespace Stump.Server.WorldServer.Database.Npcs.Replies
         {
         }
 
-        internal static DungeonEntryRecord GetEntry(Npc npc)
+        internal static DungeonEntryRecord GetEntry(Npc npc, NpcReplyRecord reponse = null)
         {
             if (m_entries == null)
                 m_entries = WorldServer.Instance.DBAccessor.Database.Query<DungeonEntryRecord>("SELECT * FROM dungeons_entries")
@@ -57,20 +57,37 @@ namespace Stump.Server.WorldServer.Database.Npcs.Replies
             if (npc?.Map == null || !m_entries.TryGetValue(npc.Map.Id, out var entries))
                 return null;
 
+            // MYSTIC 17/10 : un même gardien pour deux donjons (Bibiblop : Clos des Blops / Blop Multicolore) -> le donjon est
+            // indiqué dans Parameter0 de la réponse
+            string param = null;
+            try
+            {
+                param = reponse?.GetParameter<string>(0, true);
+            }
+            catch
+            {
+            }
+            if (int.TryParse(param, out var dungeonId) && dungeonId > 0)
+            {
+                var choisi = entries.FirstOrDefault(x => x.DungeonId == dungeonId);
+                if (choisi != null)
+                    return choisi;
+            }
+
             // NEKFEU : plusieurs donjons sur la meme map -> celui dont le gardien est sur la case du PNJ
             return entries.FirstOrDefault(x => npc.Cell != null && x.KeeperCellId == npc.Cell.Id) ?? entries[0];
         }
 
         // NEKFEU : la reponse n'apparait que sur une map d'entree (Lorkos a le meme dialogue partout dans le labyrinthe)
         public override bool CanShow(Npc npc, Character character) =>
-            base.CanShow(npc, character) && GetEntry(npc) != null;
+            base.CanShow(npc, character) && GetEntry(npc, Record) != null;
 
         public override bool Execute(Npc npc, Character character)
         {
             if (!base.Execute(npc, character))
                 return false;
 
-            var entry = GetEntry(npc);
+            var entry = GetEntry(npc, Record);
             var room = entry == null ? null : Game.World.Instance.GetMap(entry.FirstRoomMapId);
             if (room == null)
             {
@@ -116,7 +133,7 @@ namespace Stump.Server.WorldServer.Database.Npcs.Replies
             if (!base.CanShow(npc, character))
                 return false;
 
-            var entry = DungeonEnterReply.GetEntry(npc);
+            var entry = DungeonEnterReply.GetEntry(npc, Record);
             return entry != null && entry.KeyItemId > 0 && Game.Items.Player.Custom.TrousseauManager.Instance.CanUse(character, entry.DungeonId);
         }
 
@@ -125,7 +142,7 @@ namespace Stump.Server.WorldServer.Database.Npcs.Replies
             if (!base.Execute(npc, character))
                 return false;
 
-            var entry = DungeonEnterReply.GetEntry(npc);
+            var entry = DungeonEnterReply.GetEntry(npc, Record);
             var room = entry == null ? null : Game.World.Instance.GetMap(entry.FirstRoomMapId);
             if (room == null)
             {
