@@ -47,8 +47,11 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.States
                     }
 
                     var actualState = actor.GetBuffs(x => x is StateBuff && ((StateBuff)x).State.Id == state.Id).FirstOrDefault() as StateBuff;
+                    // MYSTIC 17/10 : cible sans l'état -> on passe à la suivante (avant : « return false » arrêtait tout,
+                    // les autres cibles de la zone gardaient l'état ; ex. Monogel de Missiz Frizz : « Congère (Initiateur) »
+                    // jamais retiré -> chaînes d'Antigel relancées plusieurs fois)
                     if (actualState == null)
-                        return false;
+                        continue;
 
 
                     if (Effect.EffectId == EffectsEnum.Effect_DisableState)
