@@ -1,22 +1,23 @@
 # HANDOFF — modifications Mystic (pour le Claude de l'autre dev)
 
 Dépôt de **partage** des modifications faites côté Mystic (serveur Dofus 2.51, émulateur Stump C# .NET 4.8). Ce dépôt n'est relié à
-aucun serveur : il sert seulement à récupérer nos changements. Le détail fichier par fichier, daté, est dans **`LISEZ-MOI.txt`** ;
+aucun serveur : il sert seulement à récupérer nos changements. Le détail fichier par fichier, daté, est dans **`JOURNAL_DES_MODIFICATIONS.txt`** ;
 ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **17/10/2026**.
 
 ## Contenu du dépôt
 | Dossier | Contenu |
 |---|---|
-| `server/`, `core/`, `gui/`, `DofusProtocol/`, `Library/`, `Populus.sln` | sources de l'émulateur (World + Auth), à compiler (VS 2022 / Build Tools, Debug AnyCPU) |
-| `panel-web/populus-admin/` | panel web d'administration (PHP) — créer son propre `inc/config.local.php` (accès base), jamais versionné |
-| `SQL/` | nos scripts pour la base `world`, **à jouer dans l'ordre 01 → 14**, World arrêté, tous rejouables (voir `SQL/LISEZ-MOI.md`) |
-| `CLIENT_64bits/app`, `CLIENT_32bits/app` | **uniquement les fichiers du client modifiés** (même arborescence que le dossier `app` du client) |
-| `OUTILS/` | nos scripts (générateurs SQL Python, outils client, launcher) ; `IP_DU_VPS` remplace l'IP du serveur |
+| `1_SERVEUR/` | sources de l'émulateur (World + Auth) : `Populus.sln`, `server/`, `core/`, `gui/`, `DofusProtocol/`, `Library/` — à compiler (VS 2022 / Build Tools, Debug AnyCPU) |
+| `2_PANEL_WEB/populus-admin/` | panel web d'administration (PHP) — créer son propre `inc/config.local.php` (accès base), jamais versionné |
+| `3_SQL_WORLD/` | nos scripts pour la base `world`, **à jouer dans l'ordre 01 → NN**, World arrêté, tous rejouables (voir `3_SQL_WORLD/LISEZ-MOI.md`) |
+| `4_CLIENT/64bits/app`, `4_CLIENT/32bits/app` | **uniquement les fichiers du client modifiés** (même arborescence que le dossier `app` du client) |
+| `5_OUTILS/` | nos scripts (générateurs SQL Python, outils client, launcher) ; `IP_DU_VPS` remplace l'IP du serveur |
+| `JOURNAL_DES_MODIFICATIONS.txt` | détail daté, fichier par fichier, de toutes les modifications |
 
 ## Appliquer
-1. Compiler `gui/Stump.GUI.WorldConsole` et `gui/Stump.GUI.AuthConsole`, copier les `Stump.*` dans les dossiers des serveurs (serveurs arrêtés).
-2. Base `world` : jouer `SQL/01_…` à `SQL/14_…` dans l'ordre. Certaines tables sont créées au démarrage du World (`nekfeu_trousseau`, `nekfeu_ia_soins`).
-3. Client : copier le contenu de `CLIENT_64bits/app` (ou `CLIENT_32bits/app`) dans le dossier `app` du client.
+1. Compiler `1_SERVEUR/gui/Stump.GUI.WorldConsole` et `Stump.GUI.AuthConsole`, copier les `Stump.*` dans les dossiers des serveurs (serveurs arrêtés).
+2. Base `world` : jouer `3_SQL_WORLD/01_…` puis les suivants dans l'ordre. Certaines tables sont créées au démarrage du World (`nekfeu_trousseau`, `nekfeu_ia_soins`).
+3. Client : copier le contenu de `4_CLIENT/64bits/app` (ou `32bits/app`) dans le dossier `app` du client.
 
 ## Modifications par thème (fichiers principaux)
 - **Donjons** : Kolosso officiel avec reliques (`DungeonSpawningPool`, colonnes `RewardItemId/RewardMax`, critère `POQ<`) ; salles de sortie copiées après les boss (maps 990000001-12) ; salles 8 contre 8 (8 cases par équipe, monstres jusqu'à 8 avant le boss, salles de boss inchangées) — SQL 01, 04, 05, 08-10.

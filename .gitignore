@@ -1,10 +1,6 @@
-# Mystic / Populus : fichiers generes, jamais dans le depot
 bin/
 obj/
 .vs/
 *.user
 *.suo
-packages/
-run/
-# panel web : configuration locale (mots de passe) jamais envoyee
-panel-web/populus-admin/inc/config.local.php
+config.local.php
