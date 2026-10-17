@@ -133,8 +133,8 @@ namespace Stump.Server.WorldServer.Game.Maps.Cells.Shapes
                         OnlyPerpendicular = true
                     };
                     break;
-                case SpellShapeEnum.D:
-                    m_shape = new Cross(0, Radius);
+                case SpellShapeEnum.D: // MYSTIC 17/10 : damier (client fillCheckerboard), avant : croix
+                    m_shape = new Damier(MinRadius, Radius);
                     break;
                 case SpellShapeEnum.C:
                     m_shape = new Lozenge(MinRadius, Radius);

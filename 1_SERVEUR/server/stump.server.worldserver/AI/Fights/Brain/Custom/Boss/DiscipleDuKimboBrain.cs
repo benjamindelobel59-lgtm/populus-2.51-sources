@@ -18,6 +18,10 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
 
         private void OnTurnStarted(IFight obj, FightActor actor)
         {
+            // MYSTIC 17/10 : seulement au début de SON tour (avant : au début du tour de chaque combattant)
+            if (actor != Fighter || !Fighter.IsAlive())
+                return;
+
             if (Fighter.IsSummoned())
             {
                 if(Fighter.HasState((int)SpellStatesEnum.GLYPHE_IMPAIRE_29))

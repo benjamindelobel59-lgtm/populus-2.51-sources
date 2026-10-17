@@ -1027,6 +1027,7 @@
     <Compile Include="Game\Maps\Cells\Shapes\Square.cs" />
     <Compile Include="Game\Maps\Cells\Shapes\Zone.cs" />
     <Compile Include="Game\Maps\Cells\Shapes\CercleInverse.cs" />
+    <Compile Include="Game\Maps\Cells\Shapes\Damier.cs" />
     <Compile Include="Game\Maps\Cells\Triggers\AnimateTrigger.cs" />
     <Compile Include="Game\Maps\Cells\Triggers\CellTrigger.cs" />
     <Compile Include="Game\Maps\Cells\Triggers\CellTriggerManager.cs" />
