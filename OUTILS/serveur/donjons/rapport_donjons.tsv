@@ -1,0 +1,109 @@
+id	nom	maps client	salles avec monstres	salles de fin (client)	salle(s) boss -> destination	diagnostic
+1	Cour du Bouftou Royal	5	5	-	121374211->120063489	OK
+3	Bibliothèque du Maître Corbac	19	17	159121666,159124488	-	salle de fin 159121666 sans sortie | salle de fin 159124488 jamais atteinte (aucune salle n'y teleporte) | salle de fin 159124488 sans sortie
+4	Centre du Labyrinthe du Minotoror	2	1	34473476	34473474->191105026	salle de fin 34473476 jamais atteinte (aucune salle n'y teleporte)
+6	Antre du Dragon Cochon	13	6	72356864,72357888,72358912,72359936,72360960,72359170,72358146	72361984->72363008	salle de fin 72356864 jamais atteinte (aucune salle n'y teleporte) | salle de fin 72357888 jamais atteinte (aucune salle n'y teleporte) | salle de fin 72357888 sans sortie | salle de fin 72358912 jamais atteinte (aucune salle n'y teleporte) | salle de fin 72358912 sans sortie | salle de fin 72359936 jamais atteinte (aucune salle n'y teleporte) | salle de fin 72359936 sans sortie | salle de fin 72360960 jamais atteinte (aucune salle n'y teleporte) | salle de fin 72359170 jamais atteinte (aucune salle n'y teleporte) | salle de fin 72358146 jamais atteinte (aucune salle n'y teleporte)
+7	Donjon des Dragoeufs	5	5	-	27789316->27789318	OK
+8	Grange du Tournesol Affamé	5	5	-	190318592->192937992	OK
+9	Domaine Ancestral	5	5	-	149688320->149689344	OK
+10	Clairière du Chêne Mou	5	5	-	149427200->149428224	OK
+11	Clos des Blops	10	8	166989826,166990848	-	OK
+12	Caverne des Bulbes	6	5	17564929	17565953->10006	salle de fin 17564929 jamais atteinte (aucune salle n'y teleporte)
+13	Donjon des Bworks	7	5	104599041,104599043	104596995->104598019	salle de fin 104599041 jamais atteinte (aucune salle n'y teleporte) | salle de fin 104599041 sans sortie | salle de fin 104599043 jamais atteinte (aucune salle n'y teleporte) | salle de fin 104599043 sans sortie
+14	Grotte du Bworker	5	5	-	104333827->104334851	OK
+15	Tanière du Meulou	8	5	155716610,155717632,155719680	-	salle de fin 155716610 jamais atteinte (aucune salle n'y teleporte) | salle de fin 155716610 sans sortie | salle de fin 155717632 jamais atteinte (aucune salle n'y teleporte) | salle de fin 155717632 sans sortie | salle de fin 155719680 sans sortie
+17	Terrier du Wa Wabbit	5	5	-	116654595->116655619	OK
+18	Pitons Rocheux des Craqueleurs	12	5	106958848,106959872,106959874,106957826,106957828	106960896->106961920	maps absentes du serveur : 106957830,106957832 | salle de fin 106958848 jamais atteinte (aucune salle n'y teleporte) | salle de fin 106958848 sans sortie | salle de fin 106959872 jamais atteinte (aucune salle n'y teleporte) | salle de fin 106959872 sans sortie | salle de fin 106959874 jamais atteinte (aucune salle n'y teleporte) | salle de fin 106959874 sans sortie | salle de fin 106957826 jamais atteinte (aucune salle n'y teleporte) | salle de fin 106957826 sans sortie | salle de fin 106957828 jamais atteinte (aucune salle n'y teleporte) | salle de fin 106957828 sans sortie
+19	Château Ensablé	6	5	193727490	193729536->190056961	salle de fin 193727490 jamais atteinte (aucune salle n'y teleporte) | salle de fin 193727490 sans sortie
+20	Donjon des Firefoux	9	1	16515841,16515584,16515585,16516353,16516096,16516097,16516608,16515072	16516867->16515331	salle de fin 16515841 jamais atteinte (aucune salle n'y teleporte) | salle de fin 16515841 sans sortie | salle de fin 16515584 jamais atteinte (aucune salle n'y teleporte) | salle de fin 16515584 sans sortie | salle de fin 16515585 jamais atteinte (aucune salle n'y teleporte) | salle de fin 16515585 sans sortie | salle de fin 16516353 jamais atteinte (aucune salle n'y teleporte) | salle de fin 16516353 sans sortie | salle de fin 16516096 jamais atteinte (aucune salle n'y teleporte) | salle de fin 16516096 sans sortie | salle de fin 16516097 jamais atteinte (aucune salle n'y teleporte) | salle de fin 16516097 sans sortie | salle de fin 16516608 jamais atteinte (aucune salle n'y teleporte) | salle de fin 16515072 jamais atteinte (aucune salle n'y teleporte) | salle de fin 16515072 sans sortie
+21	Donjon des Forgerons	12	5	87297537,87295491,87294469,87296517,87297541,87294471,87294465	87296515->88086786	salle de fin 87297537 jamais atteinte (aucune salle n'y teleporte) | salle de fin 87297537 sans sortie | salle de fin 87295491 jamais atteinte (aucune salle n'y teleporte) | salle de fin 87295491 sans sortie | salle de fin 87294469 jamais atteinte (aucune salle n'y teleporte) | salle de fin 87294469 sans sortie | salle de fin 87296517 jamais atteinte (aucune salle n'y teleporte) | salle de fin 87296517 sans sortie | salle de fin 87297541 jamais atteinte (aucune salle n'y teleporte) | salle de fin 87297541 sans sortie | salle de fin 87294471 jamais atteinte (aucune salle n'y teleporte) | salle de fin 87294471 sans sortie | salle de fin 87294465 jamais atteinte (aucune salle n'y teleporte) | salle de fin 87294465 sans sortie
+22	Temple du Grand Ougah	11	7	182323203,182322179,182190081,182191105	182192129->182193153	salle de fin 182323203 jamais atteinte (aucune salle n'y teleporte) | salle de fin 182323203 sans sortie | salle de fin 182322179 jamais atteinte (aucune salle n'y teleporte) | salle de fin 182322179 sans sortie | salle de fin 182190081 jamais atteinte (aucune salle n'y teleporte) | salle de fin 182190081 sans sortie | salle de fin 182191105 jamais atteinte (aucune salle n'y teleporte) | salle de fin 182191105 sans sortie
+24	Gelaxième Dimension	11	5	98568707,98566661,98567685,98568709,98566663,98568705	-	salle de fin 98568707 jamais atteinte (aucune salle n'y teleporte) | salle de fin 98568707 sans sortie | salle de fin 98566661 jamais atteinte (aucune salle n'y teleporte) | salle de fin 98566661 sans sortie | salle de fin 98567685 jamais atteinte (aucune salle n'y teleporte) | salle de fin 98567685 sans sortie | salle de fin 98568709 jamais atteinte (aucune salle n'y teleporte) | salle de fin 98568709 sans sortie | salle de fin 98566663 jamais atteinte (aucune salle n'y teleporte) | salle de fin 98566663 sans sortie
+25	Grotte Hesque	5	5	-	5242886->5244422	OK
+26	?	5	0	-	-	maps absentes du serveur : 80743937,80744961,80745985,80747009,80742913 | aucune salle avec monstres en base
+27	Village Kanniboul	5	5	-	157552640->157553664	OK
+28	Canopée du Kimbo	5	5	-	21497858->130549760	OK
+29	Donjon des Kitsounes	17	5	18088966,18089990,18091014,18087944,18088968,18087938,18089986,18091010,18088964,18091012,18087942,18087936	18087940->18089988	salle de fin 18088966 jamais atteinte (aucune salle n'y teleporte) | salle de fin 18088966 sans sortie | salle de fin 18089990 jamais atteinte (aucune salle n'y teleporte) | salle de fin 18089990 sans sortie | salle de fin 18091014 jamais atteinte (aucune salle n'y teleporte) | salle de fin 18091014 sans sortie | salle de fin 18087944 jamais atteinte (aucune salle n'y teleporte) | salle de fin 18087944 sans sortie | salle de fin 18088968 jamais atteinte (aucune salle n'y teleporte) | salle de fin 18088968 sans sortie | salle de fin 18087938 jamais atteinte (aucune salle n'y teleporte) | salle de fin 18087938 sans sortie | salle de fin 18089986 jamais atteinte (aucune salle n'y teleporte) | salle de fin 18089986 sans sortie | salle de fin 18091010 jamais atteinte (aucune salle n'y teleporte) | salle de fin 18091010 sans sortie | salle de fin 18088964 jamais atteinte (aucune salle n'y teleporte) | salle de fin 18088964 sans sortie | salle de fin 18091012 jamais atteinte (aucune salle n'y teleporte) | salle de fin 18087942 jamais atteinte (aucune salle n'y teleporte) | salle de fin 18087942 sans sortie | salle de fin 18087936 jamais atteinte (aucune salle n'y teleporte)
+30	Caverne du Koulosse	12	5	107218944,107219968,107220992,107222016,107223040,107224064,107228160	-	salle de fin 107218944 jamais atteinte (aucune salle n'y teleporte) | salle de fin 107218944 sans sortie | salle de fin 107219968 jamais atteinte (aucune salle n'y teleporte) | salle de fin 107219968 sans sortie | salle de fin 107220992 jamais atteinte (aucune salle n'y teleporte) | salle de fin 107220992 sans sortie | salle de fin 107222016 jamais atteinte (aucune salle n'y teleporte) | salle de fin 107222016 sans sortie | salle de fin 107223040 jamais atteinte (aucune salle n'y teleporte) | salle de fin 107223040 sans sortie | salle de fin 107224064 jamais atteinte (aucune salle n'y teleporte) | salle de fin 107224064 sans sortie | salle de fin 107228160 sans sortie
+31	Antre du Kralamoure Géant	3	3	-	26740736->191105026	OK
+32	Nid du Kwakwa	5	5	-	64753664->64754688	OK
+33	Donjon des Larves	15	5	96995841,96996865,96997889,96997891,96998915,96994821,96995845,96996871,96997893,96997895	96998917->96998919	salle de fin 96995841 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96995841 sans sortie | salle de fin 96996865 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96996865 sans sortie | salle de fin 96997889 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96997889 sans sortie | salle de fin 96997891 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96997891 sans sortie | salle de fin 96998915 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96998915 sans sortie | salle de fin 96994821 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96994821 sans sortie | salle de fin 96995845 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96995845 sans sortie | salle de fin 96996871 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96996871 sans sortie | salle de fin 96997893 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96997893 sans sortie | salle de fin 96997895 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96997895 sans sortie
+34	Maison Fantôme	5	5	-	163582464->139723265	OK
+35	Laboratoire de Brumen Tinctorias	5	5	-	176951296->191105026	OK
+36	Donjon de Nowel	5	5	-	66589184->66590208	OK
+37	Caverne de Nowel	5	5	-	66850816->66851840	OK
+38	Maison du Papa Nowel	5	5	-	66326528->66327552	OK
+39	Cale de l'Arche d'Otomaï	5	5	-	22284290->22285314	OK
+40	Repaire des Pandikazes	5	5	-	17309696->17310720	OK
+41	Goulet du Rasboul	5	5	-	22809602->22810626	OK
+42	Donjon des Rats de Bonta	5	5	-	27000836->27001860	OK
+43	Donjon des Rats de Brâkmar	5	5	-	40110085->40110087	OK
+44	Donjon des Rats du Château d'Amakna	5	5	-	102760963->102761987	OK
+45	Donjon des Scarafeuilles	8	6	94109696,94111746	94115840->94116864	salle de fin 94109696 jamais atteinte (aucune salle n'y teleporte) | salle de fin 94109696 sans sortie | salle de fin 94111746 jamais atteinte (aucune salle n'y teleporte) | salle de fin 94111746 sans sortie
+46	Repaire de Skeunk	8	5	107486208,107479040,107480064	-	salle de fin 107486208 sans sortie | salle de fin 107479040 jamais atteinte (aucune salle n'y teleporte) | salle de fin 107479040 sans sortie | salle de fin 107480064 jamais atteinte (aucune salle n'y teleporte) | salle de fin 107480064 sans sortie
+47	Donjon des Squelettes	6	5	87035394	87033346->82314497	salle de fin 87035394 jamais atteinte (aucune salle n'y teleporte) | salle de fin 87035394 sans sortie
+48	Donjon des Tofus	7	5	96206850,96206852	96209922->88082705	salle de fin 96206850 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96206850 sans sortie | salle de fin 96206852 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96206852 sans sortie
+49	Antre du Blop Multicolore Royal	1	1	-	166990850->166985728	OK
+50	Tofulailler Royal	7	5	96207876,96206854	96209926->96210950	salle de fin 96207876 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96207876 sans sortie | salle de fin 96206854 jamais atteinte (aucune salle n'y teleporte) | salle de fin 96206854 sans sortie
+51	Laboratoire du Tynril	5	5	-	89392130->89393154	OK
+52	Château du Wa Wabbit	5	5	-	116392450->116393474	OK
+53	Salle du Minotot	1	1	-	34472450->34472452	OK
+54	Serre du Royalmouth	5	5	-	55053312->55054336	OK
+55	Excavation du Mansot Royal	5	5	-	56102912->56103936	OK
+56	Épave du Grolandais violent	5	5	-	56365056->56365058	OK
+57	Hypogée de l'Obsidiantre	7	6	57279745	57155841->57157377	salle de fin 57279745 jamais atteinte (aucune salle n'y teleporte)
+58	Tanière Givrefoux	11	6	59515138,59517186,59516928,59517952,59518976	-	salle de fin 59517186 jamais atteinte (aucune salle n'y teleporte) | salle de fin 59517186 sans sortie | salle de fin 59516928 jamais atteinte (aucune salle n'y teleporte) | salle de fin 59516928 sans sortie | salle de fin 59517952 jamais atteinte (aucune salle n'y teleporte)
+59	Antre du Korriandre	5	5	-	62919680->62920704	OK
+60	Cavernes du Kolosso	9	7	61868032,61868034	61868036->61869060	salle de fin 61868032 jamais atteinte (aucune salle n'y teleporte) | salle de fin 61868034 jamais atteinte (aucune salle n'y teleporte)
+61	Antichambre des Gloursons	6	5	62135816	62134792->62136840	salle de fin 62135816 jamais atteinte (aucune salle n'y teleporte) | salle de fin 62135816 sans sortie
+62	Donjon de la mine de Sakaï	5	5	-	57938689->57939713	OK
+63	?	6	0	-	-	maps absentes du serveur : 10224644,10225668,10226692,10226694,10227716,10223620 | aucune salle avec monstres en base
+64	Repaire de Daïgoro	5	5	-	79434241->79435265	OK
+65	?	7	0	-	-	maps absentes du serveur : 14942208,14943232,14944256,14945280,14946304,14947328,14947330 | aucune salle avec monstres en base
+66	Potager d'Halouine	6	5	101192704	-	salle de fin 101192704 sans sortie
+67	Transporteur de Sylargh	6	5	110102528	110101506->110102530	salle de fin 110102528 jamais atteinte (aucune salle n'y teleporte) | salle de fin 110102528 sans sortie
+68	Salons privés de Klime	6	5	110365696	110363650->110364674	salle de fin 110365696 jamais atteinte (aucune salle n'y teleporte) | salle de fin 110365696 sans sortie
+69	Forgefroide de Missiz Frizz	5	5	-	109840899->109841923	OK
+70	Laboratoire de Nileza	5	5	-	109576707->109577731	OK
+71	Donjon du Comte Harebourg	14	5	112198145,112203265,112203269,112203271,112203521,112204545,112204289,112204293,112204295	112203523->112204547	salle de fin 112198145 jamais atteinte (aucune salle n'y teleporte) | salle de fin 112198145 sans sortie | salle de fin 112203265 jamais atteinte (aucune salle n'y teleporte) | salle de fin 112203265 sans sortie | salle de fin 112203269 jamais atteinte (aucune salle n'y teleporte) | salle de fin 112203269 sans sortie | salle de fin 112203271 jamais atteinte (aucune salle n'y teleporte) | salle de fin 112203271 sans sortie | salle de fin 112203521 jamais atteinte (aucune salle n'y teleporte) | salle de fin 112203521 sans sortie | salle de fin 112204545 jamais atteinte (aucune salle n'y teleporte) | salle de fin 112204545 sans sortie | salle de fin 112204289 jamais atteinte (aucune salle n'y teleporte) | salle de fin 112204289 sans sortie | salle de fin 112204293 jamais atteinte (aucune salle n'y teleporte) | salle de fin 112204293 sans sortie | salle de fin 112204295 jamais atteinte (aucune salle n'y teleporte) | salle de fin 112204295 sans sortie
+72	Théâtre de Dramak	7	5	118229250,118229252	118231040->118232064	salle de fin 118229250 jamais atteinte (aucune salle n'y teleporte) | salle de fin 118229250 sans sortie | salle de fin 118229252 jamais atteinte (aucune salle n'y teleporte) | salle de fin 118229252 sans sortie
+73	Aquadôme de Merkator	5	5	-	119277059->119278083	OK
+74	Pyramide d'Ombre	6	5	123211776	123212800->123213824	salle de fin 123211776 jamais atteinte (aucune salle n'y teleporte) | salle de fin 123211776 sans sortie
+75	Grotte de Kanigroula	5	5	-	125831683->125832707	OK
+76	Palais du roi Nidas	1	1	-	129500160->129501184	OK
+77	Fabrique de Malléfisk	1	1	-	130286592->130287616	OK
+79	Galerie du Phossile	1	1	-	130548736->130549760	OK
+80	Volière de la Haute Truche	5	5	-	132911104->132912128	OK
+81	Ring du Capitaine Ekarlatte	1	1	-	136578048->191105026	OK
+82	Cave du Toxoliath	1	1	-	136840192->136841216	OK
+83	Trône de la Cour Sombre	2	2	-	137101312->136056074	OK
+84	Ventre de la Baleine	6	5	140773376	140776448->140777472	salle de fin 140773376 jamais atteinte (aucune salle n'y teleporte) | salle de fin 140773376 sans sortie
+85	Mégalithe de Fraktale	1	1	-	143138823->143139847	OK
+86	Horologium de XLII	1	1	-	143917569->143918593	OK
+87	Œil de Vortex	1	1	-	143393281->143394305	OK
+88	Cache de Kankreblath	7	5	146672640,146672898	146670592->191102980	salle de fin 146672640 jamais atteinte (aucune salle n'y teleporte) | salle de fin 146672640 sans sortie | salle de fin 146672898 jamais atteinte (aucune salle n'y teleporte) | salle de fin 146672898 sans sortie
+89	Antre de la Reine Nyée	5	5	-	149165056->149166080	OK
+90	Crypte de Kardorim	5	5	-	152834048->152835072	OK
+91	Bateau du Chouque	5	5	-	157028352->157029376	OK
+92	Arbre de Moon	5	5	-	157290496->157291520	OK
+93	Miausolée du Pounicheur	1	1	-	161743872->161744896	OK
+94	Plateau de Ush	1	1	-	162004992->162006016	OK
+95	Défi du Chalœil	1	1	-	160564224->160432128	OK
+96	Temple Maudit d'Araknas	4	3	182456320	-	salle de fin 182456320 sans sortie
+97	Vaisseau du Capitaine Meno	5	5	-	169873408->169874432	OK
+98	Temple de Koutoulou	5	5	-	169349120->169350144	OK
+99	Palais de Dantinéa	5	5	-	169611264->169612288	OK
+100	Cimetière des Mastodontes	5	5	-	174330368->174331392	OK
+101	Caverne d'El Piko	5	5	-	174070272->174071808	OK
+102	Boyau du Père Ver	5	5	-	175902208->175903232	OK
+103	Chambre de Tal Kasha	5	5	-	176164864->176165888	OK
+104	Camp du Comte Razof	5	5	-	179572736->179573760	OK
+105	Chapiteau des Magik Riktus	6	5	181670912	-	salle de fin 181670912 sans sortie
+106	Manoir des Katrepat	5	5	-	182718464->182719488	donjon absent de la table dungeons
+107	Belvédère d'Ilyzaelle	5	5	-	184686337->184685313	donjon absent de la table dungeons
+108	Tour de Bethel	5	5	-	187437056->187438080	donjon absent de la table dungeons
+109	Tour de Solar	5	5	-	187957512->187957514	donjon absent de la table dungeons
+110	Brasserie du roi Dazak	5	5	-	195039232->195040256	donjon absent de la table dungeons
+111	?	5	5	-	197660672->197133314	donjon absent de la table dungeons
+112	?	5	5	-	197398528->196870144	donjon absent de la table dungeons
+113	?	5	5	-	106434560->196346371	donjon absent de la table dungeons

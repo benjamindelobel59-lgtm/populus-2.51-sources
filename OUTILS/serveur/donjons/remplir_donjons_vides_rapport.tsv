@@ -1,0 +1,134 @@
+spawn	map	donjon	salle	boss	composition 1-4 joueurs
+76	66585088	Donjon de Nowel	1		Tofu Givré g1, Kipik g1, Tofu Enneigé g1, Ver Glacé g1
+77	66586112	Donjon de Nowel	2		Kipik g2, Tofu Enneigé g2, Ver Glacé g2, Kitsou Nakwatus g2
+78	66587136	Donjon de Nowel	3		Tofu Enneigé g3, Ver Glacé g3, Kitsou Nakwatus g3, Black Tiwabbitus g3
+79	66588160	Donjon de Nowel	4		Ver Glacé g4, Kitsou Nakwatus g4, Black Tiwabbitus g4, Kwakus g4
+80	66589184	Donjon de Nowel	5	Sapik	Sapik g1, Kitsou Nakwatus g5, Black Tiwabbitus g5, Kwakus g5
+170	101188608	Potager d'Halouine	1		Cauchemarakne g1, Champêtrouille g1, Lanverne g1, Chauffe-Soutrille g1
+171	101189632	Potager d'Halouine	2		Champêtrouille g2, Lanverne g2, Chauffe-Soutrille g2, Dévhorreur g2
+172	101190656	Potager d'Halouine	3		Lanverne g3, Chauffe-Soutrille g3, Dévhorreur g3, Cauchemarakne g3
+173	101191680	Potager d'Halouine	4		Chauffe-Soutrille g4, Dévhorreur g4, Cauchemarakne g4, Champêtrouille g4
+174	101193728	Potager d'Halouine	5	Halouine	Halouine g1, Dévhorreur g5, Cauchemarakne g5, Champêtrouille g5
+187	66846720	Caverne de Nowel	1		Bonhomme de Neige g1, Tofu Hiberné g1, Bouboule de Neige g1, Craqueleur des Glaces g1
+188	66847744	Caverne de Nowel	2		Tofu Hiberné g2, Bouboule de Neige g2, Craqueleur des Glaces g2, Ver Getur g2
+189	66848768	Caverne de Nowel	3		Bouboule de Neige g3, Craqueleur des Glaces g3, Ver Getur g3, Minimini Nuit' g3
+190	66849792	Caverne de Nowel	4		Craqueleur des Glaces g4, Ver Getur g4, Minimini Nuit' g4, Abominable Yiti des Neiges g4
+191	66850816	Caverne de Nowel	5	Papa Nowel	Papa Nowel g1, Ver Getur g5, Minimini Nuit' g5, Abominable Yiti des Neiges g5
+214	17302528	Repaire des Pandikazes	1		Pandikaze Aérien g1, Pandikaze Vertige g1, Pandikwakaze g1, Pandulkaze g1
+215	17304576	Repaire des Pandikazes	2		Pandikaze Vertige g2, Pandikwakaze g2, Pandulkaze g2, Guerrier Pandikaze g2
+216	17307648	Repaire des Pandikazes	3		Pandikwakaze g3, Pandulkaze g3, Guerrier Pandikaze g3, Pandikaze g3
+217	17308672	Repaire des Pandikazes	4		Pandulkaze g4, Guerrier Pandikaze g4, Pandikaze g4, Pandikaze Aérien g4
+218	17309696	Repaire des Pandikazes	5	Maître Pandore	Maître Pandore g1, Guerrier Pandikaze g5, Pandikaze g5, Pandikaze Aérien g5
+220	107482112	Repaire de Skeunk	2		Saphira g2, Poupée Affamée g2, Rubise g2, Diamantine g2
+221	107483136	Repaire de Skeunk	3		Poupée Affamée g3, Rubise g3, Diamantine g3, Émeraude g3
+222	107484160	Repaire de Skeunk	4		Rubise g4, Diamantine g4, Émeraude g4, Poupée Émeraude g4
+223	107485184	Repaire de Skeunk	5	Skeunk	Skeunk g1, Diamantine g5, Émeraude g5, Poupée Émeraude g5
+235	18088960	Donjon des Kitsounes	1		Kitsou Nere g1, Kitsou Nae g1, Kitsou Nufeu g1, Kitsou Nakwa g1
+236	18089984	Donjon des Kitsounes	2		Kitsou Nae g2, Kitsou Nufeu g2, Kitsou Nakwa g2, Kitsou Nere g2
+237	18091008	Donjon des Kitsounes	3		Kitsou Nufeu g3, Kitsou Nakwa g3, Kitsou Nere g3, Kitsou Nae g3
+238	18088962	Donjon des Kitsounes	4		Kitsou Nakwa g4, Kitsou Nere g4, Kitsou Nae g4, Kitsou Nufeu g4
+239	18087940	Donjon des Kitsounes	5	Tanukouï San	Tanukouï San g1, Kitsou Nere g5, Kitsou Nae g5, Kitsou Nufeu g5
+245	136578048	Ring du Capitaine Ekarlatte	1	Capitaine Ekarlatte	Capitaine Ekarlatte g1, Kartouche g5, Sramouraï g5, Tromblion g5
+256	16516867	Donjon des Firefoux	1	Péki Péki	Péki Péki g1, Soryo Firefoux g5, Maho Firefoux g5, Yokai Firefoux g5
+267	102760961	Donjon des Rats du Château d'Amakna	1		Rat Goûtant g1, Rat Masseur g1, Rat Colleur g1, Rat Pine g1
+268	102761985	Donjon des Rats du Château d'Amakna	2		Rat Masseur g2, Rat Colleur g2, Rat Pine g2, Rat Fraîchi g2
+269	102763009	Donjon des Rats du Château d'Amakna	3		Rat Colleur g3, Rat Pine g3, Rat Fraîchi g3, Rat Caille g3
+270	102764033	Donjon des Rats du Château d'Amakna	4		Rat Pine g4, Rat Fraîchi g4, Rat Caille g4, Rat Botteur g4
+271	102760963	Donjon des Rats du Château d'Amakna	5	Sphincter Cell	Sphincter Cell g1, Rat Fraîchi g5, Rat Caille g5, Rat Botteur g5
+277	130548736	Galerie du Phossile	1	Phossile	Phossile g1, Métaphorreur g5, Père Phorreur g5, Phozami g5
+294	162004992	Plateau de Ush	1	Ush Galesh	Ush Galesh g1, Chacrebleu g5, Chakichan g5, Chargus g5
+295	59511808	Tanière Givrefoux	1		Maho Givrefoux g1, Soryo Givrefoux g1, Yomi Givrefoux g1, Kami Givrefoux g1
+296	59512832	Tanière Givrefoux	2		Soryo Givrefoux g2, Yomi Givrefoux g2, Kami Givrefoux g2, Yokaï Givrefoux g2
+297	59513856	Tanière Givrefoux	3		Yomi Givrefoux g3, Kami Givrefoux g3, Yokaï Givrefoux g3, Maho Givrefoux g3
+298	59514880	Tanière Givrefoux	4		Kami Givrefoux g4, Yokaï Givrefoux g4, Maho Givrefoux g4, Soryo Givrefoux g4
+300	59515904	Tanière Givrefoux	1	Tengu Givrefoux	Tengu Givrefoux g1, Maho Givrefoux g5, Soryo Givrefoux g5, Yomi Givrefoux g5
+301	59516162	Tanière Givrefoux	1	Fuji Givrefoux Nourricière	Fuji Givrefoux Nourricière g1, Maho Givrefoux g5, Soryo Givrefoux g5, Yomi Givrefoux g5
+302	143917569	Horologium de XLII	1	XLII	XLII g1, Vindeux g5, Trantroa g5, Seith g5
+303	176030208	Boyau du Père Ver	1		Trémorse g1, Masticroc g1, Morsquale g1, Cycloporth g1
+304	175899136	Boyau du Père Ver	2		Masticroc g2, Morsquale g2, Cycloporth g2, Pikténia g2
+305	175900160	Boyau du Père Ver	3		Morsquale g3, Cycloporth g3, Pikténia g3, Trémorse g3
+306	175901184	Boyau du Père Ver	4		Cycloporth g4, Pikténia g4, Trémorse g4, Masticroc g4
+307	175902208	Boyau du Père Ver	5	Père Ver	Père Ver g1, Pikténia g5, Trémorse g5, Masticroc g5
+308	104333825	Grotte du Bworker	1		Bwork Élémental de Feu g1, Bwork Élémental d'Eau g1, Bwork Élémental d'Air g1, Bwork Élémental de Terre g1
+309	104334849	Grotte du Bworker	2		Bwork Élémental d'Eau g2, Bwork Élémental d'Air g2, Bwork Élémental de Terre g2, Cybwork g2
+310	104335873	Grotte du Bworker	3		Bwork Élémental d'Air g3, Bwork Élémental de Terre g3, Cybwork g3, Mama Bwork g3
+311	104336897	Grotte du Bworker	4		Bwork Élémental de Terre g4, Cybwork g4, Mama Bwork g4, Bwork Élémental de Feu g4
+312	104333827	Grotte du Bworker	5	Bworker	Bworker g1, Cybwork g5, Mama Bwork g5, Bwork Élémental de Feu g5
+313	182327297	Temple du Grand Ougah	1		Tromperelle g1, Champaknyde g1, Champodonte g1, Champmane g1
+314	182326273	Temple du Grand Ougah	2		Champaknyde g2, Champodonte g2, Champmane g2, Champbis g2
+315	182325249	Temple du Grand Ougah	3		Champodonte g3, Champmane g3, Champbis g3, Champ à Gnons g3
+316	182324225	Temple du Grand Ougah	4		Champmane g4, Champbis g4, Champ à Gnons g4, Champa Explosif g4
+317	182323201	Temple du Grand Ougah	5		Champbis g5, Champ à Gnons g5, Champa Explosif g5, Champ Champ g5
+318	182322177	Temple du Grand Ougah	6		Champ à Gnons g5, Champa Explosif g5, Champ Champ g5, Tromperelle g5
+319	182192129	Temple du Grand Ougah	7	Ougah	Ougah g1, Champa Explosif g5, Champ Champ g5, Tromperelle g5
+323	66322432	Maison du Papa Nowel	1		Cadob'Omb g1, Mini Nuit' g1, Cadob' g1, Peluche Tofu g1
+324	66323456	Maison du Papa Nowel	2		Mini Nuit' g2, Cadob' g2, Peluche Tofu g2, Peluche Bouftou g2
+325	66324480	Maison du Papa Nowel	3		Cadob' g3, Peluche Tofu g3, Peluche Bouftou g3, Peluche Wabbit g3
+326	66325504	Maison du Papa Nowel	4		Peluche Tofu g4, Peluche Bouftou g4, Peluche Wabbit g4, Sakai Firefoux g4
+327	66326528	Maison du Papa Nowel	5	Père Fwetar	Père Fwetar g1, Peluche Bouftou g5, Peluche Wabbit g5, Sakai Firefoux g5
+328	62915584	Antre du Korriandre	1		Fistulor g1, Fongeur g1, Abrazif g1, Mérulette g1
+329	62916608	Antre du Korriandre	2		Fongeur g2, Abrazif g2, Mérulette g2, Dramanite g2
+330	62917632	Antre du Korriandre	3		Abrazif g3, Mérulette g3, Dramanite g3, Fistulor g3
+331	62918656	Antre du Korriandre	4		Mérulette g4, Dramanite g4, Fistulor g4, Fongeur g4
+332	62919680	Antre du Korriandre	5	Korriandre	Korriandre g1, Dramanite g5, Fistulor g5, Fongeur g5
+333	136840192	Cave du Toxoliath	1	Toxoliath	Toxoliath g1, Puceronde g5, Lucrane g5, Éperfide g5
+334	182453248	Temple Maudit d'Araknas	1		Shushu Yneur g1, Shushu Marreur g1, Shushu Picca g1, Shushu Bidou g1
+335	182454272	Temple Maudit d'Araknas	2		Shushu Marreur g2, Shushu Picca g2, Shushu Bidou g2, Shushu Yneur g2
+336	182455296	Temple Maudit d'Araknas	3	Qu'Tan	Qu'Tan g1, Shushu Picca g5, Shushu Bidou g5, Shushu Yneur g5
+337	61865984	Cavernes du Kolosso	2		Wolvero g2, Croleur g2, Fleuro g2, Blérice g2
+338	61867008	Cavernes du Kolosso	3		Croleur g3, Fleuro g3, Blérice g3, Blérauve g3
+339	61868036	Cavernes du Kolosso	4	Kolosso	Kolosso g1, Fleuro g5, Blérice g5, Blérauve g5
+340	62130696	Antichambre des Gloursons	1		Boulglours g1, Gloursaya g1, Glourmand g1, Glouragan g1
+341	62131720	Antichambre des Gloursons	2		Gloursaya g2, Glourmand g2, Glouragan g2, Meliglours g2
+342	62132744	Antichambre des Gloursons	3		Glourmand g3, Glouragan g3, Meliglours g3, Apériglours g3
+343	62133768	Antichambre des Gloursons	4		Glouragan g4, Meliglours g4, Apériglours g4, Boulglours g4
+344	62134792	Antichambre des Gloursons	5	Glourséleste	Glourséleste g1, Meliglours g5, Apériglours g5, Boulglours g5
+345	57934593	Donjon de la mine de Sakaï	1		Sapeur g1, Ouilleur g1, Marôdeur g1, Perkü g1
+346	57935617	Donjon de la mine de Sakaï	2		Ouilleur g2, Marôdeur g2, Perkü g2, Courtilieur g2
+347	57936641	Donjon de la mine de Sakaï	3		Marôdeur g3, Perkü g3, Courtilieur g3, Gobus g3
+348	57937665	Donjon de la mine de Sakaï	4		Perkü g4, Courtilieur g4, Gobus g4, Gobosteur g4
+349	57938689	Donjon de la mine de Sakaï	5	Grolloum	Grolloum g1, Courtilieur g5, Gobus g5, Gobosteur g5
+350	123207680	Pyramide d'Ombre	1		Panterreur g1, Brutopak g1, Caznoar g1, Sombléro g1
+351	123208704	Pyramide d'Ombre	2		Brutopak g2, Caznoar g2, Sombléro g2, Noctulule g2
+352	123209728	Pyramide d'Ombre	3		Caznoar g3, Sombléro g3, Noctulule g3, Panterreur g3
+353	123210752	Pyramide d'Ombre	4		Sombléro g4, Noctulule g4, Panterreur g4, Brutopak g4
+354	123212800	Pyramide d'Ombre	5	Ombre	Ombre g1, Noctulule g5, Panterreur g5, Brutopak g5
+355	179568640	Camp du Comte Razof	1		Chevrotine g1, Brokouillon g1, Nemroz g1, Crâmbo g1
+356	179569664	Camp du Comte Razof	2		Brokouillon g2, Nemroz g2, Crâmbo g2, Viandargh g2
+357	179570688	Camp du Comte Razof	3		Nemroz g3, Crâmbo g3, Viandargh g3, Chevrotine g3
+358	179571712	Camp du Comte Razof	4		Crâmbo g4, Viandargh g4, Chevrotine g4, Brokouillon g4
+359	179572736	Camp du Comte Razof	5	Comte Razof	Comte Razof g1, Viandargh g5, Chevrotine g5, Brokouillon g5
+380	112201217	Donjon du Comte Harebourg	1		Strigide g1, Cycloïde g1, Sinistrofu g1, Nocturlabe g1
+381	112202241	Donjon du Comte Harebourg	2		Cycloïde g2, Sinistrofu g2, Nocturlabe g2, Granduk g2
+382	112199169	Donjon du Comte Harebourg	3		Sinistrofu g3, Nocturlabe g3, Granduk g3, Strigide g3
+383	112200193	Donjon du Comte Harebourg	4		Nocturlabe g4, Granduk g4, Strigide g4, Cycloïde g4
+384	112203523	Donjon du Comte Harebourg	5	Comte Harebourg	Comte Harebourg g1, Granduk g5, Strigide g5, Cycloïde g5
+390	129500160	Palais du roi Nidas	1	Roi Nidas	Roi Nidas g1, Barbétoal g5, Lévitrof g5, Paspartou g5
+391	137102336	Trône de la Cour Sombre	1		Terristocrate g1, Doublure g1, Bourôliste g1, Magouille g1
+397	143393281	Œil de Vortex	1	Vortex	Vortex g1, Méjaire g5, Harpille g5, Buboxor g5
+398	160564224	Défi du Chalœil	1	Chalœil	Chalœil g1, Cavalier Chanceux g5, Valet Veinard g5, Dame du Hasard g5
+399	169869312	Vaisseau du Capitaine Meno	1		Crabe Yoloniste g1, Gambaf g1, Mantaze g1, Tilamproie g1
+400	169870336	Vaisseau du Capitaine Meno	2		Gambaf g2, Mantaze g2, Tilamproie g2, Mol Usk g2
+401	169871360	Vaisseau du Capitaine Meno	3		Mantaze g3, Tilamproie g3, Mol Usk g3, Crabe Yoloniste g3
+402	169872384	Vaisseau du Capitaine Meno	4		Tilamproie g4, Mol Usk g4, Crabe Yoloniste g4, Gambaf g4
+403	169873408	Vaisseau du Capitaine Meno	5	Capitaine Meno	Capitaine Meno g1, Mol Usk g5, Crabe Yoloniste g5, Gambaf g5
+409	169607168	Palais de Dantinéa	1		Poulpée g1, Tryde g1, Rilur g1, Diondin g1
+410	169608192	Palais de Dantinéa	2		Tryde g2, Rilur g2, Diondin g2, Tourthon g2
+411	169609216	Palais de Dantinéa	3		Rilur g3, Diondin g3, Tourthon g3, Poulpée g3
+412	169610240	Palais de Dantinéa	4		Diondin g4, Tourthon g4, Poulpée g4, Tryde g4
+413	169611264	Palais de Dantinéa	5	Dantinéa	Dantinéa g1, Tourthon g5, Poulpée g5, Tryde g5
+419	182714368	Manoir des Katrepat	1		Kérigoule g1, Gouligane g1, Goultime g1, Pipisteuse g1
+420	182715392	Manoir des Katrepat	2		Gouligane g2, Goultime g2, Pipisteuse g2, Goulafre g2
+421	182716416	Manoir des Katrepat	3		Goultime g3, Pipisteuse g3, Goulafre g3, Kérigoule g3
+422	182717440	Manoir des Katrepat	4		Pipisteuse g4, Goulafre g4, Kérigoule g4, Gouligane g4
+423	182718464	Manoir des Katrepat	5	Anerice la Shushess	Anerice la Shushess g1, Goulafre g5, Kérigoule g5, Gouligane g5
+434	187957506	Tour de Solar	1		Trépavois g1, Hacharné g1, Moribombe g1, Halbardent g1
+435	187957508	Tour de Solar	2		Hacharné g2, Moribombe g2, Halbardent g2, Klémort g2
+436	187957248	Tour de Solar	3		Moribombe g3, Halbardent g3, Klémort g3, Trépavois g3
+437	187957510	Tour de Solar	4		Halbardent g4, Klémort g4, Trépavois g4, Hacharné g4
+438	187957512	Tour de Solar	5	Solar	Solar g1, Klémort g5, Trépavois g5, Hacharné g5
+439	195035136	Brasserie du roi Dazak	1		Boufbos g1, Barbélier g1, Kasrok g1, Vatenbière g1
+440	195036160	Brasserie du roi Dazak	2		Barbélier g2, Kasrok g2, Vatenbière g2, Tanklume g2
+441	195037184	Brasserie du roi Dazak	3		Kasrok g3, Vatenbière g3, Tanklume g3, Boufbos g3
+442	195038208	Brasserie du roi Dazak	4		Vatenbière g4, Tanklume g4, Boufbos g4, Barbélier g4
+443	195039232	Brasserie du roi Dazak	5	Dazak Martegel	Dazak Martegel g1, Tanklume g5, Boufbos g5, Barbélier g5

@@ -1,0 +1,6 @@
+-- Annulation de kolosso.sql : remettre les tables d'AVANT depuis une sauvegarde (mysqldump) faite juste avant l'application.
+-- En local : _SAUVEGARDES/BDD_locale/world_8tables-avant-kolosso-officiel.sql-<date> (tables completes)
+--   mysql world < cette_sauvegarde
+--   puis : ALTER TABLE monsters_spawns_dungeons DROP COLUMN RewardItemId, DROP COLUMN RewardMax;  (si la sauvegarde ne les avait pas)
+-- Sur le VPS : faire la meme sauvegarde AVANT de passer kolosso.sql :
+--   mysqldump world interactives_spawns_skills interactives_skills monsters_spawns_dungeons monsters_spawns_dungeons_groups npcs_actions npcs_replies dungeons_entries dungeons_exits > avant-kolosso.sql

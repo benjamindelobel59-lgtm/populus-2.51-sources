@@ -1,0 +1,81 @@
+2	Bibliothèque du Maître Corbac	158334976	312	-	-	-	ambigu : 3405 Natacha Manka(3), 774 Virgil(3), 183 Oto Mustam(3), 3291 Markaris(2)
+3	Centre du Labyrinthe du Minotoror	34473220	281	783	Lorkos	2838:Accepter et utiliser la clef du labyrinthe. | 2844:Entrer dans le labyrinthe. | 2845:Demander comment rentrer dans le labyrinthe | 6610:Accepter et utiliser le trousseau de clefs. | 6625:Affronter le Minotot et utiliser le trousseau de clefs.	deja sur la map
+4	Antre du Dragon Cochon	72221696	280	784	Fwoued	2847:Présenter la clef et rentrer | 2856:Donner les deux clefs et entrer. | 6626:Utiliser le trousseau et la clef pour entrer. | 8787:Utiliser uniquement le trousseau et entrer.	deja sur la map
+6	Grange du Tournesol Affamé	192937992	351	-	-	-	ambigu : 3439 Maître Yado(1), 1285 Truffo(1), 780 Mawy Ingalsse(1), 183 Oto Mustam(1)
+10	Caverne des Bulbes	10006	226	1165	Iturik	6638:Donner la clef et entrer. | 6639:Utiliser le trousseau de clefs.	deja sur la map
+11	Donjon des Bworks	104862211	341	-	-	-	ambigu : 2892 Lykhen Lesurviven(1), 775 Bowork(1)
+12	Grotte du Bworker	172493057	280	-	-	-	ambigu : 1711 Foya(1), 712 Bworkie(1)
+13	Tanière du Meulou	171706891	394	3724	Nosya la Ronge	32212:Entrer dans le tunnel pour rejoindre la Gorge des Vents Hurlants. | 32213:Entrer dans le tunnel sans tarder.	texte (2 mots : taniere,meulou)
+14	Terrier du Wa Wabbit	106694158	283	-	-	-	ambigu : 2167 Captain Amakna(1), 2146 Betamoche(1), 1013 Grassimore(1), 930 Docteur Nauh(1)
+15	Pitons Rocheux des Craqueleurs	185861634	284	-	-	-	ambigu : 2314 Kanish(1), 1010 Merlan l'Enchaîneur(1), 930 Docteur Nauh(1), 772 Krakotte(1)
+16	Château Ensablé	190056961	280	798	Capitaine Igloute	2944:Donner la clef et entrer. | 6617:Utiliser le trousseau de clefs. | 38230:Préciser que vous voulez entrer dans le Château Ensablé. | 38235:Donner la clef et entrer. | 38238:Utiliser le trousseau de clefs.	texte (2 mots : chateau,ensable)
+17	Donjon des Firefoux	13613	280	709	Berthawa	2579:Entrer dans le donjon.	deja sur la map
+18	Donjon des Forgerons	88086786	280	183	Oto Mustam	766:Donner la clef.	texte (1 mots : forgerons)
+19	Temple du Grand Ougah	181146624	280	-	-	-	ambigu : 3105 Absolum(3), 679 Ebru of El(3), 3712 Chalcas(2), 3456 Rosal(2)
+20	Gelaxième Dimension	88084997	280	183	Oto Mustam	766:Donner la clef.	texte (2 mots : gelaxieme,dimension)
+21	Grotte Hesque	161295	269	941	Tina Montini	3668:Donner la clef et entrer. | 6620:Utiliser le trousseau de clefs.	deja sur la map
+23	Village Kanniboul	156499971	396	-	-	-	ambigu : 1384 Gentil Organisateur Kanniboul(2), 183 Oto Mustam(2), 151 Gropinson Cruaulé(2), 3105 Absolum(1)
+24	Canopée du Kimbo	25693696	280	946	Chachka	3685:Utiliser la clef. | 8909:Utiliser le trousseau de clefs.	deja sur la map
+25	Donjon des Kitsounes	16678	266	-	-	-	aucun
+26	Caverne du Koulosse	139784	283	754	Gardien Koalak	2742:Entrer dans la caverne. | 6607:Utiliser le trousseau de clefs.	deja sur la map
+27	Antre du Kralamoure Géant	162056	294	-	-	-	ambigu : 2892 Lykhen Lesurviven(2), 946 Chachka(2), 798 Capitaine Igloute(2), 770 Nikos Monote(2)
+28	Nid du Kwakwa	185861122	280	183	Oto Mustam	766:Donner la clef.	texte (1 mots : kwakwa)
+30	Maison Fantôme	139723265	407	-	-	-	ambigu : 1387 Gentil Organisateur Chafer(2), 183 Oto Mustam(2), 3591 Shadout Maine(1), 3105 Absolum(1)
+31	Laboratoire de Brumen Tinctorias	177079296	295	1410	Tassa	8705:Demander à entrer dans la cave. | 8706:Donner la clef. | 8707:Donner la clef. | 8708:Utiliser le trousseau de clefs.	texte (2 mots : laboratoire,brumen,tinctorias)
+32	Donjon de Nowel	66061569	338	-	-	-	ambigu : 1415 Nicolas Nowel(1), 795 Hector Nowel(1)
+33	Caverne de Nowel	66192641	280	-	-	-	ambigu : 1415 Nicolas Nowel(1), 795 Hector Nowel(1)
+34	Maison du Papa Nowel	66060545	280	-	-	-	ambigu : 1415 Nicolas Nowel(3), 795 Hector Nowel(3), 183 Oto Mustam(2), 101 Loopine(2)
+35	Cale de l'Arche d'Otomaï	22546944	294	942	Capitaine Flams	3673:Utiliser la clef. | 8936:Utiliser le trousseau de clefs.	deja sur la map
+36	Repaire des Pandikazes	9508	280	706	Mamowa	2576:Donner la clef et entrer. | 6603:Utiliser le trousseau de clefs.	deja sur la map
+37	Goulet du Rasboul	89916416	339	945	Razbitume	3682:Utiliser la clef. | 8941:Utiliser le trousseau de clefs.	texte (2 mots : goulet,rasboul)
+38	Donjon des Rats de Bonta	25035524	295	799	Portier du Donjon des Rats de Bonta	2947:Donner la clef et entrer. | 6619:Utiliser le trousseau de clefs.	deja sur la map
+40	Donjon des Rats du Château d'Amakna	101714451	256	818	Aperirel	3032:Donner la clef et entrer dans le donjon. | 8847:Utiliser le trousseau de clefs.	texte (3 mots : rats,chateau,d'amakna)
+41	Donjon des Scarafeuilles	88080387	364	781	El Scarador	2803:Donner la clef et entrer. | 6614:Utiliser le trousseau de clefs.	texte (1 mots : scarafeuilles)
+42	Repaire de Skeunk	63310595	280	758	Kakolak	2762:Utiliser le trousseau de clefs. | 15919:Donner la clef et entrer.	deja sur la map
+43	Donjon des Squelettes	87032320	353	-	-	-	ambigu : 3373 Marty Makzap(1), 2146 Betamoche(1)
+44	Tofulailler Royal	96338944	340	778	Kazy Ingalsse	2798:Donner la clef du Tofulailler Royal. | 6630:Utiliser le trousseau de clefs.	texte (2 mots : tofulailler,royal)
+46	Tofulailler Royal	96338944	340	778	Kazy Ingalsse	2798:Donner la clef du Tofulailler Royal. | 6630:Utiliser le trousseau de clefs.	texte (2 mots : tofulailler,royal)
+47	Laboratoire du Tynril	63964672	280	943	Mulèze	3678:Utiliser la clef. | 8960:Utiliser le trousseau de clefs.	deja sur la map
+48	Château du Wa Wabbit	99614979	280	-	-	-	ambigu : 2167 Captain Amakna(2), 818 Aperirel(2), 2146 Betamoche(1), 1155 Annapelle(1)
+49	Salle du Minotot	34473476	281	783	Lorkos	2838:Accepter et utiliser la clef du labyrinthe. | 2844:Entrer dans le labyrinthe. | 2845:Demander comment rentrer dans le labyrinthe | 6610:Accepter et utiliser le trousseau de clefs. | 6625:Affronter le Minotot et utiliser le trousseau de clefs.	texte (1 mots : minotot)
+56	Cavernes du Kolosso	54164293	336	1393	Professeur Xa	8474:Donner la clef. | 8475:Utiliser le trousseau de clefs.	deja sur la map
+58	Donjon de la mine de Sakaï	54159661	322	1363	Hywan Kenoby	8145:Donner la clef pour entrer. | 8146:Utiliser le trousseau de clefs.	deja sur la map
+62	Potager d'Halouine	101187584	338	1768	Disciple d'Asid	14423:Demander à entrer. | 14424:Donner la Clef du Potager d'Halouine. | 14425:Utiliser le trousseau de clefs. | 39143:Donner la Clef du Potager d'Halouine. | 39146:Utiliser le trousseau de clefs.	texte (2 mots : potager,d'halouine)
+63	Transporteur de Sylargh	108793118	280	2005	Hiroze	16968:Donner la clef. | 16969:Utiliser le trousseau de clefs.	texte (2 mots : transporteur,sylargh)
+64	Salons privés de Klime	108925717	280	-	-	-	ambigu : 2006 Domie Natrix(1), 789 Ziho(1), 679 Ebru of El(1)
+65	Forgefroide de Missiz Frizz	108927238	257	-	-	-	ambigu : 2007 Noo(2), 1393 Professeur Xa(2), 646 Henual(2)
+66	Laboratoire de Nileza	108794630	372	-	-	-	ambigu : 3456 Rosal(1), 3291 Markaris(1), 2146 Betamoche(1), 2007 Noo(1)
+67	Donjon du Comte Harebourg	112460048	294	-	-	-	ambigu : 2167 Captain Amakna(2), 2008 Dorléans(2), 1393 Professeur Xa(2), 1260 Éric Azaraille(2)
+68	Théâtre de Dramak	117965057	280	2167	Captain Amakna	19671:Dire que Lumino vous a demandé d'entrer dans la Dimension Obscure.	texte (2 mots : theatre,dramak)
+69	Aquadôme de Merkator	117706767	323	2196	Théo Dolith	19519:Donner la clef et franchir les portes. | 19520:Utiliser le trousseau de clefs. | 19521:Renoncer à entrer et s'en aller. | 19527:Donner la clef et franchir les portes. | 19528:Utiliser le trousseau de clefs. | 19529:Renoncer à entrer et s'en aller. | 19535:Donner la clef et franchir les portes. | 19536:Utiliser le trousseau de clefs.	texte (2 mots : aquadome,merkator)
+70	Pyramide d'Ombre	121636870	280	2215	Vhé	19715:Donner la clef et entrer. | 19716:Utiliser le trousseau de clefs.	texte (2 mots : pyramide,d'ombre)
+72	Palais du roi Nidas	129499136	352	2351	Léonard	21433:Donner la clef et entrer. | 21436:Entrer dans la salle du trône. | 29568:Entrer sans utiliser de clef.	texte (2 mots : palais,nidas)
+73	Fabrique de Malléfisk	130285568	338	2353	Inès Karcel	21153:Donner la clef et entrer. | 29570:Entrer sans utiliser de clef.	texte (2 mots : fabrique,mallefisk)
+74	Galerie du Phossile	130547712	352	2352	Dyane Phossé	21222:Donner la clef et entrer. | 29569:Entrer sans utiliser de clef.	texte (2 mots : galerie,phossile)
+75	Volière de la Haute Truche	133171202	356	2436	Orno Tolig	21570:Donner la clef et entrer. | 21573:Utiliser le trousseau de clefs.	texte (3 mots : voliere,haute,truche)
+76	Ring du Capitaine Ekarlatte	136577024	352	-	-	-	ambigu : 4057 Ilyzaelle(1), 4029 Oumou Skaille(1), 3266 Prosper Meraimée(1), 3256 Nora Nax(1)
+77	Cave du Toxoliath	136839168	309	2445	Starchy Tropeur	21912:Donner la clef et entrer. | 29566:Entrer sans utiliser de clef.	texte (2 mots : cave,toxoliath)
+78	Trône de la Cour Sombre	136056074	340	-	-	-	ambigu : 1010 Merlan l'Enchaîneur(3), 943 Mulèze(3), 4057 Ilyzaelle(2), 4029 Oumou Skaille(2)
+79	Ventre de la Baleine	140641537	357	2636	Mathilde Oualtgniz	22747:Demander à pénétrer dans la baleine. | 22750:Donner la clef et entrer. | 22753:Utiliser le trousseau de clefs.	texte (2 mots : ventre,baleine)
+80	Mégalithe de Fraktale	144969990	379	2661	Hypéria Gritch	23376:Donner la clef et entrer. | 24045:Demander à entrer dans le Mégalithe pour accéder à la pierre de Méthée. | 29563:Entrer sans utiliser de clef. | 43318:Dire que vous ne voulez pas affronter Fraktale à moins d'y être forcé et demander à entrer dans son sanctuaire sans utiliser de clef. | 43321:Pénétrer dans le Mégalithe. | 43322:Renouveler votre demande pour entrer dans le Mégalithe.	texte (2 mots : megalithe,fraktale)
+81	Horologium de XLII	144707846	392	2660	Gardien de l'Horologium	23144:Donner la clef et entrer. | 29564:Entrer sans utiliser de clef.	texte (2 mots : horologium,xlii)
+82	Œil de Vortex	144445702	380	2662	Tessie Oude	23354:Donner la clef et entrer. | 29562:Entrer sans utiliser de clef.	texte (1 mots : vortex)
+83	Cache de Kankreblath	146676736	381	-	-	-	ambigu : 4337 Montrakwartz(1), 4057 Ilyzaelle(1), 4029 Oumou Skaille(1), 3712 Chalcas(1)
+84	Antre de la Reine Nyée	149159936	340	183	Oto Mustam	766:Donner la clef.	texte (2 mots : reine,nyee)
+86	Bateau du Chouque	158078976	367	-	-	-	ambigu : 4624 Tressa Vert-de-gris(1), 4029 Oumou Skaille(1), 3015 Employée de l'agence Touriste(1), 1357 Fantômahawk(1)
+87	Arbre de Moon	156499968	326	-	-	-	ambigu : 3015 Employée de l'agence Touriste(2), 3007 Servante de Moon(2), 4248 Éphiginie(1), 2218 Toungousa(1)
+88	Miausolée du Pounicheur	161742848	323	3097	Caporal Tomonte	27270:Donner la clef et entrer. | 29561:Entrer sans utiliser de clef.	texte (2 mots : miausolee,pounicheur)
+89	Plateau de Ush	160960771	283	3103	Chalfred	27276:Donner la clef et entrer. | 29560:Entrer sans utiliser de clef.	texte (1 mots : plateau)
+90	Défi du Chalœil	160565248	280	-	-	-	ambigu : 3105 Absolum(2), 3099 Filouface(2), 1394 Willy La Bille(2), 183 Oto Mustam(2)
+91	Temple Maudit d'Araknas	182452224	310	-	-	-	ambigu : 3192 Henri Tohis(2), 1260 Éric Azaraille(2), 789 Ziho(2), 422 Limine Bryone(2)
+92	Vaisseau du Capitaine Meno	169084930	338	-	-	-	ambigu : 3266 Prosper Meraimée(2), 3256 Nora Nax(2), 4057 Ilyzaelle(1), 4029 Oumou Skaille(1)
+94	Palais de Dantinéa	168820736	396	-	-	-	ambigu : 4019 Bontarien Suspicieux(1), 3255 Kruchula(1), 3238 Pollie Perkine(1), 2351 Léonard(1)
+97	Boyau du Père Ver	174850048	449	3679	Goba Fett	31731:Donner la clef et entrer. | 31734:Utiliser le trousseau de clefs.	texte (2 mots : boyau,pere)
+98	Chambre de Tal Kasha	175637504	280	3686	Drol Novranrac	31742:Donner la clef et entrer. | 31745:Utiliser le trousseau de clefs.	texte (2 mots : chambre,kasha)
+99	Camp du Comte Razof	179438082	309	3747	Dédé	32330:Donner la clef et entrer. | 32333:Utiliser le trousseau de clefs.	texte (2 mots : camp,comte,razof)
+100	Chapiteau des Magik Riktus	181797888	328	-	-	-	ambigu : 3983 MC Dimote(2), 3966 Guichetière du Magik Riktus(2), 347 Sentinelle Emide Routte(1)
+101	Manoir des Katrepat	179831808	365	-	-	-	aucun
+102	Belvédère d'Ilyzaelle	183501836	367	-	-	-	aucun
+103	Tour de Bethel	186384896	281	-	-	-	ambigu : 4197 La Voix des Douze(2), 4189 Tourier Submergé(2), 4817 Jeanne Nœud-Os(1), 4498 Dundivad(1)
+104	Tour de Solar	183108098	425	4197	La Voix des Douze	36231:Dire que vous êtes ici pour obtenir le moyen d'entrer dans les Tours des Trépamorts.	texte (2 mots : tour,solar)
+105	Brasserie du roi Dazak	194779138	280	4499	Triboulette	38444:Donner la clef. | 38447:Utiliser le trousseau de clefs.	texte (2 mots : brasserie,dazak)

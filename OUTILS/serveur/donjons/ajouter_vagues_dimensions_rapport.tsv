@@ -1,0 +1,38 @@
+spawn	donjon	vague	composition 1-4 joueurs
+245	Ring du Capitaine Ekarlatte	1	Kartouche g5, Sramouraï g5, Tromblion g5, Elsoummo g5
+245	Ring du Capitaine Ekarlatte	2	Sramouraï g5, Tromblion g5, Elsoummo g5, Milimaître g5
+245	Ring du Capitaine Ekarlatte	3	Tromblion g5, Elsoummo g5, Milimaître g5, Kartouche g5
+245	Ring du Capitaine Ekarlatte	4	Elsoummo g5, Milimaître g5, Kartouche g5, Sramouraï g5
+333	Cave du Toxoliath	1	Puceronde g5, Lucrane g5, Éperfide g5, Morfrelon g5
+333	Cave du Toxoliath	2	Lucrane g5, Éperfide g5, Morfrelon g5, Scoliopode g5
+333	Cave du Toxoliath	3	Éperfide g5, Morfrelon g5, Scoliopode g5, Puceronde g5
+333	Cave du Toxoliath	4	Morfrelon g5, Scoliopode g5, Puceronde g5, Lucrane g5
+449	Trône de la Cour Sombre	départ	Reine des Voleurs g1, Mâchassin g5, Terristocrate g5, Doublure g5
+449	Trône de la Cour Sombre	1	Terristocrate g5, Doublure g5, Bourôliste g5, Magouille g5
+449	Trône de la Cour Sombre	2	Doublure g5, Bourôliste g5, Magouille g5, Mâchassin g5
+449	Trône de la Cour Sombre	3	Bourôliste g5, Magouille g5, Mâchassin g5, Terristocrate g5
+449	Trône de la Cour Sombre	4	Magouille g5, Mâchassin g5, Terristocrate g5, Doublure g5
+390	Palais du roi Nidas	1	Barbétoal g5, Lévitrof g5, Paspartou g5, Piloztère g5
+390	Palais du roi Nidas	2	Lévitrof g5, Paspartou g5, Piloztère g5, Kamasterisk g5
+390	Palais du roi Nidas	3	Paspartou g5, Piloztère g5, Kamasterisk g5, Barbétoal g5
+390	Palais du roi Nidas	4	Piloztère g5, Kamasterisk g5, Barbétoal g5, Lévitrof g5
+277	Galerie du Phossile	1	Métaphorreur g5, Père Phorreur g5, Phozami g5, Mère Veilleuse g5
+277	Galerie du Phossile	2	Père Phorreur g5, Phozami g5, Mère Veilleuse g5, Phorrêveur g5
+277	Galerie du Phossile	3	Phozami g5, Mère Veilleuse g5, Phorrêveur g5, Métaphorreur g5
+277	Galerie du Phossile	4	Mère Veilleuse g5, Phorrêveur g5, Métaphorreur g5, Père Phorreur g5
+302	Horologium de XLII	1	Vindeux g6, Trantroa g6, Seith g6, Soissanth g5
+302	Horologium de XLII	2	Trantroa g6, Seith g6, Soissanth g5, Trezz g6
+302	Horologium de XLII	3	Seith g6, Soissanth g5, Trezz g6, Vindeux g6
+302	Horologium de XLII	4	Soissanth g5, Trezz g6, Vindeux g6, Trantroa g6
+397	Œil de Vortex	1	Méjaire g6, Harpille g6, Buboxor g6, Brabuzar g5
+397	Œil de Vortex	2	Harpille g6, Buboxor g6, Brabuzar g5, Ikargn g6
+397	Œil de Vortex	3	Buboxor g6, Brabuzar g5, Ikargn g6, Méjaire g6
+397	Œil de Vortex	4	Brabuzar g5, Ikargn g6, Méjaire g6, Harpille g6
+294	Plateau de Ush	1	Chacrebleu g5, Chakichan g5, Chargus g5, Chakaroze g5
+294	Plateau de Ush	2	Chakichan g5, Chargus g5, Chakaroze g5, Chasquatch g5
+294	Plateau de Ush	3	Chargus g5, Chakaroze g5, Chasquatch g5, Chacrebleu g5
+294	Plateau de Ush	4	Chakaroze g5, Chasquatch g5, Chacrebleu g5, Chakichan g5
+398	Défi du Chalœil	1	Cavalier Chanceux g5, Valet Veinard g5, Dame du Hasard g5, Roi Joueur g5
+398	Défi du Chalœil	2	Valet Veinard g5, Dame du Hasard g5, Roi Joueur g5, Soldat de Fortune g5
+398	Défi du Chalœil	3	Dame du Hasard g5, Roi Joueur g5, Soldat de Fortune g5, Cavalier Chanceux g5
+398	Défi du Chalœil	4	Roi Joueur g5, Soldat de Fortune g5, Cavalier Chanceux g5, Valet Veinard g5

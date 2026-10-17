@@ -1,0 +1,54 @@
+donjon	nom	salle de fin	pnj	nom pnj	case pnj	case arrivee	map sortie	case sortie	case choisie pres de
+3	Bibliothèque du Maître Corbac	159121666	800	Portero de la Mazmorra de las Ratas de Brakmar	286	271	158334976	326	entree
+13	Donjon des Bworks	104598019	712	Bworky	286	271	104862211	327	entree
+14	Grotte du Bworker	104334851	712	Bworky	300	271	172493057	294	entree
+15	Tanière du Meulou	155719680	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	171706891	407	entree
+17	Terrier du Wa Wabbit	116655619	137	Wey Wabbit	300	271	68420613	327	entree
+18	Pitons Rocheux des Craqueleurs	106961920	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	185861634	270	entree
+22	Temple du Grand Ougah	182193153	800	Portero de la Mazmorra de las Ratas de Brakmar	314	327	181146624	266	entree
+27	Village Kanniboul	157553664	1384	Animador kan├¡bola del Equipo Turist-A	286	271	156499971	382	entree
+28	Canopée du Kimbo	21498882	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	25693696	170	entree
+30	Caverne du Koulosse	107228160	800	Portero de la Mazmorra de las Ratas de Brakmar	286	271	139784	95	entree
+36	Donjon de Nowel	66590208	795	H├®ctor Nawidad	287	271	66061569	351	entree
+37	Caverne de Nowel	66851840	795	H├®ctor Nawidad	300	271	66192641	266	entree
+38	Maison du Papa Nowel	66327552	795	H├®ctor Nawidad	286	271	66060545	266	entree
+44	Donjon des Rats du Château d'Amakna	102761987	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	101714451	242	entree
+46	Repaire de Skeunk	107486208	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	63310595	287	entree
+50	Tofulailler Royal	96210950	800	Portero de la Mazmorra de las Ratas de Brakmar	300	273	96338944	326	entree
+51	Laboratoire du Tynril	89393154	800	Portero de la Mazmorra de las Ratas de Brakmar	314	271	63964672	299	entree
+52	Château du Wa Wabbit	116393474	2151	Pw├¡cipe Dowo	300	273	99614979	266	entree
+53	Salle du Minotot	34472452	783	Lorkos	300	271	34476294	286	centre
+66	Potager d'Halouine	101192704	800	Portero de la Mazmorra de las Ratas de Brakmar	286	273	101187584	324	entree
+67	Transporteur de Sylargh	110102530	800	Portero de la Mazmorra de las Ratas de Brakmar	300	273	108793118	294	entree
+68	Salons privés de Klime	110364674	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	108925717	266	entree
+69	Forgefroide de Missiz Frizz	109841923	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	108927238	243	entree
+70	Laboratoire de Nileza	109577731	800	Portero de la Mazmorra de las Ratas de Brakmar	300	273	108794630	358	entree
+71	Donjon du Comte Harebourg	112204547	800	Portero de la Mazmorra de las Ratas de Brakmar	286	271	112460048	308	entree
+72	Théâtre de Dramak	118232064	800	Portero de la Mazmorra de las Ratas de Brakmar	300	273	117965057	266	entree
+73	Aquadôme de Merkator	119278083	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	117706767	338	entree
+74	Pyramide d'Ombre	123213824	800	Portero de la Mazmorra de las Ratas de Brakmar	287	273	121636870	266	entree
+76	Palais du roi Nidas	129501184	800	Portero de la Mazmorra de las Ratas de Brakmar	299	327	129236992	314	centre
+77	Fabrique de Malléfisk	130287616	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	129368578	286	centre
+79	Galerie du Phossile	130549760	2352	Dian Perfos├®	300	271	129238529	286	centre
+80	Volière de la Haute Truche	132912128	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	133171202	343	entree
+82	Cave du Toxoliath	136841216	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	135269891	286	centre
+84	Ventre de la Baleine	140777472	800	Portero de la Mazmorra de las Ratas de Brakmar	315	327	140641537	372	entree
+85	Mégalithe de Fraktale	143139847	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	144969990	393	entree
+86	Horologium de XLII	143918593	800	Portero de la Mazmorra de las Ratas de Brakmar	300	273	144707846	406	entree
+87	Œil de Vortex	143394305	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	144445702	395	entree
+89	Antre de la Reine Nyée	149166080	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	147853312	286	centre
+91	Bateau du Chouque	157029376	800	Portero de la Mazmorra de las Ratas de Brakmar	286	271	158078976	353	entree
+92	Arbre de Moon	157291520	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	156499968	313	entree
+96	Temple Maudit d'Araknas	182456320	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	172757504	286	centre
+97	Vaisseau du Capitaine Meno	169874432	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	169084930	324	entree
+98	Temple de Koutoulou	169350144	800	Portero de la Mazmorra de las Ratas de Brakmar	300	273	168560640	285	centre
+99	Palais de Dantinéa	169612288	800	Portero de la Mazmorra de las Ratas de Brakmar	329	342	168820736	382	entree
+102	Boyau du Père Ver	175903232	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	174850048	462	entree
+103	Chambre de Tal Kasha	176165888	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	175637504	266	entree
+104	Camp du Comte Razof	179573760	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	179438082	295	entree
+105	Chapiteau des Magik Riktus	181670912	3994	Magik Riktus panzudo	300	271	181797888	315	entree
+106	Manoir des Katrepat	182719488	800	Portero de la Mazmorra de las Ratas de Brakmar	314	271	179831808	378	entree
+107	Belvédère d'Ilyzaelle	184685313	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	183501836	353	entree
+108	Tour de Bethel	187438080	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	186384896	267	entree
+109	Tour de Solar	187957514	800	Portero de la Mazmorra de las Ratas de Brakmar	300	271	183108098	411	entree
+110	Brasserie du roi Dazak	195040256	800	Portero de la Mazmorra de las Ratas de Brakmar	300	273	194779138	266	entree

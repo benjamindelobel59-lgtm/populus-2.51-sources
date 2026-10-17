@@ -1,0 +1,108 @@
+id	donjon	map d'arrivee apres le boss	position	etat
+1	Cour du Bouftou Royal	120063489	hors liste	sortie officielle
+3	Bibliothèque du Maître Corbac	159121666	dans le donjon	AUCUNE SORTIE
+4	Centre du Labyrinthe du Minotoror	191105026	hors liste	OK (pnj)
+6	Antre du Dragon Cochon	72363008	hors liste	OK (pnj)
+7	Donjon des Dragoeufs	27789318	hors liste	OK (pnj)
+8	Grange du Tournesol Affamé	192937992	hors liste	sortie officielle
+9	Domaine Ancestral	149689344	hors liste	OK (pnj)
+10	Clairière du Chêne Mou	149428224	hors liste	OK (pnj)
+11	Clos des Blops	166989826	dans le donjon	OK (pnj)
+11	Clos des Blops	166990848	dans le donjon	OK (pnj)
+12	Caverne des Bulbes	10006	hors liste	sortie officielle
+13	Donjon des Bworks	104598019	hors liste	AUCUNE SORTIE
+14	Grotte du Bworker	104334851	hors liste	AUCUNE SORTIE
+15	Tanière du Meulou	155719680	dans le donjon	AUCUNE SORTIE
+17	Terrier du Wa Wabbit	116655619	hors liste	AUCUNE SORTIE
+18	Pitons Rocheux des Craqueleurs	106961920	hors liste	AUCUNE SORTIE
+19	Château Ensablé	190056961	hors liste	sortie officielle
+20	Donjon des Firefoux	16515331	hors liste	OK (pnj)
+21	Donjon des Forgerons	88086786	hors liste	sortie officielle
+22	Temple du Grand Ougah	182193153	hors liste	AUCUNE SORTIE
+24	Gelaxième Dimension	98568705	dans le donjon	OK (element)
+25	Grotte Hesque	5244422	hors liste	OK (pnj)
+27	Village Kanniboul	157553664	hors liste	AUCUNE SORTIE
+28	Canopée du Kimbo	130549760	hors liste	AUCUNE SORTIE
+29	Donjon des Kitsounes	18089988	hors liste	OK (pnj)
+30	Caverne du Koulosse	107228160	dans le donjon	AUCUNE SORTIE
+31	Antre du Kralamoure Géant	191105026	hors liste	OK (pnj)
+32	Nid du Kwakwa	64754688	hors liste	OK (pnj)
+33	Donjon des Larves	96998919	hors liste	OK (element)
+34	Maison Fantôme	139723265	hors liste	sortie officielle
+35	Laboratoire de Brumen Tinctorias	191105026	hors liste	OK (pnj)
+36	Donjon de Nowel	66590208	hors liste	AUCUNE SORTIE
+37	Caverne de Nowel	66851840	hors liste	AUCUNE SORTIE
+38	Maison du Papa Nowel	66327552	hors liste	AUCUNE SORTIE
+39	Cale de l'Arche d'Otomaï	22285314	hors liste	OK (pnj)
+40	Repaire des Pandikazes	17310720	hors liste	OK (pnj)
+41	Goulet du Rasboul	22810626	hors liste	OK (pnj)
+42	Donjon des Rats de Bonta	27001860	hors liste	OK (pnj)
+43	Donjon des Rats de Brâkmar	40110087	hors liste	OK (pnj)
+44	Donjon des Rats du Château d'Amakna	102761987	hors liste	AUCUNE SORTIE
+45	Donjon des Scarafeuilles	94116864	hors liste	OK (element)
+46	Repaire de Skeunk	107486208	dans le donjon	AUCUNE SORTIE
+47	Donjon des Squelettes	82314497	hors liste	OK (element)
+48	Donjon des Tofus	88082705	hors liste	sortie officielle
+49	Antre du Blop Multicolore Royal	166985728	hors liste	sortie officielle
+50	Tofulailler Royal	96210950	hors liste	AUCUNE SORTIE
+51	Laboratoire du Tynril	89393154	hors liste	AUCUNE SORTIE
+52	Château du Wa Wabbit	116393474	hors liste	AUCUNE SORTIE
+53	Salle du Minotot	34472452	hors liste	AUCUNE SORTIE
+54	Serre du Royalmouth	55054336	hors liste	OK (pnj)
+55	Excavation du Mansot Royal	56103936	hors liste	OK (pnj)
+56	Épave du Grolandais violent	56365058	hors liste	OK (pnj)
+57	Hypogée de l'Obsidiantre	57157377	hors liste	OK (pnj)
+58	Tanière Givrefoux	59515138	dans le donjon	OK (pnj)
+58	Tanière Givrefoux	59518976	dans le donjon	OK (declencheur+element)
+59	Antre du Korriandre	62920704	hors liste	OK (pnj)
+60	Cavernes du Kolosso	61869060	hors liste	OK (pnj)
+61	Antichambre des Gloursons	62136840	hors liste	OK (pnj)
+62	Donjon de la mine de Sakaï	57939713	hors liste	OK (pnj)
+64	Repaire de Daïgoro	79435265	hors liste	OK (pnj)
+66	Potager d'Halouine	101192704	dans le donjon	AUCUNE SORTIE
+67	Transporteur de Sylargh	110102530	hors liste	AUCUNE SORTIE
+68	Salons privés de Klime	110364674	hors liste	AUCUNE SORTIE
+69	Forgefroide de Missiz Frizz	109841923	hors liste	AUCUNE SORTIE
+70	Laboratoire de Nileza	109577731	hors liste	AUCUNE SORTIE
+71	Donjon du Comte Harebourg	112204547	hors liste	AUCUNE SORTIE
+72	Théâtre de Dramak	118232064	hors liste	AUCUNE SORTIE
+73	Aquadôme de Merkator	119278083	hors liste	AUCUNE SORTIE
+74	Pyramide d'Ombre	123213824	hors liste	AUCUNE SORTIE
+75	Grotte de Kanigroula	125832707	hors liste	OK (pnj)
+76	Palais du roi Nidas	129501184	hors liste	AUCUNE SORTIE
+77	Fabrique de Malléfisk	130287616	hors liste	AUCUNE SORTIE
+79	Galerie du Phossile	130549760	hors liste	AUCUNE SORTIE
+80	Volière de la Haute Truche	132912128	hors liste	AUCUNE SORTIE
+81	Ring du Capitaine Ekarlatte	191105026	hors liste	OK (pnj)
+82	Cave du Toxoliath	136841216	hors liste	AUCUNE SORTIE
+83	Trône de la Cour Sombre	136056074	hors liste	sortie officielle
+84	Ventre de la Baleine	140777472	hors liste	AUCUNE SORTIE
+85	Mégalithe de Fraktale	143139847	hors liste	AUCUNE SORTIE
+86	Horologium de XLII	143918593	hors liste	AUCUNE SORTIE
+87	Œil de Vortex	143394305	hors liste	AUCUNE SORTIE
+88	Cache de Kankreblath	191102980	hors liste	OK (element)
+89	Antre de la Reine Nyée	149166080	hors liste	AUCUNE SORTIE
+90	Crypte de Kardorim	152835072	hors liste	OK (pnj)
+91	Bateau du Chouque	157029376	hors liste	AUCUNE SORTIE
+92	Arbre de Moon	157291520	hors liste	AUCUNE SORTIE
+93	Miausolée du Pounicheur	161744896	hors liste	sortie officielle
+94	Plateau de Ush	162006016	hors liste	sortie officielle
+95	Défi du Chalœil	160432128	hors liste	sortie officielle
+96	Temple Maudit d'Araknas	182456320	dans le donjon	AUCUNE SORTIE
+97	Vaisseau du Capitaine Meno	169874432	hors liste	AUCUNE SORTIE
+98	Temple de Koutoulou	169350144	hors liste	AUCUNE SORTIE
+99	Palais de Dantinéa	169612288	hors liste	AUCUNE SORTIE
+100	Cimetière des Mastodontes	174331392	hors liste	OK (pnj)
+101	Caverne d'El Piko	174071808	hors liste	OK (pnj)
+102	Boyau du Père Ver	175903232	hors liste	AUCUNE SORTIE
+103	Chambre de Tal Kasha	176165888	hors liste	AUCUNE SORTIE
+104	Camp du Comte Razof	179573760	hors liste	AUCUNE SORTIE
+105	Chapiteau des Magik Riktus	181670912	dans le donjon	AUCUNE SORTIE
+106	Manoir des Katrepat	182719488	hors liste	AUCUNE SORTIE
+107	Belvédère d'Ilyzaelle	184685313	hors liste	AUCUNE SORTIE
+108	Tour de Bethel	187438080	hors liste	AUCUNE SORTIE
+109	Tour de Solar	187957514	hors liste	AUCUNE SORTIE
+110	Brasserie du roi Dazak	195040256	hors liste	AUCUNE SORTIE
+111	?	197133314	hors liste	sortie officielle
+112	?	196870144	hors liste	OK (element)
+113	?	196346371	hors liste	sortie officielle

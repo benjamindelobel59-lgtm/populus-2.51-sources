@@ -1,0 +1,49 @@
+donjon	nom	map entree	gardien	nom gardien	reponse	message	raison
+3	Centre du Labyrinthe du Minotoror	34473220	783	Lorkos	2844 Entrer dans le labyrinthe.	3201	deja sur la map
+4	Antre du Dragon Cochon	72221696	784	Fwoued	6626 Utiliser le trousseau et la clef pour entrer.	3216	deja sur la map
+10	Caverne des Bulbes	10006	1165	Iturik	6638 Donner la clef et entrer.	7072	deja sur la map
+11	Donjon des Bworks	104862211	775	Bowork	6613 Utiliser le trousseau de clefs.	3172	manuel
+12	Grotte du Bworker	172493057	712	Bworkie	6636 Donner la clef et entrer.	17027	manuel
+15	Pitons Rocheux des Craqueleurs	185861634	772	Krakotte	2781 Donner la clef et entrer.	3163	manuel
+16	Château Ensablé	190056961	798	Capitaine Igloute	2944 Donner la clef et entrer.	3289	texte (2 mots : chateau,ensable)
+17	Donjon des Firefoux	13613	709	Berthawa	2579 Entrer dans le donjon.	2943	deja sur la map
+21	Grotte Hesque	161295	941	Tina Montini	3668 Donner la clef et entrer.	4190	deja sur la map
+23	Village Kanniboul	156499971	1384	Gentil Organisateur Kanniboul	8352 Utiliser le trousseau de clefs.	8271	manuel
+24	Canopée du Kimbo	25693696	946	Chachka	3685 Utiliser la clef.	4206	deja sur la map
+26	Caverne du Koulosse	139784	754	Gardien Koalak	2742 Entrer dans la caverne.	3119	deja sur la map
+31	Laboratoire de Brumen Tinctorias	177079296	1410	Tassa	8705 Demander à entrer dans la cave.	8667	texte (2 mots : laboratoire,brumen,tinctorias)
+32	Donjon de Nowel	66061569	795	Hector Nowel	4613 Donner la clef et entrer.	5494	manuel
+33	Caverne de Nowel	66192641	795	Hector Nowel	4613 Donner la clef et entrer.	5494	manuel
+34	Maison du Papa Nowel	66060545	795	Hector Nowel	4613 Donner la clef et entrer.	5494	manuel
+35	Cale de l'Arche d'Otomaï	22546944	942	Capitaine Flams	3673 Utiliser la clef.	4192	deja sur la map
+36	Repaire des Pandikazes	9508	706	Mamowa	2576 Donner la clef et entrer.	2940	deja sur la map
+37	Goulet du Rasboul	89916416	945	Razbitume	3682 Utiliser la clef.	4203	texte (2 mots : goulet,rasboul)
+38	Donjon des Rats de Bonta	25035524	799	Portier du Donjon des Rats de Bonta	2947 Donner la clef et entrer.	3292	deja sur la map
+40	Donjon des Rats du Château d'Amakna	101714451	818	Aperirel	3032 Donner la clef et entrer dans le donjon.	3416	texte (3 mots : rats,chateau,d'amakna)
+41	Donjon des Scarafeuilles	88080387	781	El Scarador	2803 Donner la clef et entrer.	3179	texte (1 mots : scarafeuilles)
+42	Repaire de Skeunk	63310595	758	Kakolak	15919 Donner la clef et entrer.	3138	deja sur la map
+44	Tofulailler Royal	96338944	778	Kazy Ingalsse	6630 Utiliser le trousseau de clefs.	17101	texte (2 mots : tofulailler,royal)
+46	Tofulailler Royal	96338944	778	Kazy Ingalsse	6630 Utiliser le trousseau de clefs.	17101	texte (2 mots : tofulailler,royal)
+47	Laboratoire du Tynril	63964672	943	Mulèze	3678 Utiliser la clef.	4197	deja sur la map
+49	Salle du Minotot	34473476	783	Lorkos	2844 Entrer dans le labyrinthe.	3201	texte (1 mots : minotot)
+56	Cavernes du Kolosso	54164293	1393	Professeur Xa	8475 Utiliser le trousseau de clefs.	8457	deja sur la map
+58	Donjon de la mine de Sakaï	54159661	1363	Hywan Kenoby	8146 Utiliser le trousseau de clefs.	8153	deja sur la map
+62	Potager d'Halouine	101187584	1768	Disciple d'Asid	14425 Utiliser le trousseau de clefs.	12672	texte (2 mots : potager,d'halouine)
+63	Transporteur de Sylargh	108793118	2005	Hiroze	16969 Utiliser le trousseau de clefs.	17196	texte (2 mots : transporteur,sylargh)
+69	Aquadôme de Merkator	117706767	2196	Théo Dolith	19520 Utiliser le trousseau de clefs.	16404	texte (2 mots : aquadome,merkator)
+70	Pyramide d'Ombre	121636870	2215	Vhé	19715 Donner la clef et entrer.	16553	texte (2 mots : pyramide,d'ombre)
+72	Palais du roi Nidas	129499136	2351	Léonard	21433 Donner la clef et entrer.	17887	texte (2 mots : palais,nidas)
+73	Fabrique de Malléfisk	130285568	2353	Inès Karcel	21153 Donner la clef et entrer.	17637	texte (2 mots : fabrique,mallefisk)
+74	Galerie du Phossile	130547712	2352	Dyane Phossé	21222 Donner la clef et entrer.	17710	texte (2 mots : galerie,phossile)
+75	Volière de la Haute Truche	133171202	2436	Orno Tolig	21570 Donner la clef et entrer.	17977	texte (3 mots : voliere,haute,truche)
+77	Cave du Toxoliath	136839168	2445	Starchy Tropeur	21912 Donner la clef et entrer.	18292	texte (2 mots : cave,toxoliath)
+79	Ventre de la Baleine	140641537	2636	Mathilde Oualtgniz	22750 Donner la clef et entrer.	19079	texte (2 mots : ventre,baleine)
+80	Mégalithe de Fraktale	144969990	2661	Hypéria Gritch	23376 Donner la clef et entrer.	19557	texte (2 mots : megalithe,fraktale)
+81	Horologium de XLII	144707846	2660	Gardien de l'Horologium	23144 Donner la clef et entrer.	19397	texte (2 mots : horologium,xlii)
+82	Œil de Vortex	144445702	2662	Tessie Oude	23354 Donner la clef et entrer.	19539	texte (1 mots : vortex)
+88	Miausolée du Pounicheur	161742848	3097	Caporal Tomonte	27270 Donner la clef et entrer.	22674	texte (2 mots : miausolee,pounicheur)
+97	Boyau du Père Ver	174850048	3679	Goba Fett	31731 Donner la clef et entrer.	26439	texte (2 mots : boyau,pere)
+98	Chambre de Tal Kasha	175637504	3686	Drol Novranrac	31742 Donner la clef et entrer.	26444	texte (2 mots : chambre,kasha)
+99	Camp du Comte Razof	179438082	3747	Dédé	32330 Donner la clef et entrer.	26892	texte (2 mots : camp,comte,razof)
+100	Chapiteau des Magik Riktus	181797888	3966	Guichetière du Magik Riktus	33150 Donner la clef et entrer.	27619	manuel
+105	Brasserie du roi Dazak	194779138	4499	Triboulette	38447 Utiliser le trousseau de clefs.	31789	texte (2 mots : brasserie,dazak)
