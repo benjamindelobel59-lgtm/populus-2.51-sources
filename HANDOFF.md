@@ -12,7 +12,6 @@ ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **18/10/2026**.
 | `3_SQL_WORLD/` | nos scripts pour la base `world`, **à jouer dans l'ordre 01 → NN**, World arrêté, tous rejouables (voir `3_SQL_WORLD/LISEZ-MOI.md`) |
 | `4_CLIENT/64bits/app`, `4_CLIENT/32bits/app` | **uniquement les fichiers du client modifiés** (même arborescence que le dossier `app` du client) |
 | `5_OUTILS/` | nos scripts (générateurs SQL Python, outils client, launcher) ; `IP_DU_VPS` remplace l'IP du serveur |
-| `6_SERVEURS_COMPILES/AuthServer`, `WorldServer` | **serveurs compilés complets** (DLL, exe, `cases_fixes.tsv`, `swf_patchs`, `sql_update`, configs) prêts à lancer — configs = celles d'un PC local (base `127.0.0.1`, mots de passe vides, `WebAPIKey` = `A_CHANGER`) : mettre vos propres accès ; pas de journaux ni de sauvegardes |
 | `JOURNAL_DES_MODIFICATIONS.txt` | détail daté, fichier par fichier, de toutes les modifications |
 
 ## Appliquer

@@ -1,9 +1,0 @@
-# Mystic : seuls les points d'entrée de l'API sont accessibles
-Options -Indexes
-<FilesMatch "^(config|config\.local|commun)\.php$">
-  Require all denied
-</FilesMatch>
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteRule ^cache/ - [F,L]
-</IfModule>

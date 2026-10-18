@@ -8,12 +8,10 @@ GitHub sert UNIQUEMENT à partager nos modifications (on ne travaille pas avec ;
   3_SQL_WORLD/      nos scripts base world 01 → NN  ← PUSH/<dernier paquet>/2_BDD
   4_CLIENT/64bits|32bits/app  fichiers client MODIFIÉS seulement ← PUSH/<paquet>/6_CLIENT_64bits|7_CLIENT_32bits
   5_OUTILS/         nos scripts                      ← _OUTILS (sélection, IP du VPS masquée)
-  6_SERVEURS_COMPILES/AuthServer|WorldServer  serveurs prêts à lancer ← SERVEUR_Emu/run/debug (sans journaux, sauvegardes,
-                    ni état ; configs = celles du PC local, accès vides, clé WebAPIKey masquée)
-  7_PAQUETS_VPS/<paquet>/  paquets de mise en ligne du VPS en cours (TOUT_INSTALLER.bat, COMPLEMENT.bat…) ← PUSH/
-                    sans les fichiers du jeu (5_LAUNCHER/maj/files, 3,4 Go)
   HANDOFF.md        (pour le Claude de l'autre dev, à tenir à jour : _OUTILS/divers/partage_github_HANDOFF.md)
   JOURNAL_DES_MODIFICATIONS.txt ← SOURCES_Populus/LISEZ-MOI.txt
+
+Les serveurs compilés (AuthServer / WorldServer) et le dossier PUSH sont envoyés à la main par l'utilisateur, pas sur GitHub.
 
 Utilisation : python -I _OUTILS/divers/partage_github.py ["message de commit"]   (sans message : prépare seulement, pas de push)
 """
@@ -103,7 +101,7 @@ def copier_outils(dest):
             cible = os.path.join(dest, *relf.split('/'))
             os.makedirs(os.path.dirname(cible), exist_ok=True)
             shutil.copy2(f, cible)
-    for nom in ('bin/NekfeuLauncher.exe', 'bin_mystic/MysticLauncher.exe'):
+    for nom in ('bin/NekfeuLauncher.exe',):
         exe = os.path.join(RACINE, '_OUTILS', 'web', 'launcher', *nom.split('/'))
         if os.path.isfile(exe):
             os.makedirs(os.path.join(dest, 'web', 'launcher', os.path.dirname(nom)), exist_ok=True)
@@ -177,8 +175,6 @@ def main():
             if os.path.isdir(os.path.join(paquet, src)):
                 shutil.copytree(os.path.join(paquet, src), os.path.join(DEST, '4_CLIENT', dst), dirs_exist_ok=True)
     copier_outils(os.path.join(DEST, '5_OUTILS'))
-    copier_serveurs(os.path.join(DEST, '6_SERVEURS_COMPILES'))
-    copier_paquets(os.path.join(DEST, '7_PAQUETS_VPS'), paquets)
     shutil.copy2(os.path.join(SRC, 'LISEZ-MOI.txt'), os.path.join(DEST, 'JOURNAL_DES_MODIFICATIONS.txt'))
     for nom in ('partage_github_HANDOFF.md', 'partage_github_LISEZ-MOI.md', 'partage_github_SQL_LISEZ-MOI.md'):
         shutil.copy2(os.path.join(RACINE, '_OUTILS', 'divers', nom),
