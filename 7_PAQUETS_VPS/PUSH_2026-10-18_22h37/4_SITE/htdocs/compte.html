@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mon compte · Mystic</title>
+<meta name="description" content="Ton compte web Mystic : tes comptes de jeu, tes personnages, le launcher.">
+<meta name="theme-color" content="#07060b">
+<meta name="robots" content="noindex">
+<link rel="icon" href="img/logo_mystic_700.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,500;0,600;1,600;1,800;1,900&family=Rubik:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="entete colle" id="entete">
+  <div class="entete-in">
+    <a class="marque" href="index.html" aria-label="Mystic, retour à l'accueil"><img src="img/logo_mystic_700.png" alt="Mystic"></a>
+    <nav class="menu" id="menu" aria-label="Navigation principale">
+      <a href="index.html#serveur">Le serveur</a>
+      <a href="index.html#classements">Classements</a>
+      <a href="index.html#rejoindre">Nous rejoindre</a>
+      <a href="atelier.html">Atelier</a>
+      <a href="compte.html" aria-current="page">Mon compte</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page-compte">
+  <div class="env">
+
+    <!-- connexion -->
+    <section id="vueConnexion" hidden>
+      <form class="formulaire carte-web etroite" id="formConnexion" novalidate>
+        <div class="surtitre">MON COMPTE</div>
+        <h2 style="margin:0">Connexion</h2>
+        <div class="champ"><label for="cEmail">E-mail</label><input id="cEmail" name="email" type="email" autocomplete="email" required></div>
+        <div class="champ"><label for="cMdp">Mot de passe</label><input id="cMdp" name="mot_de_passe" type="password" autocomplete="current-password" required></div>
+        <button class="btn btn-violet grand" type="submit" id="bConnexion">Se connecter</button>
+        <p class="message" id="msgConnexion" role="status"></p>
+        <p class="deja">Pas encore de compte ? <a href="index.html#rejoindre">Crée ton compte Mystic</a></p>
+      </form>
+    </section>
+
+    <!-- compte -->
+    <section id="vueCompte" hidden>
+      <div class="bonjour">
+        <div>
+          <div class="surtitre">MON COMPTE</div>
+          <h1 id="titrePseudo">Bonjour</h1>
+          <p class="vide" id="emailWeb"></p>
+        </div>
+        <div class="actions">
+          <a class="btn btn-contour petit" href="/maj/MysticLauncher.exe" download id="lienLauncher">Télécharger le launcher</a>
+          <button class="btn btn-contour petit" type="button" id="bDeconnexion">Se déconnecter</button>
+        </div>
+      </div>
+
+      <div class="carte-web" style="margin-top:28px">
+        <h2 style="margin:0 0 4px">Mes comptes de jeu <span class="compteur" id="compteur"></span></h2>
+        <p class="vide" style="margin:0 0 18px">Chaque compte de jeu apparaît aussi dans le launcher : choisis-le puis JOUER, sans retaper de mot de passe.</p>
+        <div class="comptes-jeu" id="comptesJeu"></div>
+      </div>
+
+      <form class="formulaire carte-web" id="formJeu" novalidate style="margin-top:28px">
+        <h2 style="margin:0">Créer un compte de jeu</h2>
+        <div class="deux">
+          <div class="champ"><label for="jLogin">Nom de compte</label><input id="jLogin" name="login" autocomplete="off" required minlength="3" maxlength="20" pattern="[a-zA-Z0-9_-]{3,20}"><small>Pour te connecter en jeu. Personne ne le voit.</small><em class="err" data-pour="login"></em></div>
+          <div class="champ"><label for="jPseudo">Pseudo</label><input id="jPseudo" name="pseudo" autocomplete="off" required minlength="3" maxlength="20"><small>Le nom affiché en jeu.</small><em class="err" data-pour="pseudo"></em></div>
+        </div>
+        <div class="deux">
+          <div class="champ"><label for="jMdp">Mot de passe du compte de jeu</label><input id="jMdp" name="mot_de_passe" type="password" autocomplete="new-password" required minlength="8"><em class="err" data-pour="mot_de_passe"></em></div>
+          <div class="champ"><label for="jMdp2">Confirmation</label><input id="jMdp2" name="confirmation" type="password" autocomplete="new-password" required minlength="8"><em class="err" data-pour="confirmation"></em></div>
+        </div>
+        <div class="champ"><label for="jReponse">Réponse secrète</label><input id="jReponse" name="reponse_secrete" required minlength="2" maxlength="40"><small>Demandée en jeu pour supprimer un personnage. Note-la bien.</small><em class="err" data-pour="reponse_secrete"></em></div>
+        <button class="btn btn-violet grand" type="submit" id="bJeu">Créer le compte de jeu</button>
+        <p class="message" id="msgJeu" role="status"></p>
+      </form>
+
+      <form class="formulaire carte-web" id="formRattacher" novalidate style="margin-top:28px">
+        <h2 style="margin:0">Rattacher un compte existant</h2>
+        <p class="vide" style="margin:0">Tu jouais déjà sur Mystic avant les comptes web ? Ajoute ton compte de jeu avec son nom de compte et son mot de passe : il apparaîtra dans le launcher et dans l'Atelier, avec tes personnages.</p>
+        <div class="deux">
+          <div class="champ"><label for="rLogin">Nom de compte du jeu</label><input id="rLogin" name="login" autocomplete="username" required maxlength="50"></div>
+          <div class="champ"><label for="rMdp">Mot de passe du jeu</label><input id="rMdp" name="mot_de_passe" type="password" autocomplete="current-password" required maxlength="100"></div>
+        </div>
+        <button class="btn btn-contour grand" type="submit" id="bRattacher">Rattacher ce compte</button>
+        <p class="message" id="msgRattacher" role="status"></p>
+      </form>
+    </section>
+
+  </div>
+</main>
+
+<footer class="pied">
+  <div class="env">
+    <img src="img/logo_mystic_700.png" alt="Mystic" class="pied-logo">
+    <p>Mystic est un serveur privé non officiel, sans lien avec Ankama. Dofus est une marque d'Ankama Games.</p>
+  </div>
+</footer>
+
+<script src="assets/compte.js"></script>
+</body>
+</html>

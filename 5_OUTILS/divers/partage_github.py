@@ -10,6 +10,8 @@ GitHub sert UNIQUEMENT à partager nos modifications (on ne travaille pas avec ;
   5_OUTILS/         nos scripts                      ← _OUTILS (sélection, IP du VPS masquée)
   6_SERVEURS_COMPILES/AuthServer|WorldServer  serveurs prêts à lancer ← SERVEUR_Emu/run/debug (sans journaux, sauvegardes,
                     ni état ; configs = celles du PC local, accès vides, clé WebAPIKey masquée)
+  7_PAQUETS_VPS/<paquet>/  paquets de mise en ligne du VPS en cours (TOUT_INSTALLER.bat, COMPLEMENT.bat…) ← PUSH/
+                    sans les fichiers du jeu (5_LAUNCHER/maj/files, 3,4 Go)
   HANDOFF.md        (pour le Claude de l'autre dev, à tenir à jour : _OUTILS/divers/partage_github_HANDOFF.md)
   JOURNAL_DES_MODIFICATIONS.txt ← SOURCES_Populus/LISEZ-MOI.txt
 
@@ -59,6 +61,20 @@ def copier_serveurs(dest):
                     open(q, 'w', encoding='utf-8').write(t2)
 
 
+IGNORE_PAQUET = shutil.ignore_patterns('files', '*.log')  # files = fichiers du jeu (3,4 Go) : voir LISEZ-MOI
+
+
+def copier_paquets(dest, paquets):
+    """MYSTIC 19/10 (demande utilisateur) : paquets VPS en cours, tels quels, sans les gros fichiers du jeu"""
+    for paquet in paquets:
+        shutil.copytree(paquet, os.path.join(dest, os.path.basename(paquet)), ignore=IGNORE_PAQUET)
+    open(os.path.join(dest, 'LISEZ-MOI.md'), 'w', encoding='utf-8').write(
+        "# Paquets de mise en ligne du VPS\n\n"
+        "Copie des paquets `PUSH/` en cours côté Mystic (procédure, `TOUT_INSTALLER.bat`, compléments, SQL, AuthServer, site…).\n"
+        "Pas inclus : `5_LAUNCHER/maj/files` (fichiers du jeu, plusieurs Go).\n"
+        "L'adresse du VPS est remplacée par `IP_DU_VPS` dans les textes.\n")
+
+
 def vider(dossier):
     """vide PARTAGE_GITHUB sauf .git"""
     os.makedirs(dossier, exist_ok=True)
@@ -80,17 +96,18 @@ def copier_outils(dest):
             continue
         for f in fichiers:
             relf = os.path.relpath(f, os.path.join(RACINE, '_OUTILS')).replace('\\', '/')
-            if EXCLUS_OUTILS.search(relf) or not (f.endswith(EXT_OUTILS) or relf == 'web/launcher/bin/NekfeuLauncher.exe'):
+            if EXCLUS_OUTILS.search(relf) or not f.endswith(EXT_OUTILS):
                 continue
             if os.path.getsize(f) > 5 * 1024 * 1024:
                 continue
             cible = os.path.join(dest, *relf.split('/'))
             os.makedirs(os.path.dirname(cible), exist_ok=True)
             shutil.copy2(f, cible)
-    exe = os.path.join(RACINE, '_OUTILS', 'web', 'launcher', 'bin', 'NekfeuLauncher.exe')
-    if os.path.isfile(exe):
-        os.makedirs(os.path.join(dest, 'web', 'launcher', 'bin'), exist_ok=True)
-        shutil.copy2(exe, os.path.join(dest, 'web', 'launcher', 'bin'))
+    for nom in ('bin/NekfeuLauncher.exe', 'bin_mystic/MysticLauncher.exe'):
+        exe = os.path.join(RACINE, '_OUTILS', 'web', 'launcher', *nom.split('/'))
+        if os.path.isfile(exe):
+            os.makedirs(os.path.join(dest, 'web', 'launcher', os.path.dirname(nom)), exist_ok=True)
+            shutil.copy2(exe, os.path.join(dest, 'web', 'launcher', *nom.split('/')))
 
 
 def masquer_ip(dossier):
@@ -161,6 +178,7 @@ def main():
                 shutil.copytree(os.path.join(paquet, src), os.path.join(DEST, '4_CLIENT', dst), dirs_exist_ok=True)
     copier_outils(os.path.join(DEST, '5_OUTILS'))
     copier_serveurs(os.path.join(DEST, '6_SERVEURS_COMPILES'))
+    copier_paquets(os.path.join(DEST, '7_PAQUETS_VPS'), paquets)
     shutil.copy2(os.path.join(SRC, 'LISEZ-MOI.txt'), os.path.join(DEST, 'JOURNAL_DES_MODIFICATIONS.txt'))
     for nom in ('partage_github_HANDOFF.md', 'partage_github_LISEZ-MOI.md', 'partage_github_SQL_LISEZ-MOI.md'):
         shutil.copy2(os.path.join(RACINE, '_OUTILS', 'divers', nom),

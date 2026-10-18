@@ -1,0 +1,15 @@
+<?php
+// Modèle de htdocs\api\config.local.php pour le VPS (TOUT_INSTALLER.bat le crée tout seul).
+// Mettre les accès MySQL du VPS (les mêmes que dans auth_config.xml de l'AuthServer) et un secret au hasard.
+// Ne jamais partager ce fichier une fois rempli.
+return [
+    'bdd' => [
+        'hote'         => '127.0.0.1',
+        'port'         => 3306,
+        'utilisateur'  => 'UTILISATEUR_MYSQL_DU_VPS',
+        'mot_de_passe' => 'MOT_DE_PASSE_MYSQL_DU_VPS',
+        'base_auth'    => 'auth',
+        'base_monde'   => 'world',
+    ],
+    'secret' => 'UNE_LONGUE_CHAINE_AU_HASARD',
+];
