@@ -40,6 +40,15 @@ namespace Stump.Server.AuthServer.Managers
                 var username = message.username;
                 var password = message.password;
 
+                // MYSTIC 18/10 : connexion depuis le launcher (ticket à usage unique transmis par le patch de connexion)
+                if (password != null && password.StartsWith(Launcher.LauncherApi.PREFIXE_TICKET))
+                {
+                    if (!Launcher.LauncherApi.Instance.ConsommerTicket(username, password.Substring(Launcher.LauncherApi.PREFIXE_TICKET.Length)))
+                        return false;
+                    account = AccountManager.Instance.FindAccountByLogin(username);
+                    return account != null;
+                }
+
                 account = AccountManager.Instance.FindAccountByLogin(username);
 
                 if (account == null)

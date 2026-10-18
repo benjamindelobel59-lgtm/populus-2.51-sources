@@ -116,6 +116,9 @@ namespace Stump.Server.WorldServer.Game.Guilds
 
         public ReadOnlyCollection<GuildMember> Members => m_members.AsReadOnly();
 
+        /// <summary>MYSTIC 17/10 : alliance de la guilde (null = aucune), tenue par AllianceManager.</summary>
+        public Alliances.Alliance Alliance { get; set; }
+
         public WorldClientCollection Clients => m_clients;
 
         public ReadOnlyCollection<TaxCollectorNpc> TaxCollectors => m_taxCollectors.AsReadOnly();
@@ -769,6 +772,7 @@ namespace Stump.Server.WorldServer.Game.Guilds
         protected virtual void OnMemberAdded(GuildMember member)
         {
             IsDirty = true;
+            WorldServer.Instance.IOTaskPool.AddMessage(GuildManager.Instance.Save); // MYSTIC 17/10 : sauvegarde immédiate
 
             BindMemberEvents(member);
             GuildManager.Instance.RegisterGuildMember(member);
@@ -785,6 +789,13 @@ namespace Stump.Server.WorldServer.Game.Guilds
                 if (MotdContent != null)
                     GuildHandler.SendGuildMotdMessage(member.Character.Client, this);
 
+                // MYSTIC 17/10 : un nouveau membre d'une guilde alliée rejoint aussi l'alliance
+                if (Alliance != null)
+                {
+                    Handlers.Alliances.AllianceHandler.SendAllianceJoinedMessage(member.Character.Client, Alliance);
+                    Handlers.Alliances.AllianceHandler.SendMotdAndBulletin(member.Character.Client, Alliance);
+                }
+
                 member.Character.RefreshActor();
 
                 member.Character.AddEmote(EmotesEnum.EMOTE_GUILD);
@@ -796,6 +807,7 @@ namespace Stump.Server.WorldServer.Game.Guilds
         protected virtual void OnMemberRemoved(GuildMember member)
         {
             IsDirty = true;
+            WorldServer.Instance.IOTaskPool.AddMessage(GuildManager.Instance.Save); // MYSTIC 17/10 : sauvegarde immédiate
 
             GuildManager.Instance.DeleteGuildMember(member);
             UnBindMemberEvents(member);
@@ -825,6 +837,10 @@ namespace Stump.Server.WorldServer.Game.Guilds
 
             member.Character.GuildMember = null;
             member.Character.RefreshActor();
+
+            // MYSTIC 17/10 : quitter la guilde = quitter son alliance
+            if (Alliance != null)
+                Handlers.Alliances.AllianceHandler.SendAllianceLeftMessage(member.Character.Client);
 
             // Vous avez quitté la guilde.
             member.Character.SendInformationMessage(TextInformationTypeEnum.TEXT_INFORMATION_MESSAGE, 176);

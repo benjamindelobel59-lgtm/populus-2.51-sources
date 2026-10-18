@@ -2,7 +2,7 @@
 
 Dépôt de **partage** des modifications faites côté Mystic (serveur Dofus 2.51, émulateur Stump C# .NET 4.8). Ce dépôt n'est relié à
 aucun serveur : il sert seulement à récupérer nos changements. Le détail fichier par fichier, daté, est dans **`JOURNAL_DES_MODIFICATIONS.txt`** ;
-ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **17/10/2026**.
+ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **18/10/2026**.
 
 ## Contenu du dépôt
 | Dossier | Contenu |
@@ -12,6 +12,7 @@ ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **17/10/2026**.
 | `3_SQL_WORLD/` | nos scripts pour la base `world`, **à jouer dans l'ordre 01 → NN**, World arrêté, tous rejouables (voir `3_SQL_WORLD/LISEZ-MOI.md`) |
 | `4_CLIENT/64bits/app`, `4_CLIENT/32bits/app` | **uniquement les fichiers du client modifiés** (même arborescence que le dossier `app` du client) |
 | `5_OUTILS/` | nos scripts (générateurs SQL Python, outils client, launcher) ; `IP_DU_VPS` remplace l'IP du serveur |
+| `6_SERVEURS_COMPILES/AuthServer`, `WorldServer` | **serveurs compilés complets** (DLL, exe, `cases_fixes.tsv`, `swf_patchs`, `sql_update`, configs) prêts à lancer — configs = celles d'un PC local (base `127.0.0.1`, mots de passe vides, `WebAPIKey` = `A_CHANGER`) : mettre vos propres accès ; pas de journaux ni de sauvegardes |
 | `JOURNAL_DES_MODIFICATIONS.txt` | détail daté, fichier par fichier, de toutes les modifications |
 
 ## Appliquer
@@ -36,6 +37,15 @@ ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **17/10/2026**.
 - **Brisage (17/10 soir)** : `game/Exchanges/Craft/Runes/BrisageOfficiel.cs` : poids de ligne = (valeur × poids × niveau × 0,015 + 1) × coefficient, runes de base ; coefficient par objet (table `nekfeu_brisage_coef`) départ 4000 %, ×0,99 par objet brisé, remontée de 1 % de l'écart par heure, sans recette 50 % ; focus pris en compte (`FocusedExchangeReadyMessage` → `RuneTrader.Focus`) : runes de la stat focus seulement, 100 % de sa ligne + 50 % des autres.
 - **Fluidité / capacité (17/10 soir, ton document « Prompt-fluidite-serveur.md »)** : appliqué tel quel, sections 1 à 8 (`BufferManager.TraceSegments`, `SegmentStream`, `WorldClientCollection` → `SendPacked`, file d'envoi groupée dans `BaseClient`, BasicNoOperation au seul joueur dans `Map`, `Character.LogOut` / `RejoinMap`, garde dans `ContextRoleplayHandler`, limites 6000 / 1000 / 5000). Base `auth` : `3_SQL_WORLD/39_auth_capacite_monde.sql` (⚠ à jouer sur **auth**, pas world). Configs à changer à la main (LogPackets False, etc.). Section 9 : nos clients étaient déjà en `renderMode` direct.
 - **Icônes d'état (17/10 soir)** : Lourd / Enraciné / Indéplaçable / Inébranlable au-dessus de la tête (`SpellStates.d2o` + 3 symboles inutilisés de `stateBuffs.swf` redessinés, `d2o_state_icon.py`).
+
+- **Launcher Mystic + comptes web (18/10)** : API HTTP dans l'AuthServer (`server/Stump.Server.AuthServer/Launcher/LauncherApi*.cs`, port 8090, variables `LauncherApi.Actif/Port/BaseMonde/DureeSessionJours`) :
+  - comptes web (PBKDF2), sessions, ticket de connexion à usage unique (`CredentialManager` : mot de passe `#mystic-ticket:<ticket>`, envoyé par le `swf_patchs/AuthPatch.swf` modifié) ;
+  - partage de comptes par code à 6 chiffres (tables `nekfeu_partages`, `nekfeu_partages_codes`) ;
+  - les personnages sont trouvés via `auth.worlds_characters`, car le World laisse `characters.AccountId` à 0.
+  - Tables : `3_SQL_WORLD/57_auth_comptes_web_launcher.sql` (⚠ base **auth**).
+  - Sources du launcher WPF : `5_OUTILS/web/launcher/src_mystic` (compilé avec `csc`, icône `-win32icon`).
+- **Atelier du site (18/10)** : exporteur base → JSON `5_OUTILS/web/atelier/exporteur` (C#, x86, relit les effets BinaryFormatter avec les DLL du serveur) + `extraire_icones.py`.
+- **Icône de Dofus.exe (18/10)** : `5_OUTILS/client/icone_exe` (remplace l'icône d'un exe par l'API Windows) ; `4_CLIENT/*/app/Dofus.exe` = exe avec l'œuf Dofus.
 
 ## Points connus non faits
 - Pas de système d'alliances dans l'émulateur (livre du temple inopérant).

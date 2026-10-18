@@ -34,6 +34,15 @@ namespace Stump.Server.WorldServer.Handlers.Interactives
         [WorldHandler(TeleportRequestMessage.Id)]
         public static void HandleTeleportRequestMessage(WorldClient client, TeleportRequestMessage message)
         {
+            // MYSTIC 17/10 : téléportation entre les prismes de l'alliance
+            if (client.Character.Dialog is Game.Alliances.PrismTeleportDialog prismDialog)
+            {
+                var prismMap = World.Instance.GetMap((int)message.MapId);
+                if (prismMap != null)
+                    prismDialog.Teleport(prismMap);
+                return;
+            }
+
             if (client.Character.IsInZaapDialog())
             {
                 var map = World.Instance.GetMap((int)message.MapId);

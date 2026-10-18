@@ -263,6 +263,9 @@ namespace Stump.Server.WorldServer.Handlers.Characters
             if (client.Character.GuildMember != null)
                 GuildHandler.SendGuildMembershipMessage(client, client.Character.GuildMember);
 
+            // MYSTIC 17/10 : alliance
+            Alliances.AllianceHandler.SendConnectionMessages(client);
+
             //Mount
             if (client.Character.EquippedMount != null)
             {

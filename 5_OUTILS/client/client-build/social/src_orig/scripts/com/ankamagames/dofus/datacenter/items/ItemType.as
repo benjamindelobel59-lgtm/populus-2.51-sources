@@ -1,0 +1,92 @@
+package com.ankamagames.dofus.datacenter.items
+{
+   public class ItemType
+   {
+      
+      public function ItemType()
+      {
+         super();
+      }
+      
+      public function get id() : int
+      {
+         return new int();
+      }
+      
+      public function get nameId() : uint
+      {
+         return new uint();
+      }
+      
+      public function get superTypeId() : uint
+      {
+         return new uint();
+      }
+      
+      public function get categoryId() : uint
+      {
+         return new uint();
+      }
+      
+      public function get isInEncyclopedia() : Boolean
+      {
+         return new Boolean();
+      }
+      
+      public function get plural() : Boolean
+      {
+         return new Boolean();
+      }
+      
+      public function get gender() : uint
+      {
+         return new uint();
+      }
+      
+      public function get rawZone() : String
+      {
+         return new String();
+      }
+      
+      public function get mimickable() : Boolean
+      {
+         return new Boolean();
+      }
+      
+      public function get craftXpRatio() : int
+      {
+         return new int();
+      }
+      
+      public function get evolutiveTypeId() : int
+      {
+         return new int();
+      }
+      
+      public function get name() : String
+      {
+         return null;
+      }
+      
+      public function get evolutiveType() : EvolutiveItemType
+      {
+         return null;
+      }
+      
+      public function get zoneSize() : uint
+      {
+         return 0;
+      }
+      
+      public function get zoneShape() : uint
+      {
+         return 0;
+      }
+      
+      public function get zoneMinSize() : uint
+      {
+         return 0;
+      }
+   }
+}
+

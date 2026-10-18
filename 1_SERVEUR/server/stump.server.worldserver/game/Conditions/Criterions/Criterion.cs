@@ -287,6 +287,13 @@ namespace Stump.Server.WorldServer.Game.Conditions.Criterions
                 case MountFamilyItemCriterion.Identifier:
                     return new MountFamilyItemCriterion();
 
+                // MYSTIC 17/10 : alliances
+                case AllianceRightsCriterion.Identifier:
+                    return new AllianceRightsCriterion();
+
+                case OcCriterion.Identifier:
+                    return new OcCriterion();
+
                 default:
                     throw new Exception(string.Format("Criterion {0} doesn't not exist or not handled", name));
             }

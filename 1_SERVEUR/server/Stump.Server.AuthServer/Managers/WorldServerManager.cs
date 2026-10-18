@@ -169,6 +169,9 @@ namespace Stump.Server.AuthServer.Managers
 
         public WorldServer GetServerById(int id) => m_realmlist.ContainsKey(id) ? m_realmlist[id] : null;
 
+        // MYSTIC 18/10 : liste des mondes pour l'API du launcher (joueurs en ligne)
+        public System.Collections.Generic.IEnumerable<WorldServer> Mondes() => m_realmlist.Values;
+
         public static bool CanAccessToWorld(AuthClient client, WorldServer world)
         {
             if (world == null)

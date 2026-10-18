@@ -1,0 +1,1606 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<menu>
+	<!--
+		Syntaxe
+		------------------------------------------------------------
+		1)
+			<item type="TYPE" label="LABEL" command="COMMAND"/>
+
+		2)
+			<item type="TYPE" label="LABEL">
+				...
+			</item>
+
+
+		Param		description
+		-----           --------------------------------------------
+		%p		Nom du joueur selectionn
+		%g		Nom de la guilde du joueur selectionn (Marche que pour joueur sur la meme carte)
+		%c		Numero de la cellule du joueur selectionn (Marche que pour joueur sur la meme carte)
+
+		%n		Mon nom de perso
+		%m		Id de la carte ou se trouve MON perso
+
+		%d		Date YY/MM/DD
+		%h		Heure HH:MM:SS
+		%t		Heure du serveur
+		%s		Nom du serveur
+		%v		Version de Dofus
+
+
+		Interface
+		---------------------------------------------------------------
+		#item		Ouvre une interface de selection d'objet et remplace #item par "id_objet quantit_objet" selectionn
+		#look		Ouvre une interface de selection de look et remplace #look par "id_look" selectionn		
+		#monster	Ouvre une interface de selection de monstres et remplace #monster par "id_monstre" selectionn				
+
+
+		type		description					Syntaxe
+		----		-------------------------------------------	-------
+		loadXML		Recharge le menu				1
+		static 		Affiche un titre				1
+		clearConsole 	Efface le contenu de la console d'admin		1
+		openConsole 	Ouvre la console admin				1
+		closeConsole 	Ferme la console admin				1
+		menu		Crée un menu pour				2
+		menuDebug	Crée un menu pour qui saffiche en DEBUG only	2
+		batch		Execute une liste de commande			2 	(attributs  repeat="nombrederepetition", delay="nombredemillisecondes" pour les item du batch seulement)
+		startup		Comme batch, mais se lance au démarrage		1
+		sendCommand	Execute une commande dans la console		1
+		prepareCommand	Prpare une commande dans la console		1
+		sendChat	Envoie une commande dans la boite de chat	1
+		prepareChat	Prpare une commande dans le chat		1
+		
+		
+		emote		Joue une emote					1	(attributs  num="numeroemote")
+		smiley		Affiche un smiley				1	(attributs  num="numerosmiley")
+		direction	Change le perso de direction			1	(attributs  num="numdirection")
+		
+	-->
+	<item type="startup" label="Admin Hide" command="adminhide true" />
+
+	<item type="static" label="%p" />
+	<item type="sendCommand" label="Admin Hide" command="adminhide true" />
+	
+	<item type="menu" label="Alignements" >
+		<item type="static" label="Alignements" />
+		<item type="sendCommand" label="Neutre" command="align %p 0" />
+		<item type="sendCommand" label="Bontarien" command="align %p 1 100 40" />
+		<item type="sendCommand" label="Brakmarien" command="align %p 2 100 40" />
+	</item>
+
+	<item type="menu" label="Donjons">
+		<item type="static" label="Donjons" />
+		<item type="menu" label="Niveau 0 à 50">
+			<item type="static" label="Niveau 0 à 50" />
+			<item type="menu" label="Sanctuaire des Familiers">
+				<item type="static" label="Sanctuaire des Familiers" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="move * 134913" />
+				</item>
+				<item type="batch" label="Dernière salle">
+					<item type="sendCommand" command="move * 14947328" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon d'Incarnam">
+				<item type="static" label="Donjon d'Incarnam" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8545 1" />
+					<item type="sendCommand" command="move * 80741889" />
+				</item>
+				<item type="batch" label="Boss - Milimilou">
+					<item type="sendCommand" command="move * 80745985" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Champs">
+				<item type="static" label="Donjon des Champs" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8143 1" />
+					<item type="sendCommand" command="move * 83623938" />
+				</item>
+				<item type="batch" label="Boss - Tournesol Affamé">
+					<item type="sendCommand" command="move * 105385984" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon Ensablé">
+				<item type="static" label="Donjon Ensablé" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8437 1" />
+					<item type="sendCommand" command="move * 84679430" />
+				</item>
+				<item type="batch" label="Boss - Mob l'Éponge">
+					<item type="sendCommand" command="move * 105648128" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Bouftous">
+				<item type="static" label="Donjon des Bouftous" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 1568 1" />
+					<item type="sendCommand" command="move * 1314" />
+				</item>
+				<item type="batch" label="Boss - Bouftou Royal">
+					<item type="sendCommand" command="move * 1311748" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Scarafeuilles">
+				<item type="static" label="Donjon des Scarafeuilles" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8139 1" />
+					<item type="sendCommand" command="move * 88080387" />
+				</item>
+				<item type="batch" label="Boss - Scarabosse Doré">
+					<item type="sendCommand" command="move * 94115840" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Squelettes">
+				<item type="static" label="Donjon des Squelettes" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 1570 1" />
+					<item type="sendCommand" command="move * 87032320" />
+				</item>
+				<item type="batch" label="Boss - Chafer Rönin">
+					<item type="sendCommand" command="move * 87033346" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Tofus">
+				<item type="static" label="Donjon des Tofus" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7918 1" />
+					<item type="sendCommand" command="move * 96338944" />
+				</item>
+				<item type="batch" label="Boss - Batofu">
+					<item type="sendCommand" command="move * 96209922" />
+				</item>
+			</item>
+			<item type="menu" label="Maison Fantôme">
+				<item type="static" label="Maison Fantôme" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 11799 1" />
+					<item type="sendCommand" command="move * 138025" />
+				</item>
+				<item type="batch" label="Boss - Boostache">
+					<item type="sendCommand" command="move * 61345792" />
+				</item>
+			</item>
+		</item>
+		<item type="menu" label="Niveau 50 à 100">
+			<item type="static" label="Niveau 50 à 100" />
+			<item type="menu" label="Caverne des Bulbes">
+				<item type="static" label="Caverne des Bulbes" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7310 1" />
+					<item type="sendCommand" command="move * 10006" />
+				</item>
+				<item type="batch" label="Boss - Bulbig Brozeur">
+					<item type="sendCommand" command="move * 17565953" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon de Nowel">
+				<item type="static" label="Donjon de Nowel" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 12150 1" />
+					<item type="sendCommand" command="move * 66061569" />
+				</item>
+				<item type="batch" label="Boss - Sapik">
+					<item type="sendCommand" command="move * 66589184" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Bworks">
+				<item type="static" label="Donjon des Bworks" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8135 1" />
+					<item type="sendCommand" command="move * 104862211" />
+				</item>
+				<item type="batch" label="Boss - Bworkette">
+					<item type="sendCommand" command="move * 104596995" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Forgerons">
+				<item type="static" label="Donjon des Forgerons" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 1569 1" />
+					<item type="sendCommand" command="move * 88086786" />
+				</item>
+				<item type="batch" label="Boss - Coffre des Forgerons">
+					<item type="sendCommand" command="move * 87296515" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Larves">
+				<item type="static" label="Donjon des Larves" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7425 1" />
+					<item type="sendCommand" command="move * 96993793" />
+				</item>
+				<item type="batch" label="Boss - Shin Larve">
+					<item type="sendCommand" command="move * 96998917" />
+				</item>
+			</item>
+			<item type="menu" label="Grotte Hesque">
+				<item type="static" label="Grotte Hesque" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8917 1" />
+					<item type="sendCommand" command="move * 161295" />
+				</item>
+				<item type="batch" label="Boss - Corailleur Magistral">
+					<item type="sendCommand" command="move * 5242886" />
+				</item>
+			</item>
+			<item type="menu" label="Nid du Kwakwa">
+				<item type="static" label="Nid du Kwakwa" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 12017 1" />
+					<item type="sendCommand" command="move * 133383" />
+				</item>
+				<item type="batch" label="Boss - Kwakwa">
+					<item type="sendCommand" command="move * 64753664" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon Cawotte">
+				<item type="static" label="Donjon Cawotte" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="move * 35913728" />
+				</item>
+				<item type="batch" label="Dernière Salle">
+					<item type="sendCommand" command="move * 35921920" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Blops">
+				<item type="static" label="Donjon des Blops" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 9248 1" />
+					<item type="sendCommand" command="move * 18874368" />
+				</item>
+				<item type="batch" label="Boss - Blop Griotte Royal">
+					<item type="sendCommand" command="move * 18874372" />
+				</item>
+				<item type="batch" label="Boss - Blop Coco Royal">
+					<item type="sendCommand" command="move * 18877442" />
+				</item>
+				<item type="batch" label="Boss - Blop Reinette Royal">
+					<item type="sendCommand" command="move * 18878466" />
+				</item>
+				<item type="batch" label="Boss - Blop Indigo Royal">
+					<item type="sendCommand" command="move * 18879490" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon Kanniboul">
+				<item type="static" label="Donjon Kanniboul" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 11798 1" />
+					<item type="sendCommand" command="move * 61079552" />
+				</item>
+				<item type="batch" label="Boss - Kanniboul Ebil">
+					<item type="sendCommand" command="move * 60297216" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon Wabbit">
+				<item type="static" label="Donjon Wabbit" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="move * 12557" />
+				</item>
+				<item type="batch" label="Boss - Wa Wabbit">
+					<item type="sendCommand" command="move * 27270144" />
+				</item>
+			</item>
+			<item type="menu" label="Cale de l'Arche d'Otomaï">
+				<item type="static" label="Cale de l'Arche d'Otomaï" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8971 1" />
+					<item type="sendCommand" command="move * 22546944" />
+				</item>
+				<item type="batch" label="Boss - Gourlo le Terrible">
+					<item type="sendCommand" command="move * 22284290" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Craqueleurs">
+				<item type="static" label="Donjon des Craqueleurs" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7927 1" />
+					<item type="sendCommand" command="move * 132871" />
+				</item>
+				<item type="batch" label="Boss - Craqueleur Légendaire">
+					<item type="sendCommand" command="move * 106960896" />
+				</item>
+			</item>
+			<item type="menu" label="Laboratoire de Brumen Tinctorias">
+				<item type="static" label="Laboratoire de Brumen Tinctorias" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 12073 1" />
+					<item type="sendCommand" command="move * 65798144" />
+				</item>
+				<item type="batch" label="Boss - Nelween">
+					<item type="sendCommand" command="move * 65276928" />
+				</item>
+			</item>
+			<item type="menu" label="Gelaxième Dimension">
+				<item type="static" label="Gelaxième Dimension" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 996 1" />
+					<item type="sendCommand" command="move * 98566657" />
+				</item>
+				<item type="batch" label="Boss - Gelée Royale Bleue">
+					<item type="sendCommand" command="move * 98566661" />
+				</item>
+				<item type="batch" label="Boss - Gelée Royale Citron">
+					<item type="sendCommand" command="move * 98566663" />
+				</item>
+				<item type="batch" label="Boss - Gelée Royale Menthe">
+					<item type="sendCommand" command="move * 98567685" />
+				</item>
+				<item type="batch" label="Boss - Gelée Royale Fraise">
+					<item type="sendCommand" command="move * 98568709" />
+				</item>
+				<item type="batch" label="Boss - Gelées Royales">
+					<item type="sendCommand" command="move * 98567687" />
+				</item>
+			</item>
+			<item type="menu" label="Repaire de Daïgoro">
+				<item type="static" label="Repaire de Daïgoro" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 12735 1" />
+					<item type="sendCommand" command="move * 79167488" />
+				</item>
+				<item type="batch" label="Boss - Daïgoro">
+					<item type="sendCommand" command="move * 79434241" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Abraknydes">
+				<item type="static" label="Donjon des Abraknydes" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7557 1" />
+					<item type="sendCommand" command="move * 135950" />
+				</item>
+				<item type="batch" label="Boss - Abraknyde Ancestral">
+					<item type="sendCommand" command="move * 42469121" />
+				</item>
+			</item>
+		</item>
+		<item type="menu" label="Niveau 100 à 150">
+			<item type="static" label="Niveau 100 à 150" />
+			<item type="menu" label="Antre du Dragon Cochon">
+				<item type="static" label="Antre du Dragon Cochon" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7511 1" />
+					<item type="sendCommand" command="item * 8320 1" />
+					<item type="sendCommand" command="move * 72092676" />
+				</item>
+				<item type="batch" label="Boss - Dragon Cochon">
+					<item type="sendCommand" command="move * 72361984" />
+				</item>
+			</item>
+			<item type="menu" label="Caverne du Koulosse">
+				<item type="static" label="Caverne du Koulosse" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7908 1" />
+					<item type="sendCommand" command="move * 139784" />
+				</item>
+				<item type="batch" label="Boss - Koulosse">
+					<item type="sendCommand" command="move * 107227136" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Canidés">
+				<item type="static" label="Donjon des Canidés" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8156 1" />
+					<item type="sendCommand" command="move * 11666944" />
+				</item>
+				<item type="batch" label="Boss - Meulou">
+					<item type="sendCommand" command="move * 11543552" />
+				</item>
+			</item>
+			<item type="menu" label="Potager d'Halouine">
+				<item type="static" label="Potager d'Halouine" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 13333 1" />
+					<item type="sendCommand" command="move * 101187584" />
+				</item>
+				<item type="batch" label="Boss - Halouine">
+					<item type="sendCommand" command="move * 101193728" />
+				</item>
+			</item>
+			<item type="menu" label="Bibliothèque du Maître Corbac">
+				<item type="static" label="Bibliothèque du Maître Corbac" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7926 1" />
+					<item type="sendCommand" command="move * 141630" />
+				</item>
+			</item>
+			<item type="menu" label="Caverne de Nowel">
+				<item type="static" label="Caverne de Nowel" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 12151 1" />
+					<item type="sendCommand" command="move * 66192641" />
+				</item>
+				<item type="batch" label="Boss - Papa Nowel">
+					<item type="sendCommand" command="move * 66850816" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Rats de Bonta">
+				<item type="static" label="Donjon des Rats de Bonta" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8439 1" />
+					<item type="sendCommand" command="move * 25035524" />
+				</item>
+				<item type="batch" label="Boss - Rat Blanc">
+					<item type="sendCommand" command="move * 27000836" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Rats de Brâkmar">
+				<item type="static" label="Donjon des Rats de Brâkmar" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8438 1" />
+					<item type="sendCommand" command="move * 28443909" />
+				</item>
+				<item type="batch" label="Boss - Rat Noir">
+					<item type="sendCommand" command="move * 40110085" />
+				</item>
+			</item>
+			<item type="menu" label="Goulet du Rasboul">
+				<item type="static" label="Goulet du Rasboul" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8972 1" />
+					<item type="sendCommand" command="move * 22807552" />
+				</item>
+				<item type="batch" label="Boss - Silf le Rasboul Majeur">
+					<item type="sendCommand" command="move * 22809602" />
+				</item>
+			</item>
+			<item type="menu" label="Antre du Blop Multicolore Royal">
+				<item type="static" label="Antre du Blop Multicolore Royal" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 9254 1" />
+					<item type="sendCommand" command="move * 18875396" />
+				</item>
+				<item type="batch" label="Boss - Blop Multicolore Royal">
+					<item type="sendCommand" command="move * 18876420" />
+				</item>
+			</item>
+			<item type="menu" label="Centre du Labyrinthe du Minotoror">
+				<item type="static" label="Centre du Labyrinthe du Minotoror" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7924 1" />
+					<item type="sendCommand" command="item * 8305 1" />
+					<item type="sendCommand" command="item * 8306 1" />
+					<item type="sendCommand" command="move * 34473220" />
+				</item>
+				<item type="batch" label="Boss - Minotoror">
+					<item type="sendCommand" command="move * 34473474" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon Dragoeuf">
+				<item type="static" label="Donjon Dragoeuf" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8342 1" />
+					<item type="sendCommand" command="item * 8343 1" />
+					<item type="sendCommand" command="move * 33686016" />
+				</item>
+				<item type="batch" label="Boss Crocabulia">
+					<item type="sendCommand" command="move * 27789316" />
+				</item>
+			</item>
+			<item type="menu" label="Repaire de Skeunk">
+				<item type="static" label="Repaire de Skeunk" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8073 1" />
+					<item type="sendCommand" command="move * 63310595" />
+				</item>
+				<item type="batch" label="Boss - Skeunk">
+					<item type="sendCommand" command="move * 107485184" />
+				</item>
+			</item>
+			<item type="menu" label="Repaire des Pandikazes">
+				<item type="static" label="Repaire des Pandikazes" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7309 1" />
+					<item type="sendCommand" command="move * 9508" />
+				</item>
+				<item type="batch" label="Boss - Maître Pandore">
+					<item type="sendCommand" command="move * 17309696" />
+				</item>
+			</item>
+			<item type="menu" label="Serre du Royalmouth">
+				<item type="static" label="Serre du Royalmouth" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 11174 1" />
+					<item type="sendCommand" command="move * 54176049" />
+				</item>
+				<item type="batch" label="Boss - Royalmouth">
+					<item type="sendCommand" command="move * 55053312" />
+				</item>
+			</item>
+			<item type="menu" label="Tofulailler Royal">
+				<item type="static" label="Tofulailler Royal" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8142 1" />
+					<item type="sendCommand" command="move * 96338944" />
+				</item>
+				<item type="batch" label="Boss - Tofu Royal">
+					<item type="sendCommand" command="move * 96209926" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Kitsounes">
+				<item type="static" label="Donjon des Kitsounes" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7311 1" />
+					<item type="sendCommand" command="move * 16678" />
+				</item>
+				<item type="batch" label="Boss - Tanukouï San">
+					<item type="sendCommand" command="move * 18088964" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon des Firefoux">
+				<item type="static" label="Donjon des Firefoux" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7312 1" />
+					<item type="sendCommand" command="move * 13613" />
+				</item>
+				<item type="batch" label="Boss - Péki Péki">
+					<item type="sendCommand" command="move * 16516867" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon du Chêne Mou">
+				<item type="static" label="Donjon du Chêne Mou" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8436 1" />
+					<item type="sendCommand" command="move * 42470147" />
+				</item>
+				<item type="batch" label="Boss - Chêne Mou">
+					<item type="sendCommand" command="move * 42469890" />
+				</item>
+			</item>
+			<item type="menu" label="Excavation du Mansot Royal">
+				<item type="static" label="Excavation du Mansot Royal" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 11175 1" />
+					<item type="sendCommand" command="move * 55836672" />
+				</item>
+				<item type="batch" label="Boss - Mansot Royal">
+					<item type="sendCommand" command="move * 56102912" />
+				</item>
+			</item>
+			<item type="menu" label="Laboratoire du Tynril">
+				<item type="static" label="Laboratoire du Tynril" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8975 1" />
+					<item type="sendCommand" command="move * 63964672" />
+				</item>
+				<item type="batch" label="Boss - Tynril">
+					<item type="sendCommand" command="move * 21235203" />
+				</item>
+			</item>
+		</item>
+		<item type="menu" label="Niveau 150 à 200">
+			<item type="static" label="Niveau 150 à 200" />
+			<item type="menu" label="Donjon des Rats du Château d'Amakna">
+				<item type="static" label="Donjon des Rats du Château d'Amakna" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 12351 1" />
+					<item type="sendCommand" command="move * 101714451" />
+				</item>
+				<item type="batch" label="Boss - Sphincter Cell">
+					<item type="sendCommand" command="move * 102760963" />
+				</item>
+			</item>
+			<item type="menu" label="Epave du Grolandais violent">
+				<item type="static" label="Epave du Grolandais violent" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 11176 1" />
+					<item type="sendCommand" command="move * 54163796" />
+				</item>
+				<item type="batch" label="Boss - Ben le Ripate">
+					<item type="sendCommand" command="move * 56365056" />
+				</item>
+			</item>
+			<item type="menu" label="Canopée du Kimbo">
+				<item type="static" label="Canopée du Kimbo" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8977 1" />
+					<item type="sendCommand" command="move * 25693696" />
+				</item>
+				<item type="batch" label="Boss - Kimbo">
+					<item type="sendCommand" command="move * 21497858" />
+				</item>
+			</item>
+			<item type="menu" label="Hypogée de l'Obsidiantre">
+				<item type="static" label="Hypogée de l'Obsidiantre" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 11177 1" />
+					<item type="sendCommand" command="move * 56890883" />
+				</item>
+				<item type="batch" label="Boss - Obsidiantre">
+					<item type="sendCommand" command="move * 57155841" />
+				</item>
+			</item>
+			<item type="menu" label="Salle du Minotot">
+				<item type="static" label="Salle du Minotot" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 7924 1" />
+					<item type="sendCommand" command="item * 8305 1" />
+					<item type="sendCommand" command="item * 8306 1" />
+					<item type="sendCommand" command="item * 8307 1" />
+					<item type="sendCommand" command="move * 34473476" />
+				</item>
+				<item type="batch" label="Boss - Minotot">
+					<item type="sendCommand" command="move * 34472450" />
+				</item>
+			</item>
+			<item type="menu" label="Tanière Givrefoux">
+				<item type="static" label="Tanière Givrefoux" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 11178 1" />
+					<item type="sendCommand" command="move * 59510784" />
+				</item>
+				<item type="batch" label="Boss - Tengu Givrefoux">
+					<item type="sendCommand" command="move * 59516162" />
+				</item>
+				<item type="batch" label="Boss - Fuji Givrefoux Nourricière ">
+					<item type="sendCommand" command="move * 59515904" />
+				</item>
+			</item>
+			<item type="menu" label="Antre du Korriandre">
+				<item type="static" label="Antre du Korriandre" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 11179 1" />
+					<item type="sendCommand" command="move * 60036612" />
+				</item>
+				<item type="batch" label="Boss - Korriandre">
+					<item type="sendCommand" command="move * 62919680" />
+				</item>
+			</item>
+			<item type="menu" label="Antre du Kralamoure Géant">
+				<item type="static" label="Antre du Kralamoure Géant" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="move * 162056" />
+				</item>
+				<item type="batch" label="Boss - Kralamoure Géant">
+					<item type="sendCommand" command="move * 26740736" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon du Bworker">
+				<item type="static" label="Donjon du Bworker" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 6884 1" />
+					<item type="sendCommand" command="move * 141836" />
+				</item>
+				<item type="batch" label="Boss - Bworker">
+					<item type="sendCommand" command="move * 104333827" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon Fungus">
+				<item type="static" label="Donjon Fungus" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 9247 1" />
+					<item type="sendCommand" command="move * 17828355" />
+				</item>
+				<item type="batch" label="Boss - Ougah">
+					<item type="sendCommand" command="move * 19144963" />
+				</item>
+			</item>
+			<item type="menu" label="Maison du Papa Nowel">
+				<item type="static" label="Maison du Papa Nowel" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 12152 1" />
+					<item type="sendCommand" command="move * 66060545" />
+				</item>
+				<item type="batch" label="Boss - Père Fwetar">
+					<item type="sendCommand" command="move * 66326528" />
+				</item>
+			</item>
+			<item type="menu" label="Antichambre des Gloursons">
+				<item type="static" label="Antichambre des Gloursons" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 11181 1" />
+					<item type="sendCommand" command="move * 62129672" />
+				</item>
+				<item type="batch" label="Boss - Glourséleste">
+					<item type="sendCommand" command="move * 62135816" />
+				</item>
+			</item>
+			<item type="menu" label="Cavernes du Kolosso">
+				<item type="static" label="Cavernes du Kolosso" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 11180 1" />
+					<item type="sendCommand" command="move * 54164293" />
+				</item>
+				<item type="batch" label="Boss - Kolosso">
+					<item type="sendCommand" command="move * 61868036" />
+				</item>
+			</item>
+			<item type="menu" label="Donjon de la mine de Sakaï">
+				<item type="static" label="Donjon de la mine de Sakaï" />
+				<item type="batch" label="Entrée">
+					<item type="sendCommand" command="item * 8329 1" />
+					<item type="sendCommand" command="move * 54159661" />
+				</item>
+				<item type="batch" label="Boss - N">
+					<item type="sendCommand" command="move * 57938689" />
+				</item>
+			</item>
+		</item>
+	</item>
+      <item type="batch" label="Frigost 1, 2, 3">
+            <item type="sendCommand" command="quest * start quest 619" />
+            <item type="sendCommand" command="quest * valid quest 619" />
+            <item type="sendCommand" command="quest * start quest 620" />
+            <item type="sendCommand" command="quest * valid quest 620" />
+            <item type="sendCommand" command="quest * start quest 621" />
+            <item type="sendCommand" command="quest * valid quest 621" />
+            <item type="sendCommand" command="quest * start quest 622" />
+            <item type="sendCommand" command="quest * valid quest 622" />
+            <item type="sendCommand" command="quest * start quest 623" />
+            <item type="sendCommand" command="quest * valid quest 623" />
+            <item type="sendCommand" command="quest * start quest 624" />
+            <item type="sendCommand" command="quest * valid quest 624" />
+            <item type="sendCommand" command="quest * start quest 625" />
+            <item type="sendCommand" command="quest * valid quest 625" />
+            <item type="sendCommand" command="quest * start quest 626" />
+            <item type="sendCommand" command="quest * valid quest 626" />
+
+        </item>
+	<item type="menu" label="Montures" >
+		<item type="static" label="Montures" />
+		<item type="menu" label="Sauvages">
+			<item type="static" label="Sauvages" />
+			<item type="batch" label="Amande Sauvage">
+				<item type="sendCommand" command="createrideinfarmbydb 1_3_1,1,2,1,11,1,12,1,21,1,22,1,111,1,112,1,121,1,122,1,211,1,212,1,221,1,222,1_0,0_AmandeSauvageM_1_0_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 1_3_1,1,2,1,11,1,12,1,21,1,22,1,111,1,112,1,121,1,122,1,211,1,212,1,221,1,222,1_0,0_AmandeSauvageF_1_1_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Dorée Sauvage">
+				<item type="sendCommand" command="createrideinfarmbydb 74_3_1,74,2,74,11,74,12,74,21,74,22,74,111,74,112,74,121,74,122,74,211,74,212,74,221,74,222,74_0,0_DoréeSauvageM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 74_3_1,74,2,74,11,74,12,74,21,74,22,74,111,74,112,74,121,74,122,74,211,74,212,74,221,74,222,74_0,0_DoréeSauvageF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Rousse Sauvage">
+				<item type="sendCommand" command="createrideinfarmbydb 6_3_1,6,2,6,11,6,12,6,21,6,22,6,111,6,112,6,121,6,122,6,211,6,212,6,221,6,222,6_0,0_RousseSauvageM_1_0_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 6_3_1,6,2,6,11,6,12,6,21,6,22,6,111,6,112,6,121,6,122,6,211,6,212,6,221,6,222,6_0,0_RousseSauvageF_1_1_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Toutes">
+				<item type="sendCommand" command="createrideinfarmbydb 1_3_1,1,2,1,11,1,12,1,21,1,22,1,111,1,112,1,121,1,122,1,211,1,212,1,221,1,222,1_0,0_AmandeSauvageM_1_0_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 1_3_1,1,2,1,11,1,12,1,21,1,22,1,111,1,112,1,121,1,122,1,211,1,212,1,221,1,222,1_0,0_AmandeSauvageF_1_1_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 74_3_1,74,2,74,11,74,12,74,21,74,22,74,111,74,112,74,121,74,122,74,211,74,212,74,221,74,222,74_0,0_DoréeSauvageM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 74_3_1,74,2,74,11,74,12,74,21,74,22,74,111,74,112,74,121,74,122,74,211,74,212,74,221,74,222,74_0,0_DoréeSauvageF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 6_3_1,6,2,6,11,6,12,6,21,6,22,6,111,6,112,6,121,6,122,6,211,6,212,6,221,6,222,6_0,0_RousseSauvageM_1_0_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 6_3_1,6,2,6,11,6,12,6,21,6,22,6,111,6,112,6,121,6,122,6,211,6,212,6,221,6,222,6_0,0_RousseSauvageF_1_1_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+		</item>
+		<item type="menu" label="1ère Génération">
+			<item type="static" label="1ère Génération" />
+			<item type="batch" label="Amande">
+				<item type="sendCommand" command="createrideinfarmbydb 20_3_1,20,2,20,11,20,12,20,21,20,22,20,111,20,112,20,121,20,122,20,211,20,212,20,221,20,222,20_0,0_AmandeM_1_0_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 20_3_1,20,2,20,11,20,12,20,21,20,22,20,111,20,112,20,121,20,122,20,211,20,212,20,221,20,222,20_0,0_AmandeF_1_1_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Dorée">
+				<item type="sendCommand" command="createrideinfarmbydb 18_3_1,18,2,18,11,18,12,18,21,18,22,18,111,18,112,18,121,18,122,18,211,18,212,18,221,18,222,18_0,0_DoréeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 18_3_1,18,2,18,11,18,12,18,21,18,22,18,111,18,112,18,121,18,122,18,211,18,212,18,221,18,222,18_0,0_DoréeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Rousse">
+				<item type="sendCommand" command="createrideinfarmbydb 10_3_1,10,2,10,11,10,12,10,21,10,22,10,111,10,112,10,121,10,122,10,211,10,212,10,221,10,222,10_0,0_RousseM_1_0_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 10_3_1,10,2,10,11,10,12,10,21,10,22,10,111,10,112,10,121,10,122,10,211,10,212,10,221,10,222,10_0,0_RousseF_1_1_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Toutes">
+				<item type="sendCommand" command="createrideinfarmbydb 20_3_1,20,2,20,11,20,12,20,21,20,22,20,111,20,112,20,121,20,122,20,211,20,212,20,221,20,222,20_0,0_AmandeM_1_0_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 20_3_1,20,2,20,11,20,12,20,21,20,22,20,111,20,112,20,121,20,122,20,211,20,212,20,221,20,222,20_0,0_AmandeF_1_1_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 18_3_1,18,2,18,11,18,12,18,21,18,22,18,111,18,112,18,121,18,122,18,211,18,212,18,221,18,222,18_0,0_DoréeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 18_3_1,18,2,18,11,18,12,18,21,18,22,18,111,18,112,18,121,18,122,18,211,18,212,18,221,18,222,18_0,0_DoréeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 10_3_1,10,2,10,11,10,12,10,21,10,22,10,111,10,112,10,121,10,122,10,211,10,212,10,221,10,222,10_0,0_RousseM_1_0_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 10_3_1,10,2,10,11,10,12,10,21,10,22,10,111,10,112,10,121,10,122,10,211,10,212,10,221,10,222,10_0,0_RousseF_1_1_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+		</item>
+		<item type="menu" label="2ème Génération">
+			<item type="static" label="2ème Génération" />
+			<item type="batch" label="Amande et Dorée">
+				<item type="sendCommand" command="createrideinfarmbydb 33_3_1,33,2,33,11,33,12,33,21,33,22,33,111,33,112,33,121,33,122,33,211,33,212,33,221,33,222,33_0,0_AmandeDoréeM_1_0_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 33_3_1,33,2,33,11,33,12,33,21,33,22,33,111,33,112,33,121,33,122,33,211,33,212,33,221,33,222,33_0,0_AmandeDoréeF_1_1_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Amande et Rousse">
+				<item type="sendCommand" command="createrideinfarmbydb 38_3_1,38,2,38,11,38,12,38,21,38,22,38,111,38,112,38,121,38,122,38,211,38,212,38,221,38,222,38_0,0_AmandeRousseM_1_0_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 38_3_1,38,2,38,11,38,12,38,21,38,22,38,111,38,112,38,121,38,122,38,211,38,212,38,221,38,222,38_0,0_AmandeRousseF_1_1_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Dorée et Rousse">
+				<item type="sendCommand" command="createrideinfarmbydb 46_3_1,46,2,46,11,46,12,46,21,46,22,46,111,46,112,46,121,46,122,46,211,46,212,46,221,46,222,46_0,0_DoréeRousseM_1_0_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 46_3_1,46,2,46,11,46,12,46,21,46,22,46,111,46,112,46,121,46,122,46,211,46,212,46,221,46,222,46_0,0_DoréeRousseF_1_1_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Toutes">
+				<item type="sendCommand" command="createrideinfarmbydb 33_3_1,33,2,33,11,33,12,33,21,33,22,33,111,33,112,33,121,33,122,33,211,33,212,33,221,33,222,33_0,0_AmandeDoréeM_1_0_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 33_3_1,33,2,33,11,33,12,33,21,33,22,33,111,33,112,33,121,33,122,33,211,33,212,33,221,33,222,33_0,0_AmandeDoréeF_1_1_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 38_3_1,38,2,38,11,38,12,38,21,38,22,38,111,38,112,38,121,38,122,38,211,38,212,38,221,38,222,38_0,0_AmandeRousseM_1_0_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 38_3_1,38,2,38,11,38,12,38,21,38,22,38,111,38,112,38,121,38,122,38,211,38,212,38,221,38,222,38_0,0_AmandeRousseF_1_1_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 46_3_1,46,2,46,11,46,12,46,21,46,22,46,111,46,112,46,121,46,122,46,211,46,212,46,221,46,222,46_0,0_DoréeRousseM_1_0_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 46_3_1,46,2,46,11,46,12,46,21,46,22,46,111,46,112,46,121,46,122,46,211,46,212,46,221,46,222,46_0,0_DoréeRousseF_1_1_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+		</item>
+		<item type="menu" label="3ème Génération">
+			<item type="static" label="3ème Génération" />
+			<item type="batch" label="Ebène">
+				<item type="sendCommand" command="createrideinfarmbydb 3_3_1,3,2,3,11,3,12,3,21,3,22,3,111,3,112,3,121,3,122,3,211,3,212,3,221,3,222,3_0,0_EbèneM_1_0_4000_3000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 3_3_1,3,2,3,11,3,12,3,21,3,22,3,111,3,112,3,121,3,122,3,211,3,212,3,221,3,222,3_0,0_EbèneF_1_1_4000_3000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Indigo">
+				<item type="sendCommand" command="createrideinfarmbydb 17_3_1,17,2,17,11,17,12,17,21,17,22,17,111,17,112,17,121,17,122,17,211,17,212,17,221,17,222,17_0,0_IndigoM_1_0_4000_3000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 17_3_1,17,2,17,11,17,12,17,21,17,22,17,111,17,112,17,121,17,122,17,211,17,212,17,221,17,222,17_0,0_IndigoF_1_1_4000_3000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Toutes">
+				<item type="sendCommand" command="createrideinfarmbydb 3_3_1,3,2,3,11,3,12,3,21,3,22,3,111,3,112,3,121,3,122,3,211,3,212,3,221,3,222,3_0,0_EbèneM_1_0_4000_3000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 3_3_1,3,2,3,11,3,12,3,21,3,22,3,111,3,112,3,121,3,122,3,211,3,212,3,221,3,222,3_0,0_EbèneF_1_1_4000_3000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 17_3_1,17,2,17,11,17,12,17,21,17,22,17,111,17,112,17,121,17,122,17,211,17,212,17,221,17,222,17_0,0_IndigoM_1_0_4000_3000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 17_3_1,17,2,17,11,17,12,17,21,17,22,17,111,17,112,17,121,17,122,17,211,17,212,17,221,17,222,17_0,0_IndigoF_1_1_4000_3000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+		</item>
+		<item type="menu" label="4ème Génération">
+			<item type="static" label="4ème Génération" />
+			<item type="batch" label="Amande et Ebène">
+				<item type="sendCommand" command="createrideinfarmbydb 34_3_1,34,2,34,11,34,12,34,21,34,22,34,111,34,112,34,121,34,122,34,211,34,212,34,221,34,222,34_0,0_AmandeEbèneM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 34_3_1,34,2,34,11,34,12,34,21,34,22,34,111,34,112,34,121,34,122,34,211,34,212,34,221,34,222,34_0,0_AmandeEbèneF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Amande et Indigo">
+				<item type="sendCommand" command="createrideinfarmbydb 36_3_1,36,2,36,11,36,12,36,21,36,22,36,111,36,112,36,121,36,122,36,211,36,212,36,221,36,222,36_0,0_AmandeIndigoM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 36_3_1,36,2,36,11,36,12,36,21,36,22,36,111,36,112,36,121,36,122,36,211,36,212,36,221,36,222,36_0,0_AmandeIndigoF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Dorée et Ebène">
+				<item type="sendCommand" command="createrideinfarmbydb 42_3_1,42,2,42,11,42,12,42,21,42,22,42,111,42,112,42,121,42,122,42,211,42,212,42,221,42,222,42_0,0_DoréeEbèneM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 42_3_1,42,2,42,11,42,12,42,21,42,22,42,111,42,112,42,121,42,122,42,211,42,212,42,221,42,222,42_0,0_DoréeEbèneF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Dorée et Indigo">
+				<item type="sendCommand" command="createrideinfarmbydb 44_3_1,44,2,44,11,44,12,44,21,44,22,44,111,44,112,44,121,44,122,44,211,44,212,44,221,44,222,44_0,0_DoréeIndigoM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 44_3_1,44,2,44,11,44,12,44,21,44,22,44,111,44,112,44,121,44,122,44,211,44,212,44,221,44,222,44_0,0_DoréeIndigoF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Ebène et Indigo">
+				<item type="sendCommand" command="createrideinfarmbydb 51_3_1,51,2,51,11,51,12,51,21,51,22,51,111,51,112,51,121,51,122,51,211,51,212,51,221,51,222,51_0,0_EbèneIndigoM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 51_3_1,51,2,51,11,51,12,51,21,51,22,51,111,51,112,51,121,51,122,51,211,51,212,51,221,51,222,51_0,0_EbèneIndigoF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Ebène et Rousse">
+				<item type="sendCommand" command="createrideinfarmbydb 12_3_1,12,2,12,11,12,12,12,21,12,22,12,111,12,112,12,121,12,122,12,211,12,212,12,221,12,222,12_0,0_EbèneRousseM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 12_3_1,12,2,12,11,12,12,12,21,12,22,12,111,12,112,12,121,12,122,12,211,12,212,12,221,12,222,12_0,0_EbèneRousseF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Indigo et Rousse">
+				<item type="sendCommand" command="createrideinfarmbydb 62_3_1,62,2,62,11,62,12,62,21,62,22,62,111,62,112,62,121,62,122,62,211,62,212,62,221,62,222,62_0,0_IndigoRousseM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 62_3_1,62,2,62,11,62,12,62,21,62,22,62,111,62,112,62,121,62,122,62,211,62,212,62,221,62,222,62_0,0_IndigoRousseF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Toutes">
+				<item type="sendCommand" command="createrideinfarmbydb 34_3_1,34,2,34,11,34,12,34,21,34,22,34,111,34,112,34,121,34,122,34,211,34,212,34,221,34,222,34_0,0_AmandeEbèneM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 34_3_1,34,2,34,11,34,12,34,21,34,22,34,111,34,112,34,121,34,122,34,211,34,212,34,221,34,222,34_0,0_AmandeEbèneF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 36_3_1,36,2,36,11,36,12,36,21,36,22,36,111,36,112,36,121,36,122,36,211,36,212,36,221,36,222,36_0,0_AmandeIndigoM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 36_3_1,36,2,36,11,36,12,36,21,36,22,36,111,36,112,36,121,36,122,36,211,36,212,36,221,36,222,36_0,0_AmandeIndigoF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 42_3_1,42,2,42,11,42,12,42,21,42,22,42,111,42,112,42,121,42,122,42,211,42,212,42,221,42,222,42_0,0_DoréeEbèneM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 42_3_1,42,2,42,11,42,12,42,21,42,22,42,111,42,112,42,121,42,122,42,211,42,212,42,221,42,222,42_0,0_DoréeEbèneF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 44_3_1,44,2,44,11,44,12,44,21,44,22,44,111,44,112,44,121,44,122,44,211,44,212,44,221,44,222,44_0,0_DoréeIndigoM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 44_3_1,44,2,44,11,44,12,44,21,44,22,44,111,44,112,44,121,44,122,44,211,44,212,44,221,44,222,44_0,0_DoréeIndigoF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 51_3_1,51,2,51,11,51,12,51,21,51,22,51,111,51,112,51,121,51,122,51,211,51,212,51,221,51,222,51_0,0_EbèneIndigoM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 51_3_1,51,2,51,11,51,12,51,21,51,22,51,111,51,112,51,121,51,122,51,211,51,212,51,221,51,222,51_0,0_EbèneIndigoF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 12_3_1,12,2,12,11,12,12,12,21,12,22,12,111,12,112,12,121,12,122,12,211,12,212,12,221,12,222,12_0,0_EbèneRousseM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 12_3_1,12,2,12,11,12,12,12,21,12,22,12,111,12,112,12,121,12,122,12,211,12,212,12,221,12,222,12_0,0_EbèneRousseF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 62_3_1,62,2,62,11,62,12,62,21,62,22,62,111,62,112,62,121,62,122,62,211,62,212,62,221,62,222,62_0,0_IndigoRousseM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 62_3_1,62,2,62,11,62,12,62,21,62,22,62,111,62,112,62,121,62,122,62,211,62,212,62,221,62,222,62_0,0_IndigoRousseF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+		</item>
+		<item type="menu" label="5ème Génération">
+			<item type="static" label="5ème Génération" />
+			<item type="batch" label="Orchidée">
+				<item type="sendCommand" command="createrideinfarmbydb 22_3_1,22,2,22,11,22,12,22,21,22,22,22,111,22,112,22,121,22,122,22,211,22,212,22,221,22,222,22_0,0_OrchidéeM_1_0_4000_5000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 22_3_1,22,2,22,11,22,12,22,21,22,22,22,111,22,112,22,121,22,122,22,211,22,212,22,221,22,222,22_0,0_OrchidéeF_1_1_4000_5000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Pourpre">
+				<item type="sendCommand" command="createrideinfarmbydb 19_3_1,19,2,19,11,19,12,19,21,19,22,19,111,19,112,19,121,19,122,19,211,19,212,19,221,19,222,19_0,0_PourpreM_1_0_4000_5000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 19_3_1,19,2,19,11,19,12,19,21,19,22,19,111,19,112,19,121,19,122,19,211,19,212,19,221,19,222,19_0,0_PourpreF_1_1_4000_5000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Toutes">
+				<item type="sendCommand" command="createrideinfarmbydb 22_3_1,22,2,22,11,22,12,22,21,22,22,22,111,22,112,22,121,22,122,22,211,22,212,22,221,22,222,22_0,0_OrchidéeM_1_0_4000_5000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 22_3_1,22,2,22,11,22,12,22,21,22,22,22,111,22,112,22,121,22,122,22,211,22,212,22,221,22,222,22_0,0_OrchidéeF_1_1_4000_5000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 19_3_1,19,2,19,11,19,12,19,21,19,22,19,111,19,112,19,121,19,122,19,211,19,212,19,221,19,222,19_0,0_PourpreM_1_0_4000_5000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 19_3_1,19,2,19,11,19,12,19,21,19,22,19,111,19,112,19,121,19,122,19,211,19,212,19,221,19,222,19_0,0_PourpreF_1_1_4000_5000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+		</item>
+		<item type="menu" label="6ème Génération">
+			<item type="static" label="6ème Génération" />
+			<item type="batch" label="Amande et Orchidée">
+				<item type="sendCommand" command="createrideinfarmbydb 40_3_1,40,2,40,11,40,12,40,21,40,22,40,111,40,112,40,121,40,122,40,211,40,212,40,221,40,222,40_0,0_AmandeOrchidéeM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 40_3_1,40,2,40,11,40,12,40,21,40,22,40,111,40,112,40,121,40,122,40,211,40,212,40,221,40,222,40_0,0_AmandeOrchidéeF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Amande et Pourpre">
+				<item type="sendCommand" command="createrideinfarmbydb 41_3_1,41,2,41,11,41,12,41,21,41,22,41,111,41,112,41,121,41,122,41,211,41,212,41,221,41,222,41_0,0_AmandePourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 41_3_1,41,2,41,11,41,12,41,21,41,22,41,111,41,112,41,121,41,122,41,211,41,212,41,221,41,222,41_0,0_AmandePourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Dorée et Orchidée">
+				<item type="sendCommand" command="createrideinfarmbydb 48_3_1,48,2,48,11,48,12,48,21,48,22,48,111,48,112,48,121,48,122,48,211,48,212,48,221,48,222,48_0,0_DoréeOrchidéeM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 48_3_1,48,2,48,11,48,12,48,21,48,22,48,111,48,112,48,121,48,122,48,211,48,212,48,221,48,222,48_0,0_DoréeOrchidéeF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Dorée et Pourpre">
+				<item type="sendCommand" command="createrideinfarmbydb 49_3_1,49,2,49,11,49,12,49,21,49,22,49,111,49,112,49,121,49,122,49,211,49,212,49,221,49,222,49_0,0_DoréePourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 49_3_1,49,2,49,11,49,12,49,21,49,22,49,111,49,112,49,121,49,122,49,211,49,212,49,221,49,222,49_0,0_DoréePourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Ebène et Orchidée">
+				<item type="sendCommand" command="createrideinfarmbydb 53_3_1,53,2,53,11,53,12,53,21,53,22,53,111,53,112,53,121,53,122,53,211,53,212,53,221,53,222,53_0,0_EbèneOrchidéeM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 53_3_1,53,2,53,11,53,12,53,21,53,22,53,111,53,112,53,121,53,122,53,211,53,212,53,221,53,222,53_0,0_EbèneOrchidéeF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Ebène et Pourpre">
+				<item type="sendCommand" command="createrideinfarmbydb 54_3_1,54,2,54,11,54,12,54,21,54,22,54,111,54,112,54,121,54,122,54,211,54,212,54,221,54,222,54_0,0_EbènePourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 54_3_1,54,2,54,11,54,12,54,21,54,22,54,111,54,112,54,121,54,122,54,211,54,212,54,221,54,222,54_0,0_EbènePourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Indigo et Orchidée">
+				<item type="sendCommand" command="createrideinfarmbydb 64_3_1,64,2,64,11,64,12,64,21,64,22,64,111,64,112,64,121,64,122,64,211,64,212,64,221,64,222,64_0,0_IndigoOrchidéeM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 64_3_1,64,2,64,11,64,12,64,21,64,22,64,111,64,112,64,121,64,122,64,211,64,212,64,221,64,222,64_0,0_IndigoOrchidéeF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Indigo et Pourpre">
+				<item type="sendCommand" command="createrideinfarmbydb 65_3_1,65,2,65,11,65,12,65,21,65,22,65,111,65,112,65,121,65,122,65,211,65,212,65,221,65,222,65_0,0_IndigoPourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 65_3_1,65,2,65,11,65,12,65,21,65,22,65,111,65,112,65,121,65,122,65,211,65,212,65,221,65,222,65_0,0_IndigoPourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Orchidée et Pourpre">
+				<item type="sendCommand" command="createrideinfarmbydb 76_3_1,76,2,76,11,76,12,76,21,76,22,76,111,76,112,76,121,76,122,76,211,76,212,76,221,76,222,76_0,0_OrchidéePourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 76_3_1,76,2,76,11,76,12,76,21,76,22,76,111,76,112,76,121,76,122,76,211,76,212,76,221,76,222,76_0,0_OrchidéePourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Orchidée et Rousse">
+				<item type="sendCommand" command="createrideinfarmbydb 70_3_1,70,2,70,11,70,12,70,21,70,22,70,111,70,112,70,121,70,122,70,211,70,212,70,221,70,222,70_0,0_OrchidéeRousseM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 70_3_1,70,2,70,11,70,12,70,21,70,22,70,111,70,112,70,121,70,122,70,211,70,212,70,221,70,222,70_0,0_OrchidéeRousseF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Pourpre et Rousse">
+				<item type="sendCommand" command="createrideinfarmbydb 71_3_1,71,2,71,11,71,12,71,21,71,22,71,111,71,112,71,121,71,122,71,211,71,212,71,221,71,222,71_0,0_PourpreRousseM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 71_3_1,71,2,71,11,71,12,71,21,71,22,71,111,71,112,71,121,71,122,71,211,71,212,71,221,71,222,71_0,0_PourpreRousseF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Toutes">
+				<item type="sendCommand" command="createrideinfarmbydb 40_3_1,40,2,40,11,40,12,40,21,40,22,40,111,40,112,40,121,40,122,40,211,40,212,40,221,40,222,40_0,0_AmandeOrchidéeM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 40_3_1,40,2,40,11,40,12,40,21,40,22,40,111,40,112,40,121,40,122,40,211,40,212,40,221,40,222,40_0,0_AmandeOrchidéeF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 41_3_1,41,2,41,11,41,12,41,21,41,22,41,111,41,112,41,121,41,122,41,211,41,212,41,221,41,222,41_0,0_AmandePourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 41_3_1,41,2,41,11,41,12,41,21,41,22,41,111,41,112,41,121,41,122,41,211,41,212,41,221,41,222,41_0,0_AmandePourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 48_3_1,48,2,48,11,48,12,48,21,48,22,48,111,48,112,48,121,48,122,48,211,48,212,48,221,48,222,48_0,0_DoréeOrchidéeM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 48_3_1,48,2,48,11,48,12,48,21,48,22,48,111,48,112,48,121,48,122,48,211,48,212,48,221,48,222,48_0,0_DoréeOrchidéeF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 49_3_1,49,2,49,11,49,12,49,21,49,22,49,111,49,112,49,121,49,122,49,211,49,212,49,221,49,222,49_0,0_DoréePourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 49_3_1,49,2,49,11,49,12,49,21,49,22,49,111,49,112,49,121,49,122,49,211,49,212,49,221,49,222,49_0,0_DoréePourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 53_3_1,53,2,53,11,53,12,53,21,53,22,53,111,53,112,53,121,53,122,53,211,53,212,53,221,53,222,53_0,0_EbèneOrchidéeM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 53_3_1,53,2,53,11,53,12,53,21,53,22,53,111,53,112,53,121,53,122,53,211,53,212,53,221,53,222,53_0,0_EbèneOrchidéeF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 54_3_1,54,2,54,11,54,12,54,21,54,22,54,111,54,112,54,121,54,122,54,211,54,212,54,221,54,222,54_0,0_EbènePourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 54_3_1,54,2,54,11,54,12,54,21,54,22,54,111,54,112,54,121,54,122,54,211,54,212,54,221,54,222,54_0,0_EbènePourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 64_3_1,64,2,64,11,64,12,64,21,64,22,64,111,64,112,64,121,64,122,64,211,64,212,64,221,64,222,64_0,0_IndigoOrchidéeM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 64_3_1,64,2,64,11,64,12,64,21,64,22,64,111,64,112,64,121,64,122,64,211,64,212,64,221,64,222,64_0,0_IndigoOrchidéeF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 65_3_1,65,2,65,11,65,12,65,21,65,22,65,111,65,112,65,121,65,122,65,211,65,212,65,221,65,222,65_0,0_IndigoPourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 65_3_1,65,2,65,11,65,12,65,21,65,22,65,111,65,112,65,121,65,122,65,211,65,212,65,221,65,222,65_0,0_IndigoPourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 76_3_1,76,2,76,11,76,12,76,21,76,22,76,111,76,112,76,121,76,122,76,211,76,212,76,221,76,222,76_0,0_OrchidéePourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 76_3_1,76,2,76,11,76,12,76,21,76,22,76,111,76,112,76,121,76,122,76,211,76,212,76,221,76,222,76_0,0_OrchidéePourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 70_3_1,70,2,70,11,70,12,70,21,70,22,70,111,70,112,70,121,70,122,70,211,70,212,70,221,70,222,70_0,0_OrchidéeRousseM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 70_3_1,70,2,70,11,70,12,70,21,70,22,70,111,70,112,70,121,70,122,70,211,70,212,70,221,70,222,70_0,0_OrchidéeRousseF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 71_3_1,71,2,71,11,71,12,71,21,71,22,71,111,71,112,71,121,71,122,71,211,71,212,71,221,71,222,71_0,0_PourpreRousseM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 71_3_1,71,2,71,11,71,12,71,21,71,22,71,111,71,112,71,121,71,122,71,211,71,212,71,221,71,222,71_0,0_PourpreRousseF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+		</item>
+		<item type="menu" label="7ème Génération">
+			<item type="static" label="7ème Génération" />
+			<item type="batch" label="Ivoire">
+				<item type="sendCommand" command="createrideinfarmbydb 16_3_1,16,2,16,11,16,12,16,21,16,22,16,111,16,112,16,121,16,122,16,211,16,212,16,221,16,222,16_0,0_IvoireM_1_0_4000_7000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 16_3_1,16,2,16,11,16,12,16,21,16,22,16,111,16,112,16,121,16,122,16,211,16,212,16,221,16,222,16_0,0_IvoireF_1_1_4000_7000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Turquoise">
+				<item type="sendCommand" command="createrideinfarmbydb 15_3_1,15,2,15,11,15,12,15,21,15,22,15,111,15,112,15,121,15,122,15,211,15,212,15,221,15,222,15_0,0_TurquoiseM_1_0_4000_7000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 15_3_1,15,2,15,11,15,12,15,21,15,22,15,111,15,112,15,121,15,122,15,211,15,212,15,221,15,222,15_0,0_TurquoiseF_1_1_4000_7000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Toutes">
+				<item type="sendCommand" command="createrideinfarmbydb 16_3_1,16,2,16,11,16,12,16,21,16,22,16,111,16,112,16,121,16,122,16,211,16,212,16,221,16,222,16_0,0_IvoireM_1_0_4000_7000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 16_3_1,16,2,16,11,16,12,16,21,16,22,16,111,16,112,16,121,16,122,16,211,16,212,16,221,16,222,16_0,0_IvoireF_1_1_4000_7000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 15_3_1,15,2,15,11,15,12,15,21,15,22,15,111,15,112,15,121,15,122,15,211,15,212,15,221,15,222,15_0,0_TurquoiseM_1_0_4000_7000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 15_3_1,15,2,15,11,15,12,15,21,15,22,15,111,15,112,15,121,15,122,15,211,15,212,15,221,15,222,15_0,0_TurquoiseF_1_1_4000_7000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+		</item>
+		<item type="menu" label="8ème Génération">
+			<item type="static" label="8ème Génération" />
+			<item type="batch" label="Amande et Ivoire">
+				<item type="sendCommand" command="createrideinfarmbydb 37_3_1,37,2,37,11,37,12,37,21,37,22,37,111,37,112,37,121,37,122,37,211,37,212,37,221,37,222,37_0,0_AmandeIvoireM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 37_3_1,37,2,37,11,37,12,37,21,37,22,37,111,37,112,37,121,37,122,37,211,37,212,37,221,37,222,37_0,0_AmandeIvoireF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Amande et Turquoise">
+				<item type="sendCommand" command="createrideinfarmbydb 39_3_1,39,2,39,11,39,12,39,21,39,22,39,111,39,112,39,121,39,122,39,211,39,212,39,221,39,222,39_0,0_AmandeTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 39_3_1,39,2,39,11,39,12,39,21,39,22,39,111,39,112,39,121,39,122,39,211,39,212,39,221,39,222,39_0,0_AmandeTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Dorée et Ivoire">
+				<item type="sendCommand" command="createrideinfarmbydb 45_3_1,45,2,45,11,45,12,45,21,45,22,45,111,45,112,45,121,45,122,45,211,45,212,45,221,45,222,45_0,0_DoréeIvoireM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 45_3_1,45,2,45,11,45,12,45,21,45,22,45,111,45,112,45,121,45,122,45,211,45,212,45,221,45,222,45_0,0_DoréeIvoireF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Dorée et Turquoise">
+				<item type="sendCommand" command="createrideinfarmbydb 47_3_1,47,2,47,11,47,12,47,21,47,22,47,111,47,112,47,121,47,122,47,211,47,212,47,221,47,222,47_0,0_DoréeTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 47_3_1,47,2,47,11,47,12,47,21,47,22,47,111,47,112,47,121,47,122,47,211,47,212,47,221,47,222,47_0,0_DoréeTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Ebène et Ivoire">
+				<item type="sendCommand" command="createrideinfarmbydb 9_3_1,9,2,9,11,9,12,9,21,9,22,9,111,9,112,9,121,9,122,9,211,9,212,9,221,9,222,9_0,0_EbèneIvoireM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 9_3_1,9,2,9,11,9,12,9,21,9,22,9,111,9,112,9,121,9,122,9,211,9,212,9,221,9,222,9_0,0_EbèneIvoireF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Ebène et Turquoise">
+				<item type="sendCommand" command="createrideinfarmbydb 52_3_1,52,2,52,11,52,12,52,21,52,22,52,111,52,112,52,121,52,122,52,211,52,212,52,221,52,222,52_0,0_EbèneTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 52_3_1,52,2,52,11,52,12,52,21,52,22,52,111,52,112,52,121,52,122,52,211,52,212,52,221,52,222,52_0,0_EbèneTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Indigo et Ivoire">
+				<item type="sendCommand" command="createrideinfarmbydb 61_3_1,61,2,61,11,61,12,61,21,61,22,61,111,61,112,61,121,61,122,61,211,61,212,61,221,61,222,61_0,0_IndigoIvoireM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 61_3_1,61,2,61,11,61,12,61,21,61,22,61,111,61,112,61,121,61,122,61,211,61,212,61,221,61,222,61_0,0_IndigoIvoireF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Indigo et Turquoise">
+				<item type="sendCommand" command="createrideinfarmbydb 63_3_1,63,2,63,11,63,12,63,21,63,22,63,111,63,112,63,121,63,122,63,211,63,212,63,221,63,222,63_0,0_IndigoTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 63_3_1,63,2,63,11,63,12,63,21,63,22,63,111,63,112,63,121,63,122,63,211,63,212,63,221,63,222,63_0,0_IndigoTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Ivoire et Orchidée">
+				<item type="sendCommand" command="createrideinfarmbydb 67_3_1,67,2,67,11,67,12,67,21,67,22,67,111,67,112,67,121,67,122,67,211,67,212,67,221,67,222,67_0,0_IvoireOrchidéeM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 67_3_1,67,2,67,11,67,12,67,21,67,22,67,111,67,112,67,121,67,122,67,211,67,212,67,221,67,222,67_0,0_IvoireOrchidéeF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Ivoire et Pourpre">
+				<item type="sendCommand" command="createrideinfarmbydb 68_3_1,68,2,68,11,68,12,68,21,68,22,68,111,68,112,68,121,68,122,68,211,68,212,68,221,68,222,68_0,0_IvoirePourpreM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 68_3_1,68,2,68,11,68,12,68,21,68,22,68,111,68,112,68,121,68,122,68,211,68,212,68,221,68,222,68_0,0_IvoirePourpreF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Ivoire et Rousse">
+				<item type="sendCommand" command="createrideinfarmbydb 11_3_1,11,2,11,11,11,12,11,21,11,22,11,111,11,112,11,121,11,122,11,211,11,212,11,221,11,222,11_0,0_IvoireRousseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 11_3_1,11,2,11,11,11,12,11,21,11,22,11,111,11,112,11,121,11,122,11,211,11,212,11,221,11,222,11_0,0_IvoireRousseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Ivoire et Turquoise">
+				<item type="sendCommand" command="createrideinfarmbydb 66_3_1,66,2,66,11,66,12,66,21,66,22,66,111,66,112,66,121,66,122,66,211,66,212,66,221,66,222,66_0,0_IvoireTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 66_3_1,66,2,66,11,66,12,66,21,66,22,66,111,66,112,66,121,66,122,66,211,66,212,66,221,66,222,66_0,0_IvoireTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Turquoise et Orchidée">
+				<item type="sendCommand" command="createrideinfarmbydb 72_3_1,72,2,72,11,72,12,72,21,72,22,72,111,72,112,72,121,72,122,72,211,72,212,72,221,72,222,72_0,0_TurquoiseOrchidéeM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 72_3_1,72,2,72,11,72,12,72,21,72,22,72,111,72,112,72,121,72,122,72,211,72,212,72,221,72,222,72_0,0_TurquoiseOrchidéeF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Turquoise et Pourpre">
+				<item type="sendCommand" command="createrideinfarmbydb 73_3_1,73,2,73,11,73,12,73,21,73,22,73,111,73,112,73,121,73,122,73,211,73,212,73,221,73,222,73_0,0_TurquoisePourpreM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 73_3_1,73,2,73,11,73,12,73,21,73,22,73,111,73,112,73,121,73,122,73,211,73,212,73,221,73,222,73_0,0_TurquoisePourpreF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Turquoise et Rousse">
+				<item type="sendCommand" command="createrideinfarmbydb 69_3_1,69,2,69,11,69,12,69,21,69,22,69,111,69,112,69,121,69,122,69,211,69,212,69,221,69,222,69_0,0_TurquoiseRousseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 69_3_1,69,2,69,11,69,12,69,21,69,22,69,111,69,112,69,121,69,122,69,211,69,212,69,221,69,222,69_0,0_TurquoiseRousseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Toutes">
+				<item type="sendCommand" command="createrideinfarmbydb 37_3_1,37,2,37,11,37,12,37,21,37,22,37,111,37,112,37,121,37,122,37,211,37,212,37,221,37,222,37_0,0_AmandeIvoireM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 37_3_1,37,2,37,11,37,12,37,21,37,22,37,111,37,112,37,121,37,122,37,211,37,212,37,221,37,222,37_0,0_AmandeIvoireF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 39_3_1,39,2,39,11,39,12,39,21,39,22,39,111,39,112,39,121,39,122,39,211,39,212,39,221,39,222,39_0,0_AmandeTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 39_3_1,39,2,39,11,39,12,39,21,39,22,39,111,39,112,39,121,39,122,39,211,39,212,39,221,39,222,39_0,0_AmandeTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 45_3_1,45,2,45,11,45,12,45,21,45,22,45,111,45,112,45,121,45,122,45,211,45,212,45,221,45,222,45_0,0_DoréeIvoireM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 45_3_1,45,2,45,11,45,12,45,21,45,22,45,111,45,112,45,121,45,122,45,211,45,212,45,221,45,222,45_0,0_DoréeIvoireF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 47_3_1,47,2,47,11,47,12,47,21,47,22,47,111,47,112,47,121,47,122,47,211,47,212,47,221,47,222,47_0,0_DoréeTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 47_3_1,47,2,47,11,47,12,47,21,47,22,47,111,47,112,47,121,47,122,47,211,47,212,47,221,47,222,47_0,0_DoréeTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 9_3_1,9,2,9,11,9,12,9,21,9,22,9,111,9,112,9,121,9,122,9,211,9,212,9,221,9,222,9_0,0_EbèneIvoireM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 9_3_1,9,2,9,11,9,12,9,21,9,22,9,111,9,112,9,121,9,122,9,211,9,212,9,221,9,222,9_0,0_EbèneIvoireF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 52_3_1,52,2,52,11,52,12,52,21,52,22,52,111,52,112,52,121,52,122,52,211,52,212,52,221,52,222,52_0,0_EbèneTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 52_3_1,52,2,52,11,52,12,52,21,52,22,52,111,52,112,52,121,52,122,52,211,52,212,52,221,52,222,52_0,0_EbèneTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 61_3_1,61,2,61,11,61,12,61,21,61,22,61,111,61,112,61,121,61,122,61,211,61,212,61,221,61,222,61_0,0_IndigoIvoireM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 61_3_1,61,2,61,11,61,12,61,21,61,22,61,111,61,112,61,121,61,122,61,211,61,212,61,221,61,222,61_0,0_IndigoIvoireF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 63_3_1,63,2,63,11,63,12,63,21,63,22,63,111,63,112,63,121,63,122,63,211,63,212,63,221,63,222,63_0,0_IndigoTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 63_3_1,63,2,63,11,63,12,63,21,63,22,63,111,63,112,63,121,63,122,63,211,63,212,63,221,63,222,63_0,0_IndigoTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 67_3_1,67,2,67,11,67,12,67,21,67,22,67,111,67,112,67,121,67,122,67,211,67,212,67,221,67,222,67_0,0_IvoireOrchidéeM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 67_3_1,67,2,67,11,67,12,67,21,67,22,67,111,67,112,67,121,67,122,67,211,67,212,67,221,67,222,67_0,0_IvoireOrchidéeF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 68_3_1,68,2,68,11,68,12,68,21,68,22,68,111,68,112,68,121,68,122,68,211,68,212,68,221,68,222,68_0,0_IvoirePourpreM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 68_3_1,68,2,68,11,68,12,68,21,68,22,68,111,68,112,68,121,68,122,68,211,68,212,68,221,68,222,68_0,0_IvoirePourpreF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 11_3_1,11,2,11,11,11,12,11,21,11,22,11,111,11,112,11,121,11,122,11,211,11,212,11,221,11,222,11_0,0_IvoireRousseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 11_3_1,11,2,11,11,11,12,11,21,11,22,11,111,11,112,11,121,11,122,11,211,11,212,11,221,11,222,11_0,0_IvoireRousseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 66_3_1,66,2,66,11,66,12,66,21,66,22,66,111,66,112,66,121,66,122,66,211,66,212,66,221,66,222,66_0,0_IvoireTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 66_3_1,66,2,66,11,66,12,66,21,66,22,66,111,66,112,66,121,66,122,66,211,66,212,66,221,66,222,66_0,0_IvoireTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 72_3_1,72,2,72,11,72,12,72,21,72,22,72,111,72,112,72,121,72,122,72,211,72,212,72,221,72,222,72_0,0_TurquoiseOrchidéeM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 72_3_1,72,2,72,11,72,12,72,21,72,22,72,111,72,112,72,121,72,122,72,211,72,212,72,221,72,222,72_0,0_TurquoiseOrchidéeF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 73_3_1,73,2,73,11,73,12,73,21,73,22,73,111,73,112,73,121,73,122,73,211,73,212,73,221,73,222,73_0,0_TurquoisePourpreM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 73_3_1,73,2,73,11,73,12,73,21,73,22,73,111,73,112,73,121,73,122,73,211,73,212,73,221,73,222,73_0,0_TurquoisePourpreF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 69_3_1,69,2,69,11,69,12,69,21,69,22,69,111,69,112,69,121,69,122,69,211,69,212,69,221,69,222,69_0,0_TurquoiseRousseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 69_3_1,69,2,69,11,69,12,69,21,69,22,69,111,69,112,69,121,69,122,69,211,69,212,69,221,69,222,69_0,0_TurquoiseRousseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+		</item>
+		<item type="menu" label="9ème Génération">
+			<item type="static" label="9ème Génération" />
+			<item type="batch" label="Emeraude">
+				<item type="sendCommand" command="createrideinfarmbydb 21_3_1,21,2,21,11,21,12,21,21,21,22,21,111,21,112,21,121,21,122,21,211,21,212,21,221,21,222,21_0,0_EmeraudeM_1_0_4000_9000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 21_3_1,21,2,21,11,21,12,21,21,21,22,21,111,21,112,21,121,21,122,21,211,21,212,21,221,21,222,21_0,0_EmeraudeF_1_1_4000_9000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Prune">
+				<item type="sendCommand" command="createrideinfarmbydb 23_3_1,23,2,23,11,23,12,23,21,23,22,23,111,23,112,23,121,23,122,23,211,23,212,23,221,23,222,23_0,0_PruneM_1_0_4000_9000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 23_3_1,23,2,23,11,23,12,23,21,23,22,23,111,23,112,23,121,23,122,23,211,23,212,23,221,23,222,23_0,0_PruneF_1_1_4000_9000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Toutes">
+				<item type="sendCommand" command="createrideinfarmbydb 21_3_1,21,2,21,11,21,12,21,21,21,22,21,111,21,112,21,121,21,122,21,211,21,212,21,221,21,222,21_0,0_EmeraudeM_1_0_4000_9000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 21_3_1,21,2,21,11,21,12,21,21,21,22,21,111,21,112,21,121,21,122,21,211,21,212,21,221,21,222,21_0,0_EmeraudeF_1_1_4000_9000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 23_3_1,23,2,23,11,23,12,23,21,23,22,23,111,23,112,23,121,23,122,23,211,23,212,23,221,23,222,23_0,0_PruneM_1_0_4000_9000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 23_3_1,23,2,23,11,23,12,23,21,23,22,23,111,23,112,23,121,23,122,23,211,23,212,23,221,23,222,23_0,0_PruneF_1_1_4000_9000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+		</item>
+		<item type="menu" label="10ème Génération">
+			<item type="static" label="10ème Génération" />
+			<item type="batch" label="Amande et Emeraude">
+				<item type="sendCommand" command="createrideinfarmbydb 35_3_1,35,2,35,11,35,12,35,21,35,22,35,111,35,112,35,121,35,122,35,211,35,212,35,221,35,222,35_0,0_AmandeEmeraudeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 35_3_1,35,2,35,11,35,12,35,21,35,22,35,111,35,112,35,121,35,122,35,211,35,212,35,221,35,222,35_0,0_AmandeEmeraudeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Dorée et Emeraude">
+				<item type="sendCommand" command="createrideinfarmbydb 43_3_1,43,2,43,11,43,12,43,21,43,22,43,111,43,112,43,121,43,122,43,211,43,212,43,221,43,222,43_0,0_DoréeEmeraudeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 43_3_1,43,2,43,11,43,12,43,21,43,22,43,111,43,112,43,121,43,122,43,211,43,212,43,221,43,222,43_0,0_DoréeEmeraudeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Ebène et Emeraude">
+				<item type="sendCommand" command="createrideinfarmbydb 50_3_1,50,2,50,11,50,12,50,21,50,22,50,111,50,112,50,121,50,122,50,211,50,212,50,221,50,222,50_0,0_EbèneEmeraudeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 50_3_1,50,2,50,11,50,12,50,21,50,22,50,111,50,112,50,121,50,122,50,211,50,212,50,221,50,222,50_0,0_EbèneEmeraudeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Emeraude et Indigo">
+				<item type="sendCommand" command="createrideinfarmbydb 55_3_1,55,2,55,11,55,12,55,21,55,22,55,111,55,112,55,121,55,122,55,211,55,212,55,221,55,222,55_0,0_EmeraudeIndigoM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 55_3_1,55,2,55,11,55,12,55,21,55,22,55,111,55,112,55,121,55,122,55,211,55,212,55,221,55,222,55_0,0_EmeraudeIndigoF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Emeraude et Ivoire">
+				<item type="sendCommand" command="createrideinfarmbydb 56_3_1,56,2,56,11,56,12,56,21,56,22,56,111,56,112,56,121,56,122,56,211,56,212,56,221,56,222,56_0,0_EmeraudeIvoireM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 56_3_1,56,2,56,11,56,12,56,21,56,22,56,111,56,112,56,121,56,122,56,211,56,212,56,221,56,222,56_0,0_EmeraudeIvoireF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Emeraude et Orchidée">
+				<item type="sendCommand" command="createrideinfarmbydb 59_3_1,59,2,59,11,59,12,59,21,59,22,59,111,59,112,59,121,59,122,59,211,59,212,59,221,59,222,59_0,0_EmeraudeOrchidéeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 59_3_1,59,2,59,11,59,12,59,21,59,22,59,111,59,112,59,121,59,122,59,211,59,212,59,221,59,222,59_0,0_EmeraudeOrchidéeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Emeraude et Pourpre">
+				<item type="sendCommand" command="createrideinfarmbydb 60_3_1,60,2,60,11,60,12,60,21,60,22,60,111,60,112,60,121,60,122,60,211,60,212,60,221,60,222,60_0,0_EmeraudePourpreM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 60_3_1,60,2,60,11,60,12,60,21,60,22,60,111,60,112,60,121,60,122,60,211,60,212,60,221,60,222,60_0,0_EmeraudePourpreF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Emeraude et Rousse">
+				<item type="sendCommand" command="createrideinfarmbydb 57_3_1,57,2,57,11,57,12,57,21,57,22,57,111,57,112,57,121,57,122,57,211,57,212,57,221,57,222,57_0,0_EmeraudeRousseM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 57_3_1,57,2,57,11,57,12,57,21,57,22,57,111,57,112,57,121,57,122,57,211,57,212,57,221,57,222,57_0,0_EmeraudeRousseF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Emeraude et Turquoise">
+				<item type="sendCommand" command="createrideinfarmbydb 58_3_1,58,2,58,11,58,12,58,21,58,22,58,111,58,112,58,121,58,122,58,211,58,212,58,221,58,222,58_0,0_EmeraudeTurquoiseM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 58_3_1,58,2,58,11,58,12,58,21,58,22,58,111,58,112,58,121,58,122,58,211,58,212,58,221,58,222,58_0,0_EmeraudeTurquoiseF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Prune et Amande">
+				<item type="sendCommand" command="createrideinfarmbydb 77_3_1,77,2,77,11,77,12,77,21,77,22,77,111,77,112,77,121,77,122,77,211,77,212,77,221,77,222,77_0,0_PruneAmandeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 77_3_1,77,2,77,11,77,12,77,21,77,22,77,111,77,112,77,121,77,122,77,211,77,212,77,221,77,222,77_0,0_PruneAmandeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Prune et Dorée">
+				<item type="sendCommand" command="createrideinfarmbydb 78_3_1,78,2,78,11,78,12,78,21,78,22,78,111,78,112,78,121,78,122,78,211,78,212,78,221,78,222,78_0,0_PruneDoréeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 78_3_1,78,2,78,11,78,12,78,21,78,22,78,111,78,112,78,121,78,122,78,211,78,212,78,221,78,222,78_0,0_PruneDoréeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Prune et Ebène">
+				<item type="sendCommand" command="createrideinfarmbydb 79_3_1,79,2,79,11,79,12,79,21,79,22,79,111,79,112,79,121,79,122,79,211,79,212,79,221,79,222,79_0,0_PruneEbèneM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 79_3_1,79,2,79,11,79,12,79,21,79,22,79,111,79,112,79,121,79,122,79,211,79,212,79,221,79,222,79_0,0_PruneEbèneF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Prune et Emeraude">
+				<item type="sendCommand" command="createrideinfarmbydb 80_3_1,80,2,80,11,80,12,80,21,80,22,80,111,80,112,80,121,80,122,80,211,80,212,80,221,80,222,80_0,0_PruneEmeraudeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 80_3_1,80,2,80,11,80,12,80,21,80,22,80,111,80,112,80,121,80,122,80,211,80,212,80,221,80,222,80_0,0_PruneEmeraudeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Prune et Indigo">
+				<item type="sendCommand" command="createrideinfarmbydb 82_3_1,82,2,82,11,82,12,82,21,82,22,82,111,82,112,82,121,82,122,82,211,82,212,82,221,82,222,82_0,0_PruneIndigoM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 82_3_1,82,2,82,11,82,12,82,21,82,22,82,111,82,112,82,121,82,122,82,211,82,212,82,221,82,222,82_0,0_PruneIndigoF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Prune et Ivoire">
+				<item type="sendCommand" command="createrideinfarmbydb 83_3_1,83,2,83,11,83,12,83,21,83,22,83,111,83,112,83,121,83,122,83,211,83,212,83,221,83,222,83_0,0_PruneIvoireM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 83_3_1,83,2,83,11,83,12,83,21,83,22,83,111,83,112,83,121,83,122,83,211,83,212,83,221,83,222,83_0,0_PruneIvoireF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Prune et Orchidée">
+				<item type="sendCommand" command="createrideinfarmbydb 86_3_1,86,2,86,11,86,12,86,21,86,22,86,111,86,112,86,121,86,122,86,211,86,212,86,221,86,222,86_0,0_PruneOrchidéeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 86_3_1,86,2,86,11,86,12,86,21,86,22,86,111,86,112,86,121,86,122,86,211,86,212,86,221,86,222,86_0,0_PruneOrchidéeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Prune et Pourpre">
+				<item type="sendCommand" command="createrideinfarmbydb 87_3_1,87,2,87,11,87,12,87,21,87,22,87,111,87,112,87,121,87,122,87,211,87,212,87,221,87,222,87_0,0_PrunePourpreM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 87_3_1,87,2,87,11,87,12,87,21,87,22,87,111,87,112,87,121,87,122,87,211,87,212,87,221,87,222,87_0,0_PrunePourpreF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Prune et Rousse">
+				<item type="sendCommand" command="createrideinfarmbydb 84_3_1,84,2,84,11,84,12,84,21,84,22,84,111,84,112,84,121,84,122,84,211,84,212,84,221,84,222,84_0,0_PruneRousseM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 84_3_1,84,2,84,11,84,12,84,21,84,22,84,111,84,112,84,121,84,122,84,211,84,212,84,221,84,222,84_0,0_PruneRousseF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Prune et Turquoise">
+				<item type="sendCommand" command="createrideinfarmbydb 85_3_1,85,2,85,11,85,12,85,21,85,22,85,111,85,112,85,121,85,122,85,211,85,212,85,221,85,222,85_0,0_PruneTurquoiseM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 85_3_1,85,2,85,11,85,12,85,21,85,22,85,111,85,112,85,121,85,122,85,211,85,212,85,221,85,222,85_0,0_PruneTurquoiseF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+			<item type="batch" label="Toutes">
+				<item type="sendCommand" command="createrideinfarmbydb 35_3_1,35,2,35,11,35,12,35,21,35,22,35,111,35,112,35,121,35,122,35,211,35,212,35,221,35,222,35_0,0_AmandeEmeraudeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 35_3_1,35,2,35,11,35,12,35,21,35,22,35,111,35,112,35,121,35,122,35,211,35,212,35,221,35,222,35_0,0_AmandeEmeraudeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 43_3_1,43,2,43,11,43,12,43,21,43,22,43,111,43,112,43,121,43,122,43,211,43,212,43,221,43,222,43_0,0_DoréeEmeraudeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 43_3_1,43,2,43,11,43,12,43,21,43,22,43,111,43,112,43,121,43,122,43,211,43,212,43,221,43,222,43_0,0_DoréeEmeraudeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 50_3_1,50,2,50,11,50,12,50,21,50,22,50,111,50,112,50,121,50,122,50,211,50,212,50,221,50,222,50_0,0_EbèneEmeraudeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 50_3_1,50,2,50,11,50,12,50,21,50,22,50,111,50,112,50,121,50,122,50,211,50,212,50,221,50,222,50_0,0_EbèneEmeraudeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 55_3_1,55,2,55,11,55,12,55,21,55,22,55,111,55,112,55,121,55,122,55,211,55,212,55,221,55,222,55_0,0_EmeraudeIndigoM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 55_3_1,55,2,55,11,55,12,55,21,55,22,55,111,55,112,55,121,55,122,55,211,55,212,55,221,55,222,55_0,0_EmeraudeIndigoF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 56_3_1,56,2,56,11,56,12,56,21,56,22,56,111,56,112,56,121,56,122,56,211,56,212,56,221,56,222,56_0,0_EmeraudeIvoireM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 56_3_1,56,2,56,11,56,12,56,21,56,22,56,111,56,112,56,121,56,122,56,211,56,212,56,221,56,222,56_0,0_EmeraudeIvoireF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 59_3_1,59,2,59,11,59,12,59,21,59,22,59,111,59,112,59,121,59,122,59,211,59,212,59,221,59,222,59_0,0_EmeraudeOrchidéeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 59_3_1,59,2,59,11,59,12,59,21,59,22,59,111,59,112,59,121,59,122,59,211,59,212,59,221,59,222,59_0,0_EmeraudeOrchidéeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 60_3_1,60,2,60,11,60,12,60,21,60,22,60,111,60,112,60,121,60,122,60,211,60,212,60,221,60,222,60_0,0_EmeraudePourpreM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 60_3_1,60,2,60,11,60,12,60,21,60,22,60,111,60,112,60,121,60,122,60,211,60,212,60,221,60,222,60_0,0_EmeraudePourpreF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 57_3_1,57,2,57,11,57,12,57,21,57,22,57,111,57,112,57,121,57,122,57,211,57,212,57,221,57,222,57_0,0_EmeraudeRousseM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 57_3_1,57,2,57,11,57,12,57,21,57,22,57,111,57,112,57,121,57,122,57,211,57,212,57,221,57,222,57_0,0_EmeraudeRousseF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 58_3_1,58,2,58,11,58,12,58,21,58,22,58,111,58,112,58,121,58,122,58,211,58,212,58,221,58,222,58_0,0_EmeraudeTurquoiseM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 58_3_1,58,2,58,11,58,12,58,21,58,22,58,111,58,112,58,121,58,122,58,211,58,212,58,221,58,222,58_0,0_EmeraudeTurquoiseF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 77_3_1,77,2,77,11,77,12,77,21,77,22,77,111,77,112,77,121,77,122,77,211,77,212,77,221,77,222,77_0,0_PruneAmandeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 77_3_1,77,2,77,11,77,12,77,21,77,22,77,111,77,112,77,121,77,122,77,211,77,212,77,221,77,222,77_0,0_PruneAmandeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 78_3_1,78,2,78,11,78,12,78,21,78,22,78,111,78,112,78,121,78,122,78,211,78,212,78,221,78,222,78_0,0_PruneDoréeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 78_3_1,78,2,78,11,78,12,78,21,78,22,78,111,78,112,78,121,78,122,78,211,78,212,78,221,78,222,78_0,0_PruneDoréeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 79_3_1,79,2,79,11,79,12,79,21,79,22,79,111,79,112,79,121,79,122,79,211,79,212,79,221,79,222,79_0,0_PruneEbèneM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 79_3_1,79,2,79,11,79,12,79,21,79,22,79,111,79,112,79,121,79,122,79,211,79,212,79,221,79,222,79_0,0_PruneEbèneF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 80_3_1,80,2,80,11,80,12,80,21,80,22,80,111,80,112,80,121,80,122,80,211,80,212,80,221,80,222,80_0,0_PruneEmeraudeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 80_3_1,80,2,80,11,80,12,80,21,80,22,80,111,80,112,80,121,80,122,80,211,80,212,80,221,80,222,80_0,0_PruneEmeraudeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 82_3_1,82,2,82,11,82,12,82,21,82,22,82,111,82,112,82,121,82,122,82,211,82,212,82,221,82,222,82_0,0_PruneIndigoM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 82_3_1,82,2,82,11,82,12,82,21,82,22,82,111,82,112,82,121,82,122,82,211,82,212,82,221,82,222,82_0,0_PruneIndigoF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 83_3_1,83,2,83,11,83,12,83,21,83,22,83,111,83,112,83,121,83,122,83,211,83,212,83,221,83,222,83_0,0_PruneIvoireM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 83_3_1,83,2,83,11,83,12,83,21,83,22,83,111,83,112,83,121,83,122,83,211,83,212,83,221,83,222,83_0,0_PruneIvoireF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 86_3_1,86,2,86,11,86,12,86,21,86,22,86,111,86,112,86,121,86,122,86,211,86,212,86,221,86,222,86_0,0_PruneOrchidéeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 86_3_1,86,2,86,11,86,12,86,21,86,22,86,111,86,112,86,121,86,122,86,211,86,212,86,221,86,222,86_0,0_PruneOrchidéeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 87_3_1,87,2,87,11,87,12,87,21,87,22,87,111,87,112,87,121,87,122,87,211,87,212,87,221,87,222,87_0,0_PrunePourpreM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 87_3_1,87,2,87,11,87,12,87,21,87,22,87,111,87,112,87,121,87,122,87,211,87,212,87,221,87,222,87_0,0_PrunePourpreF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 84_3_1,84,2,84,11,84,12,84,21,84,22,84,111,84,112,84,121,84,122,84,211,84,212,84,221,84,222,84_0,0_PruneRousseM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 84_3_1,84,2,84,11,84,12,84,21,84,22,84,111,84,112,84,121,84,122,84,211,84,212,84,221,84,222,84_0,0_PruneRousseF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 85_3_1,85,2,85,11,85,12,85,21,85,22,85,111,85,112,85,121,85,122,85,211,85,212,85,221,85,222,85_0,0_PruneTurquoiseM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+				<item type="sendCommand" command="createrideinfarmbydb 85_3_1,85,2,85,11,85,12,85,21,85,22,85,111,85,112,85,121,85,122,85,211,85,212,85,221,85,222,85_0,0_PruneTurquoiseF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			</item>
+		</item>
+		<item type="batch" label="Toutes">
+			<item type="sendCommand" command="createrideinfarmbydb 74_3_1,74,2,74,11,74,12,74,21,74,22,74,111,74,112,74,121,74,122,74,211,74,212,74,221,74,222,74_0,0_DoréeSauvageM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 74_3_1,74,2,74,11,74,12,74,21,74,22,74,111,74,112,74,121,74,122,74,211,74,212,74,221,74,222,74_0,0_DoréeSauvageF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 1_3_1,1,2,1,11,1,12,1,21,1,22,1,111,1,112,1,121,1,122,1,211,1,212,1,221,1,222,1_0,0_AmandeSauvageM_1_0_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 1_3_1,1,2,1,11,1,12,1,21,1,22,1,111,1,112,1,121,1,122,1,211,1,212,1,221,1,222,1_0,0_AmandeSauvageF_1_1_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 6_3_1,6,2,6,11,6,12,6,21,6,22,6,111,6,112,6,121,6,122,6,211,6,212,6,221,6,222,6_0,0_RousseSauvageM_1_0_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 6_3_1,6,2,6,11,6,12,6,21,6,22,6,111,6,112,6,121,6,122,6,211,6,212,6,221,6,222,6_0,0_RousseSauvageF_1_1_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 20_3_1,20,2,20,11,20,12,20,21,20,22,20,111,20,112,20,121,20,122,20,211,20,212,20,221,20,222,20_0,0_AmandeM_1_0_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 20_3_1,20,2,20,11,20,12,20,21,20,22,20,111,20,112,20,121,20,122,20,211,20,212,20,221,20,222,20_0,0_AmandeF_1_1_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 18_3_1,18,2,18,11,18,12,18,21,18,22,18,111,18,112,18,121,18,122,18,211,18,212,18,221,18,222,18_0,0_DoréeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 18_3_1,18,2,18,11,18,12,18,21,18,22,18,111,18,112,18,121,18,122,18,211,18,212,18,221,18,222,18_0,0_DoréeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 10_3_1,10,2,10,11,10,12,10,21,10,22,10,111,10,112,10,121,10,122,10,211,10,212,10,221,10,222,10_0,0_RousseM_1_0_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 10_3_1,10,2,10,11,10,12,10,21,10,22,10,111,10,112,10,121,10,122,10,211,10,212,10,221,10,222,10_0,0_RousseF_1_1_4000_1000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 46_3_1,46,2,46,11,46,12,46,21,46,22,46,111,46,112,46,121,46,122,46,211,46,212,46,221,46,222,46_0,0_DoréeRousseM_1_0_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 46_3_1,46,2,46,11,46,12,46,21,46,22,46,111,46,112,46,121,46,122,46,211,46,212,46,221,46,222,46_0,0_DoréeRousseF_1_1_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 33_3_1,33,2,33,11,33,12,33,21,33,22,33,111,33,112,33,121,33,122,33,211,33,212,33,221,33,222,33_0,0_AmandeDoréeM_1_0_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 33_3_1,33,2,33,11,33,12,33,21,33,22,33,111,33,112,33,121,33,122,33,211,33,212,33,221,33,222,33_0,0_AmandeDoréeF_1_1_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 38_3_1,38,2,38,11,38,12,38,21,38,22,38,111,38,112,38,121,38,122,38,211,38,212,38,221,38,222,38_0,0_AmandeRousseM_1_0_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 38_3_1,38,2,38,11,38,12,38,21,38,22,38,111,38,112,38,121,38,122,38,211,38,212,38,221,38,222,38_0,0_AmandeRousseF_1_1_4000_2000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 3_3_1,3,2,3,11,3,12,3,21,3,22,3,111,3,112,3,121,3,122,3,211,3,212,3,221,3,222,3_0,0_EbèneM_1_0_4000_3000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 3_3_1,3,2,3,11,3,12,3,21,3,22,3,111,3,112,3,121,3,122,3,211,3,212,3,221,3,222,3_0,0_EbèneF_1_1_4000_3000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 17_3_1,17,2,17,11,17,12,17,21,17,22,17,111,17,112,17,121,17,122,17,211,17,212,17,221,17,222,17_0,0_IndigoM_1_0_4000_3000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 17_3_1,17,2,17,11,17,12,17,21,17,22,17,111,17,112,17,121,17,122,17,211,17,212,17,221,17,222,17_0,0_IndigoF_1_1_4000_3000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 44_3_1,44,2,44,11,44,12,44,21,44,22,44,111,44,112,44,121,44,122,44,211,44,212,44,221,44,222,44_0,0_DoréeIndigoM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 44_3_1,44,2,44,11,44,12,44,21,44,22,44,111,44,112,44,121,44,122,44,211,44,212,44,221,44,222,44_0,0_DoréeIndigoF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 12_3_1,12,2,12,11,12,12,12,21,12,22,12,111,12,112,12,121,12,122,12,211,12,212,12,221,12,222,12_0,0_EbèneRousseM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 12_3_1,12,2,12,11,12,12,12,21,12,22,12,111,12,112,12,121,12,122,12,211,12,212,12,221,12,222,12_0,0_EbèneRousseF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 36_3_1,36,2,36,11,36,12,36,21,36,22,36,111,36,112,36,121,36,122,36,211,36,212,36,221,36,222,36_0,0_AmandeIndigoM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 36_3_1,36,2,36,11,36,12,36,21,36,22,36,111,36,112,36,121,36,122,36,211,36,212,36,221,36,222,36_0,0_AmandeIndigoF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 62_3_1,62,2,62,11,62,12,62,21,62,22,62,111,62,112,62,121,62,122,62,211,62,212,62,221,62,222,62_0,0_IndigoRousseM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 62_3_1,62,2,62,11,62,12,62,21,62,22,62,111,62,112,62,121,62,122,62,211,62,212,62,221,62,222,62_0,0_IndigoRousseF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 34_3_1,34,2,34,11,34,12,34,21,34,22,34,111,34,112,34,121,34,122,34,211,34,212,34,221,34,222,34_0,0_AmandeEbèneM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 34_3_1,34,2,34,11,34,12,34,21,34,22,34,111,34,112,34,121,34,122,34,211,34,212,34,221,34,222,34_0,0_AmandeEbèneF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 51_3_1,51,2,51,11,51,12,51,21,51,22,51,111,51,112,51,121,51,122,51,211,51,212,51,221,51,222,51_0,0_EbèneIndigoM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 51_3_1,51,2,51,11,51,12,51,21,51,22,51,111,51,112,51,121,51,122,51,211,51,212,51,221,51,222,51_0,0_EbèneIndigoF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 42_3_1,42,2,42,11,42,12,42,21,42,22,42,111,42,112,42,121,42,122,42,211,42,212,42,221,42,222,42_0,0_DoréeEbèneM_1_0_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 42_3_1,42,2,42,11,42,12,42,21,42,22,42,111,42,112,42,121,42,122,42,211,42,212,42,221,42,222,42_0,0_DoréeEbèneF_1_1_4000_4000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 19_3_1,19,2,19,11,19,12,19,21,19,22,19,111,19,112,19,121,19,122,19,211,19,212,19,221,19,222,19_0,0_PourpreM_1_0_4000_5000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 19_3_1,19,2,19,11,19,12,19,21,19,22,19,111,19,112,19,121,19,122,19,211,19,212,19,221,19,222,19_0,0_PourpreF_1_1_4000_5000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 22_3_1,22,2,22,11,22,12,22,21,22,22,22,111,22,112,22,121,22,122,22,211,22,212,22,221,22,222,22_0,0_OrchidéeM_1_0_4000_5000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 22_3_1,22,2,22,11,22,12,22,21,22,22,22,111,22,112,22,121,22,122,22,211,22,212,22,221,22,222,22_0,0_OrchidéeF_1_1_4000_5000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 54_3_1,54,2,54,11,54,12,54,21,54,22,54,111,54,112,54,121,54,122,54,211,54,212,54,221,54,222,54_0,0_EbènePourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 54_3_1,54,2,54,11,54,12,54,21,54,22,54,111,54,112,54,121,54,122,54,211,54,212,54,221,54,222,54_0,0_EbènePourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 41_3_1,41,2,41,11,41,12,41,21,41,22,41,111,41,112,41,121,41,122,41,211,41,212,41,221,41,222,41_0,0_AmandePourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 41_3_1,41,2,41,11,41,12,41,21,41,22,41,111,41,112,41,121,41,122,41,211,41,212,41,221,41,222,41_0,0_AmandePourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 65_3_1,65,2,65,11,65,12,65,21,65,22,65,111,65,112,65,121,65,122,65,211,65,212,65,221,65,222,65_0,0_IndigoPourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 65_3_1,65,2,65,11,65,12,65,21,65,22,65,111,65,112,65,121,65,122,65,211,65,212,65,221,65,222,65_0,0_IndigoPourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 49_3_1,49,2,49,11,49,12,49,21,49,22,49,111,49,112,49,121,49,122,49,211,49,212,49,221,49,222,49_0,0_DoréePourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 49_3_1,49,2,49,11,49,12,49,21,49,22,49,111,49,112,49,121,49,122,49,211,49,212,49,221,49,222,49_0,0_DoréePourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 40_3_1,40,2,40,11,40,12,40,21,40,22,40,111,40,112,40,121,40,122,40,211,40,212,40,221,40,222,40_0,0_AmandeOrchidéeM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 40_3_1,40,2,40,11,40,12,40,21,40,22,40,111,40,112,40,121,40,122,40,211,40,212,40,221,40,222,40_0,0_AmandeOrchidéeF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 70_3_1,70,2,70,11,70,12,70,21,70,22,70,111,70,112,70,121,70,122,70,211,70,212,70,221,70,222,70_0,0_OrchidéeRousseM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 70_3_1,70,2,70,11,70,12,70,21,70,22,70,111,70,112,70,121,70,122,70,211,70,212,70,221,70,222,70_0,0_OrchidéeRousseF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 53_3_1,53,2,53,11,53,12,53,21,53,22,53,111,53,112,53,121,53,122,53,211,53,212,53,221,53,222,53_0,0_EbèneOrchidéeM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 53_3_1,53,2,53,11,53,12,53,21,53,22,53,111,53,112,53,121,53,122,53,211,53,212,53,221,53,222,53_0,0_EbèneOrchidéeF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 48_3_1,48,2,48,11,48,12,48,21,48,22,48,111,48,112,48,121,48,122,48,211,48,212,48,221,48,222,48_0,0_DoréeOrchidéeM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 48_3_1,48,2,48,11,48,12,48,21,48,22,48,111,48,112,48,121,48,122,48,211,48,212,48,221,48,222,48_0,0_DoréeOrchidéeF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 64_3_1,64,2,64,11,64,12,64,21,64,22,64,111,64,112,64,121,64,122,64,211,64,212,64,221,64,222,64_0,0_IndigoOrchidéeM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 64_3_1,64,2,64,11,64,12,64,21,64,22,64,111,64,112,64,121,64,122,64,211,64,212,64,221,64,222,64_0,0_IndigoOrchidéeF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 71_3_1,71,2,71,11,71,12,71,21,71,22,71,111,71,112,71,121,71,122,71,211,71,212,71,221,71,222,71_0,0_PourpreRousseM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 71_3_1,71,2,71,11,71,12,71,21,71,22,71,111,71,112,71,121,71,122,71,211,71,212,71,221,71,222,71_0,0_PourpreRousseF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 76_3_1,76,2,76,11,76,12,76,21,76,22,76,111,76,112,76,121,76,122,76,211,76,212,76,221,76,222,76_0,0_OrchidéePourpreM_1_0_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 76_3_1,76,2,76,11,76,12,76,21,76,22,76,111,76,112,76,121,76,122,76,211,76,212,76,221,76,222,76_0,0_OrchidéePourpreF_1_1_4000_6000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 15_3_1,15,2,15,11,15,12,15,21,15,22,15,111,15,112,15,121,15,122,15,211,15,212,15,221,15,222,15_0,0_TurquoiseM_1_0_4000_7000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 15_3_1,15,2,15,11,15,12,15,21,15,22,15,111,15,112,15,121,15,122,15,211,15,212,15,221,15,222,15_0,0_TurquoiseF_1_1_4000_7000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 16_3_1,16,2,16,11,16,12,16,21,16,22,16,111,16,112,16,121,16,122,16,211,16,212,16,221,16,222,16_0,0_IvoireM_1_0_4000_7000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 16_3_1,16,2,16,11,16,12,16,21,16,22,16,111,16,112,16,121,16,122,16,211,16,212,16,221,16,222,16_0,0_IvoireF_1_1_4000_7000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 68_3_1,68,2,68,11,68,12,68,21,68,22,68,111,68,112,68,121,68,122,68,211,68,212,68,221,68,222,68_0,0_IvoirePourpreM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 68_3_1,68,2,68,11,68,12,68,21,68,22,68,111,68,112,68,121,68,122,68,211,68,212,68,221,68,222,68_0,0_IvoirePourpreF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 37_3_1,37,2,37,11,37,12,37,21,37,22,37,111,37,112,37,121,37,122,37,211,37,212,37,221,37,222,37_0,0_AmandeIvoireM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 37_3_1,37,2,37,11,37,12,37,21,37,22,37,111,37,112,37,121,37,122,37,211,37,212,37,221,37,222,37_0,0_AmandeIvoireF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 52_3_1,52,2,52,11,52,12,52,21,52,22,52,111,52,112,52,121,52,122,52,211,52,212,52,221,52,222,52_0,0_EbèneTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 52_3_1,52,2,52,11,52,12,52,21,52,22,52,111,52,112,52,121,52,122,52,211,52,212,52,221,52,222,52_0,0_EbèneTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 11_3_1,11,2,11,11,11,12,11,21,11,22,11,111,11,112,11,121,11,122,11,211,11,212,11,221,11,222,11_0,0_IvoireRousseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 11_3_1,11,2,11,11,11,12,11,21,11,22,11,111,11,112,11,121,11,122,11,211,11,212,11,221,11,222,11_0,0_IvoireRousseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 9_3_1,9,2,9,11,9,12,9,21,9,22,9,111,9,112,9,121,9,122,9,211,9,212,9,221,9,222,9_0,0_EbèneIvoireM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 9_3_1,9,2,9,11,9,12,9,21,9,22,9,111,9,112,9,121,9,122,9,211,9,212,9,221,9,222,9_0,0_EbèneIvoireF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 39_3_1,39,2,39,11,39,12,39,21,39,22,39,111,39,112,39,121,39,122,39,211,39,212,39,221,39,222,39_0,0_AmandeTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 39_3_1,39,2,39,11,39,12,39,21,39,22,39,111,39,112,39,121,39,122,39,211,39,212,39,221,39,222,39_0,0_AmandeTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 72_3_1,72,2,72,11,72,12,72,21,72,22,72,111,72,112,72,121,72,122,72,211,72,212,72,221,72,222,72_0,0_TurquoiseOrchidéeM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 72_3_1,72,2,72,11,72,12,72,21,72,22,72,111,72,112,72,121,72,122,72,211,72,212,72,221,72,222,72_0,0_TurquoiseOrchidéeF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 66_3_1,66,2,66,11,66,12,66,21,66,22,66,111,66,112,66,121,66,122,66,211,66,212,66,221,66,222,66_0,0_IvoireTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 66_3_1,66,2,66,11,66,12,66,21,66,22,66,111,66,112,66,121,66,122,66,211,66,212,66,221,66,222,66_0,0_IvoireTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 61_3_1,61,2,61,11,61,12,61,21,61,22,61,111,61,112,61,121,61,122,61,211,61,212,61,221,61,222,61_0,0_IndigoIvoireM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 61_3_1,61,2,61,11,61,12,61,21,61,22,61,111,61,112,61,121,61,122,61,211,61,212,61,221,61,222,61_0,0_IndigoIvoireF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 69_3_1,69,2,69,11,69,12,69,21,69,22,69,111,69,112,69,121,69,122,69,211,69,212,69,221,69,222,69_0,0_TurquoiseRousseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 69_3_1,69,2,69,11,69,12,69,21,69,22,69,111,69,112,69,121,69,122,69,211,69,212,69,221,69,222,69_0,0_TurquoiseRousseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 45_3_1,45,2,45,11,45,12,45,21,45,22,45,111,45,112,45,121,45,122,45,211,45,212,45,221,45,222,45_0,0_DoréeIvoireM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 45_3_1,45,2,45,11,45,12,45,21,45,22,45,111,45,112,45,121,45,122,45,211,45,212,45,221,45,222,45_0,0_DoréeIvoireF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 73_3_1,73,2,73,11,73,12,73,21,73,22,73,111,73,112,73,121,73,122,73,211,73,212,73,221,73,222,73_0,0_TurquoisePourpreM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 73_3_1,73,2,73,11,73,12,73,21,73,22,73,111,73,112,73,121,73,122,73,211,73,212,73,221,73,222,73_0,0_TurquoisePourpreF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 47_3_1,47,2,47,11,47,12,47,21,47,22,47,111,47,112,47,121,47,122,47,211,47,212,47,221,47,222,47_0,0_DoréeTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 47_3_1,47,2,47,11,47,12,47,21,47,22,47,111,47,112,47,121,47,122,47,211,47,212,47,221,47,222,47_0,0_DoréeTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 63_3_1,63,2,63,11,63,12,63,21,63,22,63,111,63,112,63,121,63,122,63,211,63,212,63,221,63,222,63_0,0_IndigoTurquoiseM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 63_3_1,63,2,63,11,63,12,63,21,63,22,63,111,63,112,63,121,63,122,63,211,63,212,63,221,63,222,63_0,0_IndigoTurquoiseF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 67_3_1,67,2,67,11,67,12,67,21,67,22,67,111,67,112,67,121,67,122,67,211,67,212,67,221,67,222,67_0,0_IvoireOrchidéeM_1_0_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 67_3_1,67,2,67,11,67,12,67,21,67,22,67,111,67,112,67,121,67,122,67,211,67,212,67,221,67,222,67_0,0_IvoireOrchidéeF_1_1_4000_8000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 23_3_1,23,2,23,11,23,12,23,21,23,22,23,111,23,112,23,121,23,122,23,211,23,212,23,221,23,222,23_0,0_PruneM_1_0_4000_9000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 23_3_1,23,2,23,11,23,12,23,21,23,22,23,111,23,112,23,121,23,122,23,211,23,212,23,221,23,222,23_0,0_PruneF_1_1_4000_9000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 21_3_1,21,2,21,11,21,12,21,21,21,22,21,111,21,112,21,121,21,122,21,211,21,212,21,221,21,222,21_0,0_EmeraudeM_1_0_4000_9000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 21_3_1,21,2,21,11,21,12,21,21,21,22,21,111,21,112,21,121,21,122,21,211,21,212,21,221,21,222,21_0,0_EmeraudeF_1_1_4000_9000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 87_3_1,87,2,87,11,87,12,87,21,87,22,87,111,87,112,87,121,87,122,87,211,87,212,87,221,87,222,87_0,0_PrunePourpreM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 87_3_1,87,2,87,11,87,12,87,21,87,22,87,111,87,112,87,121,87,122,87,211,87,212,87,221,87,222,87_0,0_PrunePourpreF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 56_3_1,56,2,56,11,56,12,56,21,56,22,56,111,56,112,56,121,56,122,56,211,56,212,56,221,56,222,56_0,0_EmeraudeIvoireM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 56_3_1,56,2,56,11,56,12,56,21,56,22,56,111,56,112,56,121,56,122,56,211,56,212,56,221,56,222,56_0,0_EmeraudeIvoireF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 79_3_1,79,2,79,11,79,12,79,21,79,22,79,111,79,112,79,121,79,122,79,211,79,212,79,221,79,222,79_0,0_PruneEbèneM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 79_3_1,79,2,79,11,79,12,79,21,79,22,79,111,79,112,79,121,79,122,79,211,79,212,79,221,79,222,79_0,0_PruneEbèneF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 82_3_1,82,2,82,11,82,12,82,21,82,22,82,111,82,112,82,121,82,122,82,211,82,212,82,221,82,222,82_0,0_PruneIndigoM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 82_3_1,82,2,82,11,82,12,82,21,82,22,82,111,82,112,82,121,82,122,82,211,82,212,82,221,82,222,82_0,0_PruneIndigoF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 84_3_1,84,2,84,11,84,12,84,21,84,22,84,111,84,112,84,121,84,122,84,211,84,212,84,221,84,222,84_0,0_PruneRousseM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 84_3_1,84,2,84,11,84,12,84,21,84,22,84,111,84,112,84,121,84,122,84,211,84,212,84,221,84,222,84_0,0_PruneRousseF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 43_3_1,43,2,43,11,43,12,43,21,43,22,43,111,43,112,43,121,43,122,43,211,43,212,43,221,43,222,43_0,0_DoréeEmeraudeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 43_3_1,43,2,43,11,43,12,43,21,43,22,43,111,43,112,43,121,43,122,43,211,43,212,43,221,43,222,43_0,0_DoréeEmeraudeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 78_3_1,78,2,78,11,78,12,78,21,78,22,78,111,78,112,78,121,78,122,78,211,78,212,78,221,78,222,78_0,0_PruneDoréeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 78_3_1,78,2,78,11,78,12,78,21,78,22,78,111,78,112,78,121,78,122,78,211,78,212,78,221,78,222,78_0,0_PruneDoréeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 86_3_1,86,2,86,11,86,12,86,21,86,22,86,111,86,112,86,121,86,122,86,211,86,212,86,221,86,222,86_0,0_PruneOrchidéeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 86_3_1,86,2,86,11,86,12,86,21,86,22,86,111,86,112,86,121,86,122,86,211,86,212,86,221,86,222,86_0,0_PruneOrchidéeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 59_3_1,59,2,59,11,59,12,59,21,59,22,59,111,59,112,59,121,59,122,59,211,59,212,59,221,59,222,59_0,0_EmeraudeOrchidéeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 59_3_1,59,2,59,11,59,12,59,21,59,22,59,111,59,112,59,121,59,122,59,211,59,212,59,221,59,222,59_0,0_EmeraudeOrchidéeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 35_3_1,35,2,35,11,35,12,35,21,35,22,35,111,35,112,35,121,35,122,35,211,35,212,35,221,35,222,35_0,0_AmandeEmeraudeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 35_3_1,35,2,35,11,35,12,35,21,35,22,35,111,35,112,35,121,35,122,35,211,35,212,35,221,35,222,35_0,0_AmandeEmeraudeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 50_3_1,50,2,50,11,50,12,50,21,50,22,50,111,50,112,50,121,50,122,50,211,50,212,50,221,50,222,50_0,0_EbèneEmeraudeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 50_3_1,50,2,50,11,50,12,50,21,50,22,50,111,50,112,50,121,50,122,50,211,50,212,50,221,50,222,50_0,0_EbèneEmeraudeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 80_3_1,80,2,80,11,80,12,80,21,80,22,80,111,80,112,80,121,80,122,80,211,80,212,80,221,80,222,80_0,0_PruneEmeraudeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 80_3_1,80,2,80,11,80,12,80,21,80,22,80,111,80,112,80,121,80,122,80,211,80,212,80,221,80,222,80_0,0_PruneEmeraudeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 57_3_1,57,2,57,11,57,12,57,21,57,22,57,111,57,112,57,121,57,122,57,211,57,212,57,221,57,222,57_0,0_EmeraudeRousseM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 57_3_1,57,2,57,11,57,12,57,21,57,22,57,111,57,112,57,121,57,122,57,211,57,212,57,221,57,222,57_0,0_EmeraudeRousseF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 77_3_1,77,2,77,11,77,12,77,21,77,22,77,111,77,112,77,121,77,122,77,211,77,212,77,221,77,222,77_0,0_PruneAmandeM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 77_3_1,77,2,77,11,77,12,77,21,77,22,77,111,77,112,77,121,77,122,77,211,77,212,77,221,77,222,77_0,0_PruneAmandeF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 55_3_1,55,2,55,11,55,12,55,21,55,22,55,111,55,112,55,121,55,122,55,211,55,212,55,221,55,222,55_0,0_EmeraudeIndigoM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 55_3_1,55,2,55,11,55,12,55,21,55,22,55,111,55,112,55,121,55,122,55,211,55,212,55,221,55,222,55_0,0_EmeraudeIndigoF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 85_3_1,85,2,85,11,85,12,85,21,85,22,85,111,85,112,85,121,85,122,85,211,85,212,85,221,85,222,85_0,0_PruneTurquoiseM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 85_3_1,85,2,85,11,85,12,85,21,85,22,85,111,85,112,85,121,85,122,85,211,85,212,85,221,85,222,85_0,0_PruneTurquoiseF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 60_3_1,60,2,60,11,60,12,60,21,60,22,60,111,60,112,60,121,60,122,60,211,60,212,60,221,60,222,60_0,0_EmeraudePourpreM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 60_3_1,60,2,60,11,60,12,60,21,60,22,60,111,60,112,60,121,60,122,60,211,60,212,60,221,60,222,60_0,0_EmeraudePourpreF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 58_3_1,58,2,58,11,58,12,58,21,58,22,58,111,58,112,58,121,58,122,58,211,58,212,58,221,58,222,58_0,0_EmeraudeTurquoiseM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 58_3_1,58,2,58,11,58,12,58,21,58,22,58,111,58,112,58,121,58,122,58,211,58,212,58,221,58,222,58_0,0_EmeraudeTurquoiseF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 83_3_1,83,2,83,11,83,12,83,21,83,22,83,111,83,112,83,121,83,122,83,211,83,212,83,221,83,222,83_0,0_PruneIvoireM_1_0_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+			<item type="sendCommand" command="createrideinfarmbydb 83_3_1,83,2,83,11,83,12,83,21,83,22,83,111,83,112,83,121,83,122,83,211,83,212,83,221,83,222,83_0,0_PruneIvoireF_1_1_4000_10000_1000_0_10000_10000_1362566325322_0_1362566325322_0_0_0_1,0,2,0,11,0,12,0,21,0,22,0,111,0,112,0,121,0,122,0,211,0,212,0,221,0,222,0_0,0_0_0_0_-1_0_1361359003957_" />
+		</item>
+	</item>
+
+	<item type="menu" label="Objets">
+		<item type="static" label="Objets" />
+		<item type="sendCommand" label="Trousseau de clefs"	command="item * 10207" />
+		<item type="sendCommand" label="Orbe reconstituante" command="item * 10563" />
+		<item type="menu" label="Chapobusays">
+			<item type="static" label="Chapobusays" />
+			<item type="sendCommand" label="SuperBusay"	command="item * 8182 1 900,900,900,900,900,900,900,10,10,10,10,5000,5000,100,10,50,50,50,50" />
+			<item type="sendCommand" label="HypraBusay"	command="item * 8182 1 4000,4000,4000,4000,4000,4000,4000,30,100,100,30,280,13000,200,20,50,70,70,70" />
+		</item>
+		<item type="sendCommand" label="Anneau MJ OP" command="dring * PA=100,PM=100,DMG=500,PO=63,SAGESSE=8000,FORCE=8000,INTEL=8000,AGI=8000,CHANCE=8000,VITA=8000,VIE=8000,RESIST-FEU=50,RESIST-TERRE=50,RESIST-EAU=50,RESIST-AIR=500,RESIST-NEUTRE=500" />
+	</item>
+	
+	<item type="static" label="Interface Admin" />
+	<item type="sendCommand" label="Créer un objet..." command="item %p #item" />	
+	<item type="sendCommand" label="Changer de look..." command="look %p #look" />
+	<item type="sendCommand" label="Se transformer en monstre..." command="transform %p #monster" />
+	<item type="sendCommand" label="Invoquer un monstre..." command="addsummonedmonster 1x#monster 1" />
+
+	<item type="menu" label="SOS">
+		<item type="sendCommand" label="Voir le contenu des messages réseau" command="/inspecttraffic" />
+		<item type="sendCommand" label="Stopper les logs pour ce client" command="/enablelogs false" />
+		<item type="sendCommand" label="Reactiver les logs pour ce client" command="/enablelogs true" />
+	</item>	
+
+	<item type="separator" />
+
+	<item type="menu" label="Déplacement">
+		<item type="static" label="Move %p" />
+		<item type="sendCommand" label="Rejoindre %p" command="join %p " />
+		<item type="prepareCommand" label="Déplacer vers map..." command="move %p " />
+		<item type="sendCommand" label="Hdv ressources" command="move %p 148278" />
+		<item type="sendCommand" label="Hdv tailleur" command="move %p 7864327" />
+		<item type="sendCommand" label="Atelier tailleur" command="move %p 2884113" />
+		<item type="sendCommand" label="Atelier forgemagie" command="move %p 2883603" />
+		<item type="sendCommand" label="Chasse au trésor" command="move %p 128452097" />
+		<item type="sendCommand" label="Kolizeum" command="move %p 81788928" />
+	</item>		
+
+	<item type="menu" label="Jeu">
+		<item type="static" label="Commandes diverses" />
+		
+		<item type="batch" label="Initialiser un nouveau perso">
+			<item type="sendCommand" label="Niveau 200" command="givelevel %p 200" />
+			<item type="sendCommand" label="Sorts admin" command="spellomatic %p cheat" />
+			<item type="sendCommand" label="Kamas" command="givegold %p 100000000" />
+		</item>
+
+		<item type="menu" label="Look">
+			<item type="static" label="Look of %p" />
+
+			<item type="prepareCommand" label="Look" command="look %p " />
+			<item type="prepareCommand" label="Transform" command="transform %p " />
+		</item>
+
+		<item type="menu" label="Don">
+			<item type="static" label="Don a %p" />
+
+			<item type="sendCommand" label="Energie" command="giveenergy %p" />
+			<item type="prepareCommand" label="Niveau" command="givelevel %p " />
+			<item type="prepareCommand" label="XP" command="givexp %p " />
+			<item type="prepareCommand" label="XP Métier (id xp)" command="givexpjob %p " />
+			<item type="prepareCommand" label="Sort" command="givespell %p " />
+			<item type="prepareCommand" label="Alignement" command="align %p " />
+			<item type="prepareCommand" label="Objet non lie" command="item %p " />
+			<item type="prepareCommand" label="Kama" command="givegold %p " />
+		</item>
+			
+		<item type="menu" label="Guilde">
+			<item type="static" label="Guilde de %p" />
+
+			<item type="sendCommand" label="Meneur" command="guild %p" />
+			<item type="prepareCommand" label="Point d'XP" command="giveguildxp %p " />
+			<item type="prepareCommand" label="Point de stat" command="giveguildstat %p " />
+		</item>
+
+		<item type="menu" label="Créature">
+			<item type="static" label="Créature" />
+
+			<item type="prepareCommand" label="Localiser une créature" command="monsterseek " />
+			<item type="prepareCommand" label="Nv groupe unique" command="addsummonedmonster " />
+		</item>		
+
+		<item type="menu" label="Alignements" >
+			<item type="static" label="Alignements" />
+			<item type="sendCommand" label="Neutre" command="align %p 0" />
+			<item type="sendCommand" label="Bontarien" command="align %p 1 100 100" />
+			<item type="sendCommand" label="Brakmarien" command="align %p 2 100 100" />
+		</item>
+	</item>
+		<item type="menu" label="Informations">
+		<item type="static" label="Informations"/>
+		<item type="static" label="Joueur %p"/>
+			<item type="sendCommand" label="Infos serveur" command="infos" />
+			<item type="sendCommand" label="Stats serveur" command="stats" />
+			<item type="batch" label="Dossier Pénal">
+				<item type="sendCommand" label="Dossier Pénal" command="penalview %p antibot"/>
+				<item type="sendChat" command="/g [Menu] : Dossier Pénal effectué sur %p"/>
+			</item>
+			<item type="prepareCommand" label="Ecrire sur DP" command="penalinfo %p "/>
+			<item type="sendCommand" label="Info carte" command="mapinfo" />
+			<item type="sendCommand" label="Info cellule" command="cellinfo" />
+			<item type="sendCommand" label="Inspect réseau" command="inspectnetwork %p" />
+	</item>
+	<item type="menu" label="Avertissements">
+		<item type="static" label="Avertissements PopUp Joueur"/>
+			<item type="batch" label="Av Vulgarité / Insultes">
+				<item type="sendCommand" label="Av Vulgarité&amp;Insultes" command="msgpopup player %p Les insultes et la vulgarité sont sévèrement sanctionnées. Ceci sera l'unique avertissement. Veuillez consulter les &lt;a href='https://www.dofus.com/fr/mmorpg/communaute/reglement'&gt; &lt;font color='#0066FF'&gt;Règles de DOFUS&lt;/font&gt;&lt;/a&gt; (Cliquez sur le lien)."/>	
+				<item type="sendCommand" label="Av Insultes" command="penalinfo %p Averti sur la vulgarité en jeu."/>
+				<item type="sendChat" command="/g [Menu] : %p Averti sur la vulgarité en jeu."/>
+				<item type="sendCommand" label="Penalview" command="penalview %p antibot"/>
+			</item>
+			<item type="batch" label="Av Respect Modo">
+				<item type="sendCommand" label="Provoc Mod MP" command="msgpopup player %p Provoquer un modérateur ou tout membre de l'équipe vous expose à des sanctions sévères, il n'y aura pas d'autre avertissement. Veuillez lire &lt;a href='https://www.dofus.com/fr/forum/1769-moderation/2269953-respect-equipe-moderation'&gt; &lt;font color='#0066FF'&gt;cette page&lt;/font&gt; &lt;/a&gt; (Cliquez sur le lien)."/>
+				<item type="sendCommand" label="Penalinfo" command="penalinfo %p Averti pour manque de respect à un membre de l'équipe."/>
+				<item type="sendChat" command="/g [Menu] : %p Averti pour manque de respect à un membre de l'équipe."/>
+				<item type="sendCommand" label="Penalview" command="penalview %p antibot"/>
+			</item>			
+			<item type="batch" label="Av Provocation-Réponse à la provocation"> 
+				<item type="sendCommand" label="Rép. provoc" command="msgpopup player %p La provocation ou répondre à des provocations pourrait vous amener à être sanctionné. Pour votre confort de jeu, préférez ignorer le personnage qui insulte ou provoque."/> 
+				<item type="sendCommand" label="Penalinfo" command="penalinfo %p Averti pour provocations ou réponse aux provocations des autres joueurs."/>
+				<item type="sendChat" command="/g [Menu] : %p Averti pour provocations ou réponse aux provocations des autres joueurs."/> 
+				<item type="sendCommand" label="Penalview" command="penalview %p antibot"/>
+			</item>	
+			<item type="batch" label="Av Racisme-Xénophobie-Homophobie"> 
+				<item type="sendCommand" label="Av Racisme" command="msgpopup player %p Les propos que vous tenez sont à caractère raciste ou homophobe et ne sont pas tolérés. Toute récidive entraînera une sanction plus lourde."/> 
+				<item type="sendCommand" label="Penalinfo" command="penalinfo %p Averti sur le racisme en jeu."/> 
+				<item type="sendChat" command="/g [Menu] : %p Averti sur le racisme en jeu."/>
+				<item type="sendCommand" label="Penalview" command="penalview %p antibot"/>
+			</item>		
+			<item type="batch" label="Av Arnaques">
+				<item type="sendCommand" label="Av Arnaques" command="msgpopup player %p Les arnaques sont sévèrement sanctionnées. Ceci sera l'unique avertissement. Veuillez consulter les &lt;a href='https://www.dofus.com/fr/mmorpg/communaute/reglement'&gt; &lt;font color='#0066FF'&gt;Règles de DOFUS&lt;/font&gt;&lt;/a&gt; (Cliquez sur le lien)."/>	
+				<item type="sendCommand" label="Av Arnaques" command="penalinfo %p Averti sur les arnaques en jeu."/>
+				<item type="sendChat" command="/g [Menu] : %p Averti sur les arnaques en jeu."/>
+				<item type="sendCommand" label="Penalview" command="penalview %p antibot"/>
+			</item>
+			<item type="batch" label="Av Serveur privé">
+				<item type="sendCommand" label="Av serv privé" command="msgpopup player %p La création, la promotion ou l'utilisation de serveurs privés est formellement interdite. Ceci sera l'unique avertissement avant sanction. Veuillez consulter les &lt;a href='https://www.dofus.com/fr/mmorpg/communaute/reglement'&gt; &lt;font color='#0066FF'&gt;Règles de DOFUS&lt;/font&gt;&lt;/a&gt; (Cliquez sur le lien)."/>
+				<item type="sendCommand" label="Av serv privé" command="penalinfo %p Averti sur les règles de serveur privé."/>
+				<item type="sendChat" command="/g [Menu] : %p Averti sur les règles de serveur privé."/>
+				<item type="sendCommand" label="Penalview" command="penalview %p antibot"/>
+			</item>
+			<item type="batch" label="Av Site tiers">
+				<item type="sendCommand" label="Av site tiers" command="msgpopup player %p La diffusion de liens vers des sites non officiels de DOFUS ou ANKAMA est interdite en jeu. Ceci sera l'unique avertissement avant sanction."/>
+				<item type="sendCommand" label="Av site tiers" command="penalinfo %p Averti pour diffusion de site tiers."/>
+				<item type="sendChat" command="/g [Menu] : %p Averti pour diffusion de site tiers."/>
+				<item type="sendCommand" label="Penalview" command="penalview %p antibot"/>
+			</item>			
+			<item type="batch" label="Av Copier-Coller">
+				<item type="sendCommand" label="Av Copier-Coller" command="msgpopup player %p La reproduction (copier-coller) de messages hors charte dans les canaux publics (/b/r et /s) est interdite et peut vous valoir la même sanction que si vous les aviez vous-même écrits. Ceci sera l'unique avertissement avant sanction. Veuillez consulter les &lt;a href='https://www.dofus.com/fr/mmorpg/communaute/reglement'&gt; &lt;font color='#0066FF'&gt;Règles de DOFUS&lt;/font&gt;&lt;/a&gt; (Cliquez sur le lien)."/>
+				<item type="sendCommand" label="Av Copier-Coller" command="penalinfo %p Averti pour Copier-Coller de propos hors charte."/>
+				<item type="sendChat" command="/g [Menu] : %p Averti pour Copier-Coller de propos hors charte."/>
+				<item type="sendCommand" label="Penalview" command="penalview %p antibot"/>
+			</item>
+	</item>
+
+	<item type="menu" label="Modération" rank="20">
+		<item type="static" label="Modération de %p" />
+		<item type="prepareCommand" label="Mute (canal minutes raison)" command="mute %p " />
+		<item type="sendCommand" label="Unmute" command="unmute %p" />
+		<item type="prepareCommand" label="Unmute canal" command="unmute %p " />
+		<item type="prepareCommand" label="Kick (durée raison)" command="kick %p " />
+		<item type="sendCommand" label="Déconnecter joueur" command="disconnect %p" />
+		<item type="prepareCommand" label="Déconnecter compte (ID)" command="disconnectacc " />
+		<item type="prepareCommand" label="Déconnexion forcée (ID personnage)" command="disconnectforce " />
+		<item type="prepareCommand" label="Envoutement (curse)" command="curse %p " />
+		<item type="sendCommand" label="Retirer envoutement" command="curse %p none" />
+		<item type="sendCommand" label="Annuler combat (ma map)" command="cancelfight mine" />
+		<item type="prepareCommand" label="Restrictions d'actions..." command="actionrestrictions " />
+	</item>
+
+	<item type="menu" label="Mode Admin" rank="20">
+		<item type="static" label="Mode Admin" />
+		<item type="sendCommand" label="Admin Hide ON" command="adminhide true" />
+		<item type="sendCommand" label="Admin Hide OFF" command="adminhide false" />
+		<item type="sendCommand" label="Invisible ON" command="admininvisible true" />
+		<item type="sendCommand" label="Invisible OFF" command="admininvisible false" />
+		<item type="sendCommand" label="Mode Absent ON" command="adminaway true" />
+		<item type="sendCommand" label="Mode Absent OFF" command="adminaway false" />
+		<item type="sendCommand" label="God Mode (toggle)" command="god" />
+		<item type="sendCommand" label="Accepter MP ignorés ON" command="adminacceptignoredwhisp true" />
+		<item type="sendCommand" label="Accepter MP ignorés OFF" command="adminacceptignoredwhisp false" />
+		<item type="prepareCommand" label="Autoriser réponse (minutes)" command="adminallowreply " />
+	</item>
+
+	<item type="menu" label="Combat" rank="20">
+		<item type="static" label="Gestion Combat" />
+		<item type="sendCommand" label="Gagner le combat" command="winfight mine" />
+		<item type="sendCommand" label="Pause combat" command="pausefight pause" />
+		<item type="sendCommand" label="Reprendre combat" command="pausefight resume" />
+		<item type="sendCommand" label="Passe-tour auto (toggle)" command="passturn" />
+		<item type="sendCommand" label="Annuler combat" command="cancelfight mine" />
+		<item type="sendCommand" label="Cessez-le-feu PvP ON" command="ceasefire pvp on" />
+		<item type="sendCommand" label="Cessez-le-feu PvP OFF" command="ceasefire pvp off" />
+		<item type="sendCommand" label="Cessez-le-feu PvE ON" command="ceasefire pve on" />
+		<item type="sendCommand" label="Cessez-le-feu PvE OFF" command="ceasefire pve off" />
+	</item>
+
+	<item type="menu" label="Carte" rank="20">
+		<item type="static" label="Outils de carte" />
+		<item type="sendCommand" label="Afficher interactifs" command="showinteractives" />
+		<item type="prepareCommand" label="Changer état élément (id état)" command="setstated " />
+	</item>
+
+	<item type="menu" label="Récompenses" rank="40">
+		<item type="static" label="Récompenses pour %p" />
+		<item type="sendCommand" label="Ressusciter" command="resurrect %p" />
+		<item type="prepareCommand" label="Succès (action type id)" command="achievement %p " />
+		<item type="prepareCommand" label="Quête (action type id)" command="quest %p " />
+	</item>
+
+	<item type="menu" label="Inventaire Joueur" rank="40">
+		<item type="static" label="Inventaire de %p" />
+		<item type="sendCommand" label="Voir banque" command="showbank %p" />
+		<item type="sendCommand" label="Voir inventaire" command="showinv %p" />
+	</item>
+
+	<item type="menu" label="Communication" rank="40">
+		<item type="static" label="Communication" />
+		<item type="prepareCommand" label="Message serveur (auteur message)" command="advertise " />
+	</item>
+
+	<item type="menu" label="Récompenses Admin" rank="60">
+		<item type="static" label="Récompenses Admin pour %p" />
+		<item type="prepareCommand" label="Donner titre (id)" command="title %p " />
+		<item type="prepareCommand" label="Donner ornement (id)" command="ornament %p " />
+		<item type="sendCommand" label="Tous les titres" command="title %p all" />
+		<item type="sendCommand" label="Tous les ornements" command="ornament %p all" />
+		<item type="sendCommand" label="Clé donjon gratuite (toggle)" command="freekeyring" />
+	</item>
+
+	<item type="menu" label="Contenu" rank="60">
+		<item type="static" label="Gestion Contenu" />
+		<item type="prepareCommand" label="Ajouter PNJ (npcId)" command="addnpcmap " />
+		<item type="prepareCommand" label="Retirer PNJ (npcId)" command="removenpcmap " />
+		<item type="sendCommand" label="Invoquer un Poutch" command="addsummonedmonster 4x494" />
+		<item type="sendCommand" label="Recharger PNJs" command="reloadnpcs" />
+		<item type="sendCommand" label="Recharger PNJs (complet)" command="reloadnpcs complete" />
+		<item type="sendCommand" label="Recharger apparences" command="reloadappearances" />
+		<item type="sendCommand" label="Recharger interactifs" command="reloadinteractives" />
+		<item type="sendCommand" label="Recharger interactifs (complet)" command="reloadinteractives complete" />
+		<item type="sendCommand" label="Recharger monstres carte" command="reloadmapmonsters" />
+		<item type="sendCommand" label="Recharger monstres (complet)" command="reloadmapmonsters complete" />
+	</item>
+
+	<item type="menu" label="Serveur" rank="60">
+		<item type="static" label="Gestion Serveur" />
+		<item type="sendCommand" label="Recalculer horloge" command="adjustclock" />
+		<item type="sendCommand" label="Sauvegarde immédiate" command="forcedump" />
+		<item type="prepareCommand" label="Arrêt serveur (délai message)" command="kill " />
+		<item type="prepareCommand" label="Arrêt sans reboot (délai message)" command="killno " />
+	</item>
+
+	<item type="loadXML" label="Recharger le XML" />
+</menu>

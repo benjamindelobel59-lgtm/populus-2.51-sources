@@ -295,6 +295,16 @@
     <Compile Include="Game\Bugs\JournalCombat.cs" />
     <Compile Include="Game\Bugs\SignalementsBugs.cs" />
     <Compile Include="Game\Donjons\RepriseDonjons.cs" />
+    <Compile Include="Game\Alliances\Alliance.cs" />
+    <Compile Include="Game\Alliances\PrismManager.cs" />
+    <Compile Include="Game\Effects\Handlers\Usables\PrismPlacement.cs" />
+    <Compile Include="Game\Conditions\Criterions\AllianceRightsCriterion.cs" />
+    <Compile Include="Game\Alliances\AllianceManager.cs" />
+    <Compile Include="Game\Alliances\AllianceInvitationRequest.cs" />
+    <Compile Include="Game\Dialogs\Alliances\AlliancePanels.cs" />
+    <Compile Include="Game\Interactives\Skills\SkillAllianceCreation.cs" />
+    <Compile Include="Game\Effects\Handlers\Usables\AlliancePotion.cs" />
+    <Compile Include="Handlers\Alliances\AllianceHandler.cs" />
     <Compile Include="Game\Exchanges\Craft\Runes\BrisageOfficiel.cs" />
     <Compile Include="Game\Admin\AdminPanelData.cs" />
     <Compile Include="Game\Admin\AdminJournal.cs" />

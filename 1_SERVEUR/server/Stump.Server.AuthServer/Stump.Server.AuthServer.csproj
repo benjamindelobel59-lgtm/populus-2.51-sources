@@ -237,6 +237,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\ServerCommands.cs" />
+    <Compile Include="Launcher\LauncherApi.cs" />
+    <Compile Include="Launcher\LauncherApiWeb.cs" />
+    <Compile Include="Launcher\LauncherApiPartage.cs" />
     <Compile Include="Database\Accounts\HardwareIdBan.cs" />
     <Compile Include="Database\Accounts\UserGroupRecord.cs" />
     <Compile Include="Database\I18n\LangTextUI.cs" />

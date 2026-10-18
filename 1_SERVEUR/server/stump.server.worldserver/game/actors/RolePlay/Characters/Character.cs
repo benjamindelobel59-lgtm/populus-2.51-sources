@@ -5761,6 +5761,10 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
             if (Guild != null)
                 options.Add(new HumanOptionGuild(Guild.GetGuildInformations()));
 
+            // MYSTIC 17/10 : tag et blason d'alliance au-dessus du personnage (AvA : phase 3)
+            if (Guild?.Alliance != null)
+                options.Add(new HumanOptionAlliance(Guild.Alliance.GetAllianceInformations(), (sbyte)AggressableStatusEnum.NON_AGGRESSABLE));
+
             if (SelectedTitle != null)
                 options.Add(new HumanOptionTitle((ushort)SelectedTitle.Value, string.Empty));
 

@@ -97,6 +97,7 @@ namespace Stump.Server.WorldServer.Game.Social
 
             ChatHandlers.Add(ChatActivableChannelsEnum.CHANNEL_GLOBAL, SayGlobal);
             ChatHandlers.Add(ChatActivableChannelsEnum.CHANNEL_GUILD, SayGuild);
+            ChatHandlers.Add(ChatActivableChannelsEnum.CHANNEL_ALLIANCE, SayAlliance); // MYSTIC 17/10
             ChatHandlers.Add(ChatActivableChannelsEnum.CHANNEL_PARTY, SayParty);
             ChatHandlers.Add(ChatActivableChannelsEnum.CHANNEL_ARENA, SayArena);
             ChatHandlers.Add(ChatActivableChannelsEnum.CHANNEL_SALES, SaySales);
@@ -140,7 +141,7 @@ namespace Stump.Server.WorldServer.Game.Social
                 case ChatActivableChannelsEnum.CHANNEL_GUILD:
                     return character.Guild != null;
                 case ChatActivableChannelsEnum.CHANNEL_ALLIANCE:
-                    return false;
+                    return character.Guild?.Alliance != null; // MYSTIC 17/10
                 case ChatActivableChannelsEnum.CHANNEL_PARTY:
                     return character.IsInParty(PartyTypeEnum.PARTY_TYPE_CLASSICAL);
                 case ChatActivableChannelsEnum.CHANNEL_SALES:
@@ -369,6 +370,24 @@ namespace Stump.Server.WorldServer.Game.Social
                 SendChatServerWithObjectMessage(client.Character.Guild.Clients, client.Character, ChatActivableChannelsEnum.CHANNEL_GUILD, msg, objectItems);
             else
                 SendChatServerMessage(client.Character.Guild.Clients, client.Character, ChatActivableChannelsEnum.CHANNEL_GUILD, msg);
+        }
+
+        /// <summary>MYSTIC 17/10 : canal d'alliance (tous les membres connectés des guildes de l'alliance).</summary>
+        public void SayAlliance(WorldClient client, string msg, IEnumerable<ObjectItem> objectItems)
+        {
+            if (!CanUseChannel(client.Character, ChatActivableChannelsEnum.CHANNEL_ALLIANCE))
+            {
+                ChatHandler.SendChatErrorMessage(client, ChatErrorEnum.CHAT_ERROR_NO_GUILD);
+                return;
+            }
+
+            foreach (var guild in client.Character.Guild.Alliance.Guilds)
+            {
+                if (objectItems != null)
+                    SendChatServerWithObjectMessage(guild.Clients, client.Character, ChatActivableChannelsEnum.CHANNEL_ALLIANCE, msg, objectItems);
+                else
+                    SendChatServerMessage(guild.Clients, client.Character, ChatActivableChannelsEnum.CHANNEL_ALLIANCE, msg);
+            }
         }
 
         public void SayTeam(WorldClient client, string msg, IEnumerable<ObjectItem> objectItems)

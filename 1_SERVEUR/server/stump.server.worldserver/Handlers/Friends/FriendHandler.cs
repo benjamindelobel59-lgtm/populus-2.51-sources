@@ -22,6 +22,9 @@ namespace Stump.Server.WorldServer.Handlers.Friends
 
             SendGuildListMessage(client);
             SendGuildVersatileInfoListMessage(client);
+
+            // MYSTIC 17/10 : annuaire des alliances (même demande que l'annuaire des guildes)
+            Alliances.AllianceHandler.SendAllianceLists(client);
         }
 
         [WorldHandler(IgnoredGetListMessage.Id)]

@@ -1,3 +1,18 @@
+# NOUVEAU (18/10/2026) : launcher Mystic — `bin_mystic/MysticLauncher.exe`
+
+Remplace `bin/NekfeuLauncher.exe` (gardé pour l'historique). Même fonctionnement et même serveur de mises à jour
+(`manifest.txt` + `files/`, `launcher.ini`, `--auto`, `launcher.log`) : rien à changer sur le VPS.
+- Interface WPF (incluse dans Windows, .NET Framework 4.8), un seul fichier de 925 Ko (images intégrées), fenêtre sans bord 1100×620.
+- Motion design repris du héros du site : les deux moitiés de l'image ange / démon arrivent des côtés, flash + secousse,
+  couture lumineuse au centre (éclat qui descend), étincelles bleues (ange) / rouges (démon), parallaxe à la souris,
+  BONTA / BRÂKMAR au survol d'un côté, logo Mystic qui apparaît puis respire avec un reflet, panneau de verre avec barre
+  de progression dégradée et bouton JOUER animé (pulsation, reflet, survol).
+- Sources : `src_mystic/MysticLauncher.cs` + `src_mystic/ressources/` (ange_demon.jpg, logo_mystic.png du site).
+- Compiler : `csc -target:winexe -out:bin_mystic/MysticLauncher.exe` avec les références WPF v4.8 (PresentationCore,
+  PresentationFramework, WindowsBase, System.Xaml, System.Drawing) et `-resource:` pour les 2 images (commande dans HANDOFF).
+- `MysticLauncher.exe --apercu <dossier>` : captures PNG de l'animation (progression simulée, aucun accès réseau) ; exemples dans `apercus_mystic/`.
+- Joueurs : mettre `MysticLauncher.exe` à côté du dossier `app` (comme l'ancien) et le lancer à la place.
+
 # Launcher Dofus Nekfeu (mises à jour automatiques du client 64 bits)
 
 Le launcher compare les fichiers modifiés du client avec ceux publiés sur le VPS (empreinte SHA256),

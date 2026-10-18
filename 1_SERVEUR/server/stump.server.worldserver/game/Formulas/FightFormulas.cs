@@ -98,6 +98,9 @@ namespace Stump.Server.WorldServer.Game.Formulas
             xp = (long)Math.Truncate(Math.Truncate(baseXp * (100 + Math.Max(fighter.Wisdom + idolsWisdomBonus, 0)) / 100d) * multiplicator * Rates.XpRate);
             xp += (long)Math.Truncate(xp * (challengeBonus / 100d));
 
+            // MYSTIC 17/10 : bonus de territoire (sous-zone possédée par l'alliance du personnage)
+            xp += (long)Math.Truncate(xp * Alliances.PrismManager.Instance.Bonus(fighter.Id, fighter.Fight.Map));
+
             if (WaveNumber > 0) xp = xp * WaveNumber;
 
             return InvokeWinXpModifier(fighter, xp);
@@ -163,6 +166,9 @@ namespace Stump.Server.WorldServer.Game.Formulas
             var looterPP = looter.Prospecting + ((looter.Prospecting * (challengeBonus + idolsBonus)) / 100d);
 
             var rate = item.GetDropRate((int)dropper.Grade.GradeId) * (looterPP / 100d) * ((monsterAgeBonus / 100d) + 1) * Rates.DropsRate * multiplicator;
+
+            // MYSTIC 17/10 : bonus de territoire (sous-zone possédée par l'alliance du personnage)
+            rate *= 1 + Alliances.PrismManager.Instance.Bonus(looter.Id, looter.Fight.Map);
 
             return InvokeDropRateModifier(looter, item, rate);
         }

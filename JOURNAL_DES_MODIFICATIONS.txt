@@ -231,3 +231,11 @@ MODIFICATIONS MYSTIC DU 17/10/2026 - Bouton « Signaler un bug »
  - Client (module Ankama_Config) : icone btn_bug (btnIcon_bug.png) dans la barre, PopulusButtons ouvre bug.php dans la fenetre
    PanelWindow, PanelWindow.envoyerLog envoie la fin (2 Mo) du log le plus recent de %APPDATA%/Dofus-x64/logs.
  - Bot Discord « Resolu » : accepte les messages du webhook (auteur robot) et recopie leurs embeds.
+
+MODIFICATIONS DU 18/10/2026 (soir) - AuthServer : launcher Mystic
+================================================================
+ - server/Stump.Server.AuthServer/Launcher/LauncherApi.cs, LauncherApiWeb.cs, LauncherApiPartage.cs : API HTTP du launcher
+   (port 8090) : comptes web, sessions, ticket de connexion a usage unique, partage de comptes par code.
+ - Managers/CredentialManager.cs : connexion par ticket du launcher ; Managers/WorldServerManager.cs : liste des mondes.
+ - Stump.Server.AuthServer.csproj : les 3 fichiers Launcher ajoutes.
+ - Launcher/LauncherApi.cs (22h53) : personnages trouves via auth.worlds_characters (characters.AccountId reste a 0 sur nos bases).

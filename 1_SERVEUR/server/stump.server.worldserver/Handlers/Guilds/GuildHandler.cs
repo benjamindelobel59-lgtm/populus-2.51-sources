@@ -293,6 +293,17 @@ namespace Stump.Server.WorldServer.Handlers.Guilds
                 return;
             }
 
+            // MYSTIC 17/10 : fiche d'une guilde alliée = avec son alliance
+            if (guild.Alliance != null)
+            {
+                client.Send(new GuildInAllianceFactsMessage(guild.GetGuildFactSheetInformations(),
+                    guild.CreationDate.GetUnixTimeStamp(),
+                    (ushort)guild.TaxCollectors.Count,
+                    guild.Members.Select(x => x.GetCharacterMinimalGuildPublicInformations()).ToArray(),
+                    guild.Alliance.GetBasicNamedAllianceInformations()));
+                return;
+            }
+
             client.Send(new GuildFactsMessage(guild.GetGuildFactSheetInformations(),
                 guild.CreationDate.GetUnixTimeStamp(),
                 (ushort)guild.TaxCollectors.Count,

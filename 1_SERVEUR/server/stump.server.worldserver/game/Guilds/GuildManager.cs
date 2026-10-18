@@ -172,6 +172,10 @@ namespace Stump.Server.WorldServer.Game.Guilds
             character.GuildMember = member;
             character.RefreshActor();
 
+            // MYSTIC 17/10 : sauvegarde immédiate (avant : seulement à la sauvegarde automatique toutes les 3 min ; une guilde créée
+            // juste avant l'arrêt du World était perdue, et son alliance avec)
+            WorldServer.Instance.IOTaskPool.AddMessage(Save);
+
             return SocialGroupCreationResultEnum.SOCIAL_GROUP_CREATE_OK;
         }
 
@@ -179,6 +183,7 @@ namespace Stump.Server.WorldServer.Game.Guilds
         {
             lock (m_lock)
             {
+                Alliances.AllianceManager.Instance.OnGuildDeleted(guild); // MYSTIC 17/10 : la guilde quitte son alliance
                 guild.RemoveGuildMembers();
                 guild.RemoveTaxCollectors();
                 PaddockManager.Instance.OnGuildDeleted(guild); // NEKFEU : ses enclos redeviennent a vendre
