@@ -112,7 +112,25 @@ namespace Stump.Server.WorldServer.Game
             m_maps = Database.Query<MapRecord, MapPositionRecord, MapRecord>
                 (new MapRecordRelator().Map, MapRecordRelator.FetchQuery).ToDictionary(entry => entry.Id, entry => new Map(entry));
             if (Map.NoPatternCount > 0)
-                logger.Warn("[Placement] {0} maps sans modele de placement (ancien calcul utilise)", Map.NoPatternCount);
+            {
+                // information, pas une anomalie : ces cartes ont un placement de secours, ou sont trop petites pour un combat
+                // (intérieurs, couloirs : moins de 16 cases utilisables, aucun monstre n'y apparaît)
+                var withFallback = Map.NoPatternMaps.Count(x =>
+                {
+                    var p = x.Split('\t');
+                    return int.Parse(p[3]) > 0 && int.Parse(p[4]) > 0;
+                });
+                logger.Info("[Placement] {0} cartes sans modèle de placement : {1} avec placement de secours, {2} trop petites pour un combat (détail : placements_sans_modele.txt)",
+                    Map.NoPatternCount, withFallback, Map.NoPatternCount - withFallback);
+                try
+                {
+                    System.IO.File.WriteAllLines("placements_sans_modele.txt",
+                        new[] { "carte\tsous-zone\tcases_utilisables\tbleues\trouges" }.Concat(Map.NoPatternMaps));
+                }
+                catch
+                {
+                }
+            }
 
             logger.Info("Load sub areas...");
             m_subAreas = Database.Query<SubAreaRecord>(SubAreaRecordRelator.FetchQuery).ToDictionary(entry => entry.Id, entry => new SubArea(entry));

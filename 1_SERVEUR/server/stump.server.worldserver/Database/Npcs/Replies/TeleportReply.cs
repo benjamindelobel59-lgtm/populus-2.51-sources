@@ -127,11 +127,16 @@ namespace Stump.Server.WorldServer.Database.Npcs.Replies
             return m_position;
         }
 
-        public override bool CanShow(Npc npc, Character character) => base.CanShow(npc, character) && MapId != character.Map.Id;
+        // MYSTIC 19/10 : les destinations de Frigost pas encore débloquées ne sont pas proposées (PNJ transporteurs, bateaux…)
+        public override bool CanShow(Npc npc, Character character) => base.CanShow(npc, character) && MapId != character.Map.Id &&
+            Game.Maps.AccesFrigost.PeutEntrer(character, GetPosition()?.Map, false) && Game.Maps.AccesFrigost.ReponseAutorisee(character, Record.Id, false);
 
         public override bool Execute(Npc npc, Character character)
         {
             if (!base.Execute(npc, character))
+                return false;
+
+            if (!Game.Maps.AccesFrigost.ReponseAutorisee(character, Record.Id, true))
                 return false;
 
             if (string.IsNullOrEmpty(ItemsParameter) && KamasParameter == 0)

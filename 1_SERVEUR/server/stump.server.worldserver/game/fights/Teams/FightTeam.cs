@@ -385,6 +385,13 @@ namespace Stump.Server.WorldServer.Game.Fights.Teams
             return m_deadFighters.LastOrDefault(x => x.IsDead() && !(x is SummonedMonster s && s.Monster.Template.Id == (int)MonsterIdEnum.POUGNETTE));
         }
 
+        /// <summary>MYSTIC 18/10 : dernier vrai monstre mort (pas une invocation) : résurrection 147 (Aquazomb / Pyrozomb).</summary>
+        public MonsterFighter GetLastDeadMonster() => m_deadFighters.OfType<MonsterFighter>().LastOrDefault(x => x.IsDead());
+
+        /// <summary>MYSTIC 18/10 : vrais monstres morts, du plus récent au plus ancien, sans doublon (Nécromignon de Sylargh).</summary>
+        public IEnumerable<MonsterFighter> GetDeadMonstersRecentFirst() =>
+            m_deadFighters.OfType<MonsterFighter>().Reverse().Where(x => x.IsDead()).Distinct();
+
         public Party GetTeamParty()
         {
             var party = Fighters.OfType<CharacterFighter>().FirstOrDefault()?.Character.Party;

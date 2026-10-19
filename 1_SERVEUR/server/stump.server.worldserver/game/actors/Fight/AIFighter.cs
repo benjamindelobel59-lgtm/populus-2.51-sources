@@ -57,8 +57,18 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                 }
             }
             //Spells = spells.ToDictionary(entry => entry.Id);
-            Brain = BrainManager.Instance.GetBrain(identifier, this);
+            // MYSTIC 18/10 : monstres et invocations : le cerveau est créé à la FIN de leur constructeur (CreerCerveau), quand leur
+            // grade et leurs stats existent. Avant : les cerveaux de Bethel, Papa Nowel, Meno, Pandikazes… lisaient MonsterGrade / Stats
+            // encore nuls → NullReference, combat impossible à lancer et joueur déconnecté.
+            if (!(this is MonsterFighter) && !(this is SummonedMonster))
+                Brain = BrainManager.Instance.GetBrain(identifier, this);
             Fight.TurnStarted += OnTurnStarted;
+        }
+
+        protected void CreerCerveau(int identifier)
+        {
+            if (Brain == null)
+                Brain = BrainManager.Instance.GetBrain(identifier, this);
         }
         public Brain Brain
         {

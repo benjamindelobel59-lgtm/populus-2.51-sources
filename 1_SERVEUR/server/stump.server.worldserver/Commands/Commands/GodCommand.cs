@@ -62,7 +62,8 @@ namespace Stump.Server.WorldServer.Commands.Commands
     {
         public AdminChatCommand()
         {
-            Aliases = new[] { "admin" };
+            // « .admin » ouvre le panel admin (AdminPanelCommand) : le canal admin passe sur « .adminchat »
+            Aliases = new[] { "adminchat" };
             RequiredRole = RoleEnum.Moderator;
             Description = "Enable/disable admin chat mode";
         }

@@ -93,6 +93,9 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.States
 
                 var id = buff.Target.PopNextBuffId();
                 var stateBuff = new DisableStateBuff(id, buff.Target, Caster, this, Spell, DefaultDispellableStatus, actualState, triggerrer);
+                // MYSTIC 18/10 : le délai de l'effet (Galuchat de Klime : 952 délai 2 = « pas avant le tour 3 ») est celui du DÉCLENCHEUR,
+                // déjà écoulé ; la désactivation s'applique tout de suite (avant : elle attendait 2 tours et était retirée avant d'agir)
+                stateBuff.Delay = 0;
 
                 buff.Target.AddBuff(stateBuff);
             }

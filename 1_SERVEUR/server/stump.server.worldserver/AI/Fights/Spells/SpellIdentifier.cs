@@ -20,6 +20,10 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
         {
             switch (effect.EffectId)
             {
+                // MYSTIC 18/10 : multiplicateur de dommages subis (1163) : moins de 100 % = protection (Retour de flamme de Shin Larve),
+                // plus de 100 % = malus. Avant : aucune catégorie → l'IA ne lançait jamais ces sorts
+                case EffectsEnum.Effect_DamageMultiplier:
+                    return effect.DiceNum < 100 ? SpellCategory.Buff : SpellCategory.Curse;
                 case EffectsEnum.Effect_StealHPAir:
                     return SpellCategory.DamagesAir | SpellCategory.Healing;
                 case EffectsEnum.Effect_StealHPWater:

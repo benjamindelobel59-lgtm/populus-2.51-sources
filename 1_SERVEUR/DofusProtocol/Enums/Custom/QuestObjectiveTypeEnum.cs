@@ -16,6 +16,7 @@ namespace Stump.DofusProtocol.Enums {
         DEFEAT_ONE = 13,
         DEFEAT_MULTI = 14,
         WIN_KROSMASTER = 15,
+        DEFEAT_MONSTERS_ON_MAP = 16,
         CRAFT_ITEM = 17,
 
         //CUSTOM

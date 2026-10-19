@@ -34,11 +34,20 @@ namespace Stump.Server.WorldServer.Game.Alliances
         /// PrismSettingsRequest.startDefenseTime). -1 = ancienne donnée en heure locale (VulnHour), convertie au chargement.
         /// </summary>
         public int VulnQuarter { get; set; } = -1;
+
+        /// <summary>MYSTIC 17/10 (AvA) : date de vulnérabilité fixée quand le prisme est affaibli ou saboté.</summary>
+        public DateTime? VulnerableAt { get; set; }
         public DateTime LastTimeSlotModificationDate { get; set; }
         public int AuthorGuildId { get; set; }
         public int AuthorId { get; set; }
         public string AuthorName { get; set; }
         public int Pepites { get; set; }
+
+        /// <summary>MYSTIC 17/10 (phase 4) : modules installés (ids des objets, séparés par des virgules).</summary>
+        public string Modules { get; set; }
+
+        /// <summary>MYSTIC 17/10 : invulnérable jusqu'à cette date (24 h après la pose, 5 h après une défense gagnée).</summary>
+        public DateTime? InvulnerableUntil { get; set; }
 
         public PrismNpc Npc { get; set; }
 
@@ -51,6 +60,9 @@ namespace Stump.Server.WorldServer.Game.Alliances
         {
             get
             {
+                if (VulnerableAt.HasValue)
+                    return VulnerableAt.Value;
+
                 var mini = PlacementDate.ToUniversalTime().AddHours(24);
                 var maintenant = DateTime.UtcNow;
                 var depart = maintenant > mini ? maintenant : mini;
@@ -66,7 +78,7 @@ namespace Stump.Server.WorldServer.Game.Alliances
             var alliance = Alliance;
             if (interne)
                 return new AllianceInsiderPrismInformation(0, (sbyte)State, NextVulnerabilityDate.GetUnixTimeStamp(), PlacementDate.GetUnixTimeStamp(),
-                    (uint)Pepites, LastTimeSlotModificationDate.GetUnixTimeStamp(), (uint)AuthorGuildId, (ulong)AuthorId, AuthorName ?? "", new ObjectItem[0]);
+                    (uint)Pepites, LastTimeSlotModificationDate.GetUnixTimeStamp(), (uint)AuthorGuildId, (ulong)AuthorId, AuthorName ?? "", PrismModules.Objets(this));
 
             return new AlliancePrismInformation(0, (sbyte)State, NextVulnerabilityDate.GetUnixTimeStamp(), PlacementDate.GetUnixTimeStamp(),
                 (uint)Pepites, alliance?.GetAllianceInformations() ?? new AllianceInformations(0, "", "#NONAME#", new DofusProtocol.Types.GuildEmblem()));
@@ -88,7 +100,47 @@ namespace Stump.Server.WorldServer.Game.Alliances
             Id = id;
             Prisme = prisme;
             Position = position;
-            Look = ActorLook.Parse("{2211}");
+            Look = LookDe(prisme.Alliance, prisme.State);
+        }
+
+        /// <summary>
+        /// MYSTIC 17/10 : apparence du prisme. Le graphisme officiel (os 2211) colore la sphère (noyau) avec la couleur 1 et le logo
+        /// avec la couleur 9, et accroche le blason d'alliance (« AllianceUp ») : couleur du noyau selon l'état, blason de l'alliance
+        /// (motif du blason en skin, couleurs 7 / 8 / 9 comme le percepteur). Couleurs 2 à 4 = celles du monstre officiel 3451.
+        /// </summary>
+        public static ActorLook LookDe(Alliance alliance, int etat = (int)PrismStateEnum.PRISM_STATE_NORMAL)
+        {
+            var look = ActorLook.Parse("{2211||2=16752644,3=14301485,4=12148110}");
+            look.AddColor(1, System.Drawing.Color.FromArgb(CouleurNoyau(etat)));
+            if (alliance?.Emblem == null)
+                return look;
+
+            var motif = Guilds.GuildManager.Instance.TryGetEmblem(alliance.Emblem.SymbolShape);
+            if (motif != null)
+                look.AddSkin((short)motif.SkinId);
+            look.AddColor(9, System.Drawing.Color.FromArgb(alliance.Emblem.SymbolColor));
+            look.AddColor(8, System.Drawing.Color.FromArgb(alliance.Emblem.SymbolColor));
+            look.AddColor(7, System.Drawing.Color.FromArgb(alliance.Emblem.BackgroundColor));
+            return look;
+        }
+
+        /// <summary>Couleur du noyau selon l'état (proche des couleurs de la carte des conquêtes).</summary>
+        public static int CouleurNoyau(int etat)
+        {
+            switch ((PrismStateEnum)etat)
+            {
+                case PrismStateEnum.PRISM_STATE_ATTACKED:
+                case PrismStateEnum.PRISM_STATE_FIGHTING:
+                    return 0xFF8C00; // orange : attaqué
+                case PrismStateEnum.PRISM_STATE_WEAKENED:
+                    return 0xFFD700; // jaune : affaibli
+                case PrismStateEnum.PRISM_STATE_VULNERABLE:
+                    return 0xE01010; // rouge : vulnérable (KOH)
+                case PrismStateEnum.PRISM_STATE_SABOTAGED:
+                    return 0x9B30FF; // violet : saboté
+                default:
+                    return 0xC2E6EE; // bleu clair officiel : normal
+            }
         }
 
         public PrismeAlliance Prisme { get; }
@@ -178,6 +230,13 @@ namespace Stump.Server.WorldServer.Game.Alliances
             if (prisme == null)
                 return;
 
+            var bloque = AvAManager.Instance.ZaapBloque(Character, Character.Map, map);
+            if (bloque != null)
+            {
+                Character.SendServerMessage(bloque);
+                return;
+            }
+
             var cell = map.GetRandomAdjacentFreeCell(new MapPoint((short)prisme.CellId), true) ?? map.Cells[prisme.CellId];
             Close();
             Character.Teleport(map, cell);
@@ -249,7 +308,7 @@ namespace Stump.Server.WorldServer.Game.Alliances
 
         public IEnumerable<PrismeAlliance> PrismesDe(Alliance alliance) => Prismes.Where(x => x.AllianceId == alliance.Id);
 
-        static void Executer(string sql, params object[] args)
+        public static void Executer(string sql, params object[] args)
         {
             WorldServer.Instance.IOTaskPool.AddMessage(() => Database.Execute(sql, args));
         }
@@ -261,6 +320,9 @@ namespace Stump.Server.WorldServer.Game.Alliances
                 CellId INT NOT NULL, State INT NOT NULL, PlacementDate DATETIME NOT NULL, VulnHour INT NOT NULL, LastTimeSlotModificationDate DATETIME NOT NULL,
                 AuthorGuildId INT NOT NULL, AuthorId INT NOT NULL, AuthorName VARCHAR(64) NULL, Pepites INT NOT NULL DEFAULT 0) DEFAULT CHARSET=utf8");
             Database.Execute("ALTER TABLE nekfeu_prisms ADD COLUMN IF NOT EXISTS VulnQuarter INT NOT NULL DEFAULT -1");
+            Database.Execute("ALTER TABLE nekfeu_prisms ADD COLUMN IF NOT EXISTS VulnerableAt DATETIME NULL");
+            Database.Execute("ALTER TABLE nekfeu_prisms ADD COLUMN IF NOT EXISTS Modules VARCHAR(255) NULL");
+            Database.Execute("ALTER TABLE nekfeu_prisms ADD COLUMN IF NOT EXISTS InvulnerableUntil DATETIME NULL");
 
             foreach (var mapId in Database.Fetch<int>("SELECT DISTINCT EntranceMapId FROM dungeons_entries"))
                 m_entreesDonjons.Add(mapId);
@@ -284,6 +346,10 @@ namespace Stump.Server.WorldServer.Game.Alliances
             }
 
             logger.Info("[Alliances] {0} prismes", m_prismes.Count);
+
+            PrismModules.Instance.Charger();
+            VillagesConquete.Instance.Charger();
+            AvAManager.Instance.Demarrer();
         }
 
         void Apparaitre(PrismeAlliance p)
@@ -327,6 +393,10 @@ namespace Stump.Server.WorldServer.Game.Alliances
             if (map.IsDungeon() || character.Record.IsInHavenBag)
                 return "Impossible de poser un prisme ici.";
 
+            // MYSTIC 17/10 : village de conquête : le prisme se pose uniquement à la porte (carte officielle allowPrism)
+            if (VillagesConquete.Villages.Contains(subArea.Id) && !VillagesConquete.EstPorte(map))
+                return "Dans un village de conquête, le prisme se pose uniquement à la porte du village.";
+
             // MYSTIC 17/10 : interdits sur une carte avec un zaap, à Astrub / Incarnam et devant les donjons
             if (map.Zaap != null)
                 return "Impossible de poser un prisme sur la carte d'un zaap.";
@@ -351,10 +421,14 @@ namespace Stump.Server.WorldServer.Game.Alliances
                 VulnHour = 20,
                 VulnQuarter = QuartsUtc(20),
                 LastTimeSlotModificationDate = DateTime.Now,
+                InvulnerableUntil = DateTime.Now.AddHours(24),
                 AuthorGuildId = character.Guild.Id,
                 AuthorId = character.Id,
                 AuthorName = character.Name,
             };
+
+            if (AvAManager.Instance.ZoneReserveePourAutre(p.SubAreaId, alliance.Id, out var reservee))
+                return reservee;
 
             lock (m_lock)
             {
@@ -364,13 +438,22 @@ namespace Stump.Server.WorldServer.Game.Alliances
             }
 
             Executer(@"REPLACE INTO nekfeu_prisms (SubAreaId, AllianceId, MapId, CellId, State, PlacementDate, VulnHour, LastTimeSlotModificationDate,
-                AuthorGuildId, AuthorId, AuthorName, Pepites, VulnQuarter) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11, @12)",
+                AuthorGuildId, AuthorId, AuthorName, Pepites, VulnQuarter, InvulnerableUntil) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11, @12, @13)",
                 p.SubAreaId, p.AllianceId, p.MapId, p.CellId, p.State, p.PlacementDate, p.VulnHour, p.LastTimeSlotModificationDate,
-                p.AuthorGuildId, p.AuthorId, p.AuthorName, p.Pepites, p.VulnQuarter);
+                p.AuthorGuildId, p.AuthorId, p.AuthorName, p.Pepites, p.VulnQuarter, p.InvulnerableUntil);
 
             Apparaitre(p);
             Annoncer(p);
+            AvAManager.MessageATous($"La zone {AvAManager.Lien(p.SubAreaId)} a été prismée par l'alliance {AvAManager.Lien(alliance)} !");
             return null;
+        }
+
+        /// <summary>MYSTIC 17/10 (AvA) : enregistre l'état et la date de vulnérabilité, et prévient tout le monde.</summary>
+        public void SauverEtat(PrismeAlliance p)
+        {
+            Executer("UPDATE nekfeu_prisms SET State = @1, VulnerableAt = @2, InvulnerableUntil = @3 WHERE SubAreaId = @0", p.SubAreaId, p.State, p.VulnerableAt,
+                p.InvulnerableUntil);
+            Annoncer(p);
         }
 
         public void Retirer(PrismeAlliance p)
@@ -386,6 +469,7 @@ namespace Stump.Server.WorldServer.Game.Alliances
         /// <summary>L'alliance est dissoute : ses prismes disparaissent.</summary>
         public void OnAllianceDeleted(Alliance alliance)
         {
+            VillagesConquete.Instance.SurAllianceSupprimee(alliance.Id);
             foreach (var p in PrismesDe(alliance).ToArray())
                 Retirer(p);
         }
@@ -423,7 +507,11 @@ namespace Stump.Server.WorldServer.Game.Alliances
             }
 
             if (!retire)
+            {
+                if (p.Npc != null)
+                    p.Npc.Look = PrismNpc.LookDe(p.Alliance, p.State);
                 p.Npc?.Map?.Refresh(p.Npc);
+            }
         }
 
         public void EnvoyerListe(Character character)

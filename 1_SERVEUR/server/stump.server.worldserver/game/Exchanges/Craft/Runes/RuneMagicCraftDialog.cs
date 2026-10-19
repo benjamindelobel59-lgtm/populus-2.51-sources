@@ -21,6 +21,28 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
 {
     public abstract class RuneMagicCraftDialog : BaseCraftDialog
     {
+        static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        // MYSTIC 18/10 : part de la réussite en succès critique (le reste en succès neutre)
+        // MYSTIC 19/10 (retour joueurs « trop dur ») : 30 % de la réussite en succès critique (sans perte) ; était 0,12
+        const double PART_CRITIQUE_STATS = 0.30;
+
+        // MYSTIC 18/10 (règle utilisateur) : réussite totale (critique + neutre) [palier de valeur 0-30 / 31-50 / 51+, rune simple / Pa / Ra]
+        // MYSTIC 19/10 (retour joueurs « trop dur ») : réussite relevée ; était { 70, 50, 30 }, { 50, 60, 40 }, { 35, 45, 55 }
+        static readonly double[,] PALIERS_STATS = { { 85, 75, 60 }, { 75, 75, 65 }, { 60, 65, 70 } };
+
+        /// <summary>MYSTIC 19/10 (retour joueurs « trop de pertes ») : part de la perte normale réellement appliquée.</summary>
+        const double PART_PERTE = 0.5;
+
+        // MYSTIC 18/10 : bornes des paliers en poids (30 / 50 = valeurs de Force, Intelligence, Chance, Agilité)
+        const double PALIER_1 = 30;
+        const double PALIER_2 = 50;
+
+        /// <summary>MYSTIC 18/10 : lignes de l'objet pour le journal [FM] (« effet=valeur », reliquat compris).</summary>
+        string LignesPourJournal() =>
+            string.Join(" ", ItemToImprove.Effects.OfType<EffectInteger>().Select(x => $"{x.EffectId.ToString().Replace("Effect_", "")}={x.Value}")) +
+            $" reliquat={ItemToImprove.PlayerItem.PowerSink}";
+
         public const int MAX_STAT_POWER_25 = 25;
         public const int MAX_STAT_POWER_50 = 50;
         public const int MAX_STAT_POWER_75 = 75;
@@ -148,8 +170,17 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
         }
 
 
+        /// <summary>MYSTIC 19/10 : atelier de forgemagie de la maison-atelier d'Astrub [5,-17] : objets de niveau 80 au maximum (demande utilisateur).</summary>
+        public const int CarteAtelierAstrub = 191890437, NiveauMaxAtelierAstrub = 80;
+
         public override bool CanMoveItem(BasePlayerItem item)
         {
+            if (Interactive?.Map?.Id == CarteAtelierAstrub && item.Template.TypeId != (int)ItemTypeEnum.RUNE_DE_FORGEMAGIE &&
+                Skill.SkillTemplate.ModifiableItemTypes.Contains((int)item.Template.TypeId) && item.Template.Level > NiveauMaxAtelierAstrub)
+            {
+                item.Owner?.OpenPopup($"Tu ne peux pas FM ici : l'objet est trop haut niveau (max {NiveauMaxAtelierAstrub}).");
+                return false;
+            }
             return item.Template.TypeId == (int)ItemTypeEnum.RUNE_DE_FORGEMAGIE || Skill.SkillTemplate.ModifiableItemTypes.Contains((int)item.Template.TypeId);
         }
 
@@ -430,7 +461,12 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
                     var percent = (20 * EffectManager.Instance.GetEffectPower(effect)) * (Job.Level - ItemToImprove.Template.Level) * 7 / 100;
                     var xp = 20 * EffectManager.Instance.GetEffectPower(effect) - percent;
 
-                    if (randNumber <= criticalSuccess)
+                    // MYSTIC 18/10 : journal de chaque rune (retours de test FM) ; tirage 0-99 strictement sous la chance
+                    // (avant « <= » : 1 % affiché = 2 % réels, 25 % = 26 %)
+                    var avantJournal = LignesPourJournal();
+                    var resultatJournal = randNumber < criticalSuccess ? "SC" : randNumber < criticalSuccess + neutralSuccess ? "SN" : "ECHEC";
+
+                    if (randNumber < criticalSuccess)
                     {
                         BoostEffect(effect);
 
@@ -441,7 +477,7 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
 
                         OnRuneApplied(CraftResultEnum.CRAFT_SUCCESS, MagicPoolStatus.UNMODIFIED);
                     }
-                    else if (randNumber <= criticalSuccess + neutralSuccess)
+                    else if (randNumber < criticalSuccess + neutralSuccess)
                     {
                         BoostEffect(effect);
 
@@ -459,6 +495,11 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
 
                         OnRuneApplied(CraftResultEnum.CRAFT_FAILED, GetMagicPoolStatus(residual));
                     }
+
+                    logger.Info("[FM] {0} | {1} ({2}) | rune {3}+{4} | chances SC {5:0.#} / SN {6:0.#} / EC {7:0.#} | tirage {8} -> {9} | avant : {10} | apres : {11}",
+                        Crafter.Character.Name, ItemToImprove.Template.Name, ItemToImprove.Template.Id,
+                        effect.EffectId.ToString().Replace("Effect_", ""), effect.Value, criticalSuccess, neutralSuccess, criticalFailure,
+                        randNumber, resultatJournal, avantJournal, LignesPourJournal());
                 }
             }
 
@@ -511,7 +552,7 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
 
         private int DeBoostEffect(EffectInteger runeEffect)
         {
-            var pwrToLose = (int)Math.Ceiling(EffectManager.Instance.GetEffectPower(runeEffect));
+            var pwrToLose = (int)Math.Ceiling(EffectManager.Instance.GetEffectPower(runeEffect) * PART_PERTE);
             short residual = 0;
 
             if (ItemToImprove.PlayerItem.PowerSink > 0)
@@ -531,9 +572,16 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
                 if (effect == null)
                     break;
 
-                var maxLost = (int)Math.Ceiling(EffectManager.Instance.GetEffectBasePower(runeEffect) / Math.Abs(EffectManager.Instance.GetEffectBasePower(effect)));
+                // MYSTIC 18/10 : perte max = poids TOTAL de la rune / poids d'un point de la ligne (avant : poids d'un seul point de rune ->
+                // une rune vitalité +50 (poids 10) ne faisait perdre que 1 vitalité par tour de boucle, 10 au lieu de 50 au total)
+                var maxLost = (int)Math.Ceiling(EffectManager.Instance.GetEffectPower(runeEffect) / Math.Abs(EffectManager.Instance.GetEffectBasePower(effect)));
+                maxLost = Math.Max(1, Math.Min(maxLost, Math.Abs((int)effect.Value)));
 
                 var rand = new CryptoRandom();
+                // MYSTIC 18/10 (logs : vitalité 100 -> 31 pour une rune de poids 10) : jamais plus de points que la puissance qui reste à perdre
+                var poidsLigne = Math.Abs(EffectManager.Instance.GetEffectBasePower(effect));
+                if (poidsLigne > 0)
+                    maxLost = Math.Max(1, Math.Min(maxLost, (int)Math.Ceiling(pwrToLose / poidsLigne)));
                 var lost = rand.Next(1, maxLost + 1);
 
                 var oldValue = effect.Value;
@@ -601,6 +649,11 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
             if (overmaxEffect != null)
                 return overmaxEffect;
 
+            // MYSTIC 18/10 (logs FM du Gelano, vitalité exo + PA de base) : la ligne qu'on FM, si elle est elle-même exo ou over,
+            // baisse avant toute ligne de base (avant : exclue -> le PA sautait à chaque échec de rune vitalité).
+            if (effectToImprove != null && effectToImprove.Value != 0 && (IsExotic(effectToImprove) || IsOverMax(effectToImprove)))
+                return effectToImprove;
+
             var rand = new CryptoRandom();
             var candidats = LignesEffets.Where(x => x != effectToImprove && x.Value != 0).ToArray();
 
@@ -611,7 +664,11 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
                     return effect;
             }
 
-            return candidats.RandomElementOrDefault();
+            // MYSTIC 18/10 : seules les lignes au moins aussi légères (par point) que la perte restante peuvent tomber d'office ; une ligne
+            // lourde (PA, PM…) ne tombe que si le tirage ci-dessus l'a choisie. Sinon le reste de la perte est absorbé.
+            // (logs : vitalité exo épuisée puis le PA sautait pour 9 de puissance restante)
+            return candidats.Where(x => Math.Abs(EffectManager.Instance.GetEffectBasePower(x)) <= EffectManager.Instance.GetEffectPower(runeEffect))
+                            .OrderBy(x => Math.Abs(EffectManager.Instance.GetEffectBasePower(x))).FirstOrDefault();
         }
 
         private bool IsExotic(EffectBase effect)
@@ -671,6 +728,21 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
                 return;
             }
 
+            // MYSTIC 18/10 (décision utilisateur) : un seul exo « lourd » par objet (PA, PM, PO, Invocation… poids 30 ou plus) et +1 seulement
+            // (avant : exo PA + PM + PO cumulables, +3 invocations)
+            if (parentEffect == null && EffectManager.Instance.GetEffectBasePower(runeEffect) >= POIDS_EXO_DIFFICILE)
+            {
+                var autreExoLourd = LignesEffets.Any(x => IsExotic(x) && x.EffectId != runeEffect.EffectId &&
+                                                          EffectManager.Instance.GetEffectBasePower(x) >= POIDS_EXO_DIFFICILE);
+                if (autreExoLourd || effectToImprove != null)
+                {
+                    criticalSuccess = 0;
+                    neutralSuccess = 0;
+                    criticalFailure = 100;
+                    return;
+                }
+            }
+
             // MYSTIC 17/10 : exo (ligne absente du jet théorique) avec une rune de poids 30 ou plus (PA, PM, PO, Invo, Cri…) : 1 % de succès
             if (parentEffect == null && EffectManager.Instance.GetEffectPower(runeEffect) >= POIDS_EXO_DIFFICILE)
             {
@@ -685,6 +757,48 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
             double itemFactor;
             double effectSuccess;
             double itemSuccess;
+            // MYSTIC 18/10 (décision utilisateur, proche de l'officiel) : plus la ligne dépasse son jet max (over) ou plus une ligne exotique
+            // légère grossit (ex. vitalité sur un Gelano), plus la chance chute : de 25 % juste au-dessus du max à 1 % à la limite de poids
+            // (101), sans succès neutre (soit la rune passe, soit échec). Avant : la chance ne baissait plus une fois le max dépassé
+            // (un Gelano montait à 500 vitalité, 50 force -> 100 force).
+            {
+                var poidsMax = parentEffect != null ? EffectManager.Instance.GetEffectPower(runeEffect.Template) * Math.Max(parentEffect.Max, parentEffect.Min) : 0;
+                if (parentEffect == null || (effectToImprove != null ? IsOverMax(effectToImprove, runeEffect) : runeEffect.Value > parentEffect.Max))
+                {
+                    var marge = Math.Max(1, limite - poidsMax);
+                    var depassement = Math.Min(1, Math.Max(0, poidsApres - poidsMax) / marge);
+                    criticalSuccess = Math.Max(1, Math.Round(25 * Math.Pow(1 - depassement, 2)));
+                    neutralSuccess = 0;
+                    criticalFailure = 100 - criticalSuccess;
+                    return;
+                }
+            }
+
+            // MYSTIC 18/10 (règle utilisateur) : caractéristiques principales DANS le jet (pas over / pas exo, traités au-dessus) : la
+            // chance dépend de la valeur actuelle de la ligne et de la taille de la rune (paliers absolus 30 / 50).
+            //   (réussite totale) valeur 0-30  : rune +1 70 %, Pa 50 %, Ra 30 %
+            //   valeur 31-50 : rune +1 50 %, Pa 60 %, Ra 40 %
+            //   valeur 51+   : rune +1 35 %, Pa 45 %, Ra 55 %
+            // MYSTIC 18/10 (retour utilisateur : « succès neutre = la base, critique rare ») : le tableau donne la réussite TOTALE ;
+            // 12 % de cette réussite en succès critique, le reste en succès neutre ; échec = 100 - réussite.
+            // MYSTIC 18/10 (retour utilisateur : « ce système pour toutes les runes ») : paliers exprimés en POIDS (valeur × poids d'un
+            // point) : 30 / 50 de poids = 30 / 50 en Force, Intelligence, Chance, Agilité ; 150 / 250 vitalité ; 10 / 16 sagesse ou
+            // prospection ; 3 / 5 soins ou critique ; 1 / 2 dommages ; 5 / 8 % de résistance ; 1 PA / PM / PO = dernier palier.
+            // Taille de rune : rang de la rune parmi celles de la caractéristique (simple, Pa, Ra).
+            {
+                var poidsPointStat = Math.Abs(EffectManager.Instance.GetEffectPower(runeEffect.Template));
+                var poidsActuel = Math.Abs((int)(effectToImprove?.Value ?? 0)) * poidsPointStat;
+                var runesStat = RuneManager.Instance.GetEffectRunes(runeEffect.EffectId).OrderBy(x => x.Amount).ToArray();
+                var rang = Array.FindIndex(runesStat, x => x.Amount >= runeEffect.Value);
+                var taille = Math.Min(2, Math.Max(0, rang < 0 ? runesStat.Length - 1 : rang)); // 0 = simple, 1 = Pa, 2 = Ra
+                var palier = poidsActuel <= PALIER_1 ? 0 : poidsActuel <= PALIER_2 ? 1 : 2;
+                var reussite = PALIERS_STATS[palier, taille];
+                criticalSuccess = Math.Round(reussite * PART_CRITIQUE_STATS);
+                neutralSuccess = reussite - criticalSuccess;
+                criticalFailure = 100 - reussite;
+                return;
+            }
+
             if (parentEffect == null) // exo
             {
                 effectStatus = 100;

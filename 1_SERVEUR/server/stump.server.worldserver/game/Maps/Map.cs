@@ -196,6 +196,9 @@ namespace Stump.Server.WorldServer.Game.Maps
         /// <summary>NEKFEU : nombre de maps sans modele de placement (ancien calcul), resume dans le log au demarrage.</summary>
         public static int NoPatternCount;
 
+        /// <summary>Diagnostic : cartes sans modèle de placement (id, cases utilisables, résultat de l'ancien calcul), écrit dans placements_sans_modele.txt.</summary>
+        public static readonly System.Collections.Concurrent.ConcurrentBag<string> NoPatternMaps = new System.Collections.Concurrent.ConcurrentBag<string>();
+
         public void UpdateFightPlacements(bool useRecordPlacements)
         {
             var hasRecord = Record.BlueFightCells.Length > 0 && Record.RedFightCells.Length > 0;
@@ -238,6 +241,14 @@ namespace Stump.Server.WorldServer.Game.Maps
             // NEKFEU : une seule ligne de resume au demarrage (voir World.LoadSpaces) au lieu d'une ligne par map
             System.Threading.Interlocked.Increment(ref NoPatternCount);
             UpdateFightPlacementsOld();
+            try
+            {
+                var usable = Cells.Count(x => Placements.PlacementManager.IsPlacementCell(this, x, new short[0]));
+                NoPatternMaps.Add($"{Id}\t{Record.SubAreaId}\t{usable}\t{m_bluePlacement?.Length ?? -1}\t{m_redPlacement?.Length ?? -1}");
+            }
+            catch
+            {
+            }
         }
 
         /// <summary>
@@ -1063,6 +1074,10 @@ namespace Stump.Server.WorldServer.Game.Maps
                     l += spawn.Frequency;
 
                     if (!(roll <= l))
+                        continue;
+
+                    // MYSTIC 19/10 : monstre rare déjà présent dans la sous-zone (Leprechaun, Hell Mina : 1 max) -> monstre suivant
+                    if (Spawns.MonstresLimites.Atteinte(this, spawn.MonsterId, group.GetMonsters().Select(x => x.Grade.MonsterId)))
                         continue;
 
                     monster = MonsterManager.Instance.GetMonsterGrade(spawn.MonsterId, SubArea.RollMonsterGrade(spawn.MinGrade, spawn.MaxGrade));
@@ -2079,13 +2094,57 @@ namespace Stump.Server.WorldServer.Game.Maps
             return m_mainArea = best;
         }
 
+        /// <summary>Taille minimale d'une zone praticable pour y arriver (portes à travers un mur, ex. villages de conquête).</summary>
+        const int TailleMiniZoneArrivee = 15;
+
+        HashSet<short> m_landingCells;
+
+        /// <summary>
+        /// MYSTIC 17/10 : cases d'arrivée acceptées = toutes les zones praticables d'au moins 15 cases (la plus grande zone seule
+        /// renvoyait du mauvais côté du mur les portes des villages de conquête). Les recoins isolés restent exclus.
+        /// </summary>
+        HashSet<short> GetLandingCells()
+        {
+            if (m_landingCells != null)
+                return m_landingCells;
+
+            var seen = new HashSet<short>();
+            var result = new HashSet<short>(GetMainArea());
+            foreach (var start in Cells.Where(IsUsableLandingCell))
+            {
+                if (!seen.Add(start.Id))
+                    continue;
+
+                var area = new HashSet<short> { start.Id };
+                var queue = new Queue<short>();
+                queue.Enqueue(start.Id);
+                while (queue.Count > 0)
+                {
+                    var point = new MapPoint(queue.Dequeue());
+                    foreach (var next in point.GetAdjacentCells(id => id >= 0 && id < Cells.Length && IsUsableLandingCell(Cells[id])))
+                    {
+                        if (seen.Add(next.CellId))
+                        {
+                            area.Add(next.CellId);
+                            queue.Enqueue(next.CellId);
+                        }
+                    }
+                }
+
+                if (area.Count >= TailleMiniZoneArrivee)
+                    result.UnionWith(area);
+            }
+
+            return m_landingCells = result;
+        }
+
         /// <summary>
         /// NEKFEU : case d'arrivee utilisable (teleportation de donjon, entree, sortie) : la case voulue si elle est praticable
         /// et reliee au reste de la map, sinon la case utilisable la plus proche (sinon le centre de la map).
         /// </summary>
         public Cell GetUsableCell(int cellId)
         {
-            var area = GetMainArea();
+            var area = GetLandingCells();
             if (cellId >= 0 && cellId < Cells.Length && area.Contains((short)cellId))
                 return Cells[cellId];
 
@@ -2116,7 +2175,7 @@ namespace Stump.Server.WorldServer.Game.Maps
         /// </summary>
         public Cell GetArrivalCell(int cellId)
         {
-            var area = GetMainArea();
+            var area = GetLandingCells();
             var blocked = new HashSet<short>(m_cellsTriggers.Where(x => x.Value.Count > 0).Select(x => x.Key.Id));
             foreach (var interactive in m_interactives.Values)
                 if (interactive.Cell != null)
@@ -2378,4 +2437,4 @@ namespace Stump.Server.WorldServer.Game.Maps
             return new CellInformation(Map.Cells[cell], IsCellWalkable(cell));
         }
     }
-}
+}

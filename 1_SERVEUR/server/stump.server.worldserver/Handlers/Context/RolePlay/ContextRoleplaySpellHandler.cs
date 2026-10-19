@@ -43,28 +43,36 @@ namespace Stump.Server.WorldServer.Handlers.Context.RolePlay
         {
             var spellVariants = SpellManager.Instance.GetSpellVariants();
 
-            if (!client.Character.IsFighting())
+            // MYSTIC 18/10 : variante changeable aussi pendant le PLACEMENT d'un combat (demande utilisateur, comme en officiel) ; refus
+            // explicite sinon (avant : demande ignorée sans réponse). La position 63 (sort actif) change même si aucun des deux sorts
+            // n'est dans la barre de raccourcis, et plus de plantage si le personnage n'a pas l'un des deux sorts.
+            var personnage = client.Character;
+            var autorise = !personnage.IsFighting() || personnage.Fight.State == Game.Fights.FightState.Placement;
+            var variante = spellVariants.FirstOrDefault(v => v.SpellIds[0] == message.SpellId || v.SpellIds[1] == message.SpellId);
+            var nouveau = personnage.Spells.FirstOrDefault(x => x.Template.Id == message.SpellId);
+            if (!autorise || variante == null || nouveau == null)
             {
-                foreach (var variant in spellVariants)
-                {
-                    if (variant.SpellIds[1] == message.SpellId || variant.SpellIds[0] == message.SpellId)
-                    {
-                        foreach (SpellShortcut sh in client.Character.Shortcuts.GetShortcuts(ShortcutBarEnum.SPELL_SHORTCUT_BAR))
-                        {
-                            if (sh.SpellId == variant.SpellIds[0] || sh.SpellId == variant.SpellIds[1])
-                            {
-                                client.Character.Spells.Where(x => x.Template.Id == sh.SpellId).FirstOrDefault().Record.Position = 0;
-                                client.Character.Spells.Where(x => x.Template.Id == message.SpellId).FirstOrDefault().Record.Position = 63;
+                client.Send(new SpellVariantActivationMessage(message.SpellId, false));
+                return;
+            }
 
-                                client.Send(new ShortcutBarReplacedMessage((sbyte)ShortcutBarEnum.SPELL_SHORTCUT_BAR, new ShortcutSpell((sbyte)sh.Slot, message.SpellId)));
-                                client.Character.Shortcuts.SwapSpellShortcuts(sh.SpellId, (short)message.SpellId);
-                                client.Character.Shortcuts.Save();
-                                client.Send(new SpellVariantActivationMessage(message.SpellId, true));
-                            }
-                        }
-                    }
+            var ancienId = variante.SpellIds[0] == message.SpellId ? variante.SpellIds[1] : variante.SpellIds[0];
+            var ancien = personnage.Spells.FirstOrDefault(x => x.Template.Id == ancienId);
+            if (ancien != null)
+                ancien.Record.Position = 0;
+            nouveau.Record.Position = 63;
+
+            foreach (SpellShortcut sh in personnage.Shortcuts.GetShortcuts(ShortcutBarEnum.SPELL_SHORTCUT_BAR).ToArray())
+            {
+                if (sh.SpellId == ancienId)
+                {
+                    client.Send(new ShortcutBarReplacedMessage((sbyte)ShortcutBarEnum.SPELL_SHORTCUT_BAR, new ShortcutSpell((sbyte)sh.Slot, message.SpellId)));
+                    personnage.Shortcuts.SwapSpellShortcuts(sh.SpellId, (short)message.SpellId);
+                    break;
                 }
             }
+            personnage.Shortcuts.Save();
+            client.Send(new SpellVariantActivationMessage(message.SpellId, true));
 
         }
     }

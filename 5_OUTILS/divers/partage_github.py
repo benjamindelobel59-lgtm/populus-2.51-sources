@@ -11,7 +11,9 @@ GitHub sert UNIQUEMENT à partager nos modifications (on ne travaille pas avec ;
   HANDOFF.md        (pour le Claude de l'autre dev, à tenir à jour : _OUTILS/divers/partage_github_HANDOFF.md)
   JOURNAL_DES_MODIFICATIONS.txt ← SOURCES_Populus/LISEZ-MOI.txt
 
-Les serveurs compilés (AuthServer / WorldServer) et le dossier PUSH sont envoyés à la main par l'utilisateur, pas sur GitHub.
+  6_SERVEURS_COMPILES/AuthServer|WorldServer  fichiers compilés Stump (DLL, exe, .config de liaison) + swf_patchs ← SERVEUR_Emu/run/debug
+                    (MYSTIC 20/10, demande utilisateur « source + auth et world » : JAMAIS les *_config.xml, logs ni données)
+Le dossier PUSH reste envoyé à la main par l'utilisateur, pas sur GitHub.
 
 Utilisation : python -I _OUTILS/divers/partage_github.py ["message de commit"]   (sans message : prépare seulement, pas de push)
 """
@@ -28,10 +30,45 @@ IGNORE_SRC = shutil.ignore_patterns('.git', 'bin', 'obj', '.vs', 'packages', 'ru
                                     '.gitignore', 'LISEZ-MOI.txt')
 OUTILS = ['serveur/donjons', 'serveur/recherches', 'serveur/ia', 'serveur/trousseau', 'serveur/interactifs', 'serveur/placements',
           'client/client-build', 'client/client-configs', 'web/launcher', 'divers/partage_github.py', 'serveur/importer_dump_vps.sh',
-          'web/atelier', 'client/icone_exe']
+          'web/atelier', 'client/icone_exe', 'serveur/audit_cartes']
 EXT_OUTILS = ('.py', '.sql', '.tsv', '.ps1', '.bat', '.sh', '.md', '.as', '.cs')
 EXCLUS_OUTILS = re.compile(r'(^|/)(verif[^/]*|x32|publication|build-emu|pcode[^/]*|__pycache__|installation|client_cumule|maquette)(/|$)'
                            r'|(^|/)compte_test_local\.md$')  # MYSTIC 18/10 : identifiants de test locaux, jamais sur le dépôt public
+
+
+def copier_compiles(dest):
+    """MYSTIC 20/10 : AuthServer + WorldServer compilés, seulement les fichiers Stump (pas de config, pas de données)"""
+    import fnmatch
+    garder = ('Stump.*.dll', 'Stump.*.pdb', 'Stump.GUI.AuthConsole.exe', 'Stump.GUI.WorldConsole.exe', 'Stump.*.exe.config', 'Stump.*.dll.config')
+    for nom, console in (('AuthServer', 'AuthConsole'), ('WorldServer', 'WorldConsole')):
+        src = os.path.join(RACINE, 'SERVEUR_Emu', 'run', 'debug', nom)
+        os.makedirs(os.path.join(dest, nom))
+        for f in sorted(os.listdir(src)):
+            if any(fnmatch.fnmatch(f, m) for m in garder) and 'vshost' not in f and (console in f or 'GUI' not in f):
+                shutil.copy2(os.path.join(src, f), os.path.join(dest, nom, f))
+        if os.path.isdir(os.path.join(src, 'swf_patchs')):
+            shutil.copytree(os.path.join(src, 'swf_patchs'), os.path.join(dest, nom, 'swf_patchs'))
+    # MYSTIC 20/10 (demande utilisateur) : LISEZ-MOI pour que le Claude de l'autre dev comprenne que ce sont des binaires compilés
+    date = datetime.datetime.fromtimestamp(os.path.getmtime(os.path.join(dest, 'WorldServer', 'Stump.Server.WorldServer.dll'))).strftime('%d/%m/%Y %Hh%M')
+    open(os.path.join(dest, 'LISEZ-MOI.md'), 'w', encoding='utf-8').write(f"""# Serveurs COMPILÉS (binaires prêts à l'emploi) — pas des sources
+
+Ce dossier contient l'AuthServer et le WorldServer **déjà compilés** à partir des sources de `1_SERVEUR/` (même version que ce dépôt).
+Ce sont des **fichiers binaires** (.NET Framework 4.8, Debug AnyCPU) : **il n'y a rien à lire ni à modifier ici**. Pour comprendre ou changer
+le code, travailler dans `1_SERVEUR/` (sources C#) puis recompiler.
+
+- Compilé le : **{date}** (WorldServer, avec toutes les modifications du `JOURNAL_DES_MODIFICATIONS.txt` jusqu'à cette date).
+- `AuthServer/` : `Stump.*.dll` / `.pdb`, `Stump.GUI.AuthConsole.exe` (+ `.config` de liaison des DLL), `swf_patchs/AuthPatch.swf`
+  (connexion automatique du launcher).
+- `WorldServer/` : `Stump.*.dll` / `.pdb`, `Stump.GUI.WorldConsole.exe` (+ `.config` de liaison des DLL).
+- **Aucune configuration** (`auth_config.xml`, `world_config.xml`), aucun log, aucune donnée : garder celles de votre serveur.
+- Les bibliothèques tierces (MySql.Data, NLog, Newtonsoft.Json…) ne sont pas incluses : elles ne changent pas, celles de votre serveur suffisent.
+
+## Installer
+1. Arrêter le WorldServer (après `save`) et l'AuthServer.
+2. Sauvegarder vos dossiers AuthServer et WorldServer.
+3. Copier `AuthServer/*` par-dessus votre dossier AuthServer et `WorldServer/*` par-dessus votre dossier WorldServer (remplacer).
+4. Jouer les SQL manquants de `3_SQL_WORLD/` dans l'ordre (voir `3_SQL_WORLD/LISEZ-MOI.md`), puis relancer l'AuthServer et le WorldServer.
+""")
 
 
 def paquets_en_cours():
@@ -175,6 +212,7 @@ def main():
             if os.path.isdir(os.path.join(paquet, src)):
                 shutil.copytree(os.path.join(paquet, src), os.path.join(DEST, '4_CLIENT', dst), dirs_exist_ok=True)
     copier_outils(os.path.join(DEST, '5_OUTILS'))
+    copier_compiles(os.path.join(DEST, '6_SERVEURS_COMPILES'))
     shutil.copy2(os.path.join(SRC, 'LISEZ-MOI.txt'), os.path.join(DEST, 'JOURNAL_DES_MODIFICATIONS.txt'))
     for nom in ('partage_github_HANDOFF.md', 'partage_github_LISEZ-MOI.md', 'partage_github_SQL_LISEZ-MOI.md'):
         shutil.copy2(os.path.join(RACINE, '_OUTILS', 'divers', nom),

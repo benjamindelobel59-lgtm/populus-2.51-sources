@@ -56,6 +56,50 @@ namespace Stump.Server.WorldServer.Handlers.Inventory
             client.Character.Inventory.RemoveItem(item, (int)message.Quantity);
         }
 
+        static void EquiperDepuisCertificat(Character character, Game.Items.Player.Custom.MountCertificate certificat)
+        {
+            if (character.IsFighting() || character.IsBusy())
+                return;
+
+            if (character.Level < Mount.RequiredLevel)
+            {
+                character.SendInformationMessage(TextInformationTypeEnum.TEXT_INFORMATION_ERROR, 227, Mount.RequiredLevel);
+                return;
+            }
+
+            if (!certificat.CanConvert() || certificat.Mount == null || certificat.Mount.Owner != character)
+            {
+                character.SendServerMessage("Ce certificat n'est pas valide.");
+                return;
+            }
+
+            // MYSTIC 19/10 : sous l'eau, pas de Dragodinde ni de Volkorne (double-clic sur le certificat)
+            if (!Game.Maps.SousLEau.PeutMonter(character, certificat.Mount.Template.FamilyId))
+                return;
+
+            var monture = certificat.Mount;
+            if (character.HasEquippedMount())
+            {
+                MountManager.Instance.StoreMount(character, character.EquippedMount);
+                character.UnEquipMount();
+            }
+
+            if (!character.Inventory.RemoveItem(certificat))
+                return;
+
+            character.EquipMount(monture);
+            // MYSTIC 17/10 : la monture équipée depuis le certificat est montée aussitôt (demande utilisateur)
+            character.RideMount();
+        }
+
+        // MYSTIC 18/10 : objets qui téléportent : effets 600 (point de sauvegarde), 999 (potions de cité), 826 (« Téléporte ») et les
+        // objets téléportés en dur plus bas (rappel 548, Bonta 6965, Brâkmar 6964, Multigly 996) + potions de foyer
+        static readonly HashSet<int> ObjetsDeTeleportation = new HashSet<int> { 548, 6964, 6965, 996, 12844, 2542, 8883, 9035 };
+
+        static bool EstObjetDeTeleportation(Game.Items.Player.BasePlayerItem item) =>
+            ObjetsDeTeleportation.Contains(item.Template.Id) ||
+            item.Effects.Any(x => x.EffectId == EffectsEnum.Effect_TeleportToSavePoint || x.EffectId == EffectsEnum.Effect_999 || x.EffectId == EffectsEnum.Effect_826);
+
         [WorldHandler(ObjectUseMessage.Id)]
         public static void HandleObjectUseMessage(WorldClient client, ObjectUseMessage message)
         {
@@ -63,6 +107,21 @@ namespace Stump.Server.WorldServer.Handlers.Inventory
 
             if (item == null)
             {
+                return;
+            }
+
+            // MYSTIC 18/10 : aucun objet de téléportation (rappel, cités, foyer, parchemins, élixirs…) dans une salle de sortie de donjon
+            if (EstObjetDeTeleportation(item) && Game.Donjons.RepriseDonjons.Instance.EstSalleDeSortie(client.Character.Map.Id))
+            {
+                client.Character.SendServerMessage("Impossible d'utiliser un objet de teleportation dans une salle de sortie de donjon.");
+                return;
+            }
+
+            // MYSTIC 17/10 : utiliser un certificat de monture l'équipe directement (sans enclos, comme un familier) ; la monture déjà
+            // équipée repart en certificat dans l'inventaire
+            if (item is Game.Items.Player.Custom.MountCertificate certificat)
+            {
+                EquiperDepuisCertificat(client.Character, certificat);
                 return;
             }
 
@@ -217,6 +276,12 @@ namespace Stump.Server.WorldServer.Handlers.Inventory
 
             if (item == null)
             {
+                return;
+            }
+
+            if (EstObjetDeTeleportation(item) && Game.Donjons.RepriseDonjons.Instance.EstSalleDeSortie(client.Character.Map.Id))
+            {
+                client.Character.SendServerMessage("Impossible d'utiliser un objet de teleportation dans une salle de sortie de donjon.");
                 return;
             }
 

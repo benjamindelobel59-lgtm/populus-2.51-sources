@@ -44,6 +44,15 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Debuffs
     [EffectHandler(EffectsEnum.Effect_SubSpellResistence)]
     [EffectHandler(EffectsEnum.Effect_SubPushDamageReduction)]
     [EffectHandler(EffectsEnum.Effect_SubPushDamageBonus)]
+    // MYSTIC 18/10 : effets 2.51 non gérés (audit des donjons) : -réductions fixes (Élancé de Couteau du Chafer Primitif),
+    // -réduction critique (Pattes Harassent du Morsquale), malus de PV (Milépines d'El Piko)
+    [EffectHandler(EffectsEnum.Effect_SubEarthElementReduction)]
+    [EffectHandler(EffectsEnum.Effect_SubWaterElementReduction)]
+    [EffectHandler(EffectsEnum.Effect_SubAirElementReduction)]
+    [EffectHandler(EffectsEnum.Effect_SubFireElementReduction)]
+    [EffectHandler(EffectsEnum.Effect_SubNeutralElementReduction)]
+    [EffectHandler(EffectsEnum.Effect_SubCriticalDamageReduction)]
+    [EffectHandler(EffectsEnum.Effect_1047)]
 
     public class StatsDebuff : SpellEffectHandler
     {
@@ -125,6 +134,20 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Debuffs
                     return PlayerFields.AirResistPercent;
                 case EffectsEnum.Effect_SubFireResistPercent:
                     return PlayerFields.FireResistPercent;
+                case EffectsEnum.Effect_SubEarthElementReduction:
+                    return PlayerFields.EarthElementReduction;
+                case EffectsEnum.Effect_SubWaterElementReduction:
+                    return PlayerFields.WaterElementReduction;
+                case EffectsEnum.Effect_SubAirElementReduction:
+                    return PlayerFields.AirElementReduction;
+                case EffectsEnum.Effect_SubFireElementReduction:
+                    return PlayerFields.FireElementReduction;
+                case EffectsEnum.Effect_SubNeutralElementReduction:
+                    return PlayerFields.NeutralElementReduction;
+                case EffectsEnum.Effect_SubCriticalDamageReduction:
+                    return PlayerFields.CriticalDamageReduction;
+                case EffectsEnum.Effect_1047: // ACTION_CHARACTER_LIFE_POINTS_MALUS
+                    return PlayerFields.Vitality;
                 case EffectsEnum.Effect_ReduceFinalDamages:
                     return PlayerFields.DamageMultiplicator;
                 case EffectsEnum.Effect_SubMeeleDamageDonePercent:

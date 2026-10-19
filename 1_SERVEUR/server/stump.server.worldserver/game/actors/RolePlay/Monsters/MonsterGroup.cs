@@ -362,7 +362,7 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Monsters
                                                             Leader.Look.GetEntityLook(),
                                                             GetEntityDispositionInformations(),
                                                             false,
-                                                            false,
+                                                            Heroique.ButinHeroique.Instance.PorteButin(this), // MYSTIC : coffre héroïque (butin d'un joueur mort)
                                                             false,
                                                             GetGroupMonsterStaticInformations(character),
                                                             0,

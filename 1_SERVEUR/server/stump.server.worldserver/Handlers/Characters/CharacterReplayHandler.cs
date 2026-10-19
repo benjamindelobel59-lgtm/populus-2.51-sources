@@ -16,7 +16,8 @@ namespace Stump.Server.WorldServer.Handlers.Characters
         [WorldHandler(CharacterReplayRequestMessage.Id, ShouldBeLogged = false, IsGamePacket = false)]
         public static void HandleCharacterReplayRequestMessage(WorldClient client, CharacterReplayRequestMessage message)
         {
-            // TODO mhh ?
+            // MYSTIC : mode héroïque, « Recommencer » un personnage mort (niveau 1, même nom et même apparence)
+            Game.Heroique.HeroicManager.Instance.Replay(client, (int)message.CharacterId);
         }
     }
 }

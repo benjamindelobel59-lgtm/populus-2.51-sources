@@ -45,11 +45,13 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Debuffs
                     }
 
                     actor.TriggerBuffs(actor, BuffTriggerType.OnMPAttack);
+                    actor.SignalerTentativePM(Caster); // MYSTIC 17/10 : Grolloum
 
                     if (value <= 0)
                         continue;
 
                     actor.TriggerBuffs(actor, BuffTriggerType.OnMPLost);
+                    actor.SignalerRetraitPM(Caster); // MYSTIC 17/10 : challenge Circulez
 
                     if (Effect.Duration != 0 || Effect.Delay != 0 && Effect.EffectId != EffectsEnum.Effect_LostMP)
                     {
@@ -83,11 +85,13 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Debuffs
             }
 
             buff.Target.TriggerBuffs(buff.Target, BuffTriggerType.OnMPAttack);
+            buff.Target.SignalerTentativePM(Caster); // MYSTIC 17/10 : Grolloum
 
             if (value <= 0)
                 return;
 
             buff.Target.TriggerBuffs(buff.Target, BuffTriggerType.OnMPLost);
+            buff.Target.SignalerRetraitPM(Caster); // MYSTIC 17/10 : challenge Circulez
 
             if (Effect.Duration != 0 || Effect.Delay != 0 && Effect.EffectId != EffectsEnum.Effect_LostMP)
             {

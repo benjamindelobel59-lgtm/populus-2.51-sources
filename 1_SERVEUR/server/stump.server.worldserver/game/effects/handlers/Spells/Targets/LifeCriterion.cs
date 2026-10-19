@@ -22,10 +22,24 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Targets
             set;
         }
 
+        /// <summary>
+        /// MYSTIC 18/10 : plusieurs critères de vie forment une TRANCHE (ex. « v75,V90 » = PV &gt; 75 % ET ≤ 90 %). Avant : combinés par
+        /// OU (critère par défaut) → toujours vrai : la Comtoise du Comte Harebourg posait les 6 confusions à la fois.
+        /// </summary>
+        public override bool IsDisjonction => false;
+
+        /// <summary>MYSTIC 18/10 : préfixe « * » : on teste les PV du lanceur, pas ceux de la cible.</summary>
+        public bool SurLanceur
+        {
+            get;
+            set;
+        }
+
         public override bool IsTargetValid(FightActor actor, SpellEffectHandler handler)
         {
-            return MustBeGreater ? actor.LifePoints / (double)actor.MaxLifePoints * 100d > LifePercent :
-                actor.LifePoints / (double)actor.MaxLifePoints * 100d <= LifePercent;
+            var reference = SurLanceur ? handler.Caster : actor;
+            return MustBeGreater ? reference.LifePoints / (double)reference.MaxLifePoints * 100d > LifePercent :
+                reference.LifePoints / (double)reference.MaxLifePoints * 100d <= LifePercent;
         }
     }
 }

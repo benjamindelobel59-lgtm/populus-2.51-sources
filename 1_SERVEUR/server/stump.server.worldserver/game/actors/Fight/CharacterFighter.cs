@@ -342,7 +342,8 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             if (!IsFighterTurn())
                 return false;
 
-            if (HasState((int)SpellStatesEnum.AFFAIBLI_42))
+            // MYSTIC 18/10 : tout état « empêche de combattre » bloque l'arme (Affaibli 42, mais aussi la Cinquième Marque 115 de Daïgoro)
+            if (HasState((int)SpellStatesEnum.AFFAIBLI_42) || GetStates().Any(x => !x.IsDisabled && x.State.PreventsFight))
                 return false;
 
             var point = new MapPoint(cell);

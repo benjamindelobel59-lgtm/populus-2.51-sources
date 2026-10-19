@@ -64,10 +64,16 @@ namespace Stump.Server.WorldServer.Game.Fights.History
             m_underlyingStack.Push(entry);
         }
 
-        public void RegisterCastedSpell(SpellLevelTemplate spell, FightActor target)
+        public void RegisterCastedSpell(SpellLevelTemplate spell, FightActor target, bool declenche = false)
         {
-            RegisterCastedSpell(new SpellHistoryEntry(this, spell, Owner, target, CurrentRound, null));
+            RegisterCastedSpell(new SpellHistoryEntry(this, spell, Owner, target, CurrentRound, null) { Declenche = declenche });
         }
+
+        // MYSTIC 19/10 : seuls les lancers « réels » comptent pour les délais / lancers par tour / par cible ; les sous-sorts déclenchés
+        // (passifs, 792/1160…) remplissaient l'historique (60 entrées) et masquaient la vraie entrée du sort -> relance avant la fin du délai.
+        // Comparaison par SpellId partout (un niveau 2 du même sort lancé en cascade masquait aussi le délai du niveau 1).
+        IEnumerable<SpellHistoryEntry> LancersDuTour(SpellLevelTemplate spell) =>
+            m_underlyingStack.Where(entry => !entry.Declenche && entry.Spell.SpellId == spell.SpellId && entry.CastRound == CurrentRound);
 
         public bool CanCastSpell(SpellLevelTemplate spell, Cell targetedCell)
         {
@@ -82,7 +88,7 @@ namespace Stump.Server.WorldServer.Game.Fights.History
             if (target == null)
                 return true;
 
-            var castsThisRound = m_underlyingStack.Where(entry => entry.Spell.Id == spell.Id && entry.CastRound == CurrentRound).ToArray();
+            var castsThisRound = LancersDuTour(spell).ToArray();
             var castsOnThisTarget = castsThisRound.Count(entry => entry.Target != null && entry.Target.Id == target.Id);
 
             return spell.MaxCastPerTarget <= 0 || castsOnThisTarget < (spell.MaxCastPerTarget + AdditionalCastPerTarget);
@@ -90,7 +96,7 @@ namespace Stump.Server.WorldServer.Game.Fights.History
 
         SpellHistoryEntry GetMostRecentEntry(SpellLevelTemplate spell)
         {
-            return m_underlyingStack.LastOrDefault(entry => entry.Spell.SpellId == spell.SpellId);
+            return m_underlyingStack.LastOrDefault(entry => !entry.Declenche && entry.Spell.SpellId == spell.SpellId);
         }
 
         public bool CanCastSpell(SpellLevelTemplate spell)
@@ -99,7 +105,9 @@ namespace Stump.Server.WorldServer.Game.Fights.History
             var Spell = Owner.GetSpell((int)spell.SpellId);
             if (Spell != null) { AdditionalCastPerTurn = Spell.AdditionalCastPerTurn; }
             if (spell.GlobalCooldown != 0 &&
-                Owner.Team.Fighters.OfType<CharacterFighter>().Any(x => x.SpellHistory.GetMostRecentEntry(spell) != null &&
+                // MYSTIC 19/10 : délai global partagé par toute l'équipe, monstres compris (avant : joueurs seulement -> plusieurs
+                // monstres identiques lançaient le même sort à délai global dans le même tour)
+                Owner.Team.Fighters.Where(x => x is CharacterFighter || !(Owner is CharacterFighter)).Any(x => x.SpellHistory.GetMostRecentEntry(spell) != null &&
                                             x.SpellHistory.GetMostRecentEntry(spell).IsGlobalCooldownActive(CurrentRound)))
                 return false;
 
@@ -115,7 +123,7 @@ namespace Stump.Server.WorldServer.Game.Fights.History
             if (mostRecentEntry.IsCooldownActive(CurrentRound))
                 return false;
 
-            var castsThisRound = m_underlyingStack.Where(entry => entry.Spell.Id == spell.Id && entry.CastRound == CurrentRound).ToArray();
+            var castsThisRound = LancersDuTour(spell).ToArray();
 
             if (castsThisRound.Length == 0)
                 return true;

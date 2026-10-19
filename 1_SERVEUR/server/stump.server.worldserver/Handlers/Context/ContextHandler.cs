@@ -73,6 +73,9 @@ namespace Stump.Server.WorldServer.Handlers.Context
         {
             if (client.Character.followMap != null)
                 client.Character.UndoFollow();
+            // MYSTIC 19/10 : le joueur bouge lui-meme -> arret du trajet automatique de chasse au tresor
+            if (Game.Chasses.Autopilote.EstEnCours(client.Character))
+                Game.Chasses.Autopilote.Arreter(client.Character, "Trajet automatique arrete. Reclique sur le lien pour repartir.");
             if (!client.Character.CanMove())
             {
                 SendGameMapNoMovementMessage(client, (short)client.Character.Position.Point.X, (short)client.Character.Position.Point.Y);

@@ -4,6 +4,7 @@ using System.Linq;
 using Stump.Core.Mathematics;
 using Stump.DofusProtocol.Enums;
 using Stump.DofusProtocol.Types;
+using Stump.Server.WorldServer.Database.Items.Templates;
 using Stump.Server.WorldServer.Game.Actors.RolePlay.Characters;
 using Stump.Server.WorldServer.Game.Effects;
 using Stump.Server.WorldServer.Game.Effects.Instances;
@@ -68,20 +69,37 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
             {
                 var result = new DecraftResult(item);
                 results.Add(item, result);
+                // MYSTIC 18/10 (retour de test) : une pile se brise exactement comme les objets un par un : le 1er à son coefficient
+                // actuel (ex. 4000 %), le suivant 1 % plus bas, etc. Chaque objet a ses propres runes ; message dans le chat avec la plage.
+                double sommeCoeff = 0;
                 for (int i = 0; i < item.Stack; i++)
                 {
                     // MYSTIC 17/10 : brisage officiel (BrisageOfficiel) : coefficient propre a l'objet, formule 0,015, focus 50 %
                     var coeff = BrisageOfficiel.Instance.Coefficient(item.Template);
-                    BrisageOfficiel.Instance.Calculer(item.Template, item.Effects, coeff, Trader.Focus, result.Runes);
+                    var runesObjet = new Dictionary<ItemTemplate, int>();
+                    BrisageOfficiel.Instance.Calculer(item.Template, item.Effects, coeff, Trader.Focus, runesObjet);
                     BrisageOfficiel.Instance.Briser(item.Template);
+                    sommeCoeff += coeff;
+
+                    foreach (var r in runesObjet)
+                        result.Runes[r.Key] = (result.Runes.TryGetValue(r.Key, out var deja) ? deja : 0) + r.Value;
 
                     if (!result.MinCoeff.HasValue || coeff < result.MinCoeff)
                         result.MinCoeff = coeff;
                     if (!result.MaxCoeff.HasValue || coeff > result.MaxCoeff)
                         result.MaxCoeff = coeff;
 
+                    // avant : le total cumulé de la pile était recompté à chaque objet (succès faussés)
+                    Trader.Character.OnDecraftItem(item.Template, runesObjet.Values.Sum());
+                }
 
-                    Trader.Character.OnDecraftItem(item.Template, result.Runes.Sum(x => x.Value));
+                if (item.Stack > 0)
+                {
+                    var debut = (result.MaxCoeff ?? 0) * 100;
+                    var fin = (result.MinCoeff ?? 0) * 100;
+                    Character.SendServerMessage(item.Stack > 1
+                        ? $"Brisage : {item.Stack} × {item.Template.Name} — coefficient {debut:0} % → {fin:0} % (moyenne {sommeCoeff / item.Stack * 100:0} %)"
+                        : $"Brisage : {item.Template.Name} — coefficient {debut:0} %");
                 }
             }
             InventoryHandler.SendDecraftResultMessage(Character.Client,

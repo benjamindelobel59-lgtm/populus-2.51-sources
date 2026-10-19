@@ -136,17 +136,40 @@ namespace Stump.Server.WorldServer.Game.Fights
             return true;
         }
 
+        /// <summary>
+        /// MYSTIC 17/10 : même calcul que le client pendant le placement (FightEntitiesFrame.getOrdonnedPreFighters) pour que l'ordre
+        /// affiché avant « Prêt » soit le vrai : initiative × PV / PV max en décimal, égalités départagées par l'id du monstre puis l'id
+        /// du combattant (décroissants), moyenne d'équipe = somme tronquée à chaque ajout / nombre ; les rouges (équipe 0) commencent
+        /// sauf si une équipe est vide ou si leur moyenne est inférieure.
+        /// </summary>
+        static double InitiativeClient(FightActor f)
+        {
+            var max = f.Stats.Health.TotalMax;
+            return max <= 0 ? 0 : f.Stats.Initiative.Total * (double)f.Stats.Health.Total / max;
+        }
+
+        static int MonstreClient(FightActor f) => f is MonsterFighter m ? m.Monster.Template.Id : 0;
+
+        static double MoyenneClient(IEnumerable<FightActor> fighters)
+        {
+            int somme = 0, nombre = 0;
+            foreach (var f in fighters)
+            {
+                somme = (int)(somme + InitiativeClient(f));
+                nombre++;
+            }
+            return nombre == 0 ? 0 : somme / (double)nombre;
+        }
+
         public void OrderLine()
         {
-            var redAvgInit = Fight.ChallengersTeam.Fighters.Average(x => x.Stats.Initiative.TotalWithLife);
-            var blueAvgInit = Fight.DefendersTeam.Fighters.Average(x => x.Stats.Initiative.TotalWithLife);
+            var redList = Fight.ChallengersTeam.GetAllFighters().ToList();
+            var blueList = Fight.DefendersTeam.GetAllFighters().ToList();
 
-            var redFighters = Fight.ChallengersTeam.GetAllFighters().
-                OrderByDescending(entry => entry.Stats.Initiative.TotalWithLife);
-            var blueFighters = Fight.DefendersTeam.GetAllFighters().
-                OrderByDescending(entry => entry.Stats.Initiative.TotalWithLife);
+            var redFighters = redList.OrderByDescending(InitiativeClient).ThenByDescending(MonstreClient).ThenByDescending(x => (double)x.Id);
+            var blueFighters = blueList.OrderByDescending(InitiativeClient).ThenByDescending(MonstreClient).ThenByDescending(x => (double)x.Id);
 
-            var redFighterFirst = redAvgInit >= blueAvgInit;
+            var redFighterFirst = redList.Count > 0 && blueList.Count > 0 && MoyenneClient(redList) >= MoyenneClient(blueList);
 
             var redEnumerator = redFighters.GetEnumerator();
             var blueEnumerator = blueFighters.GetEnumerator();

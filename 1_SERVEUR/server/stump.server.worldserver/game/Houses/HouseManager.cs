@@ -29,10 +29,37 @@ namespace Stump.Server.WorldServer.Game.Houses
             m_houses = Database.Query<HouseRecord>(HouseRelator.FetchQuery).ToDictionary(x => x.Id, x => new House(x));
             m_housesByDoor = m_houses.Values.GroupBy(x => (x.DoorMapId, x.DoorElementId)).ToDictionary(x => x.Key, x => x.First());
             m_housesByMap = m_houses.Values.GroupBy(x => x.DoorMapId).ToDictionary(x => x.Key, x => x.ToArray());
+            m_interieurs = new HashSet<int>(m_houses.Values.Select(x => x.InteriorMapId));
             World.Instance.RegisterSaveableInstance(this);
         }
 
+        // MYSTIC 19/10 : 797 maisons pour 105 cartes d'intérieur (jusqu'à 38 maisons sur la même carte). Chaque maison a son propre
+        // intérieur : deux joueurs sur une même carte d'intérieur ne se voient que s'ils sont entrés par la MÊME maison (comme les
+        // havre-sacs). L'atelier public d'Astrub (191890437) reste commun à tous.
+        HashSet<int> m_interieurs = new HashSet<int>();
+        const int AtelierPublicAstrub = 191890437;
+
+        public bool CanBeSeenInHouse(WorldObject x, Character character)
+        {
+            if (!(x is Character autre) || autre == character || autre.Map == null || autre.Map.Id == AtelierPublicAstrub ||
+                !m_interieurs.Contains(autre.Map.Id))
+                return true;
+            try
+            {
+                int? ma = m_charactersInside.TryGetValue(autre.Id, out var a) ? a.House?.Record.Id : null;
+                int? mb = m_charactersInside.TryGetValue(character.Id, out var b) ? b.House?.Record.Id : null;
+                return ma == mb;
+            }
+            catch (System.InvalidOperationException)
+            {
+                return true;   // liste modifiée pendant la lecture : on ne cache personne
+            }
+        }
+
         public House GetHouse(int id) => m_houses.TryGetValue(id, out var house) ? house : null;
+
+        // MYSTIC 19/10 : toutes les maisons (Potion de Foyer de Guilde infinie)
+        public IEnumerable<House> GetHouses() => m_houses.Values;
 
         public House GetHouseByDoor(int mapId, int elementId) => m_housesByDoor.TryGetValue((mapId, elementId), out var house) ? house : null;
 

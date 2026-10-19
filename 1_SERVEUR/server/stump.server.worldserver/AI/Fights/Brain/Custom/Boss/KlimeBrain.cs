@@ -29,7 +29,11 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom
 
         private void Fight_FightStarted(IFight obj)
         {
+            obj.FightStarted -= Fight_FightStarted;
             Fighter.CastAutoSpell(new Spell((int)SpellIdEnum.SHAGREEN, 1), Fighter.Cell);
+            // MYSTIC 18/10 : une fois rendu vulnérable (poussée sur lui), Klime le restait tout le combat (durée -1 sur déclencheur
+            // → infinie) : il redevient invulnérable au début du tour suivant du joueur qui l'a déclenché (comme Royalmouth)
+            new Boss.VulnerableJusquAuTourDuDeclencheur(Fighter, true);
         }
     }
 }

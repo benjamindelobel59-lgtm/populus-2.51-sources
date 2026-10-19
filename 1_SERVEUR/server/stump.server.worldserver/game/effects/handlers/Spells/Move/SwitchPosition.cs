@@ -23,7 +23,8 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
             if (target == null)
                 return false;
 
-            if (!target.CanSwitchPos())
+            // MYSTIC 18/10 : les Wobots Tamponneurs sont indéplaçables, sauf pour la Substitution du Wa Wobot (3824)
+            if (!target.CanSwitchPos() && Spell.Id != 3824)
                 return false;
 
             if (target.IsCarrying())
@@ -33,6 +34,8 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
 
             //Caster.TriggerBuffs(Caster, BuffTriggerType.OnMoved);
             target.TriggerBuffs(Caster, BuffTriggerType.OnMoved);
+            // MYSTIC 18/10 : déclencheur « MS » (échangé de place) jamais émis : Louwdeuw des Wobots (Terrier du Wa Wabbit)
+            target.TriggerBuffs(Caster, BuffTriggerType.Unknown_6);
 
             return true;
         }

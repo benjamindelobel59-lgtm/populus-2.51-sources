@@ -30,8 +30,39 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
 
         public const int FouxDamourSpellId = 2683;
 
+        bool InvoquerTonneaux()
+        {
+            var alea = new System.Random();
+            var centre = new Maps.Cells.MapPoint(TargetedCell);
+            var cases = Map.Cells.Where(c => c.Walkable && !c.NonWalkableDuringFight && Fight.GetOneFighter(c) == null)
+                .Select(c => new { Cell = c, Distance = centre.ManhattanDistanceTo(new Maps.Cells.MapPoint(c)) })
+                .Where(x => x.Distance <= 3).OrderBy(x => x.Distance).ThenBy(x => alea.Next()).Take(3).Select(x => x.Cell).ToList();
+
+            var invoques = 0;
+            foreach (var cell in cases)
+            {
+                var grade = MonsterManager.Instance.GetMonsterGrade((int)MonsterIdEnum.TONNEAU_PIRATE, alea.Next(1, 6));
+                if (grade == null)
+                    continue;
+
+                var tonneau = new SummonedMonster(Fight.GetNextContextualId(), Caster.Team, Caster, grade, cell) { SummoningEffect = this };
+                ActionsHandler.SendGameActionFightSummonMessage(Fight.Clients, tonneau);
+                Caster.AddSummon(tonneau);
+                Caster.Team.AddFighter(tonneau);
+                Fight.TriggerMarks(tonneau.Cell, tonneau, TriggerType.MOVE);
+                invoques++;
+            }
+
+            return invoques > 0;
+        }
+
         protected override bool InternalApply()
         {
+            // MYSTIC 18/10 (audit Dantinéa / Baleine) : les conditions d'état sur le lanceur du masque (*E390…*E397, *e214) n'étaient jamais
+            // vérifiées : 8 Grokillages en solo, plusieurs Malamibes
+            if (Targets.OfType<Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Targets.StateCriterion>().Any(c => c.Caster && !c.IsTargetValid(Caster, this)))
+                return false;
+
             var monster = MonsterManager.Instance.GetMonsterGrade(Dice.DiceNum, Dice.DiceFace);
 
             if (monster == null)
@@ -50,6 +81,11 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
                     return false;
                 monster = MonsterManager.Instance.GetMonsterGrade(voulu, Dice.DiceFace) ?? monster;
             }
+
+            // MYSTIC 18/10 : journal de diagnostic : Wa Wobot (Mékattwaction 3789) qui ne pose pas ses Tamponneurs
+            if (Spell.Id == 3789)
+                logger.Info("[WaWobot] Mekattwaction : case {0}, occupee par {1}, cases de zone {2}, peut invoquer {3}",
+                    TargetedCell?.Id, Fight.GetOneFighter(TargetedCell), AffectedCells.Count, Caster.CanSummon());
 
             if (monster.Template.UseSummonSlot && !Caster.CanSummon())
                 return false;
@@ -71,6 +107,9 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
                     return false;
                 TargetedCell = Map.Cells[choisi.CellId];
             }
+
+            // MYSTIC 18/10 (retour de test) : Gourlo invoque 1 tonneau par lancer (1 lancer par tour, grade tiré au hasard par les effets à
+            // 20 %), au plus 3 en vie (GourloBrain). Avant : 3 tonneaux d'un coup puis plus rien (InvoquerTonneaux n'est plus appelée).
 
             if (Fight.GetOneFighter(TargetedCell) != null)
             {
@@ -114,7 +153,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
             // MYSTIC : contrôle des invocations (par défaut pour tous, .invo on/off) : le joueur joue ses invocations qui peuvent jouer
             if (!summon.IsControlled() && Caster is CharacterFighter controleur && controleur.Character.ControleInvocations &&
                 !(summon is SummonedTurret) && !(summon is LivingChest) && summon.CanPlay() &&
-                monster.Template.Id != (int)MonsterIdEnum.BONBOMBE) // MYSTIC 17/10 : la Bonbombe n'est jamais jouée par le joueur
+                monster.Template.Id != (int)MonsterIdEnum.BONBOMBE && monster.Template.Id != (int)MonsterIdEnum.MINIKRONE_4812) // MYSTIC : Bonbombe, Minikrone du Razof : jamais jouées par le joueur
                 summon.SetController(controleur);
 
 

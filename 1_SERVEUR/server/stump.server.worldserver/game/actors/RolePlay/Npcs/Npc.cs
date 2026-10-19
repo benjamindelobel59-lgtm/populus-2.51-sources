@@ -79,6 +79,9 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Npcs
                 Map.Refresh(this);
         }
 
+        // spawn du PNJ -> seule case d'où l'on peut lui parler (Gardien koalak du donjon Koulosse : case 124)
+        static readonly System.Collections.Generic.Dictionary<uint, short> CaseDevant = new System.Collections.Generic.Dictionary<uint, short> { { 10348, 124 } };
+
         public void InteractWith(NpcActionTypeEnum actionType, Character dialoguer)
         {
             if (!CanInteractWith(actionType, dialoguer))
@@ -93,6 +96,10 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Npcs
         public bool CanInteractWith(NpcActionTypeEnum action, Character dialoguer)
         {
             if (dialoguer.Map != Position.Map || dialoguer.IsFighting() || dialoguer.IsInRequest() || dialoguer.IsGhost())
+                return false;
+
+            // MYSTIC 18/10 (demande utilisateur) : certains PNJ ne parlent qu'au joueur posté sur la case devant eux
+            if (Spawn != null && CaseDevant.TryGetValue(Spawn.Id, out var caseDevant) && dialoguer.Cell?.Id != caseDevant)
                 return false;
 
             if (dialoguer.IsBusy())

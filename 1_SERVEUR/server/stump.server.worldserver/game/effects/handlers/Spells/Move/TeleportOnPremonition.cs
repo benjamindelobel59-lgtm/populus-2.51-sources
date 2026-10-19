@@ -21,6 +21,20 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
 
         protected override bool InternalApply()
         {
+            // MYSTIC 18/10 : Téléportation Spectrale du Chouque (6144 niv. 2, effet 1101) : il échange sa place avec le pirate ciblé
+            // (avant : effet réservé au sort Steamer 9900, le Chouque ne bougeait jamais)
+            if (Spell.Id == 6144)
+            {
+                var pirate = GetAffectedActors().FirstOrDefault(x => x != Caster);
+                if (pirate != null && pirate.CanSwitchPos() && Caster.CanSwitchPos() && !pirate.IsCarrying() && !Caster.IsCarrying())
+                {
+                    Caster.ExchangePositions(pirate);
+                    pirate.TriggerBuffs(Caster, Stump.Server.WorldServer.Game.Fights.Buffs.BuffTriggerType.OnMoved);
+                    pirate.TriggerBuffs(Caster, Stump.Server.WorldServer.Game.Fights.Buffs.BuffTriggerType.Unknown_6);
+                }
+                return true;
+            }
+
             var carryingActor = Caster.GetCarryingActor();
 
             var celltogo = Fight.GetTriggers().Where(x => x is Rune && (x as Rune).CastedSpell.Id == 9900).FirstOrDefault();

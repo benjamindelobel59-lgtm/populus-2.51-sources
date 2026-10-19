@@ -31,7 +31,11 @@ namespace Stump.Server.WorldServer.Commands.Commands
                 {
                     if (trigger.IsArgumentDefined("look"))
                     {
-                        target.CustomLook = ActorLook.Parse(trigger.Get<string>("look"));
+                        // MYSTIC : le chat du client remplace { } par #123; #125; ; un simple numéro = squelette seul ({numéro})
+                        var texte = trigger.Get<string>("look").Replace("&#123;", "{").Replace("&#125;", "}").Replace("#123;", "{").Replace("#125;", "}").Trim();
+                        if (!texte.StartsWith("{"))
+                            texte = "{" + texte + "}";
+                        target.CustomLook = ActorLook.Parse(texte);
                         target.CustomLookActivated = true;
                         target.RefreshActor();
                         i++;

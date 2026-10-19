@@ -9,7 +9,9 @@ using System.Drawing;
 
 namespace Stump.Server.WorldServer.Game.Items.Player.Custom
 {
-    [ItemId(ItemIdEnum.POTION_DE_CHASSEUR_DE_TRESOR_15236)]
+    // MYSTIC 19/10 (demande utilisateur) : la Potion de Chasseur de Trésor redevient normale (téléportation dans la Malle aux Trésors,
+    // items_teleport_potions, SQL 74) : plus de potion VIP.
+    //[ItemId(ItemIdEnum.POTION_DE_CHASSEUR_DE_TRESOR_15236)]
     public class VipPotion : BasePlayerItem
     {
         public VipPotion(Character owner, PlayerItemRecord record)

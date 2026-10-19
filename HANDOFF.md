@@ -2,7 +2,7 @@
 
 Dépôt de **partage** des modifications faites côté Mystic (serveur Dofus 2.51, émulateur Stump C# .NET 4.8). Ce dépôt n'est relié à
 aucun serveur : il sert seulement à récupérer nos changements. Le détail fichier par fichier, daté, est dans **`JOURNAL_DES_MODIFICATIONS.txt`** ;
-ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **18/10/2026**.
+ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **20/10/2026**.
 
 ## Contenu du dépôt
 | Dossier | Contenu |
@@ -12,10 +12,11 @@ ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **18/10/2026**.
 | `3_SQL_WORLD/` | nos scripts pour la base `world`, **à jouer dans l'ordre 01 → NN**, World arrêté, tous rejouables (voir `3_SQL_WORLD/LISEZ-MOI.md`) |
 | `4_CLIENT/64bits/app`, `4_CLIENT/32bits/app` | **uniquement les fichiers du client modifiés** (même arborescence que le dossier `app` du client) |
 | `5_OUTILS/` | nos scripts (générateurs SQL Python, outils client, launcher) ; `IP_DU_VPS` remplace l'IP du serveur |
+| `6_SERVEURS_COMPILES/AuthServer`, `…/WorldServer` | nos serveurs **déjà compilés** (fichiers `Stump.*` + `swf_patchs` de l'Auth) : à copier par-dessus les dossiers des serveurs, serveurs arrêtés. **Aucune config** : garder les vôtres |
 | `JOURNAL_DES_MODIFICATIONS.txt` | détail daté, fichier par fichier, de toutes les modifications |
 
 ## Appliquer
-1. Compiler `1_SERVEUR/gui/Stump.GUI.WorldConsole` et `Stump.GUI.AuthConsole`, copier les `Stump.*` dans les dossiers des serveurs (serveurs arrêtés).
+1. Copier `6_SERVEURS_COMPILES/AuthServer/*` et `6_SERVEURS_COMPILES/WorldServer/*` dans les dossiers des serveurs (serveurs arrêtés) — ou compiler soi-même `1_SERVEUR/gui/Stump.GUI.WorldConsole` et `Stump.GUI.AuthConsole`.
 2. Base `world` : jouer `3_SQL_WORLD/01_…` puis les suivants dans l'ordre. Certaines tables sont créées au démarrage du World (`nekfeu_trousseau`, `nekfeu_ia_soins`).
 3. Client : copier le contenu de `4_CLIENT/64bits/app` (ou `32bits/app`) dans le dossier `app` du client.
 
@@ -45,6 +46,20 @@ ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **18/10/2026**.
   - Sources du launcher WPF : `5_OUTILS/web/launcher/src_mystic` (compilé avec `csc`, icône `-win32icon`).
 - **Atelier du site (18/10)** : exporteur base → JSON `5_OUTILS/web/atelier/exporteur` (C#, x86, relit les effets BinaryFormatter avec les DLL du serveur) + `extraire_icones.py`.
 - **Icône de Dofus.exe (18/10)** : `5_OUTILS/client/icone_exe` (remplace l'icône d'un exe par l'API Windows) ; `4_CLIENT/*/app/Dofus.exe` = exe avec l'œuf Dofus.
+
+- **Mise à jour du 19-20/10** (SQL 70 à 79, tous sur `world`) :
+  - **Chasses au trésor** : `game/Chasses/` (`ChasseManager.cs`, `Autopilote.cs` = trajet sur la minimap via `CompassUpdatePartyMemberMessage`, départ autour d'un zaap au hasard, 5 min d'attente après abandon), commande `.chasse` ; SQL 70-71.
+  - **Chasses aux portails** : `game/Chasses/Portails.cs` (`PortailManager`, table `mystic_portails`, 8 h ou 110 passages, sans combat) ; SQL 72.
+  - **Objets infinis** 31200-31204 : `game/items/player/Custom/ObjetsInfinis.cs` ; SQL 73. Potion de Chasseur de Trésor normale : SQL 74.
+  - **Frigost** : transporteur Asfog (Sakaï, `AccesFrigost`) SQL 75 ; maisons du Village enseveli selon l'accès à la zone.
+  - **Maison-atelier des forgemages d'Astrub** [5,-17] (porte verte, `SkillHouse.MaisonsPubliques`) : SQL 76-78 + `maps0.d2p` / `Hints.d2o` du client ; forgemagie limitée au niveau 80 dans cet atelier (`RuneMagicCraftDialog`).
+  - **Forgemagie simplifiée** (`RuneMagicCraftDialog.cs` : table `PALIERS_STATS`, part critique 0,30, pertes × 0,5).
+  - **Collecteurs** des métiers de récolte : `game/Jobs/Collecteurs.cs` + `CollecteursTable.cs` (79 ressources → protecteur officiel + sac, 1 chance sur 100).
+  - **Balance AvA** : `game/Alliances/BalanceAvA.cs` (marqueur `§BAL§` dans le message du jour, %) + client (onglet Balance du module Social, `alliance.xml`).
+  - **Maisons** : un intérieur par maison (`HouseManager.CanBeSeenInHouse`).
+  - **Combat / IA** : `PassifsAuditDonjonsBrains.cs` (Wa Wobot, Tamponneurs, Kolérat, Nelween), `MonstresFuyards.cs` + `Brain.FuirAPortee` (139 monstres à distance), résistances des monstres jusqu'à 100 %, monstres lourds, Duo / Trio de boss.
+  - **Audit des cartes** : `5_OUTILS/serveur/audit_cartes` ; SQL 79 = 287 sorties réparées.
+  - **Launcher** : `5_OUTILS/web/launcher/src_mystic/Fantomes.cs` (ferme les Dofus restés en mémoire sans fenêtre).
 
 ## Points connus non faits
 - Pas de système d'alliances dans l'émulateur (livre du temple inopérant).

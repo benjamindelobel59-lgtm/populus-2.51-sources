@@ -201,6 +201,24 @@ namespace MysticLauncher
                 var suivi = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
                 suivi.Tick += (o, a) => { if (!m_vuePartages && m_calque.Visibility != Visibility.Visible) Afficher(); };
                 suivi.Start();
+                // MYSTIC 20/10 : Dofus restés en mémoire sans fenêtre après fermeture → fermés (sinon impossible de relancer)
+                if (m_apercu == null)
+                {
+                    var fantomes = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
+                    var occupe = false;
+                    fantomes.Tick += (o, a) =>
+                    {
+                        if (occupe) return;
+                        occupe = true;
+                        var appDir = m_updater.AppDir;
+                        ThreadPool.QueueUserWorkItem(_ =>
+                        {
+                            Fantomes.Nettoyer(appDir, TimeSpan.FromSeconds(8), m_updater.Log);
+                            occupe = false;
+                        });
+                    };
+                    fantomes.Start();
+                }
                 if (m_apercu != null) LancerApercu();
                 else { SuivreStatut(); Verifier(); }
             };
@@ -1313,7 +1331,8 @@ namespace MysticLauncher
         /// <summary>Lance plusieurs comptes, un toutes les 2 secondes (chacun avec son ticket de connexion automatique).</summary>
         void JouerListe(List<CompteJeu> comptes)
         {
-            comptes = comptes.Where(c => !EnJeu(c)).ToList();
+            Fantomes.Nettoyer(m_updater.AppDir, TimeSpan.Zero, m_updater.Log);
+            comptes =comptes.Where(c => !EnJeu(c)).ToList();
             if (comptes.Count == 0) return;
             var file = new Queue<CompteJeu>(comptes);
             Jouer(file.Dequeue());
@@ -1326,6 +1345,7 @@ namespace MysticLauncher
         void Jouer(CompteJeu c)
         {
             if (c == null || !(m_etat == Etat.Pret || m_etat == Etat.Erreur) || !m_updater.GameExists) return;
+            Fantomes.Nettoyer(m_updater.AppDir, TimeSpan.Zero, m_updater.Log);
             if (EnJeu(c)) { MessageInfo("« " + m_dossiers.Nom(c) + " » est déjà en jeu.", false); return; }
             m_statut.Foreground = new SolidColorBrush(Texte1);
             m_statut.Text = "Connexion automatique de « " + m_dossiers.Nom(c) + " »…";

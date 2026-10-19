@@ -14,7 +14,27 @@ namespace Stump.Server.WorldServer.Handlers.Context.RolePlay
         [WorldHandler(QuestListRequestMessage.Id)]
         public static void HandleQuestListRequestMessage(WorldClient client, QuestListRequestMessage message)
         {
-            client.Send(new QuestListMessage(client.Character.Quests.Where(x => x.Finished).Select(x => x.Id).ToArray(), new ushort[client.Character.Quests.Select(x => x.Finished).Count()], client.Character.Quests.Where(x => !x.Finished).Select(x => x.GetQuestActiveInformations()).ToArray(), new ushort[0]));
+            client.Send(new QuestListMessage(client.Character.Quests.Where(x => x.Finished).Select(x => x.Id).ToArray(), client.Character.Quests.Where(x => x.Finished).Select(x => (ushort)1).ToArray(), client.Character.Quests.Where(x => !x.Finished).Select(x => x.GetQuestActiveInformations()).ToArray(), new ushort[0]));
+        }
+
+        // MYSTIC 19/10 : quêtes suivies (liste à l'écran)
+        [WorldHandler(FollowQuestObjectiveRequestMessage.Id)]
+        public static void HandleFollowQuestObjectiveRequestMessage(WorldClient client, FollowQuestObjectiveRequestMessage message)
+        {
+            client.Character.SuivreQuete(message.QuestId, true);
+        }
+
+        [WorldHandler(UnfollowQuestObjectiveRequestMessage.Id)]
+        public static void HandleUnfollowQuestObjectiveRequestMessage(WorldClient client, UnfollowQuestObjectiveRequestMessage message)
+        {
+            if (message.ObjectiveId == -1)
+                client.Character.SuivreQuete(message.QuestId, false);
+        }
+
+        [WorldHandler(RefreshFollowedQuestsOrderRequestMessage.Id)]
+        public static void HandleRefreshFollowedQuestsOrderRequestMessage(WorldClient client, RefreshFollowedQuestsOrderRequestMessage message)
+        {
+            client.Character.OrdonnerQuetesSuivies(message.Quests.Select(x => (int)x));
         }
 
         public static void SendQuestListMessage(IPacketReceiver client)

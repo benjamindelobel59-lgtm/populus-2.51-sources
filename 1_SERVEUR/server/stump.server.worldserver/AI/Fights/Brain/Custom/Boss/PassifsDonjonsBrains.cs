@@ -8,6 +8,23 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     // mais n'étaient lancés par rien (pas de cerveau). Chaque cerveau pose le passif au début du combat, ou à l'arrivée du monstre
     // s'il est invoqué / arrive en vague (SortPassif). Le reste du jeu est l'IA normale. Règle validée : on suit les données 2.51.
 
+    /// <summary>MYSTIC 18/10 : relève la limite d'invocations d'un boss (le moteur la met à 1 pour tous les monstres).</summary>
+    public static class LimiteInvocations
+    {
+        public static void Fixer(AIFighter fighter, int limite)
+        {
+            fighter.Stats[PlayerFields.SummonLimit].Base = limite;
+            if (fighter.Fight.State != FightState.Fighting)
+                fighter.Fight.FightStarted += Debut;
+
+            void Debut(IFight fight)
+            {
+                fight.FightStarted -= Debut;
+                fighter.Stats[PlayerFields.SummonLimit].Base = limite;
+            }
+        }
+    }
+
     public abstract class BrainPassif : Brain
     {
         protected BrainPassif(AIFighter fighter, params int[] passifs)
@@ -52,10 +69,38 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     [BrainIdentifier(3623)] public class TruchonBrain : BrainPassif { public TruchonBrain(AIFighter f) : base(f, 4404) { } }
 
     /// <summary>Meulou : Fureur (version 2.51 : invulnérable au début du tour de chaque joueur jusqu'au 1er coup ; +30 puissance aux monstres frappés).</summary>
-    [BrainIdentifier(232)] public class MeulouBrain : BrainPassif { public MeulouBrain(AIFighter f) : base(f, 305) { } }
+    // MYSTIC 18/10 : 2 invocations (décision utilisateur) : sinon le Mulou d'Étripage / de Mulanthropie est bloqué tant qu'un Milimeulou vit
+    [BrainIdentifier(232)]
+    public class MeulouBrain : BrainPassif
+    {
+        public MeulouBrain(AIFighter f) : base(f, 305)
+        {
+            LimiteInvocations.Fixer(f, 2);
+        }
+    }
 
     /// <summary>Phossile : Phorreur de Gloire.</summary>
-    [BrainIdentifier(3651)] public class PhossileBrain : BrainPassif { public PhossileBrain(AIFighter f) : base(f, 4497) { } }
+    // MYSTIC 18/10 : le passif est posé avant le tour 1 alors que le délai (4) d'Abîme se décompte au début de chaque tour du
+    // Phossile → Abîme partait aux tours 4, 8, 12 ; officiel : 5, 9, 13
+    [BrainIdentifier(3651)]
+    public class PhossileBrain : BrainPassif
+    {
+        public PhossileBrain(AIFighter f) : base(f, 4497)
+        {
+            if (f.Fight.State != FightState.Fighting)
+                f.Fight.FightStarted += Decaler;
+        }
+
+        void Decaler(IFight fight)
+        {
+            fight.FightStarted -= Decaler;
+            foreach (var buff in System.Linq.Enumerable.ToArray(Fighter.GetBuffs(x => x.Spell.Id == 4498 && x.Delay > 0)))
+            {
+                buff.Delay++;
+                fight.UpdateBuff(buff, false);
+            }
+        }
+    }
 
     /// <summary>XLII : Buff heure (invoque son Auroraire 3850).</summary>
     [BrainIdentifier(3849)] public class XliiBrain : BrainPassif { public XliiBrain(AIFighter f) : base(f, 5106) { } }
@@ -72,7 +117,38 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     }
 
     /// <summary>Sylargh : Chambranle (invulnérable, Nécromignon / Zombidule).</summary>
-    [BrainIdentifier(3409)] public class SylarghBrain : BrainPassif { public SylarghBrain(AIFighter f) : base(f, 3606) { } }
+    /// MYSTIC 18/10 (décision utilisateur, comme le site) : tout Zombi qui meurt lance Zombidule, même s'il n'a pas encore joué (en 2.51
+    /// strict il ne l'avait qu'à son 1er tour) ; journal [Sylargh] pour vérifier le déverrouillage (distance 5 à 10 PO).
+    [BrainIdentifier(3409)]
+    public class SylarghBrain : BrainPassif
+    {
+        const int Zombidule = 3608, EtatZombi = 74;
+
+        public SylarghBrain(AIFighter f) : base(f, 3606)
+        {
+            f.Fight.FightStarted += Debut;
+        }
+
+        void Debut(IFight fight)
+        {
+            fight.FightStarted -= Debut;
+            foreach (var m in Fighter.Team.Fighters)
+                m.BeforeDead += AvantMort;
+            Fighter.Team.FighterAdded += (t, a) => { a.BeforeDead -= AvantMort; a.BeforeDead += AvantMort; };
+        }
+
+        void AvantMort(FightActor mort, FightActor tueur)
+        {
+            if (!mort.HasState(EtatZombi) || !Fighter.IsAlive())
+                return;
+            var distance = mort.Position.Point.ManhattanDistanceTo(Fighter.Position.Point);
+            var pose = System.Linq.Enumerable.Any(mort.GetBuffs(b => b is Game.Fights.Buffs.TriggerBuff t && t.Spell.Id == Zombidule));
+            NLog.LogManager.GetCurrentClassLogger().Info("[Sylargh] mort du Zombi {0} (case {1}) : Sylargh case {2} à {3} PO, Zombidule posé={4}",
+                mort, mort.Cell.Id, Fighter.Cell.Id, distance, pose);
+            if (!pose)
+                mort.CastAutoSpell(new Game.Spells.Spell(Zombidule, 1), mort.Cell);
+        }
+    }
 
     /// <summary>Reine des Voleurs : Péché Mignon (Bonbombe au début du tour de chaque joueur).</summary>
     [BrainIdentifier(3726)] public class ReineDesVoleursBrain : BrainPassif { public ReineDesVoleursBrain(AIFighter f) : base(f, 4693) { } }

@@ -15,6 +15,9 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Damage
     /// </summary>
     [EffectHandler(EffectsEnum.Effect_1124)]
     [EffectHandler(EffectsEnum.Effect_1125)]
+    [EffectHandler(EffectsEnum.Effect_1126)] // MYSTIC 18/10 : _FIRE (Pyrozomb de Solar / Bethel)
+    [EffectHandler(EffectsEnum.Effect_1127)] // _WATER (Rossée Matinale)
+    [EffectHandler(EffectsEnum.Effect_1128)] // _EARTH (Manteau Tellurique du Craqueboule)
     public class RenvoiDommagesBruts : SpellEffectHandler
     {
         public RenvoiDommagesBruts(EffectDice effect, FightActor caster, SpellCastHandler castHandler, Cell targetedCell, bool critical)
@@ -28,7 +31,15 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Damage
             if (montant <= 0)
                 return false;
 
-            var ecole = Effect.EffectId == EffectsEnum.Effect_1125 ? EffectSchoolEnum.Air : EffectSchoolEnum.Neutral;
+            EffectSchoolEnum ecole;
+            switch (Effect.EffectId)
+            {
+                case EffectsEnum.Effect_1125: ecole = EffectSchoolEnum.Air; break;
+                case EffectsEnum.Effect_1126: ecole = EffectSchoolEnum.Fire; break;
+                case EffectsEnum.Effect_1127: ecole = EffectSchoolEnum.Water; break;
+                case EffectsEnum.Effect_1128: ecole = EffectSchoolEnum.Earth; break;
+                default: ecole = EffectSchoolEnum.Neutral; break;
+            }
 
             foreach (var actor in GetAffectedActors())
             {
@@ -43,7 +54,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Damage
                     IsCritical = Critical,
                     IgnoreDamageBoost = true,
                     IgnoreDamageReduction = false,
-                    Spell = null,
+                    Spell = Spell, // MYSTIC 18/10 : sans sort, le renvoi passait pour un coup d'arme (Truchage, déclencheurs DC)
                     ReflectedDamages = true,
                 });
             }

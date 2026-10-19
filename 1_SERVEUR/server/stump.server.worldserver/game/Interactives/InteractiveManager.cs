@@ -27,7 +27,9 @@ namespace Stump.Server.WorldServer.Game.Interactives
         public IReadOnlyDictionary<int, InteractiveSpawn> InteractivesSpawns => m_interactivesSpawns;
         public IReadOnlyDictionary<int, InteractiveSkillTemplate> SkillsTemplates => m_skillsTemplates;
 
-        [Initialization(InitializationPass.Fourth)]
+        // MYSTIC 19/10 : GenerateInteractivePlot lit les déclencheurs de cases : ils doivent être chargés avant
+        // (dans une même passe, l'ordre dépendait des classes présentes dans le serveur)
+        [Initialization(typeof(Stump.Server.WorldServer.Game.Maps.Cells.Triggers.CellTriggerManager))]
         public override void Initialize()
         {
             m_interactivesTemplates = Database.Query<InteractiveTemplate, InteractiveSkillTemplate, InteractiveTemplateSkills, InteractiveCustomSkillRecord, InteractiveTemplate>
@@ -56,8 +58,19 @@ namespace Stump.Server.WorldServer.Game.Interactives
                 if (trigger.Type != "Teleport")
                     continue;
 
+                // MYSTIC 17/10 : les soleils ont un modèle 0 en base (et non NULL) : sans ça, 1780 soleils n'étaient pas cliquables.
+                // Élément sur une case voisine du déclencheur : pris seulement s'il est le seul candidat.
                 var interactive = m_interactivesSpawns.Values.FirstOrDefault(x => x.MapId == trigger.MapId && x.CellId == trigger.CellId
-                                                            && x.TemplateId == null && !x.CustomSkills.Any());
+                                                            && (x.TemplateId == null || x.TemplateId == 0) && !x.CustomSkills.Any());
+                if (interactive == null)
+                {
+                    var point = new Stump.Server.WorldServer.Game.Maps.Cells.MapPoint((short)trigger.CellId);
+                    var voisins = m_interactivesSpawns.Values.Where(x => x.MapId == trigger.MapId && x.CellId != trigger.CellId
+                        && (x.TemplateId == null || x.TemplateId == 0) && !x.CustomSkills.Any()
+                        && point.ManhattanDistanceTo(new Stump.Server.WorldServer.Game.Maps.Cells.MapPoint((short)x.CellId)) == 1).Take(2).ToList();
+                    if (voisins.Count == 1)
+                        interactive = voisins[0];
+                }
 
                 if (interactive == null)
                     continue;

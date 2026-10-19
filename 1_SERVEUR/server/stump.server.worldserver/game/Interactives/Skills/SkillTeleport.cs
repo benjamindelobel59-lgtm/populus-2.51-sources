@@ -125,7 +125,7 @@ namespace Stump.Server.WorldServer.Game.Interactives.Skills
                 }
             }
 
-            var ok = character.Teleport(position);
+            var ok = character.TeleportSuivi(() => character.Teleport(position)); // MYSTIC 17/10 : porte = changement de carte (One Window)
             logger.Info($"[Interactif] SkillTeleport {Record.Id} : {character.Name} -> map {position.Map?.Id} case {position.Cell?.Id} : {(ok ? "OK" : "ECHEC")}");
             return base.StartExecute(character);
         }

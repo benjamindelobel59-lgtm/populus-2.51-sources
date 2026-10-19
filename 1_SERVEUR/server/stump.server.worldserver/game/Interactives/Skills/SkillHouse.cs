@@ -23,7 +23,8 @@ namespace Stump.Server.WorldServer.Game.Interactives.Skills
         public override bool AreConditionsFilled(Character character)
         {
             var house = House;
-            return house != null && IsAvailable(house, character) && base.AreConditionsFilled(character);
+            // MYSTIC 19/10 : maisons de Frigost réservées au niveau 50 et plus
+            return house != null && Maps.AccesFrigost.NiveauMaisonEnclos(character, InteractiveObject.Map, false) && IsAvailable(house, character) && base.AreConditionsFilled(character);
         }
 
         protected abstract bool IsAvailable(House house, Character character);
@@ -76,8 +77,11 @@ namespace Stump.Server.WorldServer.Game.Interactives.Skills
         {
         }
 
+        /// <summary>MYSTIC 19/10 : maisons publiques (jamais à vendre) : 785 = maison-atelier d'Astrub [5,-17].</summary>
+        public static readonly int[] MaisonsPubliques = { 785 };
+
         protected override bool IsAvailable(House house, Character character)
-            => !house.IsOwner(character) && (!house.HasOwner || house.ForSale);
+            => System.Array.IndexOf(MaisonsPubliques, house.Record.Id) < 0 && !house.IsOwner(character) && (!house.HasOwner || house.ForSale);
 
         public override int StartExecute(Character character)
         {

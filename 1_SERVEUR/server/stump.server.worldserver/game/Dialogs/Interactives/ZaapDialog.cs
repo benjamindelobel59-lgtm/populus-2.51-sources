@@ -67,6 +67,18 @@ namespace Stump.Server.WorldServer.Game.Dialogs.Interactives
             if (!m_destinations.Contains(map))
                 return;
 
+            // MYSTIC 19/10 : zaaps de Frigost (niveau 50, Village enseveli = Tengu ou Tengu Fuji, château = Glourséleste)
+            if (!Game.Maps.AccesFrigost.ZaapAutorise(Character, map, true))
+                return;
+
+            // MYSTIC 17/10 : AvA, pas d'entrée ni de sortie d'une zone vulnérable par zaap pour les membres d'une alliance
+            var bloque = Game.Alliances.AvAManager.Instance.ZaapBloque(Character, Character.Map, map);
+            if (bloque != null)
+            {
+                Character.SendServerMessage(bloque);
+                return;
+            }
+
             Cell cell;
 
             if (map.Zaap != null)
@@ -92,7 +104,7 @@ namespace Stump.Server.WorldServer.Game.Dialogs.Interactives
                 return;
 
             Character.Inventory.SubKamas((ulong)cost);
-            Character.Teleport(map, cell);
+            Character.TeleportSuivi(() => Character.Teleport(map, cell)); // MYSTIC 17/10 : le One Window suit les zaaps
 
             //HAVENBAGS
             Character.Record.IsInHavenBag = false;
@@ -106,7 +118,7 @@ namespace Stump.Server.WorldServer.Game.Dialogs.Interactives
                 new ZaapDestinationsMessage
                 (
                 (sbyte)TeleporterTypeEnum.TELEPORTER_ZAAP,
-                m_destinations.Select(entry => new TeleportDestination((sbyte)TeleporterTypeEnum.TELEPORTER_ZAAP, entry.Id, (ushort)entry.SubArea.Id, (ushort)entry.SubArea.Record.Level, (ushort)GetCostTo(entry))).ToArray(),
+                m_destinations.Where(entry => Game.Maps.AccesFrigost.ZaapAutorise(Character, entry, false)).Select(entry => new TeleportDestination((sbyte)TeleporterTypeEnum.TELEPORTER_ZAAP, entry.Id, (ushort)entry.SubArea.Id, (ushort)entry.SubArea.Record.Level, (ushort)GetCostTo(entry))).ToArray(),
                 Character.Record.SpawnMapId ?? 0
                 ));
         }

@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Definition SYSTEM "../dtd/ui.dtd">
+<Definition labelDebug="false" debug="false">
+
+    <Import url="[config.mod.template]button/iconButton.xml" />
+    <Import url="[config.mod.template]button/themeHorizontalTab.xml" />
+    <Import url="[config.mod.template]blockDoubleBorder.xml" />
+    <Import url="[config.mod.template]button/themeIconButton.xml" />
+    <Import url="[config.mod.template]button/simpleButton.xml" />
+    
+    <Constants>
+		<Constant name="assets" value="[config.ui.skin]assets.swf|" />
+        <Constant name="css" value="[config.ui.skin]css/" />
+        <Constant name="common" value="[config.ui.skin]common/" />
+        <Constant name="texture" value="[config.ui.skin]texture/" />
+        
+       	<Constant name="picto_uri" value="[config.content.path]gfx/emblems/" />   
+	</Constants>
+    
+	<Container name="mainCtr">
+		<hintAvailable>true</hintAvailable>
+			
+		<Texture>
+			<Anchors>
+				<Anchor>
+					<AbsDimension x="5" y="-6" />
+				</Anchor>
+			</Anchors>
+			<uri>[config.ui.skin]common/corner_decoration_small.png</uri>
+		</Texture>
+		<Texture>
+			<Anchors>
+				<Anchor>
+					<AbsDimension x="1125" y="-6" />
+				</Anchor>
+			</Anchors>
+			<uri>[config.ui.skin]common/corner_decoration_small.png</uri>
+			<scaleX>-1</scaleX>
+		</Texture>
+			
+		<Container>
+			<Anchors>
+				<Anchor>
+					<AbsDimension x="0" y="20" />
+				</Anchor>
+			</Anchors>
+			
+			<Container>
+				<Anchors>
+					<Anchor>
+						<AbsDimension x="60" y="0" />
+					</Anchor>
+				</Anchors>
+	
+				<Texture name="tx_emblemBack">
+					<Anchors>
+						<Anchor>
+							<AbsDimension x="-30" y="-18" />
+						</Anchor>
+					</Anchors>
+					<Size>
+						<AbsDimension x="90" y="90" />
+					</Size>
+				</Texture>
+				<Texture name="tx_emblemUp">
+					<Anchors>
+						<Anchor relativeTo="tx_emblemBack" relativePoint="CENTER" point="CENTER" />
+					</Anchors>
+					<Size>
+						<AbsDimension x="53" y="53" />
+					</Size>
+				</Texture>
+		
+				<Label name="lbl_name">
+					<Anchors>
+						<Anchor>
+							<AbsDimension x="70" y="0" />
+						</Anchor>
+					</Anchors>
+					<Size>
+						<AbsDimension x="360" y="32" />
+					</Size>
+					<cssClass>whitebold</cssClass>
+					<css>[local.css]title.css</css>
+				</Label>
+
+				<Label name="lbl_tag">
+					<Anchors>
+						<Anchor>
+							<AbsDimension x="70" y="30" />
+						</Anchor>
+					</Anchors>
+					<Size>
+						<AbsDimension x="110" y="16" />
+					</Size>
+					<css>[local.css]normal2.css</css>
+					<hyperlinkEnabled>true</hyperlinkEnabled>
+					<useStyleSheet>true</useStyleSheet>
+				</Label>
+			
+				<iconButton name="btn_availableDares">
+					<Anchors>
+						<Anchor>
+							<AbsDimension x="360" y="24" />
+						</Anchor>
+					</Anchors>
+					<Size>
+						<AbsDimension x="28" y="28" />
+					</Size>
+					<visible>false</visible>
+					<uri>[local.assets]btn_dare</uri>
+				</iconButton>	
+			
+			</Container>
+			
+	        <Texture>
+	            <Anchors>
+	                <Anchor>
+	                    <AbsDimension x="470" y="0"/>
+	                </Anchor>
+	            </Anchors>
+	            <Size>
+	                <AbsDimension x="64" y="3" />
+	            </Size>
+	            <uri>[local.common]window_separator_black_horizontal.png</uri>
+	            <rotation>90</rotation>
+	        </Texture>
+			
+			
+			<Container name="ctr_motd">
+				<Anchors>
+					<Anchor>
+						<AbsDimension x="500" y="0" />
+					</Anchor>
+				</Anchors>
+	 			
+	 			<Container>
+					<Anchors>
+						<Anchor>
+							<AbsDimension x="-10" y="-2" />
+						</Anchor>
+					</Anchors>
+					<Size>
+						<AbsDimension x="540" y="64" />
+					</Size>
+		 			<bgColor>[colors.grid.bg]</bgColor>
+		 			<bgAlpha>0.45</bgAlpha>
+	 			</Container>
+	 			
+				<Container name="ctr_motdInteractive">
+					<Size>
+						<AbsDimension x="505" y="60" />
+					</Size>
+		 			<bgColor>0xff00ff</bgColor>
+		 			<bgAlpha>0</bgAlpha>
+	 			</Container>
+	 			
+				<Label name="lbl_motd">
+					<Anchors>
+						<Anchor>
+							<AbsDimension x="0" y="3" />
+						</Anchor>
+					</Anchors>
+					<Size>
+						<AbsDimension x="525" y="54" />
+					</Size>
+					<fixedHeightForMultiline>true</fixedHeightForMultiline>
+					<multiline>true</multiline>
+					<wordWrap>true</wordWrap>
+					<verticalAlign>center</verticalAlign>
+					<selectable>true</selectable>
+					<hyperlinkEnabled>true</hyperlinkEnabled>
+					<useStyleSheet>true</useStyleSheet>
+					<css>[local.css]small2.css</css>
+				</Label>		 		
+				
+				<themeIconButton name="btn_motdEdit">
+					<Anchors>
+						<Anchor>
+							<AbsDimension x="540" y="0" />
+						</Anchor>
+					</Anchors>
+					<Size>
+						<AbsDimension x="22" y="21" />
+					</Size>
+					<iconUri>[local.texture]btnIcon/btnIcon_pen.png</iconUri>
+				</themeIconButton>
+			</Container>
+			
+			<Container name="ctr_editMotd">
+				<Anchors>
+					<Anchor>
+						<AbsDimension x="500" y="0" />
+					</Anchor>
+				</Anchors>
+	 			<bgColor>0xffff00</bgColor>
+	 			<bgAlpha>0</bgAlpha>  
+		 		<visible>false</visible>
+		 		
+				<TextureBitmap name="tx_add">
+					<Anchors>
+						<Anchor>
+							<AbsDimension x="-15" y="-8" />
+						</Anchor>
+					</Anchors>
+					<Size>
+						<AbsDimension x="550" y="76" />
+					</Size>
+					<themeDataId>bg_small_border_light</themeDataId>
+				</TextureBitmap>
+	 			
+				<Input name="inp_motd">
+					<Anchors>
+						<Anchor>
+							<AbsDimension x="0" y="3" />
+						</Anchor>
+					</Anchors>
+					<Size>
+						<AbsDimension x="525" y="54" />
+					</Size>
+					<wordWrap>true</wordWrap>
+					<css>[local.css]small2.css</css>
+				</Input>    
+				
+				
+				<themeIconButton name="btn_motdValid">
+					<Anchors>
+						<Anchor>
+							<AbsDimension x="540" y="0" />
+						</Anchor>
+					</Anchors>
+					<Size>
+						<AbsDimension x="22" y="21" />
+					</Size>
+					<iconUri>[local.texture]btnIcon/btnIcon_check.png</iconUri>
+				</themeIconButton>
+				
+				<themeIconButton name="btn_motdExit">
+					<Anchors>
+						<Anchor>
+							<AbsDimension x="540" y="23" />
+						</Anchor>
+					</Anchors>
+					<Size>
+						<AbsDimension x="22" y="21" />
+					</Size>
+					<iconUri>[local.texture]btnIcon/btnIcon_cross.png</iconUri>
+				</themeIconButton>
+			</Container>
+		
+		</Container>
+		
+		
+		
+		<Container>
+			<Anchors>
+				<Anchor>
+					<AbsDimension x="0" y="100" />
+				</Anchor>
+			</Anchors>
+			
+			<blockDoubleBorder>
+				<Anchors>
+					<Anchor>
+						<AbsDimension x="0" y="41" />
+					</Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="1124" y="511" />
+				</Size>
+			</blockDoubleBorder>
+	
+			<themeHorizontalTab name="btn_members" bgId="htab_dark_background">
+				<Anchors>
+					<Anchor>
+						<AbsDimension x="40" y="0" />
+					</Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="160" y="45" />
+				</Size>
+				<text>[ui.social.guilds]</text>
+			</themeHorizontalTab>		
+			<themeHorizontalTab name="btn_bulletin" bgId="htab_dark_background">
+				<Anchors>
+					<Anchor>
+						<AbsDimension x="200" y="0" />
+					</Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="160" y="45" />
+				</Size>
+				<text>Balance</text>
+			</themeHorizontalTab>		
+			<themeHorizontalTab name="btn_areas" bgId="htab_dark_background">
+				<Anchors>
+					<Anchor>
+						<AbsDimension x="360" y="0" />
+					</Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="160" y="45" />
+				</Size>
+				<text>[ui.common.conquest]</text>
+			</themeHorizontalTab>
+			<themeHorizontalTab name="btn_fights" bgId="htab_dark_background">
+				<Anchors>
+					<Anchor>
+						<AbsDimension x="520" y="0" />
+					</Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="160" y="45" />
+				</Size>
+				<text>[ui.common.attacks]</text>
+			</themeHorizontalTab>
+			
+			<themeHorizontalTab name="btn_village" bgId="htab_dark_background">
+				<Anchors>
+					<Anchor>
+						<AbsDimension x="680" y="0" />
+					</Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="160" y="45" />
+				</Size>
+				<text>Village</text>
+			</themeHorizontalTab>
+
+			<Texture name="tx_bulletinWarning">	
+				<Anchors>
+		        	<Anchor relativeTo="btn_bulletin" relativePoint="TOPRIGHT" point="TOPRIGHT">
+		        		<AbsDimension x="-6" y="-16" />
+		        	</Anchor>
+		        </Anchors>
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<visible>false</visible>
+				<uri>[local.texture]pin_mark_yellow.png</uri>
+			</Texture>
+		
+		</Container>
+		
+		
+	
+		<!-- MYSTIC 17/10 : onglet Village (Brigandin / Foreuse, coffre d'alliance) -->
+		<Container name="ctr_village"><Anchors><Anchor><AbsDimension x="30" y="160" /></Anchor></Anchors>
+			<visible>false</visible>
+
+			<Label><Anchors><Anchor><AbsDimension x="0" y="0" /></Anchor></Anchors><Size><AbsDimension x="500" y="20" /></Size><css>[local.css]normal2.css</css><text>Village de conquête</text></Label>
+
+			<Label name="lbl_vInfo"><Anchors><Anchor><AbsDimension x="0" y="24" /></Anchor></Anchors><Size><AbsDimension x="600" y="80" /></Size>
+				<multiline>true</multiline><wordWrap>true</wordWrap>
+				<css>[local.css]small2.css</css>
+			</Label>
+
+			<Label><Anchors><Anchor><AbsDimension x="640" y="0" /></Anchor></Anchors><Size><AbsDimension x="300" y="20" /></Size><css>[local.css]normal2.css</css><text>Coffre de l'alliance (kamas)</text></Label>
+
+			<TextureBitmap><Anchors><Anchor><AbsDimension x="636" y="25" /></Anchor></Anchors><Size><AbsDimension x="158" y="30" /></Size><themeDataId>bg_small_border_light</themeDataId></TextureBitmap>
+			<Input name="inp_vKamas"><Anchors><Anchor><AbsDimension x="640" y="28" /></Anchor></Anchors><Size><AbsDimension x="150" y="24" /></Size><css>[local.css]normal2.css</css><maxChars>12</maxChars></Input>
+
+			<simpleButton name="btn_vDeposer"><Anchors><Anchor><AbsDimension x="805" y="22" /></Anchor></Anchors><Size><AbsDimension x="120" y="32" /></Size><label>Déposer</label></simpleButton>
+
+			<simpleButton name="btn_vRetirer"><Anchors><Anchor><AbsDimension x="935" y="22" /></Anchor></Anchors><Size><AbsDimension x="120" y="32" /></Size><label>Retirer</label></simpleButton>
+
+			<simpleButton name="btn_vBrigandin"><Anchors><Anchor><AbsDimension x="640" y="66" /></Anchor></Anchors><Size><AbsDimension x="200" y="32" /></Size><label>Installer le Téléporteur</label></simpleButton>
+
+			<simpleButton name="btn_vForeuse"><Anchors><Anchor><AbsDimension x="855" y="66" /></Anchor></Anchors><Size><AbsDimension x="200" y="32" /></Size><label>PNJ : apparence Foreuse</label></simpleButton>
+
+			<Label><Anchors><Anchor><AbsDimension x="0" y="112" /></Anchor></Anchors><Size><AbsDimension x="500" y="20" /></Size><css>[local.css]normal2.css</css><text>Destinations</text></Label>
+
+			<Grid name="gd_vDest"><Anchors><Anchor><AbsDimension x="0" y="136" /></Anchor></Anchors><Size><AbsDimension x="1075" y="228" /></Size>
+				<rendererName>InlineXmlGridRenderer</rendererName>
+				<rendererArgs>updateVillageLine,[colors.grid.line]</rendererArgs>
+				<verticalScrollbarCss>[local.css]scrollBar.css</verticalScrollbarCss>
+				<slotWidth>530</slotWidth>
+				<slotHeight>38</slotHeight>
+				<Container name="ctr_vLigne"><Size><AbsDimension x="530" y="38" /></Size>
+					<Label name="lbl_vNom"><Anchors><Anchor><AbsDimension x="8" y="9" /></Anchor></Anchors><Size><AbsDimension x="330" y="20" /></Size><css>[local.css]normal2.css</css></Label>
+					<Label name="lbl_vEtat"><Anchors><Anchor><AbsDimension x="340" y="9" /></Anchor></Anchors><Size><AbsDimension x="80" y="20" /></Size><css>[local.css]normal2.css</css></Label>
+					<simpleButton name="btn_vLigne"><Anchors><Anchor><AbsDimension x="400" y="3" /></Anchor></Anchors><Size><AbsDimension x="115" y="32" /></Size><label>Débloquer</label></simpleButton>
+					<simpleButton name="btn_vRevLigne"><Anchors><Anchor><AbsDimension x="400" y="3" /></Anchor></Anchors><Size><AbsDimension x="115" y="32" /></Size><label>Revendre</label></simpleButton>
+				</Container>
+			</Grid>
+
+
+
+			<simpleButton name="btn_vRevendre"><Anchors><Anchor><AbsDimension x="855" y="66" /></Anchor></Anchors><Size><AbsDimension x="200" y="32" /></Size><label>Tout revendre</label></simpleButton>
+
+			<Label name="lbl_vRec"><Anchors><Anchor><AbsDimension x="0" y="372" /></Anchor></Anchors><Size><AbsDimension x="1000" y="20" /></Size><css>[local.css]normal2.css</css></Label>
+			<Grid name="gd_vRec"><Anchors><Anchor><AbsDimension x="0" y="396" /></Anchor></Anchors><Size><AbsDimension x="1075" y="92" /></Size>
+				<rendererName>InlineXmlGridRenderer</rendererName>
+				<rendererArgs>updateRecompenseLine,[colors.grid.line]</rendererArgs>
+				<verticalScrollbarCss>[local.css]scrollBar.css</verticalScrollbarCss>
+				<slotWidth>1060</slotWidth>
+				<slotHeight>38</slotHeight>
+				<Container name="ctr_rLigne"><Size><AbsDimension x="1060" y="38" /></Size>
+					<Label name="lbl_rTexte"><Anchors><Anchor><AbsDimension x="8" y="9" /></Anchor></Anchors><Size><AbsDimension x="900" y="20" /></Size><css>[local.css]normal2.css</css></Label>
+					<simpleButton name="btn_rChoisir"><Anchors><Anchor><AbsDimension x="930" y="3" /></Anchor></Anchors><Size><AbsDimension x="115" y="32" /></Size><label>Choisir</label></simpleButton>
+				</Container>
+			</Grid>
+
+		</Container>
+
+		<!-- MYSTIC 19/10 : onglet Balance (à la place du Bulletin) : part de son alliance dans les zones AvA, en %, sans nommer les autres -->
+		<Container name="ctr_balance"><Anchors><Anchor><AbsDimension x="30" y="160" /></Anchor></Anchors>
+			<visible>false</visible>
+			<Label name="lbl_bZone"><Anchors><Anchor><AbsDimension x="0" y="0" /></Anchor></Anchors><Size><AbsDimension x="1000" y="22" /></Size><css>[local.css]normal2.css</css></Label>
+			<Container name="ctr_bFond"><Anchors><Anchor><AbsDimension x="0" y="28" /></Anchor></Anchors><Size><AbsDimension x="1000" y="30" /></Size><bgColor>0x6E6E6E</bgColor><bgAlpha>1</bgAlpha></Container>
+			<Container name="ctr_bMoi"><Anchors><Anchor><AbsDimension x="0" y="28" /></Anchor></Anchors><Size><AbsDimension x="1000" y="30" /></Size><bgColor>0x3E9E5A</bgColor><bgAlpha>1</bgAlpha></Container>
+			<Label name="lbl_bMoi"><Anchors><Anchor><AbsDimension x="10" y="32" /></Anchor></Anchors><Size><AbsDimension x="500" y="22" /></Size><css>[local.css]normal2.css</css></Label>
+			<Label name="lbl_bAutres"><Anchors><Anchor><AbsDimension x="880" y="32" /></Anchor></Anchors><Size><AbsDimension x="110" y="22" /></Size><css>[local.css]normal2.css</css></Label>
+			<Label><Anchors><Anchor><AbsDimension x="0" y="76" /></Anchor></Anchors><Size><AbsDimension x="700" y="22" /></Size><css>[local.css]normal2.css</css><text>Autres zones où ton alliance est présente</text></Label>
+			<Grid name="gd_bZones"><Anchors><Anchor><AbsDimension x="0" y="102" /></Anchor></Anchors><Size><AbsDimension x="1075" y="262" /></Size>
+				<rendererName>InlineXmlGridRenderer</rendererName>
+				<rendererArgs>updateBalanceLine,[colors.grid.line]</rendererArgs>
+				<verticalScrollbarCss>[local.css]scrollBar.css</verticalScrollbarCss>
+				<slotWidth>1060</slotWidth>
+				<slotHeight>34</slotHeight>
+				<Container name="ctr_bzLigne"><Size><AbsDimension x="1060" y="34" /></Size>
+					<Label name="lbl_bzNom"><Anchors><Anchor><AbsDimension x="8" y="7" /></Anchor></Anchors><Size><AbsDimension x="300" y="20" /></Size><css>[local.css]normal2.css</css></Label>
+					<Container name="ctr_bzFond"><Anchors><Anchor><AbsDimension x="320" y="7" /></Anchor></Anchors><Size><AbsDimension x="700" y="20" /></Size><bgColor>0x6E6E6E</bgColor><bgAlpha>1</bgAlpha></Container>
+					<Container name="ctr_bzMoi"><Anchors><Anchor><AbsDimension x="320" y="7" /></Anchor></Anchors><Size><AbsDimension x="700" y="20" /></Size><bgColor>0x3E9E5A</bgColor><bgAlpha>1</bgAlpha></Container>
+					<Label name="lbl_bzPct"><Anchors><Anchor><AbsDimension x="330" y="7" /></Anchor></Anchors><Size><AbsDimension x="300" y="20" /></Size><css>[local.css]normal2.css</css></Label>
+				</Container>
+			</Grid>
+			<Label name="lbl_bMaj"><Anchors><Anchor><AbsDimension x="0" y="372" /></Anchor></Anchors><Size><AbsDimension x="1075" y="20" /></Size><css>[local.css]small2.css</css></Label>
+		</Container>
+</Container>
+</Definition>
+

@@ -75,7 +75,8 @@ namespace Stump.Server.WorldServer.Commands.Commands
     {
         public GoCommand()
         {
-            Aliases = new[] { "go", "tp" };
+            // « .tp » = menu de téléportation des joueurs (TpPanel) ; téléportation admin : « .go »
+            Aliases = new[] { "go" };
             RequiredRole = RoleEnum.Administrator;
             Description = "Teleport the target given map id";
             AddParameter("map", "map", "Map destination", converter:ParametersConverter.MapConverter);

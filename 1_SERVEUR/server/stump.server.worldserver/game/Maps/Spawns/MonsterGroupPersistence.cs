@@ -47,6 +47,7 @@ namespace Stump.Server.WorldServer.Game.Maps.Spawns
         private readonly Dictionary<string, Queue<Entry>> m_entries = new Dictionary<string, Queue<Entry>>();
         private readonly object m_lock = new object();
         private int m_restored;
+        private int m_retires; // MYSTIC 19/10 : monstres retires des groupes restaures (plus de spawn actif)
 
         [Initialization(InitializationPass.Fourth)]
         public void Initialize()
@@ -147,6 +148,36 @@ namespace Stump.Server.WorldServer.Game.Maps.Spawns
                     return null;
             }
 
+            // MYSTIC 19/10 : un groupe sauvegarde ne garde que les monstres qui ont encore un spawn ACTIF sur cette map
+            // (monstres de quete, Poutch, boss ou recherches dont le spawn a ete desactive restaient pour toujours : restaures puis
+            // re-sauvegardes a chaque redemarrage)
+            var permis = new HashSet<int>(map.MonsterSpawns.Where(x => !x.IsDisabled).Select(x => x.MonsterId));
+            if (entry.Monsters.Any(x => !permis.Contains(x.Item1)))
+            {
+                m_retires += entry.Monsters.Count(x => !permis.Contains(x.Item1));
+                entry.Monsters = entry.Monsters.Where(x => permis.Contains(x.Item1)).ToList();
+                if (entry.Monsters.Count == 0)
+                    return null;
+            }
+
+            // MYSTIC 19/10 : monstres rares limités par sous-zone (Leprechaun, Hell Mina : 1 max)
+            if (entry.Monsters.Any(x => MonstresLimites.EstLimite(x.Item1)))
+            {
+                var gardes = new List<Tuple<int, uint>>();
+                foreach (var x in entry.Monsters)
+                {
+                    if (MonstresLimites.EstLimite(x.Item1) && MonstresLimites.Atteinte(map, x.Item1, gardes.Select(y => y.Item1)))
+                    {
+                        m_retires++;
+                        continue;
+                    }
+                    gardes.Add(x);
+                }
+                entry.Monsters = gardes;
+                if (entry.Monsters.Count == 0)
+                    return null;
+            }
+
             var grades = entry.Monsters.Select(x => MonsterManager.Instance.GetMonsterGrade(x.Item1, (int)x.Item2)).ToArray();
             if (grades.Any(x => x == null))
                 return null;
@@ -212,7 +243,7 @@ namespace Stump.Server.WorldServer.Game.Maps.Spawns
                 else
                     File.Move(tmp, SaveFile);
 
-                logger.Info("[Groupes] {0} groupes de monstres enregistres ({1} restaures depuis le demarrage)", count, m_restored);
+                logger.Info("[Groupes] {0} groupes de monstres enregistres ({1} restaures depuis le demarrage, {2} monstres sans spawn actif retires)", count, m_restored, m_retires);
             }
             catch (Exception ex)
             {

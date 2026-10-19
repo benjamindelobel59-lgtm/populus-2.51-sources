@@ -36,27 +36,34 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
             if (integerEffect == null)
                 return false;
 
-            double unite;
+            // MYSTIC 18/10 : Comtoise pose TROIS effets pour UNE seule rotation (770 « degrés », 771 « Pi/2 », 772 « Pi/4 » avec la même valeur
+            // n = 1, 2 ou 3) : ce sont trois écritures de n × 90° (le site cite « 90° horaire = 1Pi/2 = 2Pi/4 »). Avant, le serveur les
+            // additionnait (1° + 90° + 45° = 136°) et les sorts partaient n'importe où. Seul l'effet Pi/2 (771 / 774) fait tourner ; les autres
+            // ne servent qu'à l'affichage de l'envoûtement, avec la valeur officielle (n × 90 degrés, 2n × Pi/4).
+            var n = integerEffect.Value;
+            var horaire = Effect.EffectId == EffectsEnum.Effect_770 || Effect.EffectId == EffectsEnum.Effect_771 || Effect.EffectId == EffectsEnum.Effect_772;
+            // MYSTIC 18/10 : le sort n'accepte qu'UN buff (la dernière écriture remplace les autres) : chaque écriture porte donc la rotation
+            var angle = n * Math.PI / 2 * (horaire ? 1 : -1);
+
+            int affichage;
             switch (Effect.EffectId)
             {
-                case EffectsEnum.Effect_771:
-                case EffectsEnum.Effect_774:
-                    unite = Math.PI / 2;
+                case EffectsEnum.Effect_770:
+                case EffectsEnum.Effect_773:
+                    affichage = n * 90;
                     break;
                 case EffectsEnum.Effect_772:
                 case EffectsEnum.Effect_775:
-                    unite = Math.PI / 4;
+                    affichage = n * 2;
                     break;
                 default:
-                    unite = Math.PI / 180;
+                    affichage = n;
                     break;
             }
 
-            var horaire = Effect.EffectId == EffectsEnum.Effect_770 || Effect.EffectId == EffectsEnum.Effect_771 || Effect.EffectId == EffectsEnum.Effect_772;
-            var angle = integerEffect.Value * unite * (horaire ? 1 : -1);
-
+            // MYSTIC 18/10 : la confusion ne se désenvoûte pas (demande utilisateur)
             foreach (var actor in GetAffectedActors())
-                actor.AddBuff(new ConfusionBuff(actor.PopNextBuffId(), actor, Caster, this, Spell, Critical, FightDispellableEnum.DISPELLABLE, angle, integerEffect.Value));
+                actor.AddBuff(new ConfusionBuff(actor.PopNextBuffId(), actor, Caster, this, Spell, Critical, FightDispellableEnum.REALLY_NOT_DISPELLABLE, angle, affichage));
 
             return true;
         }
@@ -87,11 +94,12 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
         /// </summary>
         public static Cell CaseConfuse(FightActor lanceur, Cell visee)
         {
-            var confusions = lanceur.GetBuffs(x => x is ConfusionBuff && x.Delay == 0).Cast<ConfusionBuff>().ToArray();
+            var confusions = lanceur.GetBuffs(x => x is ConfusionBuff c && c.Delay == 0).Cast<ConfusionBuff>().ToArray();
             if (confusions.Length == 0 || visee == null)
                 return visee;
 
-            var angle = confusions.Sum(x => x.Angle);
+            // une seule rotation par sort (les écritures d'une même confusion ne s'additionnent pas) ; Comtoise + Pendultimatum s'additionnent
+            var angle = confusions.GroupBy(x => x.Spell.Id).Sum(g => g.Last().Angle);
             var centre = lanceur.Position.Point;
             var cible = new MapPoint(visee);
             int dx = cible.X - centre.X, dy = cible.Y - centre.Y;

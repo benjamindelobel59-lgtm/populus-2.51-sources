@@ -85,6 +85,9 @@ namespace Stump.Server.WorldServer.Game.Quests
             CurrentStep?.CancelQuest();
             CurrentStep = new QuestStep(this, step);
             m_record.StepId = step.Id;
+            // MYSTIC 19/10 : nouvelle étape affichée dans le journal du client
+            Owner.Client?.Send(new Stump.DofusProtocol.Messages.QuestStepStartedMessage(Id, (ushort)step.Id));
+            Owner.EnvoyerQuetesSuivies();
         }
 
         public QuestActiveInformations GetQuestActiveInformations()

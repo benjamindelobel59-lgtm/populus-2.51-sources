@@ -30,29 +30,54 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
             BonusMax = 125;
         }
 
+        // MYSTIC 17/10 : tous les ennemis touchés sont suivis (avant : seul le dernier touché, la cible « passait » de l'un à l'autre) ;
+        // chacun doit mourir avant le début de son tour. Les invocations ennemies arrivées en cours de combat sont suivies aussi.
+        readonly System.Collections.Generic.HashSet<FightActor> m_touches = new System.Collections.Generic.HashSet<FightActor>();
+        readonly System.Collections.Generic.List<FightActor> m_suivis = new System.Collections.Generic.List<FightActor>();
+        FightTeam m_equipeEnnemie;
+
         public override void Initialize()
         {
             base.Initialize();
 
             foreach (var fighter in Fight.GetAllFighters<MonsterFighter>())
-                fighter.BeforeDamageInflicted += OnBeforeDamageInflicted;
+                Suivre(fighter);
+
+            m_equipeEnnemie = Fight.GetAllFighters<MonsterFighter>().FirstOrDefault()?.Team;
+            if (m_equipeEnnemie != null)
+                m_equipeEnnemie.FighterAdded += OnEnnemiAjoute;
 
             Fight.TurnStarted += OnTurnStarted;
         }
+
+        void Suivre(FightActor fighter)
+        {
+            if (m_suivis.Contains(fighter))
+                return;
+
+            m_suivis.Add(fighter);
+            fighter.BeforeDamageInflicted += OnBeforeDamageInflicted;
+            fighter.Dead += OnEnnemiMort;
+        }
+
+        void OnEnnemiAjoute(FightTeam team, FightActor fighter) => Suivre(fighter);
+
+        void OnEnnemiMort(FightActor fighter, FightActor killer) => m_touches.Remove(fighter);
 
         public override bool IsEligible() => Fight.GetAllFighters<MonsterFighter>().Count() > 1;
 
         void OnBeforeDamageInflicted(FightActor fighter, Damage damage)
         {
-            if (fighter.IsFriendlyWith(damage.Source))
+            if (damage.Source == null || fighter.IsFriendlyWith(damage.Source))
                 return;
 
+            m_touches.Add(fighter);
             Target = fighter;
         }
 
         void OnTurnStarted(IFight fight, FightActor fighter)
         {
-            if (fighter == Target)
+            if (m_touches.Contains(fighter) && fighter.IsAlive())
                 UpdateStatus(ChallengeStatusEnum.FAILED);
         }
 
@@ -60,8 +85,14 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
         {
             base.OnWinnersDetermined(fight, winners, losers, draw);
 
-            foreach (var fighter in Fight.GetAllFighters<MonsterFighter>())
+            foreach (var fighter in m_suivis)
+            {
                 fighter.BeforeDamageInflicted -= OnBeforeDamageInflicted;
+                fighter.Dead -= OnEnnemiMort;
+            }
+
+            if (m_equipeEnnemie != null)
+                m_equipeEnnemie.FighterAdded -= OnEnnemiAjoute;
 
             Fight.TurnStarted -= OnTurnStarted;
         }

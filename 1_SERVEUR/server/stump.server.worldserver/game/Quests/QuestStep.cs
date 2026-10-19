@@ -33,7 +33,13 @@ namespace Stump.Server.WorldServer.Game.Quests
         {
             Quest = quest;
             Template = template;
-            Objectives = status.Where(w => QuestManager.Instance.GetObjectiveTemplate(w.ObjectiveId).StepId == Id).Select(x => QuestManager.Instance.GetObjectiveTemplate(x.ObjectiveId).GenerateObjective(Quest.Owner, x)).ToList();
+            // MYSTIC 19/10 : objectifs supprimés de la quête ignorés (plantage au chargement) et objectifs ajoutés depuis créés neufs
+            // (ex. « Le tour du monde » refaite avec tous les donjons)
+            Objectives = status.Where(w => QuestManager.Instance.GetObjectiveTemplate(w.ObjectiveId)?.StepId == Id)
+                .GroupBy(w => w.ObjectiveId).Select(g => g.First())
+                .Select(x => QuestManager.Instance.GetObjectiveTemplate(x.ObjectiveId).GenerateObjective(Quest.Owner, x)).ToList();
+            foreach (var manquant in template.Objectives.Where(x => !x.IsTriggeredByObjective && Objectives.All(o => o.Template.Id != x.Id)))
+                Objectives.Add(manquant.GenerateObjective(Quest.Owner));
             Rewards = template.Rewards.Select(x => new QuestReward(x)).ToArray();
 
             foreach (var objective in Objectives)
@@ -97,6 +103,8 @@ namespace Stump.Server.WorldServer.Game.Quests
             Quest.Finished = true;
             Quest.Owner.QuestCompleted(Quest);
             Quest.Owner.SendInformationMessage(TextInformationTypeEnum.TEXT_INFORMATION_MESSAGE, 56, Quest.Id);
+            // MYSTIC 19/10 : quête terminée dans le journal du client
+            Quest.Owner.Client?.Send(new Stump.DofusProtocol.Messages.QuestValidatedMessage(Quest.Id));
         }
 
         public void CancelQuest()

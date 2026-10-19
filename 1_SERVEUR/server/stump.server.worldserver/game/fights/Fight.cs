@@ -1273,6 +1273,9 @@ namespace Stump.Server.WorldServer.Game.Fights
             if (State != FightState.Placement)
                 throw new Exception("State != Placement, cannot random placement position");
 
+            if (PlacerPremierCombatBoss(team))
+                return;
+
             var shuffledCells = team.PlacementCells.Shuffle();
             var enumerator = shuffledCells.GetEnumerator();
             foreach (var fighter in team.GetAllFighters())
@@ -1281,6 +1284,49 @@ namespace Stump.Server.WorldServer.Game.Fights
                     fighter.ChangePrePlacement(enumerator.Current);
             }
             enumerator.Dispose();
+        }
+
+        // MYSTIC 18/10 : 1er combat d'un personnage contre un boss de donjon : placement fixe (ordre des cases bleues), voir
+        // Donjons.PremierCombatBoss
+        bool PlacerPremierCombatBoss(FightTeam team)
+        {
+            if (!(team is FightMonsterTeam) || !Map.KeepOriginalPlacements())
+                return false;
+
+            var boss = team.GetAllFighters().OfType<MonsterFighter>().FirstOrDefault(x => x.Monster.Template.IsBoss);
+            var adverse = team == (FightTeam)DefendersTeam ? (FightTeam)ChallengersTeam : DefendersTeam;
+            var lanceur = adverse.Leader as CharacterFighter;
+            if (boss == null || lanceur == null)
+                return false;
+
+            var bossId = boss.Monster.Template.Id;
+            Action<IFight> debut = null;
+            debut = fight =>
+            {
+                FightStarted -= debut;
+                foreach (var perso in fight.GetAllFighters<CharacterFighter>())
+                    Donjons.PremierCombatBoss.Instance.Noter(perso.Character.Id, bossId);
+            };
+            FightStarted += debut;
+
+            if (Donjons.PremierCombatBoss.Instance.DejaCombattu(lanceur.Character.Id, bossId))
+                return false;
+
+            // MYSTIC 18/10 (décision utilisateur, règle officielle du devblog « donjons modulables » : les monstres restent groupés
+            // au début du combat) : boss sur la 1re case bleue de la map, puis les autres monstres sur les cases bleues les plus
+            // proches de lui (égalité : ordre des cases de la map). Avant : simple ordre des cases (monstres parfois dispersés).
+            var cases = team.PlacementCells;
+            if (cases.Length == 0)
+                return false;
+            var caseBoss = cases[0];
+            var pointBoss = new MapPoint(caseBoss);
+            var autresCases = cases.Skip(1).Select((c, i) => new { c, i })
+                .OrderBy(x => pointBoss.ManhattanDistanceTo(new MapPoint(x.c))).ThenBy(x => x.i).Select(x => x.c).ToList();
+            boss.ChangePrePlacement(caseBoss);
+            var autres = team.GetAllFighters().Where(x => x != boss).ToList();
+            for (var i = 0; i < autres.Count && i < autresCases.Count; i++)
+                autres[i].ChangePrePlacement(autresCases[i]);
+            return true;
         }
 
         public DirectionsEnum FindPlacementDirection(FightActor fighter)
@@ -1980,9 +2026,16 @@ namespace Stump.Server.WorldServer.Game.Fights
 
             if (FighterPlaying.MustSkipTurn())
             {
-                FighterPlaying.ResetUsedPoints();
-                PassTurn();
-
+                // MYSTIC 18/10 (retour de test, urgent) : un tour sauté (état « passe son tour ») se termine comme un vrai tour côté clients :
+                // GameFightTurnEnd + GameFightTurnReadyRequest -> le client du maître One Window revient sur son personnage ; TurnStopped ->
+                // l'invocation contrôlée suivante reçoit son contexte. Avant : PassTurn direct, le One Window restait sur l'esclave / l'invocation.
+                logger.Info("[Chrono combat] {0} {1:HH:mm:ss.fff} : {2} passe son tour (etat)", Id, DateTime.Now, FighterPlaying);
+                BeforeTurnStopped?.Invoke(this, FighterPlaying);
+                if (IsSequencing)
+                    EndAllSequences();
+                TurnStopped?.Invoke(this, FighterPlaying);
+                ContextHandler.SendGameFightTurnEndMessage(Clients, FighterPlaying);
+                ReadyChecker = ReadyChecker.RequestCheck(this, PassTurnAndCheck, LagAndPassTurn);
                 return;
             }
 
@@ -2076,9 +2129,12 @@ namespace Stump.Server.WorldServer.Game.Fights
                     TriggerMarks(FighterPlaying.Cell, FighterPlaying, TriggerType.OnTurnEnd);
                 }
 
-                var time = (int)Math.Floor(GetTurnTimeLeft().TotalSeconds / 2);
+                // MYSTIC 17/10 : report = moitié du temps restant sur les 45 s de base seulement (le report reçu n'est pas reporté
+                // à nouveau : avant, il s'additionnait d'un tour à l'autre)
+                var resteBase = Math.Min(GetTurnTimeLeft().TotalSeconds - FighterPlaying.TurnTimeReport, FightActor.DureeTourBase / 1000.0);
+                var time = (int)Math.Floor(Math.Max(0, resteBase) / 2);
                 if (TimeLine.RoundNumber > 1)
-                    FighterPlaying.TurnTimeReport = time > 0 ? time : 0;
+                    FighterPlaying.TurnTimeReport = time;
             }
 
             // can die with triggers
@@ -2346,6 +2402,10 @@ namespace Stump.Server.WorldServer.Game.Fights
             using (StartMoveSequence(fightPath))
             {
                 int index = 0;
+                // MYSTIC 18/10 (retour de test : personnage affiché ailleurs que sa vraie case) : pendant un tacle, le serveur se place sur la
+                // case du tacle (le client y est déjà) ; si un effet déclenché le déplace (poussée, échange…), le reste du chemin est abandonné
+                // au lieu d'être recollé en silence à la fin du chemin.
+                var interrompu = false;
                 foreach (var tackle in fightPath.Tackles)
                 {
                     if (tackle.PathIndex - index > 0)
@@ -2356,8 +2416,24 @@ namespace Stump.Server.WorldServer.Game.Fights
                                 ContextHandler.SendGameMapMovementMessage(entry.Client, fightPath.Cells.Skip(index).Take(tackle.PathIndex - index + 1).Select(x => x.Id), fighter);
                         }, true);
                     }
+                    var caseTacle = fightPath.Cells[tackle.PathIndex];
+                    fighter.Position.Cell = caseTacle;
                     OnTackled(fighter, tackle);
                     index = tackle.PathIndex;
+                    if (!fighter.IsAlive() || fighter.Cell != caseTacle)
+                    {
+                        logger.Info("[Deplacement] {0} deplace pendant un tacle : case {1} -> {2}", fighter, caseTacle.Id, fighter.Cell?.Id);
+                        interrompu = true;
+                        break;
+                    }
+                }
+
+                if (interrompu)
+                {
+                    actor.AbandonnerDeplacement();
+                    fighter.UseMP((short)index);
+                    PortalsManager.RefreshClientsPortals();
+                    return;
                 }
 
                 if (path.Cells.Length - index > 0)

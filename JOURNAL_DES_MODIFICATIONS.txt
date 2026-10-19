@@ -239,3 +239,23 @@ MODIFICATIONS DU 18/10/2026 (soir) - AuthServer : launcher Mystic
  - Managers/CredentialManager.cs : connexion par ticket du launcher ; Managers/WorldServerManager.cs : liste des mondes.
  - Stump.Server.AuthServer.csproj : les 3 fichiers Launcher ajoutes.
  - Launcher/LauncherApi.cs (22h53) : personnages trouves via auth.worlds_characters (characters.AccountId reste a 0 sur nos bases).
+
+MODIFICATIONS MYSTIC DU 19/10/2026 (soir) AU 20/10/2026 - SQL 70 a 79 (base world)
+====================================================================================
+Serveur (C#) :
+ - game/Chasses/ChasseManager.cs, Autopilote.cs, Portails.cs + Commands/Commands/ChasseCommand.cs : chasses au tresor (depart
+   2 a 8 cartes autour d'un zaap au hasard, « zaap le plus proche », pilote automatique avec trajet sur la minimap, 5 min
+   d'attente apres abandon) et chasses aux portails (Enutrosor, Srambad, Xelorium, Ecaflipus ; 8 h ou 110 passages ;
+   table mystic_portails). SQL 70, 71, 72.
+ - game/items/player/Custom/ObjetsInfinis.cs : objets 31200-31204 (Pain Infini, potions de Rappel / Foyer / Enclos de
+   guilde / Chasse au tresor infinies). SQL 73, 74.
+ - game/Jobs/Collecteurs.cs, CollecteursTable.cs : protecteurs des ressources (79 ressources, 1 chance sur 100, sac).
+ - game/Alliances/BalanceAvA.cs + Handlers/Alliances/AllianceHandler.cs : onglet Balance (pourcentages par zone AvA).
+ - game/Houses/HouseManager.cs + Character.CanBeSee : un interieur par maison. SkillHouse : maisons publiques (785).
+ - RuneMagicCraftDialog.cs : forgemagie simplifiee + atelier d'Astrub limite au niveau 80. SQL 76, 77, 78.
+ - AccesFrigost / TeleportReply : transporteur Asfog (Sakai), Village enseveli. SQL 75.
+ - IA / combat : PassifsAuditDonjonsBrains.cs (Wa Wobot, Tamponneurs, Kolerat, Nelween), MonstresFuyards.cs +
+   Brain.FuirAPortee, FightActor (resistances des monstres jusqu'a 100 %), CarryActor (monstres lourds), Push.cs,
+   CastSpell.cs, SymetricTeleport, CaseInvalideCriterion, DuoChallenge.MaxJoueurs.
+ - SQL 79 : audit des cartes, 287 sorties qui menaient vers une carte inexistante reliees a la bonne carte.
+Launcher : src_mystic/Fantomes.cs (Dofus restes en memoire sans fenetre fermes, pour pouvoir relancer).

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Stump.DofusProtocol.Enums;
 using Stump.DofusProtocol.Messages;
@@ -43,13 +43,13 @@ namespace Stump.Server.WorldServer.Handlers.Context.RolePlay
 
                 if (newDestination != null)
                 {
-                    client.Character.Teleport(newDestination, neighbourState);
+                    client.Character.TeleportSuivi(() => client.Character.Teleport(newDestination, neighbourState));
                     return;
                 }
             }
             // todo : check with MapChangeData the neighbour validity
             if (neighbourState != MapNeighbour.None && client.Character.Position.Cell.MapChangeData != 0)
-                client.Character.Teleport(neighbourState);
+                client.Character.TeleportSuivi(() => client.Character.Teleport(neighbourState));
         }
 
         [WorldHandler(MapInformationsRequestMessage.Id)]
@@ -200,4 +200,4 @@ namespace Stump.Server.WorldServer.Handlers.Context.RolePlay
         }
         
     }
-}
+}

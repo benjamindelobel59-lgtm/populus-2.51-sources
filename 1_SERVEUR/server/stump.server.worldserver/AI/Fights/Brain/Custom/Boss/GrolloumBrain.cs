@@ -31,8 +31,10 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
         public const int PourcentResurrection = 25;
 
         int m_tours;
-        readonly List<FightActor> m_vraisMorts = new List<FightActor>();
-        readonly List<FightActor> m_ressuscites = new List<FightActor>();
+        // MYSTIC 17/10 : une seule liste dans l'ordre des morts (le dernier tué est ressuscité, qu'il ait déjà été ressuscité ou non)
+        readonly List<FightActor> m_morts = new List<FightActor>();
+        readonly List<Buff> m_resistances = new List<Buff>();
+        public const short ResistanceRetraitPM = 8000;
         readonly List<Buff> m_desactivationsSuspendues = new List<Buff>();
 
         public GrolloumBrain(AIFighter fighter)
@@ -54,6 +56,8 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
                 monstre.Dead += OnAllieMort;
             Fighter.Team.FighterAdded += OnAllieAjoute;
             Fighter.FightPointsVariation += OnPointsVariation;
+            Fighter.PMRetires += OnRetraitPM;
+            Fighter.PMTentative += OnRetraitPM;
             fight.TurnStopped += OnTurnStopped;
             fight.FightEnded += OnFightEnded;
         }
@@ -80,17 +84,16 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
 
         void OnAllieMort(FightActor allie, FightActor tueur)
         {
-            // une invocation ressuscitée qui meurt n'est pas un « vrai » monstre tué
-            if (allie is MonsterFighter && !m_ressuscites.Contains(allie))
+            if (allie is MonsterFighter)
             {
-                m_vraisMorts.Remove(allie);
-                m_vraisMorts.Add(allie);
+                m_morts.Remove(allie);
+                m_morts.Add(allie);
             }
         }
 
         void Ressusciter()
         {
-            var cible = m_vraisMorts.LastOrDefault(x => x.IsDead()) ?? m_ressuscites.LastOrDefault(x => x.IsDead());
+            var cible = m_morts.LastOrDefault(x => x.IsDead());
             if (cible == null)
                 return;
 
@@ -98,11 +101,11 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
             if (cell == null)
                 return;
 
-            m_vraisMorts.Remove(cible);
-            m_ressuscites.Remove(cible);
-            m_ressuscites.Add(cible);
+            m_morts.Remove(cible);
 
             cible.Revive(PourcentResurrection, Fighter);
+            // le Gobus ressuscité ne doit pas exploser aussitôt : ses délais de relance initiaux repartent de zéro
+            cible.ReinitialiserHistoriqueSorts();
             cible.Position.Cell = cell;
             ActionsHandler.SendGameActionFightReviveMessage(Fighter.Fight.Clients, Fighter, cible);
             ContextHandler.SendGameFightTurnListMessage(Fighter.Fight.Clients, Fighter.Fight);
@@ -140,8 +143,44 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
             }
         }
 
+        /// <summary>
+        /// MYSTIC 17/10 (demande utilisateur) : tout retrait ou tentative de retrait de PM (même esquivé) par un ennemi lui donne
+        /// 8000 de résistance fixe dans tous les éléments jusqu'à la fin de son prochain tour (non cumulable).
+        /// </summary>
+        void OnRetraitPM(FightActor cible, FightActor source)
+        {
+            if (source == null || source.Team == Fighter.Team || m_resistances.Count > 0 || !Fighter.IsAlive())
+                return;
+
+            var champs = new[] { PlayerFields.EarthElementReduction, PlayerFields.FireElementReduction, PlayerFields.WaterElementReduction,
+                PlayerFields.AirElementReduction, PlayerFields.NeutralElementReduction };
+            var effets = new[] { EffectsEnum.Effect_AddEarthElementReduction, EffectsEnum.Effect_AddFireElementReduction,
+                EffectsEnum.Effect_AddWaterElementReduction, EffectsEnum.Effect_AddAirElementReduction, EffectsEnum.Effect_AddNeutralElementReduction };
+
+            using (Fighter.Fight.StartSequence(SequenceTypeEnum.SEQUENCE_TRIGGERED))
+                for (var i = 0; i < champs.Length; i++)
+                {
+                    var handler = new Game.Effects.Handlers.Spells.Buffs.StatsBuff(
+                        new Game.Effects.Instances.EffectDice(effets[i], ResistanceRetraitPM, 0, 0) { Duration = 2 }, Fighter, null, Fighter.Cell, false);
+                    var buff = new StatBuff(Fighter.PopNextBuffId(), Fighter, Fighter, handler, new Game.Spells.Spell(CycleSpellId, 1),
+                        ResistanceRetraitPM, champs[i], false, FightDispellableEnum.REALLY_NOT_DISPELLABLE) { Duration = 1, DecrementReference = source };
+                    Fighter.AddBuff(buff, true);
+                    m_resistances.Add(buff);
+                }
+        }
+
         void OnTurnStopped(IFight fight, FightActor joueur)
         {
+            // les 8000 de résistance durent jusqu'à la fin du prochain tour du Grolloum (demande utilisateur)
+            if (joueur == Fighter && m_resistances.Count > 0)
+            {
+                if (Fighter.IsAlive())
+                    using (fight.StartSequence(SequenceTypeEnum.SEQUENCE_TRIGGERED))
+                        foreach (var buff in m_resistances.Where(b => Fighter.GetBuffs().Contains(b)).ToArray())
+                            Fighter.RemoveBuff(buff);
+                m_resistances.Clear();
+            }
+
             if (m_desactivationsSuspendues.Count == 0 || !Fighter.IsAlive())
                 return;
 
@@ -159,6 +198,8 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
             fight.TurnStopped -= OnTurnStopped;
             Fighter.Team.FighterAdded -= OnAllieAjoute;
             Fighter.FightPointsVariation -= OnPointsVariation;
+            Fighter.PMRetires -= OnRetraitPM;
+            Fighter.PMTentative -= OnRetraitPM;
             foreach (var allie in Fighter.Team.Fighters)
                 allie.Dead -= OnAllieMort;
         }

@@ -39,6 +39,7 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             Position = new ObjectPosition(monster.Group.Map, cell, monster.Group.Direction);
             WaveNumber = waveNumber;
             MinPlayerLevel = minPlayerLevel;
+            CreerCerveau(monster.Grade.MonsterId);
         }
 
         public int WaveNumber

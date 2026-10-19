@@ -209,6 +209,14 @@ namespace Stump.Server.BaseServer
             /* Initialize Logger */
             NLogHelper.DefineLogProfile(true, true);
             NLogHelper.EnableLogging();
+            try
+            {
+                MysticConsole.InstallConsoleLog(); // console Mystic : journal en français et coloré
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[Mystic] affichage console classique (" + ex.Message + ")");
+            }
             logger = LogManager.GetCurrentClassLogger();
 
             if (!Debugger.IsAttached)
@@ -231,8 +239,7 @@ namespace Stump.Server.BaseServer
                 UpdateConfigFiles();
             }
 
-            ConsoleBase.DrawAsciiLogo();
-            Console.WriteLine();
+            MysticConsole.DrawBanner();
 
             InitializeGarbageCollector();
 
@@ -417,6 +424,16 @@ namespace Stump.Server.BaseServer
 
         public void HandleCrashException(Exception e)
         {
+            if (logger == null)
+            {
+                // plantage avant la mise en place du journal : on affiche l'erreur telle quelle
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine();
+                Console.WriteLine(" ✖ Erreur au démarrage : " + e);
+                Console.ResetColor();
+                return;
+            }
+
             while (true)
             {
                 ExceptionManager.RegisterException(e);

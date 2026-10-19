@@ -130,6 +130,9 @@ namespace Stump.Server.WorldServer.Game.Fights
                 Looger.Instance.Insert(log_insertAgression);*/
             }
 
+            // MYSTIC : mode héroïque, le perdant voit dans l'écran de fin de combat tout ce qu'il perd
+            Heroique.HeroicManager.Instance.AfficherPertes(this, results);
+
             return results;
         }
 
@@ -865,7 +868,7 @@ namespace Stump.Server.WorldServer.Game.Fights
 
         public short CalculateEarnedDishonor(CharacterFighter character)
         {
-            if (Draw)
+            if (Draw || Heroique.HeroicManager.Enabled)
                 return 0;
 
             return character.OpposedTeam.AlignmentSide != AlignmentSideEnum.ALIGNMENT_NEUTRAL ? (short)0 : (short)1;

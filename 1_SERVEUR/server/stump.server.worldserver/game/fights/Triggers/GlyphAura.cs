@@ -30,9 +30,11 @@ namespace Stump.Server.WorldServer.Game.Fights.Triggers
                 var handler = SpellManager.Instance.GetSpellCastHandler(Caster, GlyphSpell, actor.Cell, false);
                 handler.MarkTrigger = this;
                 handler.Initialize();
+                // MYSTIC 18/10 : respecter le masque de cible de chaque effet, comme Glyph.Trigger (avant : tous les effets touchaient
+                // quiconque entrait : la glyphe d'un totem du Moon tuait le Darkli et les joueurs, l'aura du Globilum touchait tout le monde)
                 foreach (var effectHandler in handler.GetEffectHandlers())
                 {
-                    effectHandler.SetAffectedActors(new[] { actor });
+                    effectHandler.SetAffectedActors(effectHandler.IsValidTarget(actor) ? new[] { actor } : new FightActor[0]);
                 }
                 handler.Execute();
 

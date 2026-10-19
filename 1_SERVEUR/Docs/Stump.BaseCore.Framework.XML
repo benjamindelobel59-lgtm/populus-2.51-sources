@@ -1672,6 +1672,9 @@
             <param name="segmentCount">The number of chunks tocreate per segment</param>
             <param name="segmentSize">The size of a chunk in bytes</param>
         </member>
+        <member name="F:Stump.Core.Pool.BufferManager.TraceSegments">
+            <summary>Trace d'utilisation des segments (diagnostic de fuites uniquement, très coûteux).</summary>
+        </member>
         <member name="M:Stump.Core.Pool.BufferManager.CheckOut">
             <summary>
                 Checks out a segment, creating more if the pool is empty.

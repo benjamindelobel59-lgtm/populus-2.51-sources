@@ -85,7 +85,7 @@ namespace Stump.Server.WorldServer.Game.Maps.Cells.Triggers
             }              
 
             var destination = GetDestinationPosition();
-            character.Teleport(destination.Map, destination.Cell);
+            character.TeleportSuivi(() => character.Teleport(destination.Map, destination.Cell)); // MYSTIC 17/10 : soleil = changement de carte (One Window)
         }
     }
 }

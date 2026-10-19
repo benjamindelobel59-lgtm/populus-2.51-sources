@@ -183,6 +183,18 @@ namespace Stump.Server.WorldServer.Handlers.Context
             }
             else // agression
             {
+                // MYSTIC 17/10 : AvA (deux alliances différentes en mode AvA dans une zone vulnérable)
+                if (Game.Alliances.AvAManager.Instance.ZoneVulnerable(client.Character.Map) &&
+                    Game.Alliances.AvAManager.Instance.EstEnModeAvA(client.Character) && Game.Alliances.AvAManager.Instance.EstEnModeAvA(target))
+                {
+                    var raisonAvA = Game.Alliances.AvAManager.Instance.PeutAgresser(client.Character, target);
+                    if (raisonAvA != FighterRefusedReasonEnum.FIGHTER_ACCEPTED)
+                        SendChallengeFightJoinRefusedMessage(client, client.Character, raisonAvA);
+                    else
+                        Game.Alliances.AvAManager.Instance.Agresser(client.Character, target);
+                    return;
+                }
+
                 var reason = client.Character.CanAgress(target);
                 if (reason != FighterRefusedReasonEnum.FIGHTER_ACCEPTED)
                 {

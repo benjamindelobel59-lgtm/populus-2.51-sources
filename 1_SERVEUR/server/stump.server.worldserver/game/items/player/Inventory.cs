@@ -751,7 +751,7 @@ namespace Stump.Server.WorldServer.Game.Items.Player
                 return false;
             }
 
-            if (!item.AreConditionFilled(Owner))
+            if (!ConditionsRempliesAvecObjet(item))
             {
                 if (send)
                 {
@@ -983,6 +983,33 @@ namespace Stump.Server.WorldServer.Game.Items.Player
             {
                 newOwner.Inventory.AddItem(copy);
             }
+        }
+
+        /// <summary>
+        /// MYSTIC 18/10 (demande utilisateur) : les bonus de l'objet comptent pour ses propres conditions (194 Chance + Ares à +10 Chance
+        /// = 204 : la condition « Chance > 200 » est remplie). Les effets de l'objet sont appliqués le temps du test puis retirés.
+        /// Le contrôle après équipement (OnItemMoved / CheckItemsCriterias) compte déjà l'objet équipé.
+        /// </summary>
+        bool ConditionsRempliesAvecObjet(BasePlayerItem item)
+        {
+            if (item.AreConditionFilled(Owner))
+                return true;
+            if (item.IsEquiped())
+                return false;
+
+            var etat = item.EffectApplied;
+            ApplyItemEffects(item, false, ItemEffectHandler.HandlerOperation.APPLY);
+            bool ok;
+            try
+            {
+                ok = item.AreConditionFilled(Owner);
+            }
+            finally
+            {
+                ApplyItemEffects(item, false, ItemEffectHandler.HandlerOperation.UNAPPLY);
+                item.OnEffectApplied(etat);
+            }
+            return ok;
         }
 
         public void CheckItemsCriterias()

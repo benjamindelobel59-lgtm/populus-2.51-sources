@@ -33,7 +33,36 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
             base.Initialize();
 
             foreach (var fighter in Fight.GetAllFighters<MonsterFighter>())
-                fighter.FightPointsVariation += OnFightPointsVariation;
+                Suivre(fighter);
+
+            m_equipeEnnemie = Fight.GetAllFighters<MonsterFighter>().FirstOrDefault()?.Team;
+            if (m_equipeEnnemie != null)
+                m_equipeEnnemie.FighterAdded += OnEnnemiAjoute;
+        }
+
+        // MYSTIC 17/10 : tous les retraits de PM (sorts avec durée = buff, vols de PM, retraits directs) font échouer le challenge ;
+        // avant, seuls les retraits directs sans durée étaient vus. Les invocations ennemies sont suivies aussi.
+        readonly System.Collections.Generic.List<FightActor> m_suivis = new System.Collections.Generic.List<FightActor>();
+        FightTeam m_equipeEnnemie;
+
+        void Suivre(FightActor fighter)
+        {
+            if (m_suivis.Contains(fighter))
+                return;
+
+            m_suivis.Add(fighter);
+            fighter.FightPointsVariation += OnFightPointsVariation;
+            fighter.PMRetires += OnPMRetires;
+        }
+
+        void OnEnnemiAjoute(FightTeam team, FightActor fighter) => Suivre(fighter);
+
+        void OnPMRetires(FightActor cible, FightActor source)
+        {
+            if (source == null || source == cible || source.IsFriendlyWith(cible))
+                return;
+
+            UpdateStatus(ChallengeStatusEnum.FAILED, source);
         }
 
         public override bool IsEligible() => Fight.GetAllCharacters().Any(x => x.BreedId != PlayableBreedEnum.Pandawa);
@@ -56,8 +85,14 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
         {
             base.OnWinnersDetermined(fight, winners, losers, draw);
 
-            foreach (var fighter in Fight.GetAllFighters<MonsterFighter>())
+            foreach (var fighter in m_suivis)
+            {
                 fighter.FightPointsVariation -= OnFightPointsVariation;
+                fighter.PMRetires -= OnPMRetires;
+            }
+
+            if (m_equipeEnnemie != null)
+                m_equipeEnnemie.FighterAdded -= OnEnnemiAjoute;
         }
     }
 }

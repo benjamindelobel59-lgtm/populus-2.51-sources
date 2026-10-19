@@ -12,13 +12,19 @@
 		<Anchors>
 			<Anchor relativePoint="TOP" point="TOP"><AbsDimension x="0" y="90" /></Anchor>
 		</Anchors>
-		<Size><AbsDimension x="288" y="36" /></Size>
+		<Size><AbsDimension x="312" y="36" /></Size>
 		<visible>true</visible>
 
 		<Container name="ctr_h_bg">
-			<Size><AbsDimension x="288" y="36" /></Size>
+			<Size><AbsDimension x="312" y="36" /></Size>
 			<bgColor>[colors.gamemenu.background]</bgColor>
 			<alpha>[colors.gamemenu.background.alpha]</alpha>
+		</Container>
+		<Container name="ctr_h_bg_mini">
+			<Size><AbsDimension x="44" y="36" /></Size>
+			<bgColor>[colors.gamemenu.background]</bgColor>
+			<alpha>[colors.gamemenu.background.alpha]</alpha>
+			<visible>false</visible>
 		</Container>
 
 		<!-- Poignée : cliquer-glisser ici pour déplacer la barre -->
@@ -32,8 +38,34 @@
 			<dragSavePosition>true</dragSavePosition>
 		</Container>
 
+		<themeIconButton name="btn_reduire">
+			<Anchors><Anchor><AbsDimension x="20" y="5" /></Anchor></Anchors>
+			<Size><AbsDimension x="22" y="26" /></Size>
+			<smooth>true</smooth>
+			<bgThemeDataId>button_thin_border</bgThemeDataId>
+			<iconUri>[config.ui.skin]texture/hud/icon_minus_floating_menu.png</iconUri>
+			<iconAnchors>
+				<Anchor relativePoint="TOPLEFT"><AbsDimension x="3" y="3" /></Anchor>
+				<Anchor relativePoint="BOTTOMRIGHT"><AbsDimension x="-3" y="-3" /></Anchor>
+			</iconAnchors>
+		</themeIconButton>
+
+		<themeIconButton name="btn_agrandir">
+			<Anchors><Anchor><AbsDimension x="20" y="5" /></Anchor></Anchors>
+			<Size><AbsDimension x="22" y="26" /></Size>
+			<smooth>true</smooth>
+			<bgThemeDataId>button_thin_border</bgThemeDataId>
+			<iconUri>[config.ui.skin]texture/hud/icon_plus_floating_menu.png</iconUri>
+			<iconAnchors>
+				<Anchor relativePoint="TOPLEFT"><AbsDimension x="3" y="3" /></Anchor>
+				<Anchor relativePoint="BOTTOMRIGHT"><AbsDimension x="-3" y="-3" /></Anchor>
+			</iconAnchors>
+		</themeIconButton>
+
+		<Container name="ctr_h_btns">
+
 		<themeIconButton name="btn_rotate">
-			<Anchors><Anchor><AbsDimension x="20" y="3" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="44" y="3" /></Anchor></Anchors>
 			<Size><AbsDimension x="26" y="30" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -46,13 +78,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_groupe">
-			<Anchors><Anchor><AbsDimension x="50" y="2" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="74" y="2" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_groupe">
-			<Anchors><Anchor><AbsDimension x="52" y="4" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="76" y="4" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -65,13 +97,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_onewindow">
-			<Anchors><Anchor><AbsDimension x="84" y="2" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="108" y="2" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_onewindow">
-			<Anchors><Anchor><AbsDimension x="86" y="4" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="110" y="4" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -84,13 +116,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_ipdrop">
-			<Anchors><Anchor><AbsDimension x="118" y="2" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="142" y="2" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_ipdrop">
-			<Anchors><Anchor><AbsDimension x="120" y="4" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="144" y="4" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -103,13 +135,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_sasa">
-			<Anchors><Anchor><AbsDimension x="152" y="2" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="176" y="2" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_sasa">
-			<Anchors><Anchor><AbsDimension x="154" y="4" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="178" y="4" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -122,13 +154,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_pass">
-			<Anchors><Anchor><AbsDimension x="186" y="2" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="210" y="2" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_pass">
-			<Anchors><Anchor><AbsDimension x="188" y="4" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="212" y="4" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -141,13 +173,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_invo">
-			<Anchors><Anchor><AbsDimension x="220" y="2" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="244" y="2" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_invo">
-			<Anchors><Anchor><AbsDimension x="222" y="4" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="246" y="4" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -160,13 +192,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_bug">
-			<Anchors><Anchor><AbsDimension x="254" y="2" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="278" y="2" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_bug">
-			<Anchors><Anchor><AbsDimension x="256" y="4" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="280" y="4" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -177,19 +209,26 @@
 			</iconAnchors>
 		</themeIconButton>
 
+		</Container>
 	</Container>
 
 	<Container name="ctr_v">
 		<Anchors>
 			<Anchor relativePoint="TOPLEFT" point="TOPLEFT"><AbsDimension x="10" y="150" /></Anchor>
 		</Anchors>
-		<Size><AbsDimension x="62" y="272" /></Size>
+		<Size><AbsDimension x="62" y="302" /></Size>
 		<visible>false</visible>
 
 		<Container name="ctr_v_bg">
-			<Size><AbsDimension x="62" y="272" /></Size>
+			<Size><AbsDimension x="62" y="302" /></Size>
 			<bgColor>[colors.gamemenu.background]</bgColor>
 			<alpha>[colors.gamemenu.background.alpha]</alpha>
+		</Container>
+		<Container name="ctr_v_bg_mini">
+			<Size><AbsDimension x="62" y="32" /></Size>
+			<bgColor>[colors.gamemenu.background]</bgColor>
+			<alpha>[colors.gamemenu.background.alpha]</alpha>
+			<visible>false</visible>
 		</Container>
 
 		<!-- Poignée : cliquer-glisser ici pour déplacer la barre -->
@@ -203,8 +242,34 @@
 			<dragSavePosition>true</dragSavePosition>
 		</Container>
 
-		<themeIconButton name="btn_rotate2">
+		<themeIconButton name="btn_reduire2">
 			<Anchors><Anchor><AbsDimension x="34" y="2" /></Anchor></Anchors>
+			<Size><AbsDimension x="26" y="28" /></Size>
+			<smooth>true</smooth>
+			<bgThemeDataId>button_thin_border</bgThemeDataId>
+			<iconUri>[config.ui.skin]texture/hud/icon_minus_floating_menu.png</iconUri>
+			<iconAnchors>
+				<Anchor relativePoint="TOPLEFT"><AbsDimension x="3" y="3" /></Anchor>
+				<Anchor relativePoint="BOTTOMRIGHT"><AbsDimension x="-3" y="-3" /></Anchor>
+			</iconAnchors>
+		</themeIconButton>
+
+		<themeIconButton name="btn_agrandir2">
+			<Anchors><Anchor><AbsDimension x="34" y="2" /></Anchor></Anchors>
+			<Size><AbsDimension x="26" y="28" /></Size>
+			<smooth>true</smooth>
+			<bgThemeDataId>button_thin_border</bgThemeDataId>
+			<iconUri>[config.ui.skin]texture/hud/icon_plus_floating_menu.png</iconUri>
+			<iconAnchors>
+				<Anchor relativePoint="TOPLEFT"><AbsDimension x="3" y="3" /></Anchor>
+				<Anchor relativePoint="BOTTOMRIGHT"><AbsDimension x="-3" y="-3" /></Anchor>
+			</iconAnchors>
+		</themeIconButton>
+
+		<Container name="ctr_v_btns">
+
+		<themeIconButton name="btn_rotate2">
+			<Anchors><Anchor><AbsDimension x="18" y="32" /></Anchor></Anchors>
 			<Size><AbsDimension x="26" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -217,13 +282,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_groupe2">
-			<Anchors><Anchor><AbsDimension x="15" y="34" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="15" y="64" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_groupe2">
-			<Anchors><Anchor><AbsDimension x="17" y="36" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="17" y="66" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -236,13 +301,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_onewindow2">
-			<Anchors><Anchor><AbsDimension x="15" y="68" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="15" y="98" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_onewindow2">
-			<Anchors><Anchor><AbsDimension x="17" y="70" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="17" y="100" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -255,13 +320,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_ipdrop2">
-			<Anchors><Anchor><AbsDimension x="15" y="102" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="15" y="132" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_ipdrop2">
-			<Anchors><Anchor><AbsDimension x="17" y="104" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="17" y="134" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -274,13 +339,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_sasa2">
-			<Anchors><Anchor><AbsDimension x="15" y="136" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="15" y="166" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_sasa2">
-			<Anchors><Anchor><AbsDimension x="17" y="138" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="17" y="168" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -293,13 +358,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_pass2">
-			<Anchors><Anchor><AbsDimension x="15" y="170" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="15" y="200" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_pass2">
-			<Anchors><Anchor><AbsDimension x="17" y="172" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="17" y="202" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -312,13 +377,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_invo2">
-			<Anchors><Anchor><AbsDimension x="15" y="204" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="15" y="234" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_invo2">
-			<Anchors><Anchor><AbsDimension x="17" y="206" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="17" y="236" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -331,13 +396,13 @@
 
 		<!-- cadre d'état : gris = désactivé, vert = activé (couleur changée par PopulusButtons) -->
 		<Container name="f_bug2">
-			<Anchors><Anchor><AbsDimension x="15" y="238" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="15" y="268" /></Anchor></Anchors>
 			<Size><AbsDimension x="32" y="32" /></Size>
 			<bgColor>0x5A5A5A</bgColor>
 			<bgAlpha>1</bgAlpha>
 		</Container>
 		<themeIconButton name="btn_bug2">
-			<Anchors><Anchor><AbsDimension x="17" y="240" /></Anchor></Anchors>
+			<Anchors><Anchor><AbsDimension x="17" y="270" /></Anchor></Anchors>
 			<Size><AbsDimension x="28" y="28" /></Size>
 			<smooth>true</smooth>
 			<bgThemeDataId>button_thin_border</bgThemeDataId>
@@ -348,6 +413,7 @@
 			</iconAnchors>
 		</themeIconButton>
 
+		</Container>
 	</Container>
 
 	<!-- Mystic : horloge de l'Oeil de Vortex, en haut de l'écran (sur la bande noire), visible seulement quand l'Auroraire

@@ -119,6 +119,9 @@ namespace Stump.Server.WorldServer.Game.Interactives.Skills
             character.OnHarvestItem(m_harvestedItem, count + bonus);
 
             base.EndExecute(character);
+
+            // MYSTIC 19/10 : 1 chance sur 100 d'affronter le protecteur de la ressource (sac de ressource à la clé)
+            Jobs.Collecteurs.Tenter(character, m_harvestedItem.Id);
         }
 
         public void SetHarvested()

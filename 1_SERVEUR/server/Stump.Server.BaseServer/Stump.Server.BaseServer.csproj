@@ -392,6 +392,7 @@
     <Compile Include="Plugins\PluginContext.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MysticConsole.cs" />
     <Compile Include="ServerBase.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="IPC\Objects\WorldServerData.cs" />

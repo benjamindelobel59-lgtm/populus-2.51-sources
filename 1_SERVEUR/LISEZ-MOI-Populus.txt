@@ -1,0 +1,14 @@
+SOURCES DU SERVEUR POPULUS 2.51 (16/10/2026)
+================================================
+
+Contenu : toutes les sources C# de l'émulateur (Stump) : solution Populus.sln, server, core, gui, DofusProtocol, Library, Tools, lib.
+Pas inclus : bases de données, dossier run (configs et données du serveur), binaires compilés (bin/obj), packages NuGet.
+
+Compiler :
+ - Ouvrir Populus.sln avec Visual Studio (.NET Framework 4.8).
+ - Clic droit sur la solution > Restaurer les packages NuGet, puis Générer.
+ - En ligne de commande (le / final de SolutionDir est obligatoire, sinon Fody échoue) :
+   MSBuild gui\Stump.GUI.WorldConsole\Stump.GUI.WorldConsole.csproj -p:Configuration=Debug "-p:SolutionDir=<dossier des sources>/"
+
+Nouveautés récentes : panel admin en jeu (.admin, dossier server\stump.server.worldserver\game\Admin),
+journal / surveillance, dialogues PNJ avec identifiants larges, rechargement à chaud des cartes, panoplies, sorts, monstres.

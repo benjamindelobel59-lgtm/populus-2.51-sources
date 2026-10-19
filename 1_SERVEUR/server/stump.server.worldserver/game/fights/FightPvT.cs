@@ -88,8 +88,12 @@ namespace Stump.Server.WorldServer.Game.Fights
             m_placementTimer = null;
             m_isAttackersPlacementPhase = false;
 
+            // MYSTIC 17/10 : temps de défense toujours attendu en entier, même sans défenseur
             if (DefendersQueue.Count == 0)
-                StartFighting();
+            {
+                m_placementTimer = Map.Area.CallDelayed(PvTDefendersPlacementPhaseTime, StartFighting);
+                return;
+            }
 
             foreach (var defender in DefendersQueue)
             {
@@ -117,6 +121,15 @@ namespace Stump.Server.WorldServer.Game.Fights
         }
 
         protected override bool CanKickFighter(FightActor kicker, FightActor kicked) => false;
+
+        /// <summary>MYSTIC 17/10 : « Prêt » ne lance pas le combat : on attend la fin complète du temps d'attaque puis de défense.</summary>
+        protected override void OnSetReady(FightActor fighter, bool isReady)
+        {
+            if (State != FightState.Placement)
+                return;
+
+            ContextHandler.SendGameFightHumanReadyStateMessage(Clients, fighter);
+        }
 
         public override void StartFighting()
         {

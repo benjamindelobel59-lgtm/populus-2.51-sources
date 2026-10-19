@@ -27,18 +27,12 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     [BrainIdentifier(3534)]
     public class MerkatorBrain : Brain
     {
+        // MYSTIC 18/10 (retour de test, site + données 2.51) : Merkator n'est PAS invulnérable dans le donjon normal (seulement en
+        // expédition) ; l'état Invulnérable posé à la main le rendait quasi intuable.
         public MerkatorBrain(AIFighter fighter)
             : base(fighter)
         {
             SortPassif.Poser(fighter, 4009);
-            fighter.Fight.FightStarted += OnFightStarted;
-        }
-
-        void OnFightStarted(IFight fight)
-        {
-            fight.FightStarted -= OnFightStarted;
-            using (fight.StartSequence(SequenceTypeEnum.SEQUENCE_TRIGGERED))
-                EtatsBoss.Ajouter(Fighter, Fighter, EtatsBoss.Invulnerable, 4009);
         }
     }
 

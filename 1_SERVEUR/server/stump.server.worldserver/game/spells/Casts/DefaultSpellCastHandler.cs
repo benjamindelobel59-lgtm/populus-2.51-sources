@@ -18,11 +18,13 @@ namespace Stump.Server.WorldServer.Game.Spells.Casts
         {
         }
 
+        // MYSTIC 18/10 : jamais null : un échec critique (forcé par la confusion du Comte Harebourg sur un mur) annonce le sort sans
+        // Initialize() ; SeeCast plantait (ArgumentNullException) et le joueur était déconnecté
         public SpellEffectHandler[] Handlers
         {
             get;
             protected set;
-        }
+        } = new SpellEffectHandler[0];
 
         public override bool SilentCast => m_initialized && Handlers.Any(entry => entry.RequireSilentCast());
 
@@ -96,6 +98,8 @@ namespace Stump.Server.WorldServer.Game.Spells.Casts
 
                     if (!CheckWhenExecute && handler.Targets.All(x => !x.CheckWhenExecute))
                         handler.SetAffectedActors(handler.GetAffectedActors());
+                    else
+                        handler.MemoriserCandidatsInitiaux();
 
                     handler.Efficiency = Informations.Efficiency;
 
@@ -135,7 +139,11 @@ namespace Stump.Server.WorldServer.Game.Spells.Casts
             if (!m_initialized)
                 Initialize();
 
-            foreach (var handler in Handlers.OrderBy(x => x.Priority))
+            // MYSTIC 19/10 : Bump (3787) et Bump Incotwôlable (3840) des Wobots Tamponneurs : effets dans l'ORDRE du sort (malus de
+            // -500 résistance poussée / +200 dommages / +1000 résistance AVANT la poussée). Avant, la priorité faisait pousser d'abord :
+            // le Wa Wobot ne prenait le malus qu'après les rebonds et n'était jamais one-shot.
+            var ordre = Spell != null && (Spell.Id == 3787 || Spell.Id == 3840) ? Handlers : Handlers.OrderBy(x => x.Priority).ToArray();
+            foreach (var handler in ordre)
             {
                 handler.Apply();
             }

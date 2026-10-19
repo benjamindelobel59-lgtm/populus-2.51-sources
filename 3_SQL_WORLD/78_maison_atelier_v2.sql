@@ -1,0 +1,44 @@
+-- MYSTIC 19/10/2026 : SQL 78 — maison-atelier d'Astrub v2 : intérieur 191890437 = salle de forgemagie 163055618 (4 ateliers
+-- magiques + concasseur) + 13 ateliers de craft le long des murs ; sortie par le bas (téléporteurs vers la porte verte).
+-- Généré par _OUTILS/client/client-build/atelier_astrub/construire2.py. Base world, World ARRÊTÉ. Rejouable. Client : maps0.d2p.
+SET NAMES utf8mb4;
+USE `world`;
+START TRANSACTION;
+DELETE FROM interactives_spawns_skills WHERE InteractiveSpawnId IN (SELECT Id FROM interactives_spawns WHERE MapId = 191890437);
+DELETE FROM interactives_spawns WHERE MapId = 191890437 OR Id BETWEEN 517400 AND 517499;
+DELETE FROM world_maps_triggers WHERE MapId = 191890437;
+UPDATE world_maps SET CompressedCells = 0x1f8b08000000000002ff45d86590d65514c0e13d7f404069144154c0a0c316291b099b142c4ab1082554a443050495565ae954401a830e050409952e83165444c099d7997df6d33367ee7bef999d9dd9df6e5a5a5a5aa4fdff15986006cc8899f022cc8c59302b5e8c976036cc8e393027e6c2dc9807f3e2a57819e6c3cb313f16c02bb0205e8957e1d558080b6311bc06afc5ebf07a2c8ac5b03896c092580a4b63192c8be5f006bc116fc29bf116bc156fc3dbb13cde8115b02256c2ca5805efc4bbf06ebc07efc5fbf07eac8a0f6035ac8e35b0263e880fe1c3f8083e8a8fe1e3580b6b631dac8bf5b03e3e810db0213e894fe1d3f80c3e8b8db03136c1a6d80c9fc3e7b139be802fe24bf832be822db025b6c2d6f82abe866db02db6c3f6f83abe816f62077c0b3b6227ec8c5db02b76c3eed8037b622f7c1bdfc177b137f6c1bef81ef6c3fef83e7e801fe2001c888370300ec1a1380c3fc28f71388ec091380a47e3181c8b9fe0a7380ec7e3049c889370324ec1a9380da7e30c9c899fe1e7380b67e31cfc02e7e23c9c8f0b70212ec2c5b804bfc4aff06bfc0697e2325c8e2b7025aec2d5b806d7e23afc16bfc3f5b80137e2f7b80937e30fb805b7e236dc8e3fe24ff833eec09db80b77e31edc8bfb703f1ec08378282dfdeb17d35ff137fc1d0fe3113c8ac7f0389ec093f8079eb2ce69d33ff12ffc1bcfe03f7816ffc573781e2fa433f46fe8df48d2178b0c9811f56fe8dfd0bfa17f43ff86fe0dfd1bfa37f46fe8dfc899ea9c14f56fe436cd6333fd1bfa37f46fe8dfd0bfa17f43ff86fe0dfd1bfa37aeb283fe8d42a68551ff86fe0dfd1bfa37f46fe8dfd0bfa17f43ff86fe8d521e2eedbb53c6b4ac6939d4bfa17f43ff86fe0dfd1bfa37f46fe8df289ffa3b28c53bec50012bdaa1926965d32aa87f43ff86fe0dfd1bfa37f46fdc9fcada14abdaec010f57f35a75d31aced67440ff86fe0dfd1bfa37f46fe8dfd0bf512b15f229d6f65a1d3bd4f5703dacef80fe8d060e347499fe0dfd1bfa37f46f3ceb86469e688c4db0a9279a993e87cf6373f7eadfd0bfa17f43ff86fe8d166e6889ad3cd11af56fe8df68e3405b6ce7b2f6a87f43ff86fe8d0eceeadfe8e8de4ed819bbf89e7535ed86ddb187277a622fd4bfa17f43ff466faff5716f5f7c0ffbf941ec6ffa3e7e801fe200eb0cc44138d80e434c87e230977d64fab1e9701c812371148ec6312e1b8bfa37f46f8cb3e4786727b86ca2e924d3c93805a7e2349c8e335c3613f56fe8df9865b3d9cece7199fe8db9a6f3703e2e48fd5320c585a68b70b12796a0fe0dfd1b5fdb4cffc6521f5be6dee5b80257e22a5c8d6b702daef384fe0dfd1beb6db6c1d98d6ef81e37e166fc01b7e056dc86db3da17f43ff86fe8d1d36dbe963bb70b77bf798ee35dd87fbf1001ec443a87f43ffc66fd6d1bf71d8c347f0281e73ef713c8127f10f1f3b657a1aff7440ff86fe8d3396fcc7d9b3a6fa37ce3970de1317d299a46160821950ff269950ff2699d37748b26056d4bf89fe4db279223be6c09c5ecb659adb54ff267951ff26fa37c9671dfd9be4372d8057b8ac205e6907fd9be8df44ff26857dac08eadf44ff26fa37d1bf4951eb147343712c8125d1ff7f93d2e9bfc992320ee8df44fffe07b2121b7e10180000, BlueCellsCSV = (SELECT b FROM (SELECT BlueCellsCSV b FROM world_maps WHERE Id = 163055618) x), RedCellsCSV = (SELECT r FROM (SELECT RedCellsCSV r FROM world_maps WHERE Id = 163055618) y) WHERE Id = 191890437;
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517400, 119, 191890437, 245, 44929, 0);
+INSERT INTO interactives_spawns_skills (InteractiveSpawnId, SkillId) SELECT 517400, SkillId FROM interactives_spawns_skills WHERE InteractiveSpawnId = 502519;
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517401, 117, 191890437, 286, 27631, 1);
+INSERT INTO interactives_spawns_skills (InteractiveSpawnId, SkillId) SELECT 517401, SkillId FROM interactives_spawns_skills WHERE InteractiveSpawnId = 502520;
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517402, 50, 191890437, 326, 71121, 0);
+INSERT INTO interactives_spawns_skills (InteractiveSpawnId, SkillId) SELECT 517402, SkillId FROM interactives_spawns_skills WHERE InteractiveSpawnId = 502536;
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517403, 116, 191890437, 344, 27646, 1);
+INSERT INTO interactives_spawns_skills (InteractiveSpawnId, SkillId) SELECT 517403, SkillId FROM interactives_spawns_skills WHERE InteractiveSpawnId = 502521;
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517404, 118, 191890437, 394, 27630, 1);
+INSERT INTO interactives_spawns_skills (InteractiveSpawnId, SkillId) SELECT 517404, SkillId FROM interactives_spawns_skills WHERE InteractiveSpawnId = 502522;
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517405, 92, 191890437, 438, 27645, 1);
+INSERT INTO interactives_spawns_skills (InteractiveSpawnId, SkillId) SELECT 517405, SkillId FROM interactives_spawns_skills WHERE InteractiveSpawnId = 502523;
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517406, 2, 191890437, 332, 27653, 1);
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517407, 22, 191890437, 339, 27582, 1);
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517408, 27, 191890437, 376, 27587, 1);
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517409, 41, 191890437, 433, 27589, 1);
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517410, 90, 191890437, 450, 27739, 1);
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517411, 94, 191890437, 491, 27635, 1);
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517412, 97, 191890437, 508, 27640, 1);
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517413, 11, 191890437, 542, 27627, 1);
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517414, 12, 191890437, 289, 27620, 1);
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517415, 13, 191890437, 488, 27590, 1);
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517416, 57, 191890437, 523, 27632, 1);
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517417, 58, 191890437, 298, 27592, 1);
+INSERT INTO interactives_spawns (Id, TemplateId, MapId, CellId, ElementId, Animated) VALUES (517418, 122, 191890437, 393, 27626, 1);
+INSERT INTO world_maps_triggers (Type, CellId, MapId, TriggerType, Parameter0, Parameter1) VALUES ('Teleport', 531, 191890437, 0, 215, 191105028);
+INSERT INTO world_maps_triggers (Type, CellId, MapId, TriggerType, Parameter0, Parameter1) VALUES ('Teleport', 544, 191890437, 0, 215, 191105028);
+INSERT INTO world_maps_triggers (Type, CellId, MapId, TriggerType, Parameter0, Parameter1) VALUES ('Teleport', 545, 191890437, 0, 215, 191105028);
+INSERT INTO world_maps_triggers (Type, CellId, MapId, TriggerType, Parameter0, Parameter1) VALUES ('Teleport', 557, 191890437, 0, 215, 191105028);
+INSERT INTO world_maps_triggers (Type, CellId, MapId, TriggerType, Parameter0, Parameter1) VALUES ('Teleport', 558, 191890437, 0, 215, 191105028);
+INSERT INTO world_maps_triggers (Type, CellId, MapId, TriggerType, Parameter0, Parameter1) VALUES ('Teleport', 559, 191890437, 0, 215, 191105028);
+UPDATE interactives_skills SET Parameter0 = '191890437', Parameter1 = '529' WHERE Id = 101238;
+COMMIT;
+SELECT Id, TemplateId, CellId FROM interactives_spawns WHERE MapId = 191890437 ORDER BY Id;

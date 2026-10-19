@@ -89,6 +89,34 @@ namespace Stump.Server.WorldServer.Game.Fights
             return fight;
         }
 
+        /// <summary>MYSTIC 17/10 : attaque de prisme (AvA).</summary>
+        public FightPvPr CreatePvPrFight(Map map, Alliances.PrismeAlliance prisme)
+        {
+            var challengersTeam = new FightPrismAttackersTeam(TeamEnum.TEAM_CHALLENGER, map.GetRedFightPlacement());
+            var defendersTeam = new FightPrismDefendersTeam(TeamEnum.TEAM_DEFENDER, map.GetBlueFightPlacement());
+
+            var fight = new FightPvPr(m_idProvider.Pop(), map, prisme, defendersTeam, challengersTeam);
+
+            AddEntity(fight.Id, fight);
+            map.RefreshFightPlacements();
+
+            return fight;
+        }
+
+        /// <summary>MYSTIC 17/10 : agression AvA pendant un KOH.</summary>
+        public FightKoh CreateKohFight(Map map)
+        {
+            var challengersTeam = new FightPlayerTeam(TeamEnum.TEAM_CHALLENGER, map.GetRedFightPlacement());
+            var defendersTeam = new FightPlayerTeam(TeamEnum.TEAM_DEFENDER, map.GetBlueFightPlacement());
+
+            var fight = new FightKoh(m_idProvider.Pop(), map, defendersTeam, challengersTeam);
+
+            AddEntity(fight.Id, fight);
+            map.RefreshFightPlacements();
+
+            return fight;
+        }
+
         public FightPvT CreatePvTFight(Map map)
         {
             var challengersTeam = new FightTaxCollectorAttackersTeam(TeamEnum.TEAM_CHALLENGER, map.GetRedFightPlacement());

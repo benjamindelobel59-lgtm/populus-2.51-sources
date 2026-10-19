@@ -84,7 +84,13 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
         static void OnEnterMap(RolePlayActor actor, Map map)
         {
             var leader = actor as Character;
-            if (leader == null || leader.IsFighting())
+            if (leader == null)
+                return;
+
+            // MYSTIC 17/10 : on ne suit que les changements de carte, soleils, portes et zaaps (pas les PNJ, zaapis, prismes…)
+            var suivi = leader.SuiviOneWindow;
+            leader.SuiviOneWindow = false;
+            if (!suivi || leader.IsFighting())
                 return;
 
             BringFollowers(leader, map);

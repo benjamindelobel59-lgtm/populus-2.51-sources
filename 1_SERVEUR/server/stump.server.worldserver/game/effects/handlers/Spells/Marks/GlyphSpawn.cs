@@ -102,6 +102,8 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Marks
                 case (int)SpellIdEnum.LOAD_HEADICE:
                 case (int)SpellIdEnum.CAWWOT_367:
                     return Color.White;
+                case 3644: // MYSTIC 18/10 : Bon vieux temps (Comte Harebourg) : gris sombre (choix utilisateur ; aucune couleur dans les données)
+                    return Color.FromArgb(60, 60, 60);
                 default:
                     // MYSTIC 17/10 : couleur donnée par le client (valeur de l'effet, ex. 16777215 = blanc pour les glyphes
                     // paire / impaire du Disciple du Kimbo) ; rouge seulement si le client n'en donne pas

@@ -7,6 +7,7 @@ using Stump.Core.Reflection;
 using Stump.Server.BaseServer.Initialization;
 using Stump.Server.WorldServer.Database.Monsters;
 using Stump.Server.WorldServer.Game.Achievements;
+using Stump.Server.WorldServer.Game.Actors.RolePlay.Characters;
 using Stump.Server.WorldServer.Game.Actors.Fight;
 using Stump.Server.WorldServer.Game.Actors.RolePlay.Monsters;
 using Stump.Server.WorldServer.Game.Fights;
@@ -145,6 +146,114 @@ namespace Stump.Server.WorldServer.Game.Recherches
                         r.Row.ProchainSpawn == null || r.Row.ProchainSpawn <= DateTime.Now ? "bientot" : "a " + r.Row.ProchainSpawn.Value.ToString("HH:mm"));
             }
         }
+
+        #region MYSTIC 19/10 : Chasseur de primes (PNJ du zaap d'Astrub)
+
+        public const int MessageResume = 60003, MessageListe = 60004;
+        public const int LignesParPage = 10;
+
+        // Mode : 0 = résumé, 1 = en liberté, 2 = vaincus. Le client ne redessine pas un dialogue quand on lui renvoie le MÊME
+        // message : chaque réponse alterne donc entre les messages 60003 et 60004 (même texte « #1 », mêmes réponses).
+        class Consultation { public int Mode; public int Page; public bool EnCours; }
+        readonly Dictionary<int, Consultation> m_consultations = new Dictionary<int, Consultation>();
+
+        Consultation Etat(Character character)
+        {
+            lock (m_consultations)
+            {
+                if (!m_consultations.TryGetValue(character.Id, out var c))
+                    m_consultations[character.Id] = c = new Consultation();
+                return c;
+            }
+        }
+
+        List<string> Lignes(bool libres)
+        {
+            List<Recherche> liste;
+            lock (m_lock)
+                liste = m_recherches.Values.OrderBy(x => x.Row.Nom).ToList();
+
+            var lignes = new List<string>();
+            foreach (var r in liste)
+            {
+                var vivant = IsAlive(r);
+                if (vivant != libres)
+                    continue;
+
+                if (vivant)
+                {
+                    var map = r.Group.Fight != null ? r.Group.Fight.Map : r.Group.Map;
+                    var zone = map?.SubArea?.Record?.Name ?? "?";
+                    lignes.Add($"• Le recherché {r.Row.Nom} est présent dans sa zone ({zone}), attrape-le !" + (r.Group.Fight != null ? " (en combat)" : ""));
+                }
+                else
+                {
+                    var retour = r.Row.ProchainSpawn == null || r.Row.ProchainSpawn <= DateTime.Now ? "retour imminent" : "retour vers " + r.Row.ProchainSpawn.Value.ToString("HH:mm");
+                    lignes.Add($"• Le recherché {r.Row.Nom} a déjà été vaincu ({retour}).");
+                }
+            }
+            return lignes;
+        }
+
+        /// <summary>
+        /// Paramètres (#1) des messages du Chasseur de primes, null pour tout autre message. Appelé AVANT le calcul des réponses
+        /// (NpcDialog.ChangeMessage) : une nouvelle discussion (pas déclenchée par une réponse) repart du résumé.
+        /// </summary>
+        public string[] ParametresDialogue(int messageId, Character character)
+        {
+            if (messageId != MessageResume && messageId != MessageListe)
+                return null;
+
+            var c = Etat(character);
+            if (!c.EnCours) { c.Mode = 0; c.Page = 0; }
+            c.EnCours = false;
+
+            if (c.Mode == 0)
+            {
+                var libres = Lignes(true).Count;
+                var vaincus = Lignes(false).Count;
+                return new[] { $"Salut {character.Name} ! Je tiens le registre des avis de recherche.\n" +
+                               $"{libres} recherché(s) rôdent en ce moment dans le monde, {vaincus} ont déjà été vaincus et reviendront plus tard.\n" +
+                               "Lequel veux-tu traquer ?" };
+            }
+
+            var lignes = Lignes(c.Mode == 1);
+            var pages = Math.Max(1, (lignes.Count + LignesParPage - 1) / LignesParPage);
+            if (c.Page >= pages) c.Page = 0;
+            var titre = (c.Mode == 1 ? "Recherchés en liberté" : "Recherchés déjà vaincus") + (pages > 1 ? $" (page {c.Page + 1}/{pages})" : "") + " :\n";
+            var corps = lignes.Count == 0
+                ? (c.Mode == 1 ? "Aucun recherché n'est en liberté pour le moment." : "Aucun recherché n'a été vaincu récemment.")
+                : string.Join("\n", lignes.Skip(c.Page * LignesParPage).Take(LignesParPage));
+            return new[] { titre + corps };
+        }
+
+        /// <summary>Réponse choisie (« libres », « vaincus », « suivant », « retour ») : renvoie le message à afficher (alterné).</summary>
+        public int Consulter(Character character, string action, int messageActuel)
+        {
+            var c = Etat(character);
+            if (action == "libres") { c.Mode = 1; c.Page = 0; }
+            else if (action == "vaincus") { c.Mode = 2; c.Page = 0; }
+            else if (action == "suivant") c.Page++;
+            else if (action == "retour") { c.Mode = 0; c.Page = 0; }
+            c.EnCours = true;
+            return messageActuel == MessageResume ? MessageListe : MessageResume;
+        }
+
+        /// <summary>Réponse visible dans l'état actuel ?</summary>
+        public bool ReponseVisible(Character character, string action)
+        {
+            var c = Etat(character);
+            switch (action)
+            {
+                case "libres": return c.Mode != 1;
+                case "vaincus": return c.Mode != 2;
+                case "retour": return c.Mode != 0;
+                case "suivant": return c.Mode != 0 && (c.Page + 1) * LignesParPage < Lignes(c.Mode == 1).Count;
+                default: return false;
+            }
+        }
+
+        #endregion
 
         private static bool IsAlive(Recherche r)
         {

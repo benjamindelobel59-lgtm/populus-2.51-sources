@@ -97,7 +97,7 @@ namespace Stump.Server.AuthServer
             {
                 base.Initialize();
                 ConsoleInterface = new AuthConsole();
-                ConsoleBase.SetTitle($"#Populus Authentification Server - {Version}");
+                ConsoleBase.SetTitle("Mystic · Serveur de connexion");
 
                 logger.Info("Initializing Database...");
                 DBAccessor = new DatabaseAccessor(DatabaseConfiguration);
@@ -165,6 +165,8 @@ namespace Stump.Server.AuthServer
             IOTaskPool.Start();
 
             StartTime = DateTime.Now;
+
+            MysticConsole.DrawReady(Port);
         }
 
         public byte[] GetConnectionSwfPatch()

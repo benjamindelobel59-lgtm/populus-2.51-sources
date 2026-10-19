@@ -44,10 +44,14 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Debuffs
         public RemoveSpellEffects(EffectDice effect, FightActor caster, SpellCastHandler castHandler, Cell targetedCell, bool critical)
             : base(effect, caster, castHandler, targetedCell, critical)
         {
-            if (Spell.Id != Dice.Value)
-                base.Priority = 9999;
-            else
-                base.Priority = 0;
+            // MYSTIC 18/10 (audit Ventre de la Baleine) : un sort qui retire les effets du sort X puis relance X (Restaurations des Krobes,
+            // Déphasage du Protozorreur) doit retirer AVANT de relancer ; avant, la priorité 9999 effaçait aussitôt ce qui venait d'être
+            // relancé (invulnérabilité, interception, mort différée…).
+            var relance = castHandler?.SpellLevel?.Effects != null && System.Linq.Enumerable.Any(castHandler.SpellLevel.Effects, e => e.DiceNum == Dice.Value &&
+                (e.EffectId == EffectsEnum.Effect_TriggerBuff || e.EffectId == EffectsEnum.Effect_TriggerBuff_793 ||
+                 e.EffectId == EffectsEnum.Effect_CastSpell_1160 || e.EffectId == EffectsEnum.Effect_CastSpell_1017 ||
+                 e.EffectId == EffectsEnum.Effect_CastSpell_2160));
+            base.Priority = (Spell.Id == Dice.Value || relance) ? 0 : 9999;
         }
 
         protected override bool InternalApply()

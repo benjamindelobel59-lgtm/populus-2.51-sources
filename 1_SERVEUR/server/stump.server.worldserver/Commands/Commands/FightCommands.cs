@@ -196,6 +196,59 @@ namespace Stump.Server.WorldServer.Commands.Commands
         }
     }
 
+    /// <summary>
+    /// MYSTIC 18/10 (demande utilisateur) : .fight win bleu|rouge : fait gagner une équipe (tous les combattants de l'autre équipe
+    /// meurent), pour tester les fins de combat et les récompenses. Rouge = équipe qui attaque (joueurs en PvM), bleu = défenseurs.
+    /// </summary>
+    public class WinFightCommand : SubCommand
+    {
+        public WinFightCommand()
+        {
+            Aliases = new[] { "win", "gagne" };
+            Description = "Fait gagner l'équipe bleue ou rouge : .fight win bleu|rouge";
+            ParentCommandType = typeof(FightCommands);
+            RequiredRole = RoleEnum.GameMaster;
+            AddParameter<string>("equipe", "e", "bleu ou rouge");
+        }
+
+        public override void Execute(TriggerBase trigger)
+        {
+            if (!(trigger is GameTrigger jeu) || !jeu.Character.IsInFight())
+            {
+                trigger.ReplyError("Il faut être en combat.");
+                return;
+            }
+
+            var equipe = (trigger.Get<string>("equipe") ?? "").Trim().ToLowerInvariant();
+            var fight = jeu.Character.Fight;
+            Game.Fights.Teams.FightTeam gagnante;
+            if (equipe.StartsWith("b"))
+                gagnante = fight.DefendersTeam;
+            else if (equipe.StartsWith("r"))
+                gagnante = fight.ChallengersTeam;
+            else
+            {
+                trigger.ReplyError("Équipe inconnue : .fight win bleu ou .fight win rouge");
+                return;
+            }
+
+            if (fight.State == FightState.Placement)
+            {
+                trigger.ReplyError("Lance d'abord le combat (fin du placement).");
+                return;
+            }
+
+            var perdante = gagnante == fight.DefendersTeam ? fight.ChallengersTeam : fight.DefendersTeam;
+            using (fight.StartSequence(SequenceTypeEnum.SEQUENCE_CHARACTER_DEATH))
+            {
+                foreach (var f in System.Linq.Enumerable.ToArray(perdante.GetAllFighters(x => x.IsAlive())))
+                    f.Die();
+            }
+            fight.CheckFightEnd();
+            trigger.ReplyBold("Victoire de l'équipe {0}", equipe.StartsWith("b") ? "bleue" : "rouge");
+        }
+    }
+
     public class PassTurnFightCommand : SubCommand
     {
         public PassTurnFightCommand()

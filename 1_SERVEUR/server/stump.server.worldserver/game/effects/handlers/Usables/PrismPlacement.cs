@@ -24,7 +24,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Usables
                 return false;
             }
 
-            Target.SendServerMessage("Prisme d'alliance posé : la zone appartient maintenant à votre alliance.");
+            // MYSTIC 17/10 : pas de message ici, l'annonce « La zone ... a été prismée » (PrismManager.Poser) suffit
             UsedItems = 1;
             return true;
         }

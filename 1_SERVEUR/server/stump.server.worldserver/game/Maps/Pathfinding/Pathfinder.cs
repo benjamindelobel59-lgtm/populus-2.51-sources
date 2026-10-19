@@ -66,9 +66,14 @@ namespace Stump.Server.WorldServer.Game.Maps.Pathfinding
             };
 
 
-        private static double GetHeuristic(MapPoint pointA, MapPoint pointB)
+        // MYSTIC 18/10 : en 4 directions, distance de Manhattan exacte. L'ancienne formule (max + dx + dy) surestimait : l'A* fonçait
+        // tout droit jusqu'au mur et rendait un chemin plus long, tronqué aux PM (monstre bloqué devant un muret avec des PM restants).
+        private static double GetHeuristic(MapPoint pointA, MapPoint pointB, bool diagonal)
         {
             var dxy = new Point(Math.Abs(pointB.X - pointA.X), Math.Abs(pointB.Y - pointA.Y));
+            if (!diagonal)
+                return EstimateHeuristic * (dxy.X + dxy.Y);
+
             var orthogonalValue = Math.Abs(dxy.X - dxy.Y);
             var diagonalValue = Math.Abs(((dxy.X + dxy.Y) -  orthogonalValue) / 2);
 
@@ -159,7 +164,7 @@ namespace Stump.Server.WorldServer.Game.Maps.Pathfinding
                     matrix[newLocation].Cell = newLocation;
                     matrix[newLocation].Parent = location;
                     matrix[newLocation].G = newG;
-                    matrix[newLocation].H = GetHeuristic(newLocationPoint, endPoint);
+                    matrix[newLocation].H = GetHeuristic(newLocationPoint, endPoint, diagonal);
                     matrix[newLocation].F = newG + matrix[newLocation].H;
 
                     openList.Push(newLocation);

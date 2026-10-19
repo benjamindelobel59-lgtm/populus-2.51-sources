@@ -198,6 +198,22 @@
             Last activity as a socket client (last received packets)
             </summary>
         </member>
+        <member name="M:Stump.Server.BaseServer.Network.BaseClient.SendPacked(System.Byte[],System.Int32,Stump.DofusProtocol.Messages.Message)">
+            <summary>
+            Envoie un message déjà encodé (diffusion : le message est encodé une seule fois pour tous les joueurs d'une carte)
+            </summary>
+        </member>
+        <member name="F:Stump.Server.BaseServer.Network.BaseClient.MaxPendingSendBytes">
+            <summary>
+            Retard d'envoi maximal toléré pour un client (octets en attente). Au-delà, le client ne lit plus assez vite
+            (connexion trop lente ou figée) : il est déconnecté au lieu de faire grossir la mémoire du serveur.
+            </summary>
+        </member>
+        <member name="M:Stump.Server.BaseServer.Network.BaseClient.FlushSendSync">
+            <summary>
+            Envoie tout de suite ce qui reste en file (appelé juste avant la fermeture du socket : messages d'erreur/de kick)
+            </summary>
+        </member>
         <member name="M:Stump.Server.BaseServer.Network.BaseClient.EnsureBuffer(System.Int32)">
             <summary>
                 Makes sure the underlying buffer is big enough
@@ -326,6 +342,22 @@
             </summary>
             <param name="versionToCompare"></param>
             <returns></returns>
+        </member>
+        <member name="T:Stump.Server.BaseServer.MysticConsole">
+            <summary>
+            Habillage « Mystic » de la console des serveurs : bannière animée (ailes d'ange et de démon),
+            journal en français et coloré, encadré « prêt » en fin de démarrage.
+            Les fichiers de logs (logs/*.txt) ne changent pas : ils restent en anglais pour les outils de diagnostic.
+            </summary>
+        </member>
+        <member name="P:Stump.Server.BaseServer.MysticConsole.Role">
+            <summary>« Serveur de jeu » ou « Serveur de connexion », selon l'exécutable lancé.</summary>
+        </member>
+        <member name="M:Stump.Server.BaseServer.MysticConsole.InstallConsoleLog">
+            <summary>
+            Remplace l'affichage console de NLog : messages traduits, colorés, sans le bruit de débogage
+            (le niveau Debug reste écrit dans les fichiers de logs).
+            </summary>
         </member>
         <member name="F:Stump.Server.BaseServer.ServerBase.AutomaticShutdownTimer">
             <summary>

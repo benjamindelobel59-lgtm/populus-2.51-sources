@@ -31,7 +31,7 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
         public const double COEF_DEPART = 40;
         public const double COEF_MIN = 0.01;
         public const double COEF_MAX = 40;
-        public const double FACTEUR_PAR_OBJET = 0.99;
+        public const double FACTEUR_PAR_OBJET = 0.7; // MYSTIC 18/10 (décision utilisateur) : ×0,7 par objet brisé (avant 0,99)
         public const double REMONTEE_PAR_HEURE = 0.01; // part de l'écart avec COEF_MAX regagnée chaque heure
         public const double COEF_SANS_RECETTE = 0.5;
         public const double FACTEUR_NIVEAU = 0.015;
@@ -80,7 +80,7 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
             return Math.Min(COEF_MAX, Math.Max(COEF_MIN, valeur));
         }
 
-        /// <summary>Un objet vient d'être brisé : son coefficient perd 1 % de sa valeur actuelle.</summary>
+        /// <summary>Un objet vient d'être brisé : son coefficient est multiplié par FACTEUR_PAR_OBJET (0,7).</summary>
         public void Briser(ItemTemplate item)
         {
             if (!RuneManager.Instance.EstCraftable(item))
@@ -92,7 +92,18 @@ namespace Stump.Server.WorldServer.Game.Exchanges.Craft.Runes
 
             var id = item.Id;
             WorldServer.Instance.IOTaskPool.AddMessage(() =>
-                Database.Execute("REPLACE INTO nekfeu_brisage_coef (ItemId, Coef, MajAt) VALUES (@0, @1, @2)", id, valeur, maintenant));
+            {
+                // MYSTIC 18/10 : la table restait vide : on trace l'écriture (et son éventuelle erreur)
+                try
+                {
+                    Database.Execute("REPLACE INTO nekfeu_brisage_coef (ItemId, Coef, MajAt) VALUES (@0, @1, @2)", id, valeur, maintenant);
+                    logger.Info("[Brisage] objet {0} : coefficient {1:0.####}", id, valeur);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("[Brisage] écriture du coefficient de l'objet {0} impossible : {1}", id, ex.Message);
+                }
+            });
         }
 
         static double PoidsPoint(EffectInteger effet) => EffectManager.Instance.GetEffectPower(effet.Template);

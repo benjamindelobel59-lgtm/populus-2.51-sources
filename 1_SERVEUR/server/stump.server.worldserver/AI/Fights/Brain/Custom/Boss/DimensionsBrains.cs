@@ -13,16 +13,12 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     [BrainIdentifier(4263)]
     public class ChaloeilBrain : Brain
     {
-        static readonly Random m_hasard = new Random();
-
         public ChaloeilBrain(AIFighter fighter)
             : base(fighter)
         {
             SortPassif.Poser(fighter, 6231, 1);
-            int variante;
-            lock (m_hasard)
-                variante = m_hasard.Next(1, 6);
-            SortPassif.Poser(fighter, 6301, variante);
+            // MYSTIC 18/10 : La Routourne (6301) n'est plus posée ici : ses 5 niveaux sont les variantes des 5 monstres du Grand Jeu
+            // (voir RoutourneBrain dans PassifsAuditDonjonsBrains.cs) ; avant, le Chalœil (déjà invulnérable) en recevait une au hasard
         }
     }
 
@@ -39,7 +35,45 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     [BrainIdentifier(3565)] public class SilhouetteBrain : BrainPassif { public SilhouetteBrain(AIFighter f) : base(f, 4117) { } }
 
     /// <summary>Roi Nidas : Boursicotage (50 % de ses dommages subis répartis sur sa Boubourse) + Changement de camp (à sa mort).</summary>
-    [BrainIdentifier(3648)] public class RoiNidasBrain : BrainPassif { public RoiNidasBrain(AIFighter f) : base(f, 4920, 4485) { } }
+    /// MYSTIC 18/10 (audit) : la Boubourse n'apparaissait jamais (Toucher de Nidas 4486, relance 63, jamais choisi par l'IA) : elle est
+    /// invoquée au contact du Nidas au début du combat (case fixe 316 des données 2.51, sinon à côté de lui).
+    [BrainIdentifier(3648)]
+    public class RoiNidasBrain : Brain
+    {
+        const int ToucherDeNidas = 4486, BoubourseNidas = 3650, CaseBoubourse = 316;
+
+        public RoiNidasBrain(AIFighter fighter)
+            : base(fighter)
+        {
+            SortPassif.Poser(fighter, 4920);
+            SortPassif.Poser(fighter, 4485);
+            fighter.Spells.Remove(ToucherDeNidas);
+            fighter.Fight.FightStarted += PoserBoubourse;
+        }
+
+        void PoserBoubourse(Game.Fights.IFight fight)
+        {
+            fight.FightStarted -= PoserBoubourse;
+            if (!Fighter.IsAlive())
+                return;
+            var grade = Game.Actors.RolePlay.Monsters.MonsterManager.Instance.GetMonsterGrade(BoubourseNidas, 1);
+            if (grade == null)
+                return;
+            var cell = fight.Map.Cells[CaseBoubourse];
+            if (!fight.IsCellFree(cell))
+                cell = System.Linq.Enumerable.FirstOrDefault(System.Linq.Enumerable.Select(
+                    Fighter.Position.Point.GetAdjacentCells(c => fight.IsCellFree(fight.Map.Cells[c])), p => fight.Map.Cells[p.CellId]));
+            if (cell == null)
+                return;
+            using (fight.StartSequence(Stump.DofusProtocol.Enums.SequenceTypeEnum.SEQUENCE_SPELL))
+            {
+                var bourse = new SummonedMonster(fight.GetNextContextualId(), Fighter.Team, Fighter, grade, cell);
+                Handlers.Actions.ActionsHandler.SendGameActionFightSummonMessage(fight.Clients, bourse);
+                Fighter.AddSummon(bourse);
+                Fighter.Team.AddFighter(bourse);
+            }
+        }
+    }
 
     /// <summary>Boubourse volée par les joueurs : Boursicotage (Cadeau Empoisonné, Coffrage, retour chez Nidas à sa mort).</summary>
     [BrainIdentifier(3649)] public class BoubourseJoueursBrain : BrainPassif { public BoubourseJoueursBrain(AIFighter f) : base(f, 4482) { } }

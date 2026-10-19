@@ -588,6 +588,11 @@ namespace Stump.Server.WorldServer.Game.Achievements
                         if (chall == null)
                             continue;
 
+                        // MYSTIC 19/10 : succès Duo / Trio affiché seulement si le combat compte au plus 2 (Trio : 3) joueurs ; avant, il
+                        // apparaissait (en échec) dans tous les combats de boss
+                        if (chall is DuoChallenge && fighter.Fight.GetAllFighters<CharacterFighter>().Count() > DuoChallenge.MaxJoueurs(chall.Id))
+                            continue;
+
                         m_challs.Add(chall);
 
                         chall.Initialize();

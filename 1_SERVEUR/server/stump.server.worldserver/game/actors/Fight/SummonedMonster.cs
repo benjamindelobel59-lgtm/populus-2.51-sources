@@ -27,6 +27,8 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             {
                 AdjustStats();
             }
+
+            CreerCerveau(template.MonsterId);
         }
 
         void AdjustStats()

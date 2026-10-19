@@ -10,7 +10,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Targets
     {
         public override bool CheckWhenExecute => true;
 
+        // MYSTIC 19/10 : Bump du Wobot Tamponneur (3787) : « W » = le combattant n'a pas pu être téléporté PENDANT CE Bump. Avant, le
+        // marqueur restait d'un ancien échec et chaque Bump suivant détruisait tous les Tamponneurs (plus de rebonds sur le Wa Wobot).
         public override bool IsTargetValid(FightActor actor, SpellEffectHandler handler)
-            => actor.TeleporteSurCaseInvalide;
+            => actor.TeleporteSurCaseInvalide &&
+               (handler?.CastHandler?.Spell?.Id != 3787 || ReferenceEquals(actor.EchecTeleportSort, handler.CastHandler));
     }
 }

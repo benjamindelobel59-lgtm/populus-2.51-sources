@@ -262,7 +262,8 @@ namespace Stump.Server.WorldServer.Game.Admin
             if (RelaunchAfterRestart)
             {
                 var exe = Process.GetCurrentProcess().MainModule.FileName;
-                Process.Start(new ProcessStartInfo("cmd.exe", $"/c timeout /t 8 /nobreak >nul & start \"\" \"{exe}\"")
+                // pause de 8 s avant la relance (« timeout » échoue tout de suite dans une fenêtre cachée : on utilise ping)
+                Process.Start(new ProcessStartInfo("cmd.exe", $"/c ping -n 9 127.0.0.1 >nul & start \"\" \"{exe}\"")
                     { WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory, UseShellExecute = false, CreateNoWindow = true });
             }
             WorldServer.Instance.IOTaskPool.CallDelayed(3000, () => WorldServer.Instance.Shutdown());

@@ -25,6 +25,12 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
             obj.FightStarted -= Fight_FightStarted;
             Fighter.CastAutoSpell(new Spell((int)SpellIdEnum.INITIADON, 1), Fighter.Cell);
             new VulnerableJusquAuTourDuDeclencheur(Fighter);
+            // MYSTIC 18/10 : les PM gagnés sur poussée (Initiadon, durée -1 sur déclencheur → infinie) ne durent qu'1 tour
+            Fighter.BuffAdded += (f, b) =>
+            {
+                if (b is Game.Fights.Buffs.StatBuff s && s.Spell.Id == (int)SpellIdEnum.INITIADON && s.Caracteristic == PlayerFields.MP && s.Duration == -1000)
+                    s.Duration = 1;
+            };
         }
     }
 }

@@ -67,6 +67,14 @@ namespace Stump.Server.WorldServer.Game.Dialogs.Interactives
             if (!m_destinations.Contains(map))
                 return;
 
+            // MYSTIC 17/10 : AvA, pas d'entrée ni de sortie d'une zone vulnérable par zaap pour les membres d'une alliance
+            var bloque = Game.Alliances.AvAManager.Instance.ZaapBloque(Character, Character.Map, map);
+            if (bloque != null)
+            {
+                Character.SendServerMessage(bloque);
+                return;
+            }
+
             var cell = map.GetCell(280);
 
             if (map.Zaapi != null)

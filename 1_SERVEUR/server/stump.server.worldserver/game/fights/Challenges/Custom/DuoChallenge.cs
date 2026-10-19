@@ -129,6 +129,9 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
             (int)ChallengeEnum.VORTEX__CHALLENGE_TRIO_,
         };
 
+        /// <summary>MYSTIC 19/10 : nombre maximal de joueurs pour ce challenge (Duo 2, Trio 3).</summary>
+        public static int MaxJoueurs(int id) => Trio.Contains(id) ? 3 : 2;
+
         public DuoChallenge(int id, IFight fight)
             : base(id, fight)
         {

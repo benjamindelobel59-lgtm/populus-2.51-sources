@@ -102,6 +102,19 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
         public event Action<FightActor, Damage> BeforeDamageInflicted;
 
+        /// <summary>MYSTIC 17/10 : retrait de PM subi (cible, auteur), quelle que soit la forme (buff, vol, retrait direct) : challenge Circulez.</summary>
+        public event Action<FightActor, FightActor> PMRetires;
+
+        public void SignalerRetraitPM(FightActor source) => PMRetires?.Invoke(this, source);
+
+        /// <summary>MYSTIC 17/10 : tentative de retrait de PM (même entièrement esquivée) : Grolloum.</summary>
+        public event Action<FightActor, FightActor> PMTentative;
+
+        public void SignalerTentativePM(FightActor source) => PMTentative?.Invoke(this, source);
+
+        /// <summary>MYSTIC 17/10 : après une résurrection, les délais de relance initiaux repartent de zéro (Gobus ressuscité).</summary>
+        public void ReinitialiserHistoriqueSorts() => SpellHistory = new SpellHistory(this);
+
         protected virtual void OnBeforeDamageInflicted(Damage damage)
         {
             BeforeDamageInflicted?.Invoke(this, damage);
@@ -155,10 +168,18 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
         public event SpellCastingHandler SpellCasting;
 
+        // MYSTIC 18/10 : numero du dernier sort lance (un declencheur qui ne doit partir qu'une fois par sort, ex. Comte Harebourg)
+        public int NumeroDernierSort
+        {
+            get;
+            private set;
+        }
+
         protected virtual void OnSpellCasting(SpellCastHandler castHandler)
         {
+            NumeroDernierSort++;
             SpellCasting?.Invoke(this, castHandler);
-            SpellHistory.RegisterCastedSpell(castHandler.SpellLevel, Fight.GetOneFighter(castHandler.TargetedCell));
+            SpellHistory.RegisterCastedSpell(castHandler.SpellLevel, Fight.GetOneFighter(castHandler.TargetedCell), castHandler.Informations?.Triggered == true);
         }
 
         public event SpellCastingHandler SpellCasted;
@@ -174,6 +195,7 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                 }
                 else if (!IsInvisibleSpellDofusCast(castHandler.Spell))
                 {
+                    Stump.Server.WorldServer.AI.Fights.Brain.MemoireInvisibles.Noter(this); // MYSTIC 18/10 : détecté en lançant un sort
                     Fight.ForEach(x => ActionsHandler.SendGameActionFightInvisibleDetectedMessage(x.Client, this, this), true);
                 }
             }
@@ -369,14 +391,10 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             internal set;
         }
 
-        public int TurnTime
-        {
-            get
-            {
-                var duration = FightConfiguration.TurnTime + ((Stats.AP.Base + Stats.AP.Equiped + Stats.MP.Base + Stats.MP.Equiped + TurnTimeReport) * 1000);
-                return duration > FightConfiguration.MaxTurnTime ? FightConfiguration.MaxTurnTime : duration;
-            }
-        }
+        /// <summary>MYSTIC 17/10 : un tour dure 45 s, plus le report du tour précédent (moitié du temps non utilisé, sans cumul).</summary>
+        public const int DureeTourBase = 45000;
+
+        public int TurnTime => DureeTourBase + TurnTimeReport * 1000;
 
         public int TurnTimeReport
         {
@@ -405,6 +423,13 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
         // MYSTIC 17/10 : masque de cible « W » (client 2.51 : wasTeleportedInInvalidCellThisTurn), Fuseau / Gousset du Comte Harebourg
         public bool TeleporteSurCaseInvalide
+        {
+            get;
+            set;
+        }
+
+        // MYSTIC 19/10 : sort pendant lequel la téléportation a échoué (Bump 3787 : « W » ne vaut que pour CE sort)
+        public object EchecTeleportSort
         {
             get;
             set;
@@ -815,12 +840,31 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             }
 
             // MYSTIC 17/10 : confusion (Comte Harebourg) : la case visee tourne autour du lanceur
+            // MYSTIC 18/10 : regles officielles : case redirigee dans un mur / non praticable, ou ligne de vue coupee (monstre, obstacle)
+            // -> echec critique. Journal [Confusion] pour verifier la rotation en jeu.
+            var echecConfusion = false;
             if (!cast.Triggered && !cast.Force)
-                cast.TargetedCell = Game.Effects.Handlers.Spells.Others.ConfusionBuff.CaseConfuse(this, cast.TargetedCell);
+            {
+                var visee = cast.TargetedCell;
+                var confusee = Game.Effects.Handlers.Spells.Others.ConfusionBuff.CaseConfuse(this, visee);
+                var confusions = GetBuffs(x => x is Game.Effects.Handlers.Spells.Others.ConfusionBuff).Cast<Game.Effects.Handlers.Spells.Others.ConfusionBuff>().ToArray();
+                if (confusions.Length > 0)
+                    NLog.LogManager.GetCurrentClassLogger().Info("[Confusion] {0} sort {1} : lanceur {2} ({3},{4}) vise {5} ({6},{7}) -> {8} ({9},{10}) ; {11} buff(s), angle {12} deg, delais {13}",
+                        this, cast.Spell.Id, Cell.Id, Position.Point.X, Position.Point.Y, visee.Id, new MapPoint(visee).X, new MapPoint(visee).Y,
+                        confusee.Id, new MapPoint(confusee).X, new MapPoint(confusee).Y, confusions.Length,
+                        confusions.Where(x => x.Delay == 0).Sum(x => x.Angle) * 180 / Math.PI, string.Join(",", confusions.Select(x => x.Delay)));
+                if (confusee != visee)
+                {
+                    cast.TargetedCell = confusee;
+                    if (!confusee.Walkable || confusee.NonWalkableDuringFight ||
+                        (!cast.Spell.SpellObstaclesDisable && cast.SpellLevel.CastTestLos && !Fight.CanBeSeen(Cell, confusee)))
+                        echecConfusion = true;
+                }
+            }
 
             using (Fight.StartSequence(SequenceTypeEnum.SEQUENCE_SPELL))
             {
-                cast.Critical = RollCriticalDice(spellLevel);
+                cast.Critical = echecConfusion ? FightSpellCastCriticalEnum.CRITICAL_FAIL : RollCriticalDice(spellLevel);
                 var fighter = Fight.GetOneFighter(cast.TargetedCell);
                 if (fighter == null)
                 {
@@ -1301,8 +1345,12 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             if (damage.MarkTrigger is Trap)
                 bonusPercent += Stats[PlayerFields.TrapBonusPercent].TotalSafe;
             
+            var avantBonus = damage.Amount;
             damage.Amount = (int) Math.Max(0, (damage.Amount * (100 + stats + bonusPercent + weaponBonus + spellBonus) / 100d
                                                + (bonus + criticalBonus + phyMgkBonus + eltBonus)) * ((100 + mult) / 100.0));
+            // MYSTIC 18/10 : journal de diagnostic des dommages finaux (retour de test : +20 % par tour du Meno sans effet visible)
+            if (mult != 0 && this is CharacterFighter)
+                NLog.LogManager.GetCurrentClassLogger().Info("[Degats] {0} : base {1}, multiplicateur final {2} %, apres bonus {3}", this, avantBonus, mult, damage.Amount);
 
             #region Spell / Weapon / Meele / Range
             if (spellDoneDamageBonus != 0)
@@ -1375,8 +1423,15 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             double meeleResistance = Stats[PlayerFields.MeleeDamageReceivedPercent].Total;
             double rangedResistance = rangedResistance = Stats[PlayerFields.RangedDamageReceivedPercent].Total;
 
-            percentResistance = percentResistance > StatsFields.ResistanceLimit ? StatsFields.ResistanceLimit : percentResistance;
-            fixResistance = fixResistance > StatsFields.ResistanceLimit ? StatsFields.ResistanceLimit : fixResistance;
+            // MYSTIC 19/10 : le plafond de 50 % (et de 50 fixes) ne vaut que pour les joueurs ; avant, il s'appliquait aussi aux monstres
+            // (un Wobot Tamponneur à 150 % n'en avait que 50). Monstres : 100 % au maximum (= aucun dommage), pas de plafond fixe.
+            if (this is CharacterFighter)
+            {
+                percentResistance = percentResistance > StatsFields.ResistanceLimit ? StatsFields.ResistanceLimit : percentResistance;
+                fixResistance = fixResistance > StatsFields.ResistanceLimit ? StatsFields.ResistanceLimit : fixResistance;
+            }
+            else if (percentResistance > 100)
+                percentResistance = 100;
 
             var result = (int) ((1 - percentResistance / 100d) * (damage - fixResistance)) -
                          (critical ? Stats[PlayerFields.CriticalDamageReduction].Total : 0);
@@ -1452,7 +1507,9 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
         public virtual int CalculateHeal(int heal)
         {
-            return (int) (heal * (100 + Stats[PlayerFields.Intelligence].TotalSafe) / 100d + Stats[PlayerFields.HealBonus].TotalSafe);
+            // MYSTIC 18/10 : les soins NEGATIFS comptent (Telepathie du Professeur Xa : -10 000 soins aux joueurs) ; avant TotalSafe les
+            // ramenait a 0 et le malus ne faisait rien. Le soin final n'est jamais negatif.
+            return Math.Max(0, (int) (heal * (100 + Stats[PlayerFields.Intelligence].TotalSafe) / 100d + Stats[PlayerFields.HealBonus].Total));
         }
 
         public virtual int CalculateArmorValue(int reduction)
@@ -1999,6 +2056,8 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
         public void SetInvisibilityState(GameActionFightInvisibilityStateEnum state)
         {
+            if (state == GameActionFightInvisibilityStateEnum.INVISIBLE && VisibleState != GameActionFightInvisibilityStateEnum.INVISIBLE)
+                Stump.Server.WorldServer.AI.Fights.Brain.MemoireInvisibles.Noter(this); // MYSTIC 18/10 : l'IA retient où il a disparu
             var lastState = VisibleState;
             VisibleState = state;
 
@@ -2007,6 +2066,8 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
         public void SetInvisibilityState(GameActionFightInvisibilityStateEnum state, FightActor source)
         {
+            if (state == GameActionFightInvisibilityStateEnum.INVISIBLE && VisibleState != GameActionFightInvisibilityStateEnum.INVISIBLE)
+                Stump.Server.WorldServer.AI.Fights.Brain.MemoireInvisibles.Noter(this);
             var lastState = VisibleState;
             VisibleState = state;
 
@@ -2167,6 +2228,11 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             if (target.HasState((int)SpellStatesEnum.LOURD_63))
                 return false;
 
+            // MYSTIC 19/10 : Wobot, Wobot Kiafin et Wobot Tamponneur (Château du Wa Wabbit) sont lourds : jamais portés
+            var modele = (target as MonsterFighter)?.Monster.Template.Id ?? (target as SummonedMonster)?.Monster.Template.Id;
+            if (modele == 181 || modele == 3462 || modele == 3459)
+                return false;
+
             if (target.GetStates().Where(x => !x.IsDisabled).Any(x => x.State.CantBeMoved))
                 return false;
 
@@ -2287,6 +2353,9 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
         public bool Telefrag(FightActor caster, FightActor target)
         {
+            // MYSTIC 18/10 : jamais d'échange avec un porteur / un porté (le lien de porter restait et le porté était recollé ailleurs)
+            if (IsCarrying() || IsCarried() || target.IsCarried())
+                return false;
            
             if (!target.CanSwitchPos())
                 return false;

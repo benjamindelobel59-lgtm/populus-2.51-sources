@@ -251,7 +251,12 @@ namespace Stump.Server.WorldServer.Game.Fights
                 return results;
             }
 
-            else if (DefendersTeam.Fighters.Any(x => x is MonsterFighter && (x as MonsterFighter).Monster.Nani))
+            // MYSTIC : mode héroïque, les vainqueurs récupèrent le coffre du groupe (butin des joueurs morts dans la zone),
+            // les perdants voient ce qu'ils perdent dans l'écran de fin de combat
+            Heroique.ButinHeroique.Instance.RecupererButin(this, results);
+            Heroique.HeroicManager.Instance.AfficherPertes(this, results);
+
+            if (DefendersTeam.Fighters.Any(x => x is MonsterFighter && (x as MonsterFighter).Monster.Nani))
             {
                 var NaniMonster = Map.NaniMonster;
                 if (NaniMonster == null) return results;
@@ -447,7 +452,8 @@ namespace Stump.Server.WorldServer.Game.Fights
             ContextHandler.SendGameFightJoinMessage(fighter.Character.Client, true, true, IsStarted, IsStarted ? 0 : (int)GetPlacementTimeLeft().TotalMilliseconds / 100, FightType);
         }
 
-        protected override bool CanCancelFight() => false;
+        // MYSTIC 18/10 (retour de test) : on peut abandonner pendant le placement (combat annulé, ni défaite ni mort)
+        protected override bool CanCancelFight() => State == FightState.Placement;
 
         public override TimeSpan GetPlacementTimeLeft()
         {
@@ -467,4 +473,4 @@ namespace Stump.Server.WorldServer.Game.Fights
             base.OnDisposed();
         }
     }
-}
+}

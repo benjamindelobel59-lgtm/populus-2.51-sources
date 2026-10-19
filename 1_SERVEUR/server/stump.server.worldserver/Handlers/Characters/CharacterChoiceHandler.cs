@@ -199,6 +199,17 @@ namespace Stump.Server.WorldServer.Handlers.Characters
             if (character.IsDeleted)
                 return;
 
+            // MYSTIC : mode héroïque, un personnage mort ne peut plus entrer en jeu (il peut être « recommencé »)
+            if (Game.Heroique.HeroicManager.Instance.IsDead(character.Id))
+            {
+                client.Send(new CharacterSelectedErrorMessage());
+                return;
+            }
+
+            // ressuscité par un admin (.resu) : sa tombe redevient un personnage vivant
+            if (character.PlayerLifeStatus == PlayerLifeStatusEnum.STATUS_TOMBSTONE && Game.Heroique.HeroicManager.Instance.GetEtat(character.Id) != null)
+                character.PlayerLifeStatus = PlayerLifeStatusEnum.STATUS_ALIVE_AND_KICKING;
+
             // Check if we also have a world account
             if (client.WorldAccount == null)
             {
@@ -290,7 +301,9 @@ namespace Stump.Server.WorldServer.Handlers.Characters
             //Start Cinematic
             if ((DateTime.Now - client.Character.Record.CreationDate).TotalSeconds <= 30)
             {
-                client.Character.StartQuest(1042);
+                // MYSTIC 19/10 : plus de quête tutoriel (étape 1042, quête 489) : elle visait l'ancienne carte de départ (Temple 152043777) ;
+                // sur la nouvelle (154010883) l'interface du tutoriel plantait le client (chargement bloqué à 100 %)
+                //client.Character.StartQuest(1042);
                 BasicHandler.SendCinematicMessage(client, 10);
             }
             ContextRoleplayHandler.SendGameRolePlayArenaUpdatePlayerInfosMessage(client, client.Character);
@@ -382,12 +395,10 @@ namespace Stump.Server.WorldServer.Handlers.Characters
 
             foreach (var characterRecord in client.Characters.Where(x => !x.IsDeleted).OrderByDescending(x => x.LastUsage))
             {
-                characterBaseInformations.Add(new CharacterBaseInformations((ushort)characterRecord.Id,
-                                                                            characterRecord.Name,
+                // MYSTIC : mode héroïque, tombe / nombre de morts / record de niveau dans l'écran de sélection
+                characterBaseInformations.Add(Game.Heroique.HeroicManager.Instance.BuildListInformations(characterRecord,
                                                                             (ushort)ExperienceManager.Instance.GetCharacterLevel(characterRecord.Experience, characterRecord.PrestigeRank),
-                                                                            characterRecord.LastLook?.GetEntityLook() ?? characterRecord.DefaultLook.GetEntityLook(),
-                                                                            (sbyte)characterRecord.Breed,
-                                                                            characterRecord.Sex == SexTypeEnum.SEX_MALE));
+                                                                            characterRecord.LastLook?.GetEntityLook() ?? characterRecord.DefaultLook.GetEntityLook()));
 
                 if (((characterRecord.MandatoryChanges & (sbyte)CharacterRemodelingEnum.CHARACTER_REMODELING_BREED)
                 != (sbyte)CharacterRemodelingEnum.CHARACTER_REMODELING_BREED)

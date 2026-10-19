@@ -44,6 +44,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Steals
                 }
 
                 actor.TriggerBuffs(actor, BuffTriggerType.OnMPAttack);
+                actor.SignalerTentativePM(Caster); // MYSTIC 18/10 : Tal Kasha (échange sur retrait de PM), Grolloum
 
                 if (value <= 0)
                     return false;

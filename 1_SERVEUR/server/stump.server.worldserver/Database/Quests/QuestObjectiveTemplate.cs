@@ -131,6 +131,16 @@ namespace Stump.Server.WorldServer.Database.Quests
             set;
         }
 
+        /// <summary>MYSTIC 19/10 : carte de l'objectif (champ mapId du client, colonne ajoutée par le SQL 61).</summary>
+        public int MapId
+        {
+            get;
+            set;
+        }
+
+        int CarteADecouvrir => MapId != 0 ? MapId : Parameter0;
+        int CarteDuCombat => Parameter2 != 0 ? Parameter2 : MapId;
+
         [Ignore]
         public QuestObjectiveType RealType
         {
@@ -162,7 +172,12 @@ namespace Stump.Server.WorldServer.Database.Quests
                 case QuestObjectiveTypeEnum.DEFEAT_MONSTERS_ONE_FIGHT:
                     return new DefeatMonstersObjective(character, this, false, Parameter0, Parameter1);
                 case QuestObjectiveTypeEnum.DISCOVER_MAP:
-                    return new DiscoverMapObjective(character, this, false, Parameter0);
+                    return new DiscoverMapObjective(character, this, false, CarteADecouvrir);
+                case QuestObjectiveTypeEnum.DEFEAT_MONSTERS_ON_MAP:
+                    return new DefeatMonstersObjective(character, this, false, Parameter0, Math.Max(1, Parameter1), CarteDuCombat);
+                case QuestObjectiveTypeEnum.DEFEAT_MONSTERS:
+                case QuestObjectiveTypeEnum.DEFEAT_ONE:
+                    return new DefeatMonstersObjective(character, this, false, Parameter0, Math.Max(1, Parameter1));
                 case QuestObjectiveTypeEnum.DISCOVER_AREA:
                     return new DiscoverAreaObjective(character, this, false, Parameter0);
                 case QuestObjectiveTypeEnum.DEFEAT_MULTI:
@@ -174,7 +189,8 @@ namespace Stump.Server.WorldServer.Database.Quests
                 case QuestObjectiveTypeEnum.NONE:
                     return new FreeFormObjective(character, this, false);
                 default:
-                    throw new NotImplementedException($"Objective {Type} not implemented");
+                    // MYSTIC 19/10 : type non géré (escorte, duel, Krosmaster…) : objectif libre au lieu d'une exception (plantage au chargement du perso)
+                    return new FreeFormObjective(character, this, false);
             }
         }
 
@@ -195,7 +211,12 @@ namespace Stump.Server.WorldServer.Database.Quests
                 case QuestObjectiveTypeEnum.DEFEAT_MONSTERS_ONE_FIGHT:
                     return new DefeatMonstersObjective(character, this, status, Parameter0, Parameter1);
                 case QuestObjectiveTypeEnum.DISCOVER_MAP:
-                    return new DiscoverMapObjective(character, this, status, Parameter0);
+                    return new DiscoverMapObjective(character, this, status, CarteADecouvrir);
+                case QuestObjectiveTypeEnum.DEFEAT_MONSTERS_ON_MAP:
+                    return new DefeatMonstersObjective(character, this, status, Parameter0, Math.Max(1, Parameter1), CarteDuCombat);
+                case QuestObjectiveTypeEnum.DEFEAT_MONSTERS:
+                case QuestObjectiveTypeEnum.DEFEAT_ONE:
+                    return new DefeatMonstersObjective(character, this, status, Parameter0, Math.Max(1, Parameter1));
                 case QuestObjectiveTypeEnum.DISCOVER_AREA:
                     return new DiscoverAreaObjective(character, this, status, Parameter0);
                 case QuestObjectiveTypeEnum.DEFEAT_MULTI:
@@ -207,7 +228,7 @@ namespace Stump.Server.WorldServer.Database.Quests
                 case QuestObjectiveTypeEnum.NONE:
                     return new FreeFormObjective(character, this, status);
                 default:
-                    throw new NotImplementedException($"Objective {Type} not implemented");
+                    return new FreeFormObjective(character, this, status);
             }
         }
 

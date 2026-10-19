@@ -32,6 +32,29 @@ package ui
 
       private var _hidden:Boolean;
 
+      // MYSTIC 19/10 : barre repliée (seulement la poignée et le bouton « + »), comme le bloc des succès
+      private var _reduit:Boolean;
+
+      public var btn_reduire:*;
+
+      public var btn_agrandir:*;
+
+      public var btn_reduire2:*;
+
+      public var btn_agrandir2:*;
+
+      public var ctr_h_btns:*;
+
+      public var ctr_v_btns:*;
+
+      public var ctr_h_bg:*;
+
+      public var ctr_h_bg_mini:*;
+
+      public var ctr_v_bg:*;
+
+      public var ctr_v_bg_mini:*;
+
       public var sysApi:SystemApi;
 
       // Mystic : horloge de l'Oeil de Vortex (etat « Xe heure » 221..232 de l'Auroraire 3833), affichee en haut de l'ecran
@@ -209,6 +232,12 @@ package ui
          {
             this.send(_loc3_[1]);
          }
+         else if(_loc2_.indexOf("btn_reduire") == 0 || _loc2_.indexOf("btn_agrandir") == 0)
+         {
+            this._reduit = _loc2_.indexOf("btn_reduire") == 0;
+            this.save();
+            this.apply();
+         }
          else if(_loc2_.indexOf("btn_rotate") == 0)
          {
             this._vertical = !this._vertical;
@@ -269,6 +298,7 @@ package ui
          }
          this._store.data.vertical = this._vertical;
          this._store.data.hidden = this._hidden;
+         this._store.data.reduit = this._reduit;
          try
          {
             this._store.flush();
@@ -288,6 +318,7 @@ package ui
             this._store = SharedObject.getLocal("populusButtons");
             this._vertical = this._store.data.vertical == true;
             this._hidden = this._store.data.hidden == true;
+            this._reduit = this._store.data.reduit == true;
          }
          catch(e:Error)
          {
@@ -395,6 +426,20 @@ package ui
          if(this.ctr_v)
          {
             this.ctr_v.visible = !this._hidden && this._vertical;
+         }
+         for each(var _loc1_:* in [this.ctr_h_btns,this.ctr_v_btns,this.ctr_h_bg,this.ctr_v_bg,this.btn_reduire,this.btn_reduire2])
+         {
+            if(_loc1_)
+            {
+               _loc1_.visible = !this._reduit;
+            }
+         }
+         for each(_loc1_ in [this.ctr_h_bg_mini,this.ctr_v_bg_mini,this.btn_agrandir,this.btn_agrandir2])
+         {
+            if(_loc1_)
+            {
+               _loc1_.visible = this._reduit;
+            }
          }
       }
 

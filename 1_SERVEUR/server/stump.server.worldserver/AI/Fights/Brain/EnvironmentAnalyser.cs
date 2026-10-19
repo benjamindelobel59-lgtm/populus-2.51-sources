@@ -225,5 +225,79 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
         {
             return Fighter.OpposedTeam.GetAllFighters(entry => entry.IsVisibleFor(Fighter));
         }
+
+        /// <summary>MYSTIC 18/10 : il reste des ennemis vivants mais aucun n'est visible (tous invisibles).</summary>
+        public bool AucunEnnemiVisible() =>
+            Fighter.OpposedTeam.GetAllFighters(x => x.IsAlive()).Any() &&
+            !Fighter.OpposedTeam.GetAllFighters(x => x.IsAlive() && x.IsVisibleFor(Fighter)).Any();
+
+        /// <summary>MYSTIC 18/10 : cases où un invisible peut être (autour de sa dernière case connue ; le rayon grandit avec le temps).</summary>
+        public List<Cell> GetCasesPlausiblesInvisibles(out Cell plusProche)
+        {
+            var round = Fight.TimeLine.RoundNumber;
+            var cases = new HashSet<Cell>();
+            plusProche = null;
+            var dMin = int.MaxValue;
+            foreach (var ennemi in Fighter.OpposedTeam.GetAllFighters(x => x.IsAlive() && !x.IsVisibleFor(Fighter)).ToArray())
+            {
+                var s = MemoireInvisibles.Obtenir(ennemi);
+                if (s == null)
+                    continue;
+                var centre = Fight.Map.Cells[s.Case];
+                var d = (int)new MapPoint(centre).ManhattanDistanceTo(Fighter.Position.Point);
+                if (d < dMin)
+                {
+                    dMin = d;
+                    plusProche = centre;
+                }
+                var rayon = Math.Min(6, 2 + 2 * Math.Max(0, round - s.Round));
+                foreach (var c in new Lozenge(0, (byte)rayon).GetCells(centre, Fight.Map))
+                {
+                    if (!c.Walkable || c.NonWalkableDuringFight)
+                        continue;
+                    var occupant = Fight.GetOneFighter(c);
+                    if (occupant != null && occupant.IsVisibleFor(Fighter))
+                        continue;
+                    cases.Add(c);
+                }
+            }
+            return cases.ToList();
+        }
+    }
+
+    /// <summary>MYSTIC 18/10 : dernière case connue de chaque combattant (vu par l'IA, devenu invisible, ou détecté en lançant un sort).</summary>
+    public static class MemoireInvisibles
+    {
+        public class Souvenir
+        {
+            public short Case;
+            public int Round;
+        }
+
+        static readonly System.Runtime.CompilerServices.ConditionalWeakTable<IFight, Dictionary<int, Souvenir>> s_combats =
+            new System.Runtime.CompilerServices.ConditionalWeakTable<IFight, Dictionary<int, Souvenir>>();
+
+        public static void Noter(FightActor actor)
+        {
+            if (actor?.Fight == null || actor.Cell == null || actor.IsDead())
+                return;
+            var d = s_combats.GetOrCreateValue(actor.Fight);
+            lock (d)
+                d[actor.Id] = new Souvenir { Case = actor.Cell.Id, Round = actor.Fight.TimeLine.RoundNumber };
+        }
+
+        public static void NoterVisibles(FightActor observateur)
+        {
+            foreach (var e in observateur.OpposedTeam.GetAllFighters(x => x.IsAlive() && x.IsVisibleFor(observateur)).ToArray())
+                Noter(e);
+        }
+
+        public static Souvenir Obtenir(FightActor actor)
+        {
+            if (actor?.Fight == null || !s_combats.TryGetValue(actor.Fight, out var d))
+                return null;
+            lock (d)
+                return d.TryGetValue(actor.Id, out var s) ? s : null;
+        }
     }
 }

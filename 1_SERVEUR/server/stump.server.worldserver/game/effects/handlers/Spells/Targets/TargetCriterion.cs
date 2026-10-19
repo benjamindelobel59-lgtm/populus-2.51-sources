@@ -64,10 +64,11 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Targets
                         return new MonsterCriterion(int.Parse(str.Remove(0, 1)), caster, false);
                     case 'F':
                         return new MonsterCriterion(int.Parse(str.Remove(0, 1)), caster, true);
+                    // MYSTIC 18/10 : « *v » / « *V » = PV du lanceur (préfixe ignoré avant : Rage Mahal de XLII testait la cible)
                     case 'v':
-                        return new LifeCriterion(int.Parse(str.Remove(0, 1)), true);
+                        return new LifeCriterion(int.Parse(str.Remove(0, 1)), true) { SurLanceur = caster };
                     case 'V':
-                        return new LifeCriterion(int.Parse(str.Remove(0, 1)), false);
+                        return new LifeCriterion(int.Parse(str.Remove(0, 1)), false) { SurLanceur = caster };
                     case 'K':
                         return new CarriedCriterion();
                     case 'R':

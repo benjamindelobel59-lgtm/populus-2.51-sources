@@ -209,7 +209,41 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells
             if (Targets.Any(x => x is TargetTypeCriterion && ((TargetTypeCriterion)x).TargetType == SpellTargetType.SELF_ONLY) && !AffectedCells.Contains(Caster.Cell))
                 AffectedCells.Add(Caster.Cell);
 
-            return Fight.GetAllFighters(AffectedCells).Where(entry => !entry.IsDead() && !entry.IsCarried() && IsValidTarget(entry)).ToArray();
+            // MYSTIC 18/10 : « O » vise le déclencheur où qu'il soit (sorts listés dans CibleDeclencheur seulement)
+            if (CibleDeclencheur.Concerne(this) && Targets.Any(x => x is LastAttackerCriterion l && l.Required))
+            {
+                var declencheur = CibleDeclencheur.Reference(this);
+                if (declencheur != null && declencheur.IsAlive() && declencheur.Cell != null && !AffectedCells.Contains(declencheur.Cell))
+                    AffectedCells.Add(declencheur.Cell);
+            }
+
+            var presents = Fight.GetAllFighters(AffectedCells);
+            if (m_candidatsInitiaux != null)
+                presents = presents.Concat(m_candidatsInitiaux).Distinct();
+
+            // MYSTIC 18/10 (audit Palais de Dantinéa) : masque « U » (vient d'être invoqué par ce sort) : l'invocation compte où qu'elle
+            // soit (Grokillage posé sur sa case fixe, loin de la zone centrée sur le joueur ; il ne recevait jamais son numéro ni « Lié »)
+            if (CastHandler != null && Targets.Any(x => x is JustSummonedCriterion))
+            {
+                var mesEffets = CastHandler.GetEffectHandlers().ToArray();
+                presents = presents.Concat(Fight.GetAllFighters(f => f.IsAlive() && f.SummoningEffect != null && mesEffets.Contains(f.SummoningEffect))).Distinct();
+            }
+
+            return presents.Where(entry => !entry.IsDead() && !entry.IsCarried() && IsValidTarget(entry)).ToArray();
+        }
+
+        // MYSTIC 18/10 : Comte Harebourg. Les effets à masque « vérifié à l'exécution » (T = échangé, W = case invalide) recalculaient
+        // leur zone APRÈS la téléportation symétrique : le Comte avait déjà quitté la case visée et Gousset ne le rendait jamais
+        // vulnérable (ni +100 dommages, ni Heure locale sur l'invocation échangée). Comme en jeu officiel, ceux qui étaient dans la zone
+        // au lancement restent candidats. Limité aux sorts du Comte.
+        static readonly int[] SortsCandidatsInitiaux = { 3649, 3650, 3651, 3652, 3657 };
+
+        FightActor[] m_candidatsInitiaux;
+
+        public void MemoriserCandidatsInitiaux()
+        {
+            if (Spell != null && SortsCandidatsInitiaux.Contains(Spell.Id))
+                m_candidatsInitiaux = Fight.GetAllFighters(AffectedCells).ToArray();
         }
 
         public IEnumerable<FightActor> GetAffectedActors(Predicate<FightActor> predicate)

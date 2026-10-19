@@ -96,7 +96,7 @@ namespace Stump.Server.WorldServer
             base.Initialize();
             ConsoleInterface = new WorldConsole();
             VirtualConsoleInterface = new WorldVirtualConsole();
-            ConsoleBase.SetTitle($"#Populus World Server - {Version} : {ServerInformation.Name}");
+            ConsoleBase.SetTitle($"Mystic · Serveur de jeu · {ServerInformation.Name} · démarrage...");
 
             logger.Info("Initializing Database...");
             DBAccessor = new DatabaseAccessor(DatabaseConfiguration);
@@ -163,6 +163,22 @@ namespace Stump.Server.WorldServer
 
             IOTaskPool.Start();
             StartTime = DateTime.Now;
+
+            MysticConsole.DrawReady(Port);
+            UpdateConsoleTitle();
+            IOTaskPool.CallPeriodically(10000, UpdateConsoleTitle);
+        }
+
+        private void UpdateConsoleTitle()
+        {
+            try
+            {
+                var online = World.Instance.CharacterCount;
+                ConsoleBase.SetTitle($"Mystic · Serveur de jeu · {ServerInformation.Name} · {online} joueur{(online > 1 ? "s" : "")} en ligne");
+            }
+            catch
+            {
+            }
         }
 
         protected override BaseClient CreateClient(Socket s)

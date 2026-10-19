@@ -18,6 +18,13 @@ namespace Stump.Server.WorldServer.Handlers.Interactives
         [WorldHandler(InteractiveUseRequestMessage.Id)]
         public static void HandleInteractiveUseRequestMessage(WorldClient client, InteractiveUseRequestMessage message)
         {
+            // MYSTIC 17/10 : interactifs des villages de conquête réservés à l'alliance propriétaire
+            if (!Game.Alliances.VillagesConquete.Instance.PeutUtiliserInteractif(client.Character, client.Character.Map, out var refus))
+            {
+                Game.Alliances.AvAManager.Message(client.Character, refus);
+                return;
+            }
+
             client.Character.Map.UseInteractiveObject(client.Character, (int)message.ElemId, (int)message.SkillInstanceUid);
         }
 
@@ -28,12 +35,27 @@ namespace Stump.Server.WorldServer.Handlers.Interactives
         [WorldHandler(InteractiveUseWithParamRequestMessage.Id)]
         public static void HandleInteractiveUseWithParamRequestMessage(WorldClient client, InteractiveUseWithParamRequestMessage message)
         {
+            if (!Game.Alliances.VillagesConquete.Instance.PeutUtiliserInteractif(client.Character, client.Character.Map, out var refus))
+            {
+                Game.Alliances.AvAManager.Message(client.Character, refus);
+                return;
+            }
+
             client.Character.Map.UseInteractiveObject(client.Character, (int)message.ElemId, (int)message.SkillInstanceUid);
         }
 
         [WorldHandler(TeleportRequestMessage.Id)]
         public static void HandleTeleportRequestMessage(WorldClient client, TeleportRequestMessage message)
         {
+            // MYSTIC 17/10 : PNJ de village de conquête (Brigandin / Foreuse)
+            if (client.Character.Dialog is Game.Alliances.VillageTeleportDialog villageDialog)
+            {
+                var villageMap = World.Instance.GetMap((int)message.MapId);
+                if (villageMap != null)
+                    villageDialog.Teleport(villageMap);
+                return;
+            }
+
             // MYSTIC 17/10 : téléportation entre les prismes de l'alliance
             if (client.Character.Dialog is Game.Alliances.PrismTeleportDialog prismDialog)
             {

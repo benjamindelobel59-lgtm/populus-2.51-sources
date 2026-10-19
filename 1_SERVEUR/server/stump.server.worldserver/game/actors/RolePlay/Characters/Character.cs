@@ -362,7 +362,18 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
                     this.Shortcuts.AddItemShortcut(9, item);
 
                 IsFirstConnection = false;
-                StartQuest(1042);
+                // MYSTIC 19/10 : plus de quête tutoriel (étape 1042, quête 489) : elle visait l'ancienne carte de départ (Temple 152043777) ;
+                // sur la nouvelle (154010883) l'interface du tutoriel plantait le client (chargement bloqué à 100 %)
+                //StartQuest(1042);
+                // MYSTIC 19/10 : chaque nouveau personnage reçoit « Le tour du monde » (1/2) et (2/2) (quêtes 2005 et 2006,
+                // une étape par donjon, voir _OUTILS/serveur/quetes/generer_tour_du_monde.py)
+                // (1re étape lue dans la quête : les étapes ont été refaites, une par donjon, SQL 69)
+                foreach (var queteTourDuMonde in new[] { 2005, 2006 })
+                {
+                    var premiere = QuestManager.Instance.GetQuestTemplate(queteTourDuMonde)?.Steps?.FirstOrDefault();
+                    if (premiere != null)
+                        StartQuest(premiere);
+                }
                 BasicHandler.SendCinematicMessage(Client, 10);
             }
             #endregion
@@ -370,6 +381,13 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
             // MYSTIC : trousseau de clefs (TrousseauManager) : non echangeable, donne a tous ; l'ancien reset tous les 3 jours
             // (qui modifiait la date de creation du personnage) est retire
             Game.Items.Player.Custom.TrousseauManager.Instance.EnsureTrousseau(this);
+
+            // MYSTIC 19/10 : « Le tour du monde » toujours suivies (liste des quêtes à l'écran)
+            EnvoyerQuetesSuivies();
+
+            // MYSTIC 19/10 : chasse au trésor en cours (fenêtre de chasse + indice dans le chat)
+            Game.Chasses.ChasseManager.Instance.SurConnexion(this);
+
 
             OnPlayerLifeStatusChanged(PlayerLifeStatus);
 
@@ -1747,6 +1765,10 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
 
             look = Inventory.Where(x => x.IsEquiped()).Aggregate(look, (current, item) => item.UpdateItemSkin(current));
 
+            // MYSTIC 19/10 : sous l'eau, le personnage porte un scaphandre sur la tête (à la place de son chapeau)
+            if (PlayerLifeStatus != PlayerLifeStatusEnum.STATUS_TOMBSTONE)
+                SousLEau.AppliquerScaphandre(this, look);
+
             switch (PlayerLifeStatus)
             {
                 case PlayerLifeStatusEnum.STATUS_PHANTOM:
@@ -1755,7 +1777,11 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
                     look.AddSkin(Sex == SexTypeEnum.SEX_FEMALE ? Breed.FemaleGhostBonesId : Breed.MaleGhostBonesId);
                     break;
                 case PlayerLifeStatusEnum.STATUS_TOMBSTONE:
-                    look.BonesID = Breed.TombBonesId;
+                    // MYSTIC : la tombe de la classe seule (squelette TombBonesId de la table breeds) avec les couleurs du personnage,
+                    // sans peau ni tête ni équipement (sinon le client mélange la tombe et le personnage)
+                    var tombe = new ActorLook(Breed.TombBonesId);
+                    tombe.SetColors(look.Colors.ToDictionary(x => x.Key, x => x.Value));
+                    look = tombe;
                     break;
             }
 
@@ -2033,6 +2059,22 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
         }
         public bool CustomStatsActivated = false;
 
+        /// <summary>
+        /// MYSTIC 17/10 : One Window : la prochaine arrivée sur une carte peut être suivie (posé par le changement de carte, les soleils,
+        /// les portes et les zaaps ; remis à zéro à l'arrivée). Les autres téléportations (PNJ, zaapi, prisme…) ne sont pas suivies.
+        /// </summary>
+        public bool SuiviOneWindow { get; set; }
+
+        /// <summary>Téléportation que le One Window peut suivre (changement de carte, soleil, porte, zaap).</summary>
+        public bool TeleportSuivi(Func<bool> teleport)
+        {
+            SuiviOneWindow = true;
+            var ok = teleport();
+            if (!ok)
+                SuiviOneWindow = false;
+            return ok;
+        }
+
         public bool GodMode
         {
             get;
@@ -2101,7 +2143,12 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
                 StartRegen();
             }
 
-            CharacterHandler.SendGameRolePlayPlayerLifeStatusMessage(Client, status, phoenixMapId);
+            // MYSTIC : mort héroïque -> message officiel « Game Over » (le client passe en tombe et ouvre l'écran de mort héroïque,
+            // bouton « Oui » = retour à la sélection de personnages) au lieu de la fenêtre classique « Libérer son âme ? »
+            if (status == PlayerLifeStatusEnum.STATUS_TOMBSTONE && Game.Heroique.HeroicManager.Instance.IsDead(Id))
+                Client?.Send(new GameRolePlayGameOverMessage());
+            else
+                CharacterHandler.SendGameRolePlayPlayerLifeStatusMessage(Client, status, phoenixMapId);
             InitializationHandler.SendSetCharacterRestrictionsMessage(Client, this);
 
             UpdateLook();
@@ -2111,6 +2158,14 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
         {
             if (PlayerLifeStatus != PlayerLifeStatusEnum.STATUS_TOMBSTONE)
                 return;
+
+            // MYSTIC : mode héroïque, une tombe ne redevient pas fantôme (la mort est définitive) : « Libérer son âme » rouvre
+            // l'écran de mort héroïque du client, dont le bouton renvoie à la sélection de personnages
+            if (Game.Heroique.HeroicManager.Instance.IsDead(Id))
+            {
+                Client?.Send(new GameRolePlayGameOverMessage());
+                return;
+            }
 
             var graveyard = World.Instance.GetNearestGraveyard(Map);
             Teleport(graveyard.Map, graveyard.Map.GetCell(graveyard.CellId));
@@ -2549,6 +2604,10 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
                 BasicHandler.SendTextInformationMessage(Client, TextInformationTypeEnum.TEXT_INFORMATION_ERROR, 355);
                 return false;
             }
+
+            // MYSTIC 19/10 : sous l'eau, seuls les Muldos
+            if (!IsRiding && !SousLEau.PeutMonter(this, EquippedMount.Template.FamilyId))
+                return false;
 
             IsRiding = !IsRiding;
 
@@ -3731,6 +3790,15 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
             // MYSTIC 17/10 : dernière salle de donjon atteinte (« Reprendre le donjon où vous l'avez quitté »)
             Donjons.RepriseDonjons.Instance.SurArrivee(this, map);
 
+            // MYSTIC 17/10 : AvA (horloge en entrant dans une zone vulnérable)
+            Alliances.AvAManager.Instance.SurArrivee(this);
+
+            // MYSTIC 19/10 : sous l'eau, descente des Dragodindes et Volkornes
+            SousLEau.SurArrivee(this, map);
+
+            // MYSTIC 19/10 : quêtes de donjon lancées en arrivant sur la carte de leur premier objectif
+            Game.Quests.QuetesAuto.SurArrivee(this, map);
+
             // send actor actions
             foreach (var actor in map.Actors)
             {
@@ -3856,6 +3924,74 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
         public override bool MoveInstant(ObjectPosition destination) => IsFighting() ? Fighter.MoveInstant(destination) : base.MoveInstant(destination);
 
         public override bool StopMove(ObjectPosition currentObjectPosition) => IsFighting() ? Fighter.StopMove(currentObjectPosition) : base.StopMove(currentObjectPosition);
+
+        /// <summary>MYSTIC 17/10 : tout changement de carte (bord, zaap, One Window…) vérifie l'accès aux villages de conquête.</summary>
+        public override bool Teleport(ObjectPosition destination, bool performCheck = true)
+        {
+            if (performCheck && destination?.Map != null && destination.Map != Map &&
+                !Alliances.VillagesConquete.Instance.PeutEntrer(this, destination.Map, out var refus))
+            {
+                Alliances.AvAManager.Message(this, refus);
+                return false;
+            }
+
+            // MYSTIC 19/10 : Frigost (niveau 50, puis succès des donjons précédents)
+            if (performCheck && destination?.Map != null && destination.Map != Map && !AccesFrigost.PeutEntrer(this, destination.Map))
+                return false;
+
+            return base.Teleport(CasePraticable(destination), performCheck);
+        }
+
+        /// <summary>
+        /// MYSTIC 18/10 (demande utilisateur) : une téléportation (.go, panel admin, carte à carte…) vers une case non praticable
+        /// (mur, obstacle) arrive sur la case praticable la plus proche ; avant, le personnage se retrouvait dans le décor.
+        /// </summary>
+        static ObjectPosition CasePraticable(ObjectPosition destination)
+        {
+            var carte = destination?.Map;
+            var cellule = destination?.Cell;
+            if (carte == null || cellule == null)
+                return destination;
+
+            // la grande zone praticable de la carte (une case praticable dans une petite poche fermée bloquait aussi le personnage)
+            var zone = ZonePrincipale(carte);
+            if (zone.Count == 0 || zone.Contains(cellule.Id))
+                return destination;
+
+            var depart = new MapPoint(cellule);
+            var proche = carte.Cells.Where(c => zone.Contains(c.Id) && c.MapChangeData == 0)
+                .OrderBy(c => depart.ManhattanDistanceTo(new MapPoint(c))).FirstOrDefault();
+            return proche == null ? destination : new ObjectPosition(carte, proche, destination.Direction);
+        }
+
+        static readonly System.Collections.Concurrent.ConcurrentDictionary<int, HashSet<short>> s_zonesPrincipales =
+            new System.Collections.Concurrent.ConcurrentDictionary<int, HashSet<short>>();
+
+        static HashSet<short> ZonePrincipale(Map carte) => s_zonesPrincipales.GetOrAdd(carte.Id, _ =>
+        {
+            bool praticable(Cell c) => c != null && carte.IsCellWalkable(c) && !c.NonWalkableDuringRP;
+            var vues = new HashSet<short>();
+            var meilleure = new HashSet<short>();
+            foreach (var c in carte.Cells)
+            {
+                if (!praticable(c) || vues.Contains(c.Id))
+                    continue;
+                var groupe = new HashSet<short> { c.Id };
+                vues.Add(c.Id);
+                var file = new Queue<MapPoint>();
+                file.Enqueue(new MapPoint(c));
+                while (file.Count > 0)
+                    foreach (var n in file.Dequeue().GetAdjacentCells(id => praticable(carte.Cells[id])))
+                        if (vues.Add((short)n.CellId))
+                        {
+                            groupe.Add((short)n.CellId);
+                            file.Enqueue(n);
+                        }
+                if (groupe.Count > meilleure.Count)
+                    meilleure = groupe;
+            }
+            return meilleure;
+        });
 
         public override bool Teleport(MapNeighbour mapNeighbour)
         {
@@ -4193,6 +4329,50 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
             m_quests = _quests.Select(x => new Quest(this, x)).ToList();
         }
 
+        /// <summary>
+        /// MYSTIC 19/10 : quêtes suivies (liste affichée à l'écran par le client). « Le tour du monde » (2005, 2006) sont suivies
+        /// d'office à chaque connexion ; le joueur peut en suivre d'autres ou les retirer (FollowQuestObjectiveRequest / Unfollow).
+        /// Gardé le temps de la session (le client garde aussi sa propre liste).
+        /// </summary>
+        public static readonly int[] QuetesToujoursSuivies = { 2005, 2006 };
+        readonly List<int> m_quetesSuivies = new List<int>(QuetesToujoursSuivies);
+
+        public void SuivreQuete(int questId, bool suivre)
+        {
+            lock (m_quetesSuivies)
+            {
+                m_quetesSuivies.Remove(questId);
+                if (suivre)
+                    m_quetesSuivies.Add(questId);
+            }
+        }
+
+        public void OrdonnerQuetesSuivies(IEnumerable<int> ordre)
+        {
+            lock (m_quetesSuivies)
+            {
+                var liste = ordre.Where(m_quetesSuivies.Contains).Distinct().ToList();
+                liste.AddRange(m_quetesSuivies.Where(x => !liste.Contains(x)));
+                m_quetesSuivies.Clear();
+                m_quetesSuivies.AddRange(liste);
+            }
+        }
+
+        /// <summary>Envoie au client la liste des quêtes suivies (en cours seulement) : le client les affiche à l'écran.</summary>
+        public void EnvoyerQuetesSuivies()
+        {
+            if (Client == null)
+                return;
+            List<int> ids;
+            lock (m_quetesSuivies)
+                ids = m_quetesSuivies.ToList();
+            var quetes = ids.Select(id => m_quests.FirstOrDefault(q => q.Template != null && q.Id == id && !q.Finished && q.CurrentStep != null))
+                .Where(q => q != null)
+                .Select(q => q.GetQuestActiveInformations() as QuestActiveDetailedInformations)
+                .Where(x => x != null).ToArray();
+            Client.Send(new FollowedQuestsMessage(quetes));
+        }
+
         public void StartQuest(int questStepId)
         {
             var step = QuestManager.Instance.GetQuestStep(questStepId);
@@ -4212,6 +4392,13 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
                 quest = new Quest(this, questStep);
                 m_quests.Add(quest);
                 SendInformationMessage(TextInformationTypeEnum.TEXT_INFORMATION_MESSAGE, 54, quest.Id);
+                // MYSTIC 19/10 : quête ajoutée au journal du client
+                Client?.Send(new QuestStartedMessage(quest.Id));
+            }
+            else if (quest.Finished)
+            {
+                // MYSTIC 19/10 : une quête terminée ne recommence pas (elle repartait de l'étape demandée)
+                return;
             }
             else
             {
@@ -4376,6 +4563,10 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
         {
             if (target == this)
                 return FighterRefusedReasonEnum.FIGHT_MYSELF;
+
+            // MYSTIC : mode héroïque, agressions sans alignement (voir HeroicManager.CanAgress)
+            if (Game.Heroique.HeroicManager.Enabled)
+                return Game.Heroique.HeroicManager.Instance.CanAgress(this, target, bypassCheck);
 
             if (!target.PvPEnabled || !PvPEnabled)
                 return FighterRefusedReasonEnum.INSUFFICIENT_RIGHTS;
@@ -4610,11 +4801,27 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
             if (GodMode)
                 Stats.Health.DamageTaken = 0;
 
-            else if (Fighter != null && (Fighter.HasLeft() && !Fighter.IsDisconnected || Fight.Losers == Fighter.Team) && !Fight.IsDeathTemporarily)
-                OnDied();
+            // MYSTIC 18/10 : abandonner pendant le placement ne compte pas comme une mort
+            else if (Fighter != null && (Fighter.HasLeft() && !Fighter.IsDisconnected && Fight.IsStarted || Fight.Losers == Fighter.Team) && !Fight.IsDeathTemporarily)
+            {
+                // MYSTIC : mode héroïque, la défaite (ou l'abandon) est une mort définitive : le personnage reste sur la carte
+                // du combat, transformé en tombe (ne peut plus bouger ni agir), au lieu d'être renvoyé à son point de sauvegarde
+                if (Game.Heroique.HeroicManager.Instance.IsDeadlyFight(Fight) && !GodMode)
+                {
+                    Game.Heroique.HeroicManager.Instance.OnLostFight(this, Fight);
+                    Stats.Health.DamageTaken = (Stats.Health.TotalMax - 1);
+                    PlayerLifeStatus = PlayerLifeStatusEnum.STATUS_TOMBSTONE;
+                    Died?.Invoke(this);
+                }
+                else
+                    OnDied();
+            }
 
             if (Fighter != null && Fighter.HasLeft() && Fight.FightType == FightTypeEnum.FIGHT_TYPE_AGRESSION)
                 ToggleAgressionPenality();
+
+            // MYSTIC 19/10 : Pain Infini dans l'inventaire -> mangé tout seul à la fin de chaque combat
+            Game.Items.Player.Custom.ObjetInfini.ApresCombat(this);
 
             Fighter = null;
             Spectator = null;
@@ -5174,6 +5381,24 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
 
                 RefreshStats();
 
+                // MYSTIC 17/10 : AvA, connexion dans une zone vulnérable = renvoi au zaap de sauvegarde (ou à Astrub)
+                var positionAvA = Alliances.AvAManager.Instance.PositionALaConnexion(this);
+                if (positionAvA != null)
+                {
+                    Position = positionAvA;
+                    if (!Map.Area.IsRunning)
+                        Map.Area.Start();
+                }
+
+                // MYSTIC 17/10 : connexion à l'intérieur d'un village de conquête d'une autre alliance = renvoi à sa porte
+                var positionVillage = positionAvA == null ? Alliances.VillagesConquete.Instance.PositionALaConnexion(this) : null;
+                if (positionVillage != null)
+                {
+                    Position = positionVillage;
+                    if (!Map.Area.IsRunning)
+                        Map.Area.Start();
+                }
+
                 Map.Area.AddMessage(() =>
                 {
                     Map.Enter(this);
@@ -5513,6 +5738,8 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
                 (ushort)Honor,
                 (ushort)LowerBoundHonor,
                 (ushort)UpperBoundHonor,
+                // MYSTIC 17/10 : membres d'une alliance = mode AvA toujours actif
+                Guild?.Alliance != null ? Alliances.AvAManager.Instance.Statut(this) :
                 (PvPEnabled ? (sbyte)AggressableStatusEnum.PvP_ENABLED_AGGRESSABLE : (sbyte)AggressableStatusEnum.NON_AGGRESSABLE));
         }
 
@@ -5763,7 +5990,7 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
 
             // MYSTIC 17/10 : tag et blason d'alliance au-dessus du personnage (AvA : phase 3)
             if (Guild?.Alliance != null)
-                options.Add(new HumanOptionAlliance(Guild.Alliance.GetAllianceInformations(), (sbyte)AggressableStatusEnum.NON_AGGRESSABLE));
+                options.Add(new HumanOptionAlliance(Guild.Alliance.GetAllianceInformations(), Alliances.AvAManager.Instance.Statut(this)));
 
             if (SelectedTitle != null)
                 options.Add(new HumanOptionTitle((ushort)SelectedTitle.Value, string.Empty));
@@ -5785,7 +6012,7 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
 
         public CharacterRecord Record => m_record;
 
-        public override bool CanBeSee(WorldObject byObj) => base.CanBeSee(byObj) && (byObj == this || !Invisible) && Game.HavenBags.HavenBagManager.Instance.CanBeSeenInHavenBag(byObj, this) && byObj is Character && (byObj == this || !Map.IsInstantiated);
+        public override bool CanBeSee(WorldObject byObj) => base.CanBeSee(byObj) && (byObj == this || !Invisible) && Game.HavenBags.HavenBagManager.Instance.CanBeSeenInHavenBag(byObj, this) && Game.Houses.HouseManager.Instance.CanBeSeenInHouse(byObj, this) && byObj is Character && (byObj == this || !Map.IsInstantiated);
 
         protected override void OnDisposed()
         {

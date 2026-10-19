@@ -25,8 +25,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Steals
                     return false;
 
                 actor.TriggerBuffs(actor, BuffTriggerType.OnMPAttack);
+                actor.SignalerTentativePM(Caster); // MYSTIC 17/10 : Grolloum
                 AddStatBuff(actor, (short)( -( integerEffect.Value ) ), PlayerFields.MP, (short)EffectsEnum.Effect_SubMP);
                 actor.TriggerBuffs(actor, BuffTriggerType.OnMPLost);
+                actor.SignalerRetraitPM(Caster); // MYSTIC 17/10 : challenge Circulez
 
                 if (Effect.Duration != 0 || Effect.Delay != 0)
                 {

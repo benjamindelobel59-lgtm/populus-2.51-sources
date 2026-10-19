@@ -44,6 +44,8 @@ namespace Stump.Server.WorldServer.Game.Quests
             return m_quests.TryGetValue(id, out template) ? template : null;
         }
 
+        public IEnumerable<QuestTemplate> GetQuestTemplates() => m_quests.Values;
+
         public QuestTemplate GetQuestTemplateWithStepId(int id)
         {
             return m_quests.Values.FirstOrDefault(x => x.StepIds.Contains(id));

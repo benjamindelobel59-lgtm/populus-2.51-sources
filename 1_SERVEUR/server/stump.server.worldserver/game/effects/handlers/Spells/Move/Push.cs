@@ -70,7 +70,16 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
 
             foreach (var actor in actors)
             {
-                if (!actor.CanBePushed())
+                // MYSTIC 19/10 : on ne pousse pas un mort (chaîne de Bump qui continuait sur le cadavre du Wa Wobot : ~10 s d'animations)
+                if (!actor.IsAlive())
+                    continue;
+
+                // MYSTIC 18/10 : poussées « forcées » (1021 / 1022 = PUSH_FORCE / PULL_FORCE du client) qui doivent bouger un indéplaçable :
+                // Mer Cure 4007 (Merkator : déplacer ses monstres le rend vulnérable) et l'attirance des Totems du Moon 6163-6167.
+                // Limité à ces sorts (les autres 1021 / 1022 restent bloqués comme avant).
+                var forcee = (Effect.EffectId == EffectsEnum.Effect_1021 || Effect.EffectId == EffectsEnum.Effect_1022) &&
+                    (Spell.Id == 4007 || (Spell.Id >= 6163 && Spell.Id <= 6167));
+                if (!actor.CanBePushed() && !forcee)
                     continue;
 
                 var referenceCell = TargetedCell.Id == actor.Cell.Id ? CastPoint : TargetedPoint;
@@ -216,9 +225,24 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
                         ActionsHandler.SendGameActionFightSlideMessage(character.Client, Caster, actor, startCell.CellId, stopCell.CellId);
                 }
 
-                if (!DamagesDisabled)
+                // MYSTIC 18/10 : la cible est posée sur sa case d'arrivée AVANT les dommages de collision et les déclencheurs « PD » / « PPD ».
+                // Avant : l'obstacle percuté réagissait alors que la cible était encore à son départ ; le Bumper du Wobot Tamponneur
+                // (Terrier du Wa Wabbit) repoussait dans le vide et les allers-retours entre deux Tamponneurs n'avaient jamais lieu.
+                // obstacles alignés calculés avant le déplacement (sinon la cible, déjà arrivée, serait comptée deux fois)
+                var alignes = DamagesDisabled ? null : Fight.GetAllFightersInLine(startCell, Distance, pushDirection);
+
+                if (actor.IsCarrying() && stopCell != startCell)
+                    actor.ThrowActor(Map.Cells[startCell.CellId], true);
+
+                actor.Position.Cell = Map.Cells[stopCell.CellId];
+
+                // garde-fou : une chaîne de rebonds (poussée → déclencheur → poussée) s'arrête au bout de 40 niveaux
+                if (!DamagesDisabled && s_profondeur < 40)
                 {
-                    var fightersInline = Fight.GetAllFightersInLine(startCell, Distance, pushDirection);
+                    s_profondeur++;
+                    try
+                    {
+                    var fightersInline = alignes;
                     fightersInline.Insert(0, actor);
                     var distance = integerEffect.Value - startCell.ManhattanDistanceTo(stopCell);
                     var targets = 0;
@@ -238,20 +262,30 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
                             };
 
                             fighter.InflictDamage(pushDamage);
+                            // MYSTIC 19/10 : diagnostic (dommages de poussée reçus par un joueur alors qu'il pousse)
+                            if (fighter is CharacterFighter)
+                                NLog.LogManager.GetCurrentClassLogger().Info($"[Poussée] {fighter} subit {pushDamages} (poussée de {actor} par {Caster}, sort {Spell?.Id}, carte {Fight.Map.Id})");
                             fighter.TriggerBuffs(Caster, BuffTriggerType.OnPushDamaged);
                         }
 
-                        if (targets > 0)
-                            fighter.TriggerBuffs(Caster, BuffTriggerType.OnInderctlyPush);
+                        // MYSTIC 19/10 : Bumper du Wobot Tamponneur (3788 -> Bump 3787, cible « O » = déclencheur) : le déclencheur est le
+                        // combattant qui PERCUTE le Tamponneur (téléporté de l'autre côté puis repoussé vers le Tamponneur suivant : rebonds
+                        // jusqu'au one-shot). Avant : c'était le lanceur de la poussée (le joueur), téléporté et repoussé à la place du monstre.
+                        var bumper = targets > 0 && actor.IsAlive() && fighter.GetBuffs(x => x.Spell != null && x.Spell.Id == 3788).Any();
+                        if (bumper)
+                            s_resynchroniser = true;
+                        // le Bumper ne renvoie pas un combattant mort
+                        if (targets > 0 && (bumper || !fighter.GetBuffs(x => x.Spell != null && x.Spell.Id == 3788).Any()))
+                            fighter.TriggerBuffs(bumper ? actor : Caster, BuffTriggerType.OnInderctlyPush);
 
                         targets++;
-                    }             
+                    }
+                    }
+                    finally
+                    {
+                        s_profondeur--;
+                    }
                 }
-
-                if (actor.IsCarrying() && stopCell != startCell)
-                    actor.ThrowActor(Map.Cells[startCell.CellId], true);
-
-                actor.Position.Cell = Map.Cells[stopCell.CellId];
 
                 if(Fight.Fighters.Any(x => actor.Position.Point.IsAdjacentTo(x.Position.Point)))
                     actor.TriggerBuffs(Caster, BuffTriggerType.OnPushDamagedInMelee);
@@ -265,8 +299,20 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
                 actor.TriggerBuffs(Caster, BuffTriggerType.OnMoved);
             }
 
+            // MYSTIC 19/10 : après une chaîne de Bumper (téléportations et poussées imbriquées DANS cette poussée), le client affichait
+            // parfois un combattant à son ancienne case : on renvoie la vraie position de chaque combattant visible.
+            if (s_profondeur == 0 && s_resynchroniser)
+            {
+                s_resynchroniser = false;
+                foreach (var f in Fight.GetAllFighters(x => x.IsAlive() && x.Cell != null && x.VisibleState == GameActionFightInvisibilityStateEnum.VISIBLE).ToArray())
+                    ActionsHandler.SendGameActionFightTeleportOnSameMapMessage(Fight.Clients, f, f, f.Cell);
+            }
+
             return true;
         }
+
+        [ThreadStatic] static bool s_resynchroniser;
+        [ThreadStatic] static int s_profondeur;
 
         private bool IsBlockingCell(MapPoint cell, FightActor target)
         {

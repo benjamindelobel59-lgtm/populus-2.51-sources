@@ -176,6 +176,20 @@ namespace Stump.Server.WorldServer.Handlers.Alliances
         [WorldHandler(AllianceMotdSetRequestMessage.Id)]
         public static void HandleAllianceMotdSetRequestMessage(WorldClient client, AllianceMotdSetRequestMessage message)
         {
+            // MYSTIC 17/10 : ordres de l'onglet « Village » du panneau d'alliance (le message du jour n'est pas modifié)
+            // MYSTIC 19/10 : demande de l'onglet « Balance » (pourcentages AvA, lecture seule)
+            if (message.Content != null && message.Content.StartsWith(BalanceAvA.Marqueur))
+            {
+                client.Character.SendServerMessage(BalanceAvA.Instance.Donnees(client.Character));
+                return;
+            }
+
+            if (message.Content != null && message.Content.StartsWith(VillagesConquete.Marqueur))
+            {
+                VillagesConquete.Instance.Onglet(client.Character, message.Content.Substring(VillagesConquete.Marqueur.Length));
+                return;
+            }
+
             var alliance = client.Character.Guild?.Alliance;
             if (alliance == null)
                 return;
@@ -221,10 +235,63 @@ namespace Stump.Server.WorldServer.Handlers.Alliances
                 client.Send(new PrismSettingsErrorMessage());
         }
 
+        // MYSTIC 17/10 : AvA (phase 3)
+
+        [WorldHandler(SetEnableAVARequestMessage.Id)]
+        public static void HandleSetEnableAVARequestMessage(WorldClient client, SetEnableAVARequestMessage message)
+        {
+            AvAManager.Instance.ActiverAvA(client.Character, message.Enable);
+        }
+
+        [WorldHandler(PrismAttackRequestMessage.Id)]
+        public static void HandlePrismAttackRequestMessage(WorldClient client, PrismAttackRequestMessage message)
+        {
+            AvAManager.Instance.Attaquer(client.Character);
+        }
+
+        [WorldHandler(PrismFightJoinLeaveRequestMessage.Id)]
+        public static void HandlePrismFightJoinLeaveRequestMessage(WorldClient client, PrismFightJoinLeaveRequestMessage message)
+        {
+            var fight = AvAManager.Instance.CombatDe(message.SubAreaId);
+            if (fight == null)
+                return;
+
+            if (message.Join)
+            {
+                var result = fight.AddDefender(client.Character);
+                if (result != FighterRefusedReasonEnum.FIGHTER_ACCEPTED)
+                    Context.ContextHandler.SendChallengeFightJoinRefusedMessage(client, client.Character, result);
+            }
+            else
+            {
+                fight.RemoveDefender(client.Character);
+            }
+        }
+
+        [WorldHandler(PrismInfoJoinLeaveRequestMessage.Id)]
+        public static void HandlePrismInfoJoinLeaveRequestMessage(WorldClient client, PrismInfoJoinLeaveRequestMessage message)
+        {
+            if (message.Join)
+                AvAManager.Instance.EnvoyerCombats(client.Character);
+        }
+
+        [WorldHandler(PrismSetSabotagedRequestMessage.Id)]
+        public static void HandlePrismSetSabotagedRequestMessage(WorldClient client, PrismSetSabotagedRequestMessage message)
+        {
+            AvAManager.Instance.Saboter(client.Character, message.SubAreaId);
+        }
+
         [WorldHandler(PrismUseRequestMessage.Id)]
         public static void HandlePrismUseRequestMessage(WorldClient client, PrismUseRequestMessage message)
         {
-            PrismManager.Instance.Utiliser(client.Character);
+            // MYSTIC 17/10 (phase 4) : 0 = téléportation (prisme à prisme, modules des deux côtés), 1 = recyclage
+            PrismModules.Instance.Utiliser(client.Character, message.ModuleToUse);
+        }
+
+        [WorldHandler(PrismModuleExchangeRequestMessage.Id)]
+        public static void HandlePrismModuleExchangeRequestMessage(WorldClient client, PrismModuleExchangeRequestMessage message)
+        {
+            PrismModules.Instance.OuvrirModules(client.Character);
         }
 
         #endregion
@@ -265,15 +332,22 @@ namespace Stump.Server.WorldServer.Handlers.Alliances
         /// <summary>À la connexion du personnage.</summary>
         public static void SendConnectionMessages(WorldClient client)
         {
-            // MYSTIC 17/10 : liste des prismes dès la connexion (carte du monde, détail de l'XP « bonus de zone » en fin de combat)
-            PrismManager.Instance.EnvoyerListe(client.Character);
-
             var alliance = client.Character.Guild?.Alliance;
-            if (alliance == null)
-                return;
+            if (alliance != null)
+            {
+                SendAllianceMembershipMessage(client, alliance);
+                SendMotdAndBulletin(client, alliance);
+            }
 
-            SendAllianceMembershipMessage(client, alliance);
-            SendMotdAndBulletin(client, alliance);
+            // MYSTIC 17/10 : liste des prismes (carte du monde, minimap, bonus de zone). Toujours APRÈS l'alliance : le client range les
+            // prismes de son alliance dans celle-ci et plantait sans elle (aucun prisme affiché). Renvoyée après le chargement pour la minimap.
+            PrismManager.Instance.EnvoyerListe(client.Character);
+            var perso = client.Character;
+            WorldServer.Instance.IOTaskPool.CallDelayed(5000, () =>
+            {
+                if (perso.IsInWorld)
+                    PrismManager.Instance.EnvoyerListe(perso);
+            });
         }
 
         /// <summary>Annuaire des alliances (envoyé avec la liste d'amis, comme l'annuaire des guildes).</summary>

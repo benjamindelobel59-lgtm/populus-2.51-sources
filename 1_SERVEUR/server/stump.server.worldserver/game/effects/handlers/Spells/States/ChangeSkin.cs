@@ -159,10 +159,17 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.States
                         scale = 140;
                         driverLook = null;
                         break;
-                    case 953: // MYSTIC 17/10 : Grolloum - Instant (apparence absente du client 2.51, pas de changement visible)
+                    case 953: // MYSTIC 18/10 : Grolloum - Instant (apparence absente du client 2.51) : teinte cuivre (demande utilisateur)
+                        colors = new Dictionary<int, Color> { { 1, Color.FromArgb(0xB8, 0x73, 0x33) }, { 2, Color.FromArgb(0x8C, 0x4A, 0x1E) },
+                            { 3, Color.FromArgb(0xD9, 0x8E, 0x4C) } };
+                        driverLook = null;
                         break;
                     case 1326: // Bambou panda
                         bonesId = 4576;
+                        driverLook = null;
+                        break;
+                    case 1276: // MYSTIC 18/10 : Anerice - Goulification (apparence absente du client 2.51 ; os de goule inutilisé 4000, à vérifier en jeu)
+                        bonesId = 4000;
                         driverLook = null;
                         break;
 

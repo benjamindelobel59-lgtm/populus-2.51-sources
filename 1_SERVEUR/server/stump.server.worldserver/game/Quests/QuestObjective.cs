@@ -87,6 +87,10 @@ namespace Stump.Server.WorldServer.Game.Quests
             Completed?.Invoke(this);
             ContextRoleplayHandler.SendRefreshMapQuestWithout(Character.Client, QuestManager.Instance.GetQuestTemplateWithStepId(Template.StepId).Id);
             ContextRoleplayHandler.SendQuestStepValidatedMessage(Character.Client, (ushort)QuestManager.Instance.GetQuestTemplateWithStepId(Template.StepId).Id, (ushort)Template.StepId);
+            // MYSTIC 19/10 : le journal des quêtes du client coche l'objectif tout de suite
+            Character.Client?.Send(new Stump.DofusProtocol.Messages.QuestObjectiveValidatedMessage((ushort)StepTemplate.QuestId, (ushort)Template.Id));
+            // MYSTIC 19/10 : récompense propre à l'objectif (« Le tour du monde » : XP + ressource rare du boss)
+            QuetesRecompenses.Donner(Character, Template.Id);
         }
 
         public void Save(ORM.Database database)

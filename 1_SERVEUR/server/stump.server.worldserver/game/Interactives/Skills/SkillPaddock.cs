@@ -28,7 +28,8 @@ namespace Stump.Server.WorldServer.Game.Interactives.Skills
         public override bool AreConditionsFilled(Character character)
         {
             var paddock = GetPaddock(character);
-            return paddock != null && IsAvailable(paddock, character) && base.AreConditionsFilled(character);
+            // MYSTIC 19/10 : enclos de Frigost réservés au niveau 50 et plus
+            return paddock != null && Maps.AccesFrigost.NiveauMaisonEnclos(character, InteractiveObject.Map, false) && IsAvailable(paddock, character) && base.AreConditionsFilled(character);
         }
 
         protected abstract bool IsAvailable(MapPaddock paddock, Character character);
@@ -168,7 +169,7 @@ namespace Stump.Server.WorldServer.Game.Interactives.Skills
         }
 
         public override bool AreConditionsFilled(Character character)
-            => PaddockManager.Instance.GetEntrancePaddocks(InteractiveObject.Map.Id).Length > 0 && base.AreConditionsFilled(character);
+            => PaddockManager.Instance.GetEntrancePaddocks(InteractiveObject.Map.Id).Length > 0 && Maps.AccesFrigost.NiveauMaisonEnclos(character, InteractiveObject.Map, false) && base.AreConditionsFilled(character);
 
         public override int StartExecute(Character character)
         {

@@ -45,6 +45,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Damage
             damage.IgnoreDamageReduction = true;
             damage.Generated = true;
 
+            // MYSTIC 19/10 : journal de la Toxine surprise de Nelween (le joueur intercepte les dommages des monstres proches)
+            if (Spell?.Id == 2531)
+                NLog.LogManager.GetCurrentClassLogger().Info($"[Nelween] {Caster} intercepte {damage.Amount} dommages destinés à {target}");
+
             // first, apply damage to sacrifier
             Caster.InflictDamage(damage);
 

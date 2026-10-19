@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Stump.Server.WorldServer.Game.Actors.Fight;
 using Stump.Server.WorldServer.Game.Fights;
 using Stump.Server.WorldServer.Game.Fights.Teams;
@@ -15,6 +15,10 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     {
         public static void Poser(AIFighter fighter, int spellId, int level = 1)
         {
+            // MYSTIC 18/10 : sort absent de la base (ex. nouveau sort pas encore importé) : on ne pose rien au lieu de planter le combat
+            if (Stump.Server.WorldServer.Game.Spells.SpellManager.Instance.GetSpellTemplate(spellId) == null)
+                return;
+
             if (fighter.Fight.State == FightState.Fighting)
             {
                 Action<FightTeam, FightActor> arrivee = null;
@@ -68,6 +72,30 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
             cible.AddBuff(buff, true);
         }
 
+        /// <summary>MYSTIC 19/10 : le combattant passe tous ses tours jusqu'à la fin du combat (comme les monstres corrompus du Vortex).</summary>
+        public static void AjouterPasseTour(FightActor cible, FightActor lanceur, int spellId)
+        {
+            if (cible.GetBuffs(x => x is SkipTurnBuff && x.Spell.Id == spellId).Any())
+                return;
+
+            var handler = new AddState(new EffectDice(EffectsEnum.Effect_AddState, 157, 0, 0) { Duration = -1 }, cible, null, cible.Cell, false);
+            var buff = new SkipTurnBuff(cible.PopNextBuffId(), cible, lanceur, handler, new Spell(spellId, 1), false,
+                FightDispellableEnum.REALLY_NOT_DISPELLABLE) { Duration = -1000 };
+            cible.AddBuff(buff, true);
+        }
+
+        /// <summary>MYSTIC 17/10 : état pour un nombre de tours donné (ex. prisme invulnérable 2 tours).</summary>
+        public static void AjouterPourTours(FightActor cible, FightActor lanceur, int etat, int spellId, int tours)
+        {
+            var state = Game.Spells.SpellManager.Instance.GetSpellState((uint)etat);
+            if (state == null)
+                return;
+
+            var handler = new AddState(new EffectDice(EffectsEnum.Effect_AddState, etat, 0, 0) { Duration = tours }, cible, null, cible.Cell, false);
+            var buff = new StateBuff(cible.PopNextBuffId(), cible, lanceur, handler, new Spell(spellId, 1), FightDispellableEnum.REALLY_NOT_DISPELLABLE, state) { Duration = (short)tours };
+            cible.AddBuff(buff, true);
+        }
+
         /// <summary>Retire les désactivations de l'état (l'état redevient actif, ex. invulnérable à nouveau).</summary>
         public static bool RetirerDesactivations(FightActor cible, int etat)
         {
@@ -91,8 +119,13 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
         readonly IFight m_fight;
         FightActor m_declencheur;
 
-        public VulnerableJusquAuTourDuDeclencheur(FightActor boss)
+        // MYSTIC 18/10 : true = une invocation encore en vie garde la main (Klime : poussé par une invocation pendant SON tour, il reste
+        // vulnérable jusqu'au tour suivant de cette invocation, donc pendant le tour du joueur)
+        readonly bool m_garderInvocation;
+
+        public VulnerableJusquAuTourDuDeclencheur(FightActor boss, bool garderInvocation = false)
         {
+            m_garderInvocation = garderInvocation;
             m_boss = boss;
             m_fight = boss.Fight;
             boss.BuffAdded += OnBuffAdded;
@@ -106,15 +139,26 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
         {
             if (buff is DisableStateBuff d && d.StateBuff?.State?.Id == EtatsBoss.Invulnerable)
             {
-                buff.Duration = -1000; // c'est ce suivi qui la retire, pas la durée du sort
                 var declencheur = buff.BuffTriggered && buff.DecrementReference is CharacterFighter ? buff.DecrementReference : m_fight.FighterPlaying;
+                // MYSTIC 18/10 : déclenché par une invocation (Kolosso) : c'est le tour de son invocateur qui compte (l'invocation peut
+                // mourir avant de rejouer : le boss restait vulnérable tout le combat)
+                while (declencheur != null && declencheur.IsSummoned() && declencheur.Summoner != null && declencheur.Summoner != declencheur
+                       && !(m_garderInvocation && declencheur.IsAlive() && declencheur.CanPlay()))
+                    declencheur = declencheur.Summoner;
                 m_declencheur = declencheur != boss ? declencheur : m_declencheur;
+                // MYSTIC 18/10 : 1 tour, décompté au début du tour du déclencheur (l'affichage vient de spells_effects_fix, SQL 54) ; ce suivi
+                // la retire aussi au même moment
+                if (m_declencheur != null)
+                    buff.DecrementReference = m_declencheur;
+                if (buff.Duration == -1000 || buff.Duration > 1)
+                    buff.Duration = 1;
             }
         }
 
         void OnTurnStarted(IFight fight, FightActor joueur)
         {
-            if (m_declencheur == null || joueur != m_declencheur)
+            // MYSTIC 18/10 : déclencheur mort ou parti : la vulnérabilité s'arrête au premier début de tour suivant
+            if (m_declencheur == null || (joueur != m_declencheur && m_declencheur.IsAlive() && m_declencheur.Fight == fight))
                 return;
 
             m_declencheur = null;

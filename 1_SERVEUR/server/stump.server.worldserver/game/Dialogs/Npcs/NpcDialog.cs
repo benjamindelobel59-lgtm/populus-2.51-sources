@@ -87,12 +87,16 @@ namespace Stump.Server.WorldServer.Game.Dialogs.Npcs
         {
             CurrentMessage = message;
 
+            // MYSTIC 19/10 : textes calculés à la volée (Chasseur de primes) AVANT les réponses, qui dépendent du même état
+            var dynamiques = Game.Recherches.RecherchesManager.Instance.ParametresDialogue(CurrentMessage.Id, Character);
+
             var replies = message.Replies.
                 Where(entry => entry.CanShow(Npc, Character)).
                 Select(entry => (uint)entry.ReplyId).Distinct();
 
             // paramètres du message (#1, #2... du texte), dont le texte libre écrit dans le panel admin
             var parameters = CurrentMessage.Parameters?.Where(p => !string.IsNullOrEmpty(p)).ToArray() ?? new string[0];
+            parameters = dynamiques ?? parameters;
             ContextRoleplayHandler.SendNpcDialogQuestionMessage(Character.Client, CurrentMessage, replies, parameters);
         }
     }

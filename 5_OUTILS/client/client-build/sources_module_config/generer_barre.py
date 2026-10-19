@@ -52,6 +52,26 @@ def rotate(suf, x, y, h):
 '''
 
 
+def plie(suf, x, y, w, h):
+    # MYSTIC 19/10 : replier / déplier la barre (comme le bloc des succès) : « − » visible barre ouverte, « + » barre repliée
+    t = ''
+    for nom, ic in (("reduire", "minus"), ("agrandir", "plus")):
+        t += f'''
+		<themeIconButton name="btn_{nom}{suf}">
+			<Anchors><Anchor><AbsDimension x="{x}" y="{y}" /></Anchor></Anchors>
+			<Size><AbsDimension x="{w}" y="{h}" /></Size>
+			<smooth>true</smooth>
+			<bgThemeDataId>button_thin_border</bgThemeDataId>
+			<iconUri>[config.ui.skin]texture/hud/icon_{ic}_floating_menu.png</iconUri>
+			<iconAnchors>
+				<Anchor relativePoint="TOPLEFT"><AbsDimension x="3" y="3" /></Anchor>
+				<Anchor relativePoint="BOTTOMRIGHT"><AbsDimension x="-3" y="-3" /></Anchor>
+			</iconAnchors>
+		</themeIconButton>
+'''
+    return t
+
+
 def drag(suf, x, y, w, h, target):
     return f'''
 		<!-- Poignée : cliquer-glisser ici pour déplacer la barre -->
@@ -67,8 +87,9 @@ def drag(suf, x, y, w, h, target):
 '''
 
 
-W, H = 50 + len(B) * 34, 36
-VH = 34 + len(B) * 34
+W, H = 74 + len(B) * 34, 36
+VH = 64 + len(B) * 34
+WMINI, VMINI = 44, 32
 x = f'''<?xml version="1.0" encoding="UTF-8"?>
 <!-- Mystic : barre d'icônes Groupe / One Window / IP Drop / Sasa auto / Passe-tour auto / Contrôle des invocations
      (générée par _OUTILS/client/client-build/sources_module_config/generer_barre.py)
@@ -91,11 +112,20 @@ x = f'''<?xml version="1.0" encoding="UTF-8"?>
 			<bgColor>[colors.gamemenu.background]</bgColor>
 			<alpha>[colors.gamemenu.background.alpha]</alpha>
 		</Container>
+		<Container name="ctr_h_bg_mini">
+			<Size><AbsDimension x="{WMINI}" y="{H}" /></Size>
+			<bgColor>[colors.gamemenu.background]</bgColor>
+			<alpha>[colors.gamemenu.background.alpha]</alpha>
+			<visible>false</visible>
+		</Container>
 '''
-x += drag("", 2, 2, 16, 32, "ctr_h") + rotate("", 20, 3, 30)
+x += drag("", 2, 2, 16, 32, "ctr_h") + plie("", 20, 5, 22, 26)
+x += '\n\t\t<Container name="ctr_h_btns">\n'
+x += rotate("", 44, 3, 30)
 for i, (n, ic) in enumerate(B):
-    x += bouton(n, ic, "", 50 + i * 34, 2)
+    x += bouton(n, ic, "", 74 + i * 34, 2)
 x += f'''
+		</Container>
 	</Container>
 
 	<Container name="ctr_v">
@@ -110,11 +140,20 @@ x += f'''
 			<bgColor>[colors.gamemenu.background]</bgColor>
 			<alpha>[colors.gamemenu.background.alpha]</alpha>
 		</Container>
+		<Container name="ctr_v_bg_mini">
+			<Size><AbsDimension x="62" y="{VMINI}" /></Size>
+			<bgColor>[colors.gamemenu.background]</bgColor>
+			<alpha>[colors.gamemenu.background.alpha]</alpha>
+			<visible>false</visible>
+		</Container>
 '''
-x += drag("2", 2, 2, 30, 28, "ctr_v") + rotate("2", 34, 2, 28)
+x += drag("2", 2, 2, 30, 28, "ctr_v") + plie("2", 34, 2, 26, 28)
+x += '\n\t\t<Container name="ctr_v_btns">\n'
+x += rotate("2", 18, 32, 28)
 for i, (n, ic) in enumerate(B):
-    x += bouton(n, ic, "2", 15, 34 + i * 34)
+    x += bouton(n, ic, "2", 15, 64 + i * 34)
 x += '''
+		</Container>
 	</Container>
 
 	<!-- Mystic : horloge de l'Oeil de Vortex, en haut de l'écran (sur la bande noire), visible seulement quand l'Auroraire

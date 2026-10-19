@@ -35,6 +35,13 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
 
         public override void Play()
         {
+            // MYSTIC 18/10 : journal pour vérifier le déblocage en jeu (Floutage = Yokaï déplacé en diagonale du Tengu, Fulguration =
+            // Yomi frappé à l'arme en ligne avec le Tengu)
+            NLog.LogManager.GetCurrentClassLogger().Info("[Tengu] debut de tour : Floutage {0}, Fulguration {1}, invocations [{2}]",
+                Fighter.HasState((int)SpellStatesEnum.FLOUTAGE_87), Fighter.HasState((int)SpellStatesEnum.FULGURATION_86),
+                string.Join(", ", System.Linq.Enumerable.Select(Fighter.Team.GetAllFighters(x => x.IsAlive() && x.Summoner == Fighter),
+                    x => (x as SummonedMonster)?.Monster.Template.Id + "@" + x.Cell.Id)));
+
             if (Fighter.HasState((int)SpellStatesEnum.FLOUTAGE_87) && Fighter.HasState((int)SpellStatesEnum.FULGURATION_86))
                 Fighter.CastAutoSpell(new Spell(ToisonGivreeSpellId, 1), Fighter.Cell);
 
@@ -65,7 +72,16 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
             : base(fighter)
         {
             SortPassif.Poser(fighter, FoudreSpellId);
+            // MYSTIC 18/10 (demande utilisateur) : Fulguration (2670) seulement sur un COUP D'ARME, à toute distance (le déclencheur
+            // DCAC partait sur tout coup au contact, y compris les dommages de poussée contre un obstacle). Filtre dans CastSpell.cs.
+            fighter.BuffAdded += (f, b) =>
+            {
+                if (b is Game.Fights.Buffs.TriggerBuff t && t.Spell.Id == Fulguration)
+                    t.SetTrigger(Game.Fights.Buffs.BuffTriggerType.OnDamagedByWeapon);
+            };
         }
+
+        public const int Fulguration = 2670;
     }
 
     /// <summary>Fuji Givrefoux : « Instinct maternel » (mort d'un allié → +1000 dommages à Fuji / Tengu, +1 PM aux alliés).</summary>

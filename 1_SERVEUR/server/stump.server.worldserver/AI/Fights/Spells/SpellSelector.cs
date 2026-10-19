@@ -177,7 +177,9 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
                 var horsPortee = 0; var refus = new Dictionary<SpellCastResult, int>(); var sansEffet = 0;
 
                 // summoning is the priority
-                if ((category & SpellCategory.Summoning) != 0 &&
+                // MYSTIC 18/10 : un sort qui EXIGE une case occupée (ex. Mékattwaction du Wa Wobot : attire le joueur et invoque un
+                // Tamponneur à sa place) n'est pas visé comme une invocation sur une case vide (refus CELL_NOT_FREE à chaque tour)
+                if ((category & SpellCategory.Summoning) != 0 && !spell.CurrentSpellLevel.NeedTakenCell &&
                     ((category & SpellCategory.Healing) == 0 || Fighter.Team.Fighters.Any(x => x.IsDead())) && // revive effect and an ally is dead
                     (Fighter.CanSummon() || (category & SpellCategory.Healing) != 0 && Fighter.Team.Fighters.Any(x => x.IsDead()))) // can summon or is revive spell
                 {

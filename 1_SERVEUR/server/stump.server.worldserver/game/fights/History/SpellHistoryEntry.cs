@@ -52,6 +52,13 @@ namespace Stump.Server.WorldServer.Game.Fights.History
             get;
         }
 
+        /// <summary>MYSTIC 19/10 : lancer déclenché par un effet (passif, sous-sort) : ignoré pour les délais et limites de relance.</summary>
+        public bool Declenche
+        {
+            get;
+            set;
+        }
+
         public int CooldownDuration => m_cooldownDuration != null ? (int)(m_cooldownDuration - CharacterSpellDelayReduction) : (int)(Spell.MinCastInterval - CharacterSpellDelayReduction);
 
         public int GetElapsedRounds(int currentRound) => currentRound - CastRound;

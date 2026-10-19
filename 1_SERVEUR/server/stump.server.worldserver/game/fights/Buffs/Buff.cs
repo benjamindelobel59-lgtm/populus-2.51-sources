@@ -22,6 +22,10 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
             Spell = spell;
             Critical = critical;
 
+            // MYSTIC 18/10 : déclencheur d'un sous-sort connu avant la durée (Truchage de la Haute Truche : correctif de durée 1 tour)
+            if (triggerer == null && effectHandler.CastHandler?.Informations.Triggerer != null)
+                triggerer = effectHandler.CastHandler.Informations.Triggerer;
+
             Duration = triggerer != null && EffectFix?.TriggerBuffDuration != null ? (short)EffectFix.TriggerBuffDuration : (short)(EffectHandler.Duration == -1 ? -1000 : Effect.Duration);
             Dispellable = EffectFix?.Dispellable != null ? (FightDispellableEnum)EffectFix.Dispellable : dispelable;
 

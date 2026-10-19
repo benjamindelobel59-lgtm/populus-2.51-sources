@@ -13,3 +13,4 @@ Dépôt de **partage** des modifications du serveur Mystic (émulateur Stump 2.5
 | `3_SQL_WORLD/` | scripts de la base `world`, à jouer dans l'ordre |
 | `4_CLIENT/` | fichiers du client modifiés uniquement (64 et 32 bits) |
 | `5_OUTILS/` | nos scripts (générateurs, outils client, launcher) |
+| `6_SERVEURS_COMPILES/` | AuthServer et WorldServer déjà compilés (fichiers `Stump.*`, sans config) |

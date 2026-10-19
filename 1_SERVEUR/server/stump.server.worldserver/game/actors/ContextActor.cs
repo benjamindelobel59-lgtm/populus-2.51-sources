@@ -190,6 +190,13 @@ namespace Stump.Server.WorldServer.Game.Actors
             return true;
         }
 
+        /// <summary>MYSTIC 18/10 : déplacement interrompu par un effet qui a déjà replacé l'acteur : on ne remet PAS la fin du chemin.</summary>
+        public void AbandonnerDeplacement()
+        {
+            m_isMoving = false;
+            MovementPath = null;
+        }
+
         public virtual bool StopMove()
         {
             if (!IsMoving())

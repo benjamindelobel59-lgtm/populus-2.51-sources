@@ -25,6 +25,13 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
         protected override bool InternalApply()
         {
             List<FightActor> TelefraggedActor = new List<FightActor>();
+
+            // MYSTIC 18/10 : Fuseau / Gousset (Comte Harebourg) : le masque « T » (échangé) ne doit voir QUE l'échange de cette
+            // téléportation ; avant, un ancien échange restait marqué et rendait le Comte vulnérable sans échange
+            if (Spell.Id == 3649 || Spell.Id == 3657)
+                foreach (var f in Fight.GetAllFighters())
+                    f.NeedTelefragState = false;
+
             foreach (var target in GetAffectedActors())
             {
                 var casterPoint = Caster.Position.Point;
@@ -47,6 +54,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
                 // MYSTIC 17/10 : celui qui devait bouger et n'a pas pu (hors carte / case non marchable) est repéré pour le masque « W »
                 var deplace = Effect.EffectId == EffectsEnum.Effect_SymetricTargetTeleport ? Caster : target;
                 deplace.TeleporteSurCaseInvalide = false;
+                deplace.EchecTeleportSort = CastHandler;
 
                 if (!cell.IsInMap())
                 {
@@ -69,6 +77,12 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
                 }
 
                 var fighter = Fight.GetOneFighter(dstCell);
+
+                // MYSTIC 19/10 : Bump du Tamponneur : on n'échange jamais sa place avec un indéplaçable (les Tamponneurs bougeaient et
+                // la ligne de rebonds était cassée) ; le combattant reste où il est
+                if (fighter != null && fighter != target && Spell.Id == 3787 && !fighter.CanSwitchPos())
+                    continue;
+
                 if (fighter != null && fighter != target)
                 {
                     var caster = Caster;
