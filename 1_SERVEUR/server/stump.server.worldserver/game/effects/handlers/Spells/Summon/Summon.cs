@@ -90,19 +90,25 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
             if (monster.Template.UseSummonSlot && !Caster.CanSummon())
                 return false;
 
-            // MYSTIC 17/10 : Bonbombe (Péché Mignon de la Reine des Voleurs) : « invoquée malgré lui à 2 PO », toujours sur la case à
-            // DROITE du personnage à l'écran (X+1, Y+1 : X+1 descend à droite, Y+1 monte à droite), décalée si la case est prise
-            // (capture de l'utilisateur) ; avant : 1re case libre trouvée, placement au hasard
+            // PADGREF 20/10 (schéma de l'utilisateur) : Bonbombe (Péché Mignon de la Reine des Voleurs) « invoquée malgré lui à 2 PO » :
+            // les 8 cases à 2 PO du personnage, remplies dans l'ordre 1 → 8 en tournant dans le sens des aiguilles d'une montre à
+            // l'écran à partir d'en haut à droite (1 haut-droite, 2 droite, 3 bas-droite, 4 bas, 5 bas-gauche, 6 gauche, 7 haut-gauche,
+            // 8 haut) ; 1re case libre de cet ordre. Les 8 prises : même ordre à 3 PO, puis 4… À l'écran : droite = X+1/Y+1, bas = X+1/Y-1.
             if (monster.Template.Id == (int)MonsterIdEnum.BONBOMBE)
             {
                 var centre = Caster.Position.Point;
-                var voulu = new Maps.Cells.MapPoint(centre.X + 1, centre.Y + 1);
                 bool Libre(Maps.Cells.MapPoint p) => p.IsInMap() && Map.Cells[p.CellId].Walkable && Fight.GetOneFighter(Map.Cells[p.CellId]) == null;
-                Maps.Cells.MapPoint choisi = Libre(voulu) ? voulu : null;
-                for (var distance = 2; choisi == null && distance <= 4; distance++)
+                double Angle(Maps.Cells.MapPoint p)
+                {
+                    int dx = p.X - centre.X, dy = p.Y - centre.Y;
+                    var a = System.Math.Atan2(dx - dy, dx + dy) * 180 / System.Math.PI;   // écran : x = dx + dy (droite), y = dx - dy (bas)
+                    return ((a + 45) % 360 + 360) % 360;                      // 0 = haut-droite, croissant dans le sens des aiguilles
+                }
+                Maps.Cells.MapPoint choisi = null;
+                for (var distance = 2; choisi == null && distance <= 6; distance++)
                     choisi = Map.Cells.Select(c => new Maps.Cells.MapPoint(c))
                         .Where(p => p.ManhattanDistanceTo(centre) == distance && Libre(p))
-                        .OrderBy(p => p.ManhattanDistanceTo(voulu)).FirstOrDefault();
+                        .OrderBy(Angle).FirstOrDefault();
                 if (choisi == null)
                     return false;
                 TargetedCell = Map.Cells[choisi.CellId];

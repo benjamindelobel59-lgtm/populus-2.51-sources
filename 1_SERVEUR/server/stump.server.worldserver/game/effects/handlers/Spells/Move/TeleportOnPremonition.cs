@@ -35,6 +35,25 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
                 return true;
             }
 
+            // MYSTIC 20/10 (Plateau de Ush) : Chamboulement du Chacrebleu (6395, en ligne à 3 PO) : il avance en ligne jusqu'à la case collée
+            // à sa cible (avant : effet sans action, il ne bougeait pas) ; le sous-sort 6396 frappe ensuite
+            if (Spell.Id == 6395)
+            {
+                var cible = Fight.GetOneFighter(TargetedCell);
+                if (cible == null || cible == Caster || Caster.IsCarrying() || Caster.GetCarryingActor() != null)
+                    return true;
+                var depuis = cible.Position.Point;
+                var contact = depuis.GetNearestCellInDirection(depuis.OrientationTo(Caster.Position.Point, false));
+                if (contact == null || contact.CellId == Caster.Cell.Id)
+                    return true;
+                var cellule = Map.Cells[contact.CellId];
+                if (!cellule.Walkable || cellule.NonWalkableDuringFight || !Fight.IsCellFree(cellule))
+                    return true;
+                Caster.Position.Cell = cellule;
+                ActionsHandler.SendGameActionFightTeleportOnSameMapMessage(Fight.Clients, Caster, Caster, cellule);
+                return true;
+            }
+
             var carryingActor = Caster.GetCarryingActor();
 
             var celltogo = Fight.GetTriggers().Where(x => x is Rune && (x as Rune).CastedSpell.Id == 9900).FirstOrDefault();

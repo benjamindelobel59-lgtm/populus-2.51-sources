@@ -57,7 +57,7 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     /// Ush Galesh rouge : Rouge et Noir (dommages partagés avec l'Ush noir, l'un réduit les dommages à distance, l'autre au corps à
     /// corps, les états s'inversent ; la mort de l'un tue l'autre ; Négativisme) + Matoumorphose (Chachas).
     /// </summary>
-    [BrainIdentifier(4264)] public class UshRougeBrain : BrainPassif { public UshRougeBrain(AIFighter f) : base(f, 6264, 6604) { } }
+    // MYSTIC 20/10 : Ush rouge / noir : voir UshBrains.cs (mécanique codée)
 
     /// <summary>Ombre : Ex Nihilo.</summary>
     [BrainIdentifier(3564)] public class OmbreBrain : BrainPassif { public OmbreBrain(AIFighter f) : base(f, 4104) { } }

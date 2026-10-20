@@ -1,4 +1,5 @@
-﻿using Stump.DofusProtocol.Enums;
+﻿using System.Linq;
+using Stump.DofusProtocol.Enums;
 using Stump.Server.WorldServer.Game.Actors.Fight;
 using Stump.Server.WorldServer.Game.Fights;
 
@@ -160,15 +161,48 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     [BrainIdentifier(3725)]
     public class BonbombeBrain : Brain
     {
+        static readonly NLog.Logger journal = NLog.LogManager.GetCurrentClassLogger();
+        const int Nova = 4690;
+        int m_tours;
+
         public BonbombeBrain(AIFighter fighter)
             : base(fighter)
         {
             var tour = fighter.Fight?.TimeLine?.RoundNumber ?? 1;
-            SortPassif.Poser(fighter, 4690, tour <= 3 ? 1 : tour <= 7 ? 2 : 3);
+            // PADGREF 20/10 (journaux du test VPS) : les niveaux 2 et 3 du passif (posés à partir du tour 4) ne faisaient jamais
+            // exploser la bombe à la fin de son 2e tour ; seul le niveau 1 marche, et ils ont les mêmes effets dans le client 2.51
+            SortPassif.Poser(fighter, Nova, 1);
+            // PADGREF 20/10 : journal de diagnostic des explosions (chaque tour de la bombe, sa mort, l'ordre de jeu)
+            fighter.Fight.TurnStopped += FinDeTour;
+            fighter.Dead += Mort;
+            journal.Info("[Bonbombe] {0} apparait (tour de combat {1}, invocateur {2}, case {3}, position dans l'ordre de jeu {4})",
+                fighter.Id, tour, (fighter as Stump.Server.WorldServer.Game.Actors.Fight.SummonedFighter)?.Summoner?.Id, fighter.Cell?.Id,
+                fighter.Fight.TimeLine.Fighters.IndexOf(fighter));
+        }
+
+        bool PassifPose => Fighter.GetBuffs(b => b.Spell != null && b.Spell.Id == Nova).Any();
+
+        void FinDeTour(Stump.Server.WorldServer.Game.Fights.IFight fight, Stump.Server.WorldServer.Game.Actors.Fight.FightActor acteur)
+        {
+            if (acteur != Fighter)
+                return;
+            m_tours++;
+            if (Fighter.IsAlive())
+                journal.Info("[Bonbombe] {0} fin de son tour n°{1} : toujours en vie (passif Nova : {2}, Meche courte : {3}, Desamorcee : {4})",
+                    Fighter.Id, m_tours, PassifPose, Fighter.HasState(195), Fighter.HasState(198));
+        }
+
+        void Mort(Stump.Server.WorldServer.Game.Actors.Fight.FightActor bombe, Stump.Server.WorldServer.Game.Actors.Fight.FightActor tueur)
+        {
+            Fighter.Fight.TurnStopped -= FinDeTour;
+            Fighter.Dead -= Mort;
+            journal.Info("[Bonbombe] {0} meurt / explose apres {1} tour(s) (tuee par {2})", Fighter.Id, m_tours, tueur?.Id);
         }
 
         public override void Play()
         {
+            if (!PassifPose)
+                journal.Info("[Bonbombe] {0} : passif Nova ABSENT au debut de son tour", Fighter.Id);
         }
     }
 

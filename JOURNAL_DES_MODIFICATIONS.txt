@@ -268,3 +268,12 @@ Launcher : src_mystic/Fantomes.cs (Dofus restes en memoire sans fenetre fermes, 
 === 20/10/2026 15h41 (paquet PUSH_2026-10-20_15h41) ===
 - OGRINES = COMPTE WEB : game/Ogrines/OgrinesWeb.cs (porte-monnaie auth.nekfeu_comptes_web.Ogrines, journal, reprise des anciens accounts.Tokens une fois + NewTokens) ; Inventory.ActiveTokens = false (plus d'objet ogrines : ni échange ni vente) ; GiveOgrines crédite le compte web ; CharacterChoiceHandler reprend les ogrines à la sélection du perso.
 - BOUTIQUE PADGREF (boutique du client 2.51, ex « Hôtel de vente d'Artemis ») : game/Ogrines/BoutiquePadgref.cs + ApproachHandler (HaapiTokenRequestMessage -> jeton à usage unique auth.nekfeu_boutique_jetons ; fonction optionnelle 7 « web.shopInClient » ; livraisons world.nekfeu_boutique_livraisons). L'API JSON-RPC de la boutique est sur le site (boutique.php) ; le client est patché (RpcServiceCenter.apiDomain + module Web).
+
+=== 20/10/2026 18h25 (src (1).rar de l'autre dev, appliqué) ===
+- Plateau de Ush (AI/Fights/Brain/Custom/Boss/UshBrains.cs) : Rouge = dégâts au contact, Noir = à distance, bascule à chaque coup, dégâts partagés, mort liée, Matoumorphose ; IA des Chachas ; Chamboulement (TeleportOnPremonition) ; Griffure Ondulante (DirectDamage) ; infobulle des effets déclenchés (TriggerBuff) ; vagues affaiblies (FightTeam) ; FightActor (InvulnerabiliteSpeciale / AvantPerteVie) ; DimensionsBrains.
+- 8 fichiers, aucun conflit avec nos changements. Leurs motifs de placement en plus (patterns/) non repris, comme le 20/10 matin.
+
+=== 20/10/2026 21h (débogage du Trône de la Cour Sombre / Reine des Voleurs) ===
+- Bonbombes : placement selon le schéma (8 cases à 2 PO dans l'ordre horaire, puis 3 PO…) (Summon.cs) ; passif Nova toujours au niveau 1 (PassifsDonjonsBrains.cs, BonbombeBrain + journal [Bonbombe]) ; explosion Nova à dégâts fixes 1000 / 1200 (DirectDamage.cs) ; Péché Mignon et Nova gardés après la mort de leur lanceur (FightActor.SortsGardesApresMort) ; apparence 1130 « bombe bleue » = squelette 2866 (ChangeSkin.cs).
+- Double d'un monstre (Doublage) = invocation nommée « Double de Doublure » (SummonedClone.cs).
+- Vagues affaiblies aussi dans la salle de la Reine 137102336 (FightTeam.cs).

@@ -998,6 +998,12 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                 TriggerBuffs(damage.Source, BuffTriggerType.OnDamagedByGlyph, damage);
         }
 
+        /// <summary>MYSTIC 20/10 (Plateau de Ush) : invulnerabilite decidee par le cerveau du monstre (degats, attaque au contact ?).</summary>
+        public Func<Damage, bool, bool> InvulnerabiliteSpeciale;
+
+        /// <summary>MYSTIC 20/10 (Plateau de Ush) : juste avant la perte de PV (apres reductions et bouclier) : damage.Amount modifiable.</summary>
+        public event Action<FightActor, Damage> AvantPerteVie;
+
         public virtual int InflictDamage(Damage damage)
         {
             var isCloseRangeAttack = damage.Source.Position.Point.ManhattanDistanceTo(Position.Point) <= 1;
@@ -1027,7 +1033,7 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                 return 0;
             }
 
-            if (IsInvulnerable(isCloseRangeAttack))
+            if (IsInvulnerable(isCloseRangeAttack) || (InvulnerabiliteSpeciale?.Invoke(damage, isCloseRangeAttack) ?? false))
             {
                 OnDamageReducted(damage.Source, damage.Amount);
 
@@ -1124,6 +1130,7 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             }
 
             TriggerDamageBuffs(damage);
+            AvantPerteVie?.Invoke(this, damage);
 
             if (damage.IgnoreDamageReduction)
                 permanentDamages = CalculateErosionDamage(damage.Amount);
@@ -1820,12 +1827,20 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             TriggerBuffs(this, BuffTriggerType.OnDispelled);
         }
 
+        /// <summary>PADGREF 20/10 : sorts dont les effets restent sur les cibles quand leur lanceur meurt (Peche Mignon : 4693, 4692, 4691 ; Nova 4689 :
+        /// la bombe qui explose meurt, et sans ca l'etat Desamorcee + la couleur bleue des bombes en diagonale etaient retires aussitot).</summary>
+        public static readonly System.Collections.Generic.HashSet<int> SortsGardesApresMort = new System.Collections.Generic.HashSet<int> { 4693, 4692, 4691, 4689 };
+
         public void RemoveAndDispellAllBuffs(FightActor caster, FightDispellableEnum dispellable = FightDispellableEnum.REALLY_NOT_DISPELLABLE)
         {
             var copyOfBuffs = m_buffList.ToArray();
 
             foreach (var buff in copyOfBuffs.Where(buff => buff.Caster == caster && buff.Dispellable <= dispellable))
             {
+                // PADGREF 20/10 (demande utilisateur) : Peche Mignon de la Reine des Voleurs (Bonbombes + Nova) continue jusqu'a la fin
+                // du combat, meme apres la mort de la Reine
+                if (dispellable == FightDispellableEnum.DISPELLABLE_BY_DEATH && buff.Spell != null && SortsGardesApresMort.Contains(buff.Spell.Id))
+                    continue;
                 RemoveBuff(buff);
             }
         }

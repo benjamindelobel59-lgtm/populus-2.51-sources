@@ -229,6 +229,7 @@
     <Compile Include="AI\Fights\Brain\Custom\Boss\FabriqueMallefiskBrains.cs" />
 
     <Compile Include="AI\Fights\Brain\Custom\Boss\NidasBrains.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\UshBrains.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\PassifsDonjonsBrains.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\PapaNowelBrain.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\PassifsAuditDonjonsBrains.cs" />

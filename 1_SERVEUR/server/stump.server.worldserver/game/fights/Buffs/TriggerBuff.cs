@@ -156,6 +156,15 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
 
             var values = Effect.GetValues();
 
+            // MYSTIC 20/10 (Griffure Ondulante : « 76 à 6080 ») : pour les effets « forceMinMax » (dégâts...), le client 2.51 lit un effet
+            // déclenché comme un lancer de dés : min = p3 + p1, max = p1 × p2 + p3. On envoie donc (1, max - min + 1, min - 1).
+            if (Effect is Effects.Instances.EffectDice de && de.Template != null && de.Template.ForceMinMax && de.Max > 0)
+            {
+                var min = de.DiceFace == 0 ? de.DiceNum : de.Min;
+                var max = de.Max;
+                values = new object[] { 1, max - min + 1, min - 1 };
+            }
+
             return new FightTriggeredEffect((uint)Id, Target.Id, turnDuration,
                 (sbyte)Dispellable,
                 (ushort)ParentSpell.Id, (uint)(EffectFix?.ClientEffectId ?? Effect.Id), 0,

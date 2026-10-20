@@ -159,7 +159,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Teams
         /// MYSTIC 20/10 : salles où les monstres qui réapparaissent (vagues) arrivent au plus petit grade avec 25 % de vitalité en moins
         /// (Galerie du Phossile : salle du boss 130548736 ; Fabrique de Malléfisk : 130286592).
         /// </summary>
-        public static readonly HashSet<int> VaguesAffaiblies = new HashSet<int> { 130548736, 130286592, 129500160, 143393281, 143917569, 143138823, 160564224, 161743872 }; // + Horologium de XLII, Mégalithe de Fraktale, Défi du Chalœil, Pounicheur // + Palais du Roi Nidas, Œil de Vortex
+        public static readonly HashSet<int> VaguesAffaiblies = new HashSet<int> { 130548736, 130286592, 129500160, 143393281, 143917569, 143138823, 160564224, 161743872, 162004992, 137102336 }; // PADGREF 20/10 : + Reine des Voleurs (137102336) // + Horologium de XLII, Mégalithe de Fraktale, Défi du Chalœil, Pounicheur, Plateau de Ush // + Palais du Roi Nidas, Œil de Vortex
 
         public virtual bool ChangeLeader(FightActor leader)
         {

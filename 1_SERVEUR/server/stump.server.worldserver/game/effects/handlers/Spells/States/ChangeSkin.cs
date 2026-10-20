@@ -173,6 +173,12 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.States
                         driverLook = null;
                         break;
 
+                    case 1130: // PADGREF 20/10 : Reine des Voleurs - Nova : Bonbombe désamorcée (apparence absente du client 2.51 ;
+                               // squelette 2866, voisin de la Bonbombe 2867 et utilisé par aucun monstre : à vérifier en jeu avec .look 2866)
+                        bonesId = 2866;
+                        driverLook = null;
+                        break;
+
                     default:
                         return false;
                 }
