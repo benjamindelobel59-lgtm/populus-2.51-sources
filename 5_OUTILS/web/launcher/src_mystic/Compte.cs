@@ -1,7 +1,7 @@
-// MYSTIC 18/10/2026 : connexion du launcher Mystic avec le COMPTE WEB (créé sur le site, il regroupe les comptes de jeu).
-// API : AuthServer, Launcher/LauncherApiWeb.cs (/web/connexion, /web/session, /web/ticket, /web/deconnexion) + /statut.
-// « Se souvenir de moi » : seule la clé de session est gardée, chiffrée par Windows (DPAPI, utilisateur courant) ; jamais le mot
-// de passe. Après connexion : grand launcher (Principal.cs).
+// MYSTIC 18/10/2026 → PADGREF 20/10 : connexion du launcher avec le COMPTE WEB (créé sur le site, il regroupe les comptes de jeu).
+// API : AuthServer, Launcher/LauncherApiWeb.cs (/web/connexion, /web/session, /web/ticket, /web/deconnexion, /web/appairage) + /statut.
+// « Rester connecté » : seule la clé de session est gardée, chiffrée par Windows (DPAPI, utilisateur courant) ; jamais le mot
+// de passe. Interface : vue « Connexion Zaap » (thème Azur, Theme.cs). Après connexion : grand launcher (Principal.cs).
 
 using System;
 using System.Collections.Generic;
@@ -21,6 +21,8 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using static MysticLauncher.Theme;
 
 namespace MysticLauncher
 {
@@ -323,73 +325,44 @@ namespace MysticLauncher
 
     partial class LauncherWindow
     {
-        static readonly Color Vert = Color.FromRgb(0x4a, 0xde, 0x80);
-        static readonly Color Rouge = Color.FromRgb(0xf8, 0x71, 0x71);
-
         CompteApi m_api;
-        Border m_carte;
+        FrameworkElement m_carte;
         TextBox m_champEmail;
         PasswordBox m_champMdp;
-        CheckBox m_souvenir;
-        TextBlock m_erreurConnexion;
-        Border m_boutonConnexion;
-        TextBlock m_boutonConnexionTexte;
+        Func<bool> m_souvenir;
+        TextBlock m_message;
+        Border m_boutonConnexion, m_boutonSite;
+        TextBlock m_boutonConnexionTexte, m_boutonSiteTexte, m_sousTitre;
         Ellipse m_point;
         TextBlock m_statutServeur;
-        Border m_pastille;
         bool m_connexionEnCours, m_ouvert;
+        string m_codeSite;
 
-        const double CARTE_L = 320;
+        const string TexteSite = "Se connecter avec le site Padgref";
+        const string TexteAccueil = "Connecte-toi une fois : le launcher retient ta session en toute sécurité.";
 
-        // ---------------------------------------------------------------- statut du serveur
+        // ---------------------------------------------------------------- statut du serveur (en ligne / hors ligne seulement)
 
-        void ConstruireStatutServeur()
+        FrameworkElement ConstruireStatutServeur()
         {
-            m_point = new Ellipse { Width = 8, Height = 8, Fill = new SolidColorBrush(Brume), VerticalAlignment = VerticalAlignment.Center };
-            m_statutServeur = new TextBlock
-            {
-                Text = "Connexion au serveur…",
-                FontFamily = new FontFamily("Segoe UI"),
-                FontSize = 11.5,
-                FontWeight = FontWeights.SemiBold,
-                Foreground = new SolidColorBrush(Argent2),
-                Margin = new Thickness(8, 0, 0, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            };
+            m_point = new Ellipse { Width = 8, Height = 8, VerticalAlignment = VerticalAlignment.Center };
+            Theme.PointStatut(m_point, null);
+            m_statutServeur = T("Serveur…", 12.5, Texte, FontWeights.SemiBold);
+            m_statutServeur.Margin = new Thickness(8, 0, 0, 0);
             var ligne = new StackPanel { Orientation = Orientation.Horizontal };
             ligne.Children.Add(m_point);
             ligne.Children.Add(m_statutServeur);
-            m_pastille = PastilleStatut(ligne);
-            Placer(m_pastille, 18, 44);
-            m_pastille.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromSeconds(0.8)) { BeginTime = TimeSpan.FromSeconds(2.2) });
+            var p = Puce(ligne);
+            p.Padding = new Thickness(11, 4, 12, 4);
+            p.IsHitTestVisible = false;
+            return p;
         }
-
-        public static Border PastilleStatut(UIElement contenu) => new Border
-        {
-            Child = contenu,
-            Padding = new Thickness(11, 5, 13, 5),
-            CornerRadius = new CornerRadius(12),
-            Background = new SolidColorBrush(Color.FromArgb(0x99, 0x0c, 0x09, 0x14)),
-            BorderBrush = new SolidColorBrush(Color.FromArgb(0x40, 0xb7, 0x9c, 0xff)),
-            BorderThickness = new Thickness(1),
-            Opacity = 0,
-            IsHitTestVisible = false
-        };
 
         public static void AfficherStatut(Ellipse point, TextBlock texte, Tuple<bool, int> statut)
         {
-            point.BeginAnimation(OpacityProperty, null);
-            if (statut == null || !statut.Item1)
-            {
-                point.Fill = new SolidColorBrush(Rouge);
-                point.Effect = null;
-                texte.Text = "Serveur hors ligne";
-                return;
-            }
-            point.Fill = new SolidColorBrush(Vert);
-            point.Effect = new DropShadowEffect { Color = Vert, BlurRadius = 8, ShadowDepth = 0, Opacity = 0.9 };
-            point.BeginAnimation(OpacityProperty, new DoubleAnimation(1, 0.35, TimeSpan.FromSeconds(1.1)) { AutoReverse = true, RepeatBehavior = RepeatBehavior.Forever });
-            texte.Text = "Serveur en ligne";
+            var ok = statut != null && statut.Item1;
+            Theme.PointStatut(point, ok);
+            texte.Text = ok ? "Serveur en ligne" : "Serveur hors ligne";
         }
 
         void SuivreStatut()
@@ -405,141 +378,66 @@ namespace MysticLauncher
             }) { IsBackground = true }.Start();
         }
 
-        // ---------------------------------------------------------------- carte de connexion
-
-        Control StyleChamp(Control c)
-        {
-            c.Height = 40;
-            c.FontFamily = new FontFamily("Segoe UI");
-            c.FontSize = 14;
-            c.Padding = new Thickness(10, 0, 10, 0);
-            c.VerticalContentAlignment = VerticalAlignment.Center;
-            c.Foreground = new SolidColorBrush(Argent);
-            c.Background = new SolidColorBrush(Color.FromArgb(0x80, 0x07, 0x06, 0x0b));
-            var bord = new SolidColorBrush(Color.FromArgb(0x60, 0xb7, 0x9c, 0xff));
-            c.BorderBrush = bord;
-            c.BorderThickness = new Thickness(1);
-            c.Margin = new Thickness(0, 5, 0, 12);
-            if (c is TextBox tb) tb.CaretBrush = new SolidColorBrush(VioletClair);
-            if (c is PasswordBox pb) pb.CaretBrush = new SolidColorBrush(VioletClair);
-            c.GotKeyboardFocus += (s, e) => c.BorderBrush = new SolidColorBrush(VioletClair);
-            c.LostKeyboardFocus += (s, e) => c.BorderBrush = bord;
-            return c;
-        }
-
-        TextBlock Lien(string texte, Action action)
-        {
-            var l = Outils.Texte(texte, 12, VioletClair, FontWeights.SemiBold);
-            l.TextDecorations = TextDecorations.Underline;
-            l.Cursor = Cursors.Hand;
-            l.MouseLeftButtonUp += (s, e) => action();
-            return l;
-        }
+        // ---------------------------------------------------------------- formulaire « Connexion Zaap »
 
         FrameworkElement ConstruireCarteCompte()
         {
-            m_carte = new Border
-            {
-                Width = CARTE_L,
-                Height = H - MARGE - 52 - 18,
-                CornerRadius = new CornerRadius(14),
-                Background = new LinearGradientBrush(Color.FromArgb(0xc8, 0x14, 0x10, 0x1f), Color.FromArgb(0xe0, 0x0c, 0x09, 0x14), 90),
-                BorderThickness = new Thickness(1),
-                BorderBrush = new LinearGradientBrush(Argb(0x70, VioletClair), Argb(0x50, Demon), 90),
-                Effect = new DropShadowEffect { Color = Colors.Black, BlurRadius = 30, ShadowDepth = 6, Opacity = 0.7 },
-                Opacity = 0,
-                RenderTransform = new TranslateTransform(30, 0)
-            };
-            var pile = new StackPanel { Margin = new Thickness(26, 26, 26, 22), VerticalAlignment = VerticalAlignment.Center };
-            m_carte.Child = pile;
+            var pile = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(56, 20, 56, 20), RenderTransform = new TranslateTransform() };
+            m_carte = pile;
+            Action<FrameworkElement, double> ajouter = (e, marge) => { e.Margin = new Thickness(0, marge, 0, 0); pile.Children.Add(e); };
 
-            pile.Children.Add(Outils.Texte(Espace("CONNEXION"), 13, VioletClair, FontWeights.Bold));
-            var sous = Outils.Texte("Connectez-vous avec votre compte Mystic : tous vos comptes de jeu vous attendent, sans retaper de mot de passe.", 12, Brume, FontWeights.Normal);
-            sous.Margin = new Thickness(0, 8, 0, 22);
-            pile.Children.Add(sous);
-            pile.Children.Add(Outils.Texte("E-mail ou nom de compte", 12, Argent2, FontWeights.SemiBold));
-            m_champEmail = (TextBox)StyleChamp(new TextBox { MaxLength = 190 });
-            pile.Children.Add(m_champEmail);
-            pile.Children.Add(Outils.Texte("Mot de passe", 12, Argent2, FontWeights.SemiBold));
-            m_champMdp = (PasswordBox)StyleChamp(new PasswordBox { MaxLength = 128 });
-            pile.Children.Add(m_champMdp);
-            m_souvenir = new CheckBox
-            {
-                Content = Outils.Texte("Se souvenir de moi", 12, Argent2, FontWeights.Normal),
-                IsChecked = true,
-                Margin = new Thickness(0, 0, 0, 18),
-                Cursor = Cursors.Hand
-            };
-            pile.Children.Add(m_souvenir);
-
-            m_boutonConnexionTexte = Outils.Texte(Espace("SE CONNECTER"), 14, Colors.White, FontWeights.Bold);
-            m_boutonConnexionTexte.HorizontalAlignment = HorizontalAlignment.Center;
-            m_boutonConnexionTexte.VerticalAlignment = VerticalAlignment.Center;
-            var lueur = new DropShadowEffect { Color = Violet, BlurRadius = 16, ShadowDepth = 0, Opacity = 0.55 };
-            m_boutonConnexion = new Border
-            {
-                Height = 46,
-                CornerRadius = new CornerRadius(10),
-                Background = new LinearGradientBrush(Color.FromRgb(0x9d, 0x74, 0xff), Color.FromRgb(0x5b, 0x21, 0xb6), 90),
-                BorderBrush = new SolidColorBrush(Argb(0xc0, VioletClair)),
-                BorderThickness = new Thickness(1),
-                Child = m_boutonConnexionTexte,
-                Cursor = Cursors.Hand,
-                Effect = lueur
-            };
-            m_boutonConnexion.MouseEnter += (s, e) => lueur.BeginAnimation(DropShadowEffect.OpacityProperty, new DoubleAnimation(1, TimeSpan.FromSeconds(0.2)));
-            m_boutonConnexion.MouseLeave += (s, e) => lueur.BeginAnimation(DropShadowEffect.OpacityProperty, new DoubleAnimation(0.55, TimeSpan.FromSeconds(0.2)));
-            m_boutonConnexion.MouseLeftButtonUp += (s, e) => SeConnecter();
-            pile.Children.Add(m_boutonConnexion);
+            pile.Children.Add(ConstruireZaap());
+            ajouter(T("Connexion Zaap", 28, Texte, FontWeights.Bold, Titre), 12);
+            m_sousTitre = Para(TexteAccueil, 14.5, Doux);
+            ajouter(m_sousTitre, 6);
 
             // MYSTIC 20/10 : si le joueur est déjà connecté au site, un clic suffit (il confirme sur la page qui s'ouvre)
-            m_boutonSiteTexte = Outils.Texte(Espace("SE CONNECTER GRÂCE AU SITE"), 12, VioletClair, FontWeights.Bold);
-            m_boutonSiteTexte.HorizontalAlignment = HorizontalAlignment.Center;
-            m_boutonSiteTexte.VerticalAlignment = VerticalAlignment.Center;
-            var boutonSite = new Border
-            {
-                Height = 40,
-                Margin = new Thickness(0, 10, 0, 0),
-                CornerRadius = new CornerRadius(10),
-                Background = new SolidColorBrush(Argb(0x18, VioletClair)),
-                BorderBrush = new SolidColorBrush(Argb(0x90, VioletClair)),
-                BorderThickness = new Thickness(1),
-                Child = m_boutonSiteTexte,
-                Cursor = Cursors.Hand
-            };
-            boutonSite.MouseEnter += (s, e) => boutonSite.Background = new SolidColorBrush(Argb(0x38, VioletClair));
-            boutonSite.MouseLeave += (s, e) => boutonSite.Background = new SolidColorBrush(Argb(0x18, VioletClair));
-            boutonSite.MouseLeftButtonUp += (s, e) => ConnexionParLeSite();
-            pile.Children.Add(boutonSite);
+            m_boutonSite = Gros(TexteSite, IcZaap, ConnexionParLeSite);
+            m_boutonSiteTexte = (TextBlock)m_boutonSite.Tag;
+            ajouter(m_boutonSite, 18);
+            ajouter(Separateur("ou avec ton identifiant"), 16);
 
-            m_erreurConnexion = Outils.Texte("", 12, Rouge, FontWeights.SemiBold);
-            m_erreurConnexion.Margin = new Thickness(0, 12, 0, 0);
-            pile.Children.Add(m_erreurConnexion);
+            ajouter(Etiquette("E-mail ou nom de compte"), 14);
+            m_champEmail = new TextBox { MaxLength = 190 };
+            ajouter(Champ(m_champEmail, 44), 6);
+            ajouter(Etiquette("Mot de passe"), 12);
+            m_champMdp = new PasswordBox { MaxLength = 128 };
+            ajouter(Champ(m_champMdp, 44), 6);
+            ajouter(CaseTexte("Rester connecté sur ce PC", true, out m_souvenir), 12);
 
-            var creer = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 18, 0, 0) };
-            creer.Children.Add(Outils.Texte("Pas encore de compte ?  ", 12, Brume, FontWeights.Normal));
-            creer.Children.Add(Lien("Créer un compte Mystic", () => Outils.OuvrirSite(m_updater.SiteUrl + "index.html#rejoindre")));
-            pile.Children.Add(creer);
+            m_boutonConnexionTexte = T("Se connecter", 14.5, Texte, FontWeights.SemiBold);
+            m_boutonConnexionTexte.HorizontalAlignment = HorizontalAlignment.Center;
+            m_boutonConnexion = Second(m_boutonConnexionTexte, SeConnecter, 46, 14);
+            ajouter(m_boutonConnexion, 14);
+
+            m_message = Para("", 13, Rouge);
+            m_message.FontWeight = FontWeights.SemiBold;
+            ajouter(m_message, 10);
+
+            var liens = new Grid();
+            liens.Children.Add(Lien("Créer un compte", Accent2, () => Outils.OuvrirSite(m_updater.SiteUrl + "connexion.html")));
+            var oubli = Lien("Mot de passe oublié ?", Doux, () => Outils.OuvrirSite(m_updater.SiteUrl + "securite.html"));
+            oubli.HorizontalAlignment = HorizontalAlignment.Right;
+            liens.Children.Add(oubli);
+            ajouter(liens, 8);
 
             m_champEmail.KeyDown += (s, e) => { if (e.Key == Key.Enter) m_champMdp.Focus(); };
             m_champMdp.KeyDown += (s, e) => { if (e.Key == Key.Enter) SeConnecter(); };
-
-            Placer(m_carte, W - MARGE - CARTE_L, 52);
-            return m_carte;
-        }
-
-        void AfficherCarte()
-        {
-            var ease = new PowerEase { Power = 3, EasingMode = EasingMode.EaseOut };
-            m_carte.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromSeconds(0.9)) { BeginTime = TimeSpan.FromSeconds(2.3), EasingFunction = ease });
-            m_carte.RenderTransform.BeginAnimation(TranslateTransform.XProperty, new DoubleAnimation(30, 0, TimeSpan.FromSeconds(0.9)) { BeginTime = TimeSpan.FromSeconds(2.3), EasingFunction = ease });
+            return pile;
         }
 
         void ConnexionEnCours(bool oui)
         {
             m_connexionEnCours = oui;
-            m_boutonConnexionTexte.Text = oui ? "CONNEXION…" : Espace("SE CONNECTER");
+            m_boutonConnexionTexte.Text = oui ? "Connexion…" : "Se connecter";
             m_boutonConnexion.Opacity = oui ? 0.6 : 1;
+            EtatZaap(oui ? 1 : 0);
+        }
+
+        void Message(string texte, bool erreur)
+        {
+            m_message.Foreground = B(erreur ? Rouge : Accent2);
+            m_message.Text = texte;
         }
 
         void SecouerCarte()
@@ -557,12 +455,11 @@ namespace MysticLauncher
                 return;
             var email = m_champEmail.Text.Trim();
             var mdp = m_champMdp.Password;
-            var souvenir = m_souvenir.IsChecked == true;
-            m_erreurConnexion.Text = "";
-            m_erreurConnexion.Foreground = new SolidColorBrush(Rouge);
+            var souvenir = m_souvenir();
+            Message("", true);
             if (email.Length == 0 || mdp.Length == 0)
             {
-                m_erreurConnexion.Text = "Indiquez votre e-mail et votre mot de passe.";
+                Message("Indique ton e-mail (ou nom de compte) et ton mot de passe.", true);
                 SecouerCarte();
                 return;
             }
@@ -575,7 +472,7 @@ namespace MysticLauncher
                     ConnexionEnCours(false);
                     if (!r.Ok)
                     {
-                        m_erreurConnexion.Text = r.Erreur ?? "Connexion impossible.";
+                        Message(r.Erreur ?? "Connexion impossible.", true);
                         SecouerCarte();
                         return;
                     }
@@ -590,9 +487,6 @@ namespace MysticLauncher
             }) { IsBackground = true }.Start();
         }
 
-        TextBlock m_boutonSiteTexte;
-        string m_codeSite;
-
         /// <summary>MYSTIC 20/10 : ouvre la page du site avec un code secret, puis attend (5 min max) que le joueur l'autorise.</summary>
         void ConnexionParLeSite()
         {
@@ -603,10 +497,11 @@ namespace MysticLauncher
             var code = BitConverter.ToString(octets).Replace("-", "").ToLowerInvariant();
             m_codeSite = code;
             var court = (code.Substring(0, 3) + "-" + code.Substring(3, 3)).ToUpperInvariant();
-            m_erreurConnexion.Foreground = new SolidColorBrush(VioletClair);
-            m_erreurConnexion.Text = "Confirme sur la page du site qui vient de s'ouvrir." + Environment.NewLine + "Code à vérifier : " + court;
-            m_boutonSiteTexte.Text = "EN ATTENTE DU SITE…";
+            Message("Valide la connexion dans la page du site qui vient de s'ouvrir." + Environment.NewLine + "Code à vérifier : " + court, false);
+            m_boutonSiteTexte.Text = "En attente du site…";
+            EtatZaap(1);
             Outils.OuvrirSite(m_updater.SiteUrl + "connexion-launcher.html#" + code);
+            Action finAttente = () => { m_boutonSiteTexte.Text = TexteSite; EtatZaap(0); };
             new Thread(() =>
             {
                 var fin = DateTime.Now.AddMinutes(5);
@@ -628,7 +523,7 @@ namespace MysticLauncher
                     }
                     if (r.Erreur != null && !r.Erreur.StartsWith("Serveur"))
                     {
-                        Dispatcher.BeginInvoke((Action)(() => { m_erreurConnexion.Foreground = new SolidColorBrush(Rouge); m_erreurConnexion.Text = r.Erreur; m_boutonSiteTexte.Text = Espace("SE CONNECTER GRÂCE AU SITE"); }));
+                        Dispatcher.BeginInvoke((Action)(() => { Message(r.Erreur, true); finAttente(); }));
                         return;
                     }
                 }
@@ -636,9 +531,8 @@ namespace MysticLauncher
                 {
                     if (m_codeSite != code || m_ouvert) return;
                     m_codeSite = null;
-                    m_erreurConnexion.Foreground = new SolidColorBrush(Rouge);
-                    m_erreurConnexion.Text = "Temps écoulé : clique de nouveau sur « Se connecter grâce au site ».";
-                    m_boutonSiteTexte.Text = Espace("SE CONNECTER GRÂCE AU SITE");
+                    Message("Temps écoulé : clique de nouveau sur « " + TexteSite + " ».", true);
+                    finAttente();
                 }));
             }) { IsBackground = true }.Start();
         }
@@ -648,6 +542,8 @@ namespace MysticLauncher
             var session = SessionGardee.Lire();
             if (session == null)
                 return;
+            m_sousTitre.Text = "Reprise de ta session…";
+            EtatZaap(1);
             new Thread(() =>
             {
                 var r = m_api.Session(session);
@@ -657,44 +553,52 @@ namespace MysticLauncher
                     {
                         if (r.Erreur != null && r.Erreur.StartsWith("Session"))
                             SessionGardee.Effacer();
+                        m_sousTitre.Text = TexteAccueil;
+                        EtatZaap(0);
                         return;
                     }
-                    // laisse l'intro se jouer un instant avant d'ouvrir le grand launcher
-                    var attente = Math.Max(0.05, 2.6 - m_horloge.Elapsed.TotalSeconds);
-                    var t = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(attente) };
-                    t.Tick += (s, e) => { t.Stop(); OuvrirPrincipal(r, session, true); };
-                    t.Start();
+                    OuvrirPrincipal(r, session, true);
                 }));
             }) { IsBackground = true }.Start();
         }
 
-        /// <summary>Ferme la fenêtre de connexion (fondu) et ouvre le grand launcher.</summary>
+        /// <summary>Anneau vert « Connecté », puis ouvre le grand launcher au même endroit et ferme la connexion (fondu).</summary>
         void OuvrirPrincipal(ReponseWeb r, string session, bool gardee)
         {
             if (m_ouvert)
                 return;
             m_ouvert = true;
-            var principal = new PrincipalWindow(m_updater, m_api, r, session, gardee, m_apercu);
-            Application.Current.MainWindow = principal;
-            principal.Show();
-            var fondu = new DoubleAnimation(0, TimeSpan.FromSeconds(0.45)) { EasingFunction = new PowerEase { Power = 2, EasingMode = EasingMode.EaseIn } };
-            fondu.Completed += (s, e) => Close();
-            BeginAnimation(OpacityProperty, fondu);
+            EtatZaap(2);
+            m_sousTitre.Text = "Connecté. Ouverture du launcher…";
+            var attente = new DispatcherTimer { Interval = TimeSpan.FromSeconds(m_apercu != null ? 0.05 : 0.45) };
+            attente.Tick += (s, e) =>
+            {
+                attente.Stop();
+                var principal = new PrincipalWindow(m_updater, m_api, r, session, gardee, m_apercu);
+                principal.WindowStartupLocation = WindowStartupLocation.Manual;
+                principal.Left = Left;
+                principal.Top = Top;
+                Application.Current.MainWindow = principal;
+                principal.Show();
+                var fondu = new DoubleAnimation(0, TimeSpan.FromSeconds(0.3)) { EasingFunction = new PowerEase { Power = 2, EasingMode = EasingMode.EaseIn } };
+                fondu.Completed += (o, a) => Close();
+                BeginAnimation(OpacityProperty, fondu);
+            };
+            attente.Start();
         }
 
         // aperçu : connexion fictive
         void ApercuConnexion()
         {
-            m_champEmail.Text = "joueur@mystic.fr";
+            m_champEmail.Text = "joueur@padgref.fr";
             m_champMdp.Password = "motdepasse";
-            AfficherStatut(m_point, m_statutServeur, Tuple.Create(true, 47));
         }
 
         void ApercuOuvrir()
         {
             var r = new ReponseWeb
             {
-                Ok = true, Email = "joueur@mystic.fr", Pseudo = "Beny",
+                Ok = true, Email = "joueur@padgref.fr", Pseudo = "Beny",
                 Comptes = new List<CompteJeu>
                 {
                     new CompteJeu { Id = 1, Login = "Pommes15", Pseudo = "Pommes", Personnages = { new Personnage { Nom = "Pelep", Classe = 12, Niveau = 200, Depuis = 3, Apparence = "{1|120,2188|1=32235200,2=38751540,3=58004758,4=82566848,5=87901995|160}" } } },
@@ -704,9 +608,8 @@ namespace MysticLauncher
                     new CompteJeu { Id = 5, Login = "xp5", Pseudo = "Caros" }
                 }
             };
-            // comptes supplémentaires (aperçu de la densité : 8-9 comptes par colonne)
             var looks = new[] { r.Comptes[0].Personnages[0].Apparence, r.Comptes[1].Personnages[0].Apparence, r.Comptes[2].Personnages[0].Apparence, r.Comptes[3].Personnages[0].Apparence };
-            var noms = new[] { "Portos", "Pomme-jungle", "Melan", "Phobelle", "Wyllin-Daya", "Damy", "Cyria", "Bound", "Glissade", "Cobro", "Firefoux", "Boustiflore", "Jujuben", "Huser" };
+            var noms = new[] { "Portos", "Pomme-jungle", "Melan", "Phobelle", "Wyllin-Daya", "Damy", "Cyria" };
             for (var i = 0; i < noms.Length; i++)
                 r.Comptes.Add(new CompteJeu { Id = 10 + i, Login = "pvp" + (char)('a' + i), Pseudo = noms[i], Personnages = { new Personnage { Nom = noms[i], Classe = 1 + i % 18, Niveau = 140 + i * 4, Depuis = 5 + i * 37, Apparence = looks[i % 4] } } });
             OuvrirPrincipal(r, null, false);

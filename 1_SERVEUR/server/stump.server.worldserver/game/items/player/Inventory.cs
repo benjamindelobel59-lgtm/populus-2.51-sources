@@ -33,7 +33,8 @@ namespace Stump.Server.WorldServer.Game.Items.Player
         const int MaxPresets = 8;
 
         [Variable]
-        public static readonly bool ActiveTokens = true;
+        // PADGREF 20/10 : plus d'ogrines en objet dans l'inventaire (ni échange ni vente) : elles sont sur le compte web (Game/Ogrines/OgrinesWeb.cs)
+        public static readonly bool ActiveTokens = false;
 
         [Variable]
         public static readonly int TokenTemplateId = (int)12124;

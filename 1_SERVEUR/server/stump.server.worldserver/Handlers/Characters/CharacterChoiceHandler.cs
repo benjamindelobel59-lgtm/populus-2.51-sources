@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -225,6 +225,8 @@ namespace Stump.Server.WorldServer.Handlers.Characters
                 client.Account.Tokens += client.Account.NewTokens;
             
             client.Account.NewTokens = 0;
+            // PADGREF 20/10 : ogrines du compte de jeu → porte-monnaie du compte web lié
+            Game.Ogrines.OgrinesWeb.Absorber(client);
 
             client.Character = new Character(character, client);
             client.Character.LoadRecord();

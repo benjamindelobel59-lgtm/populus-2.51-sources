@@ -24,20 +24,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Usables
 
             UsedItems = NumberOfUses;
 
-            var tokens = Target.Inventory.Tokens;
+            // PADGREF 20/10 : crédit du porte-monnaie du compte web (plus d'objet ogrines en jeu)
+            Ogrines.OgrinesWeb.Donner(Target.Client, amount, "objet " + Item.Template.Id);
 
-            if (tokens != null)
-            {
-                tokens.Stack += (uint)amount;
-                Target.Inventory.RefreshItem(tokens);
-            }
-            else
-            {
-                Target.Inventory.CreateTokenItem(amount);
-                Target.Inventory.RefreshItem(Target.Inventory.Tokens);
-            }
-
-            Target.SendServerMessage($"Vous avez été crédité de {amount} Ogrines !");
+            Target.SendServerMessage($"Vous avez été crédité de {amount} Ogrines sur votre compte Padgref !");
 
             return true;
         }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -96,6 +96,13 @@ namespace Stump.Server.WorldServer.Handlers.Approach
             client.Send(new ReloginTokenStatusMessage(false, Encoding.ASCII.GetBytes(client.Account.Ticket).Select(x => (sbyte)x).ToArray()));
         }
 
+        // PADGREF 20/10 : jeton de la Boutique Padgref (le client l'envoie à boutique.php, qui le vérifie en base)
+        [WorldHandler(HaapiTokenRequestMessage.Id)]
+        public static void HandleHaapiTokenRequestMessage(WorldClient client, HaapiTokenRequestMessage message)
+        {
+            client.Send(new HaapiTokenMessage(Game.Ogrines.BoutiquePadgref.CreerJeton(client)));
+        }
+
         /*[WorldHandler(HaapiApiKeyRequestMessage.Id)]
         public static void HandleHaapiApiKeyRequestMessage(WorldClient client, HaapiApiKeyRequestMessage message)
         {
@@ -162,7 +169,7 @@ namespace Stump.Server.WorldServer.Handlers.Approach
 
             /* Ok */
             client.Send(new AuthenticationTicketAcceptedMessage());
-            SendServerOptionalFeaturesMessage(client, OptionalFeaturesEnum.PvpKIS);
+            SendServerOptionalFeaturesMessage(client, OptionalFeaturesEnum.PvpKIS, (OptionalFeaturesEnum)7);   // PADGREF 20/10 : 7 = « web.shopInClient » (onglet Boutique)
             SendServerSessionConstantsMessage(client,
                 new ServerSessionConstantInteger((ushort) ServerConstantTypeEnum.TIME_BEFORE_DISCONNECTION, BaseServer.Settings.InactivityDisconnectionTime*1000 ?? -1),
                 new ServerSessionConstantInteger((ushort) ServerConstantTypeEnum.KOH_DURATION, 7200000),

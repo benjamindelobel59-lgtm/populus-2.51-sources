@@ -4,7 +4,7 @@
 //   manifest.txt          : les fichiers modifiés par Mystic (mises à jour), même format
 //   files/<sha256>.bin    : contenu de chaque fichier
 // Dossier du jeu : à côté du launcher s'il y trouve app\Dofus.exe (ancien fonctionnement), sinon celui choisi dans le launcher
-// (%APPDATA%\Mystic\launcher.cfg), par défaut %LOCALAPPDATA%\Mystic\Jeu. Téléchargements en parallèle, reprise automatique
+// (%APPDATA%\Mystic\launcher.cfg), par défaut %LOCALAPPDATA%\Padgref\Jeu (ou l'ancien Mystic\Jeu s'il contient déjà le jeu). Téléchargements en parallèle, reprise automatique
 // (les fichiers déjà bons sont gardés), chaque fichier vérifié par son empreinte SHA-256 ; rien n'est écrit hors du dossier app.
 
 using System;
@@ -34,6 +34,7 @@ namespace MysticLauncher
         public readonly string BaseUrl;
         public string ApiUrl = Program.DefaultApi;
         public string SiteUrl = Program.DefaultSite;
+        public bool MajLauncher = true; // PADGREF 20/10 : launcher.ini « majlauncher=non » = pas de mise à jour automatique de l'exe
         readonly string m_logPath;
 
         public string Version { get; private set; }
@@ -63,6 +64,7 @@ namespace MysticLauncher
                         if (line.StartsWith("url=", StringComparison.OrdinalIgnoreCase)) url = line.Substring(4).Trim();
                         else if (line.StartsWith("api=", StringComparison.OrdinalIgnoreCase)) ApiUrl = line.Substring(4).Trim();
                         else if (line.StartsWith("site=", StringComparison.OrdinalIgnoreCase)) SiteUrl = line.Substring(5).Trim();
+                        else if (line.StartsWith("majlauncher=", StringComparison.OrdinalIgnoreCase)) MajLauncher = !line.Substring(12).Trim().Equals("non", StringComparison.OrdinalIgnoreCase);
                     }
             }
             catch { }
@@ -82,7 +84,22 @@ namespace MysticLauncher
                             return l.Substring(8).Trim();
             }
             catch { }
-            return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Mystic", "Jeu");
+            // PADGREF 20/10 : nouveau dossier par défaut « Padgref\Jeu » ; un jeu déjà installé dans l'ancien « Mystic\Jeu » y reste
+            var local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var ancien = System.IO.Path.Combine(local, "Mystic", "Jeu");
+            if (File.Exists(System.IO.Path.Combine(ancien, "app", "Dofus.exe")))
+                return ancien;
+            return System.IO.Path.Combine(local, "Padgref", "Jeu");
+        }
+
+        /// <summary>Vrai si un dossier du jeu a été choisi (launcher.cfg).</summary>
+        public static bool DossierChoisi
+        {
+            get
+            {
+                try { return File.Exists(FichierConfig) && File.ReadAllLines(FichierConfig).Any(l => l.StartsWith("dossier=") && l.Length > 8); }
+                catch { return false; }
+            }
         }
 
         /// <summary>Dossier du jeu pour cette exécution seulement (option --installer, tests).</summary>

@@ -226,7 +226,8 @@
     <Compile Include="AI\Fights\Brain\Custom\Boss\GrolloumBrain.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\MysticCorrectifsBrains.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\PhorreursBrains.cs" />
-    <Compile Include="AI\Fights\Brain\Custom\Boss\FabriqueMallefiskBrains.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\FabriqueMallefiskBrains.cs" />
+
     <Compile Include="AI\Fights\Brain\Custom\Boss\NidasBrains.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\PassifsDonjonsBrains.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\PapaNowelBrain.cs" />
@@ -302,6 +303,8 @@
     <Compile Include="Game\Bugs\JournalCombat.cs" />
     <Compile Include="Game\Bugs\SignalementsBugs.cs" />
     <Compile Include="Game\Donjons\RepriseDonjons.cs" />
+    <Compile Include="Game\Ogrines\OgrinesWeb.cs" />
+    <Compile Include="Game\Ogrines\BoutiquePadgref.cs" />
     <Compile Include="Game\Heroique\HeroicManager.cs" />
     <Compile Include="Game\Heroique\ButinHeroique.cs" />
     <Compile Include="Commands\Commands\HeroiqueCommands.cs" />
