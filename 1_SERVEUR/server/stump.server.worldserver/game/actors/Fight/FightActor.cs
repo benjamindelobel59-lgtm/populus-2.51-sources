@@ -1178,6 +1178,9 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             return Stats.Shield.TotalSafe > 0 ? Stats.Shield.TotalSafe : 0;
         }
 
+        /// <summary>MYSTIC 20/10 : un soin vient d'etre applique (cible, soin) ; vol de vie : la source est la victime.</summary>
+        public static event Action<FightActor, Damage> SoinApplique;
+
         public virtual int Heal(int amount, FightActor source, bool ignoreBonus = false)
         {
             return Heal(new Damage(amount) {Source = source, School = EffectSchoolEnum.Healing, IgnoreDamageBoost = ignoreBonus});
@@ -1222,6 +1225,9 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             DamageTaken -= damage.Amount;
 
             OnLifePointsChanged(damage.Amount, 0, 0, damage.Source, EffectSchoolEnum.Unknown, damage);
+            // MYSTIC 20/10 : soin applique (Tabacille du Ventre de la Baleine : « ne soigner personne »)
+            if (damage.Amount > 0)
+                SoinApplique?.Invoke(this, damage);
 
             if (damage.Source != null)
             {
@@ -2258,7 +2264,7 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
             // MYSTIC 19/10 : Wobot, Wobot Kiafin et Wobot Tamponneur (Château du Wa Wabbit) sont lourds : jamais portés
             var modele = (target as MonsterFighter)?.Monster.Template.Id ?? (target as SummonedMonster)?.Monster.Template.Id;
-            if (modele == 181 || modele == 3462 || modele == 3459)
+            if (modele == 181 || modele == 3462 || modele == 3459 || modele == 3828) // MYSTIC 20/10 : + Protozorreur (Ventre de la Baleine)
                 return false;
 
             if (target.GetStates().Where(x => !x.IsDisabled).Any(x => x.State.CantBeMoved))

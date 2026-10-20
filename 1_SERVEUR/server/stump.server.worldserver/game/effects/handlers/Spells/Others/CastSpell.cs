@@ -239,6 +239,20 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
 
             var damages = token as Fights.Damage;
 
+            // MYSTIC 20/10 : Protozorreur (Ventre de la Baleine) : voir la classe Protozorreur
+            if (buff.Spell.Id == Protozorreur.Attraction && buff.Target is MonsterFighter proto && proto.Monster.Template.Id == Protozorreur.Monstre)
+            {
+                Protozorreur.Attirer(proto, triggerrer);
+                return;
+            }
+            if (buff.Spell.Id == Protozorreur.Glyphe && !Protozorreur.PeutPoserGlyphe(buff.Target, damages))
+                return;
+            if (buff.Spell.Id == Dislocation.Sort)
+            {
+                Dislocation.Intercepter(buff.Target, damages);
+                return;
+            }
+
             if ((buff.Spell.Id == Fuseau || buff.Spell.Id == Gousset) && buff.Target is MonsterFighter comte && comte.Monster.Template.Id == 3416)
             {
                 DeclencherAlternanceComte(comte, triggerrer);
@@ -456,6 +470,115 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
                 var h = EffectManager.Instance.GetSpellEffectHandler(new EffectDice(EffectsEnum.Effect_Advance, 0, 1, 0), allie, cast, attaquant.Cell, false);
                 h.SetAffectedActors(new[] { attaquant });
                 h.Apply();
+            }
+        }
+    }
+
+    /// <summary>
+    /// MYSTIC 20/10 (Ventre de la Baleine, décision utilisateur) : Protozorreur (3828), passif Restauration infectieuse (4972).
+    /// - Attraction cellulaire (4967) : à la première frappe du tour d'un joueur, si celui-ci est ALIGNÉ avec lui, il est attiré en ligne droite jusqu'au contact (il s'arrête
+    ///   devant un obstacle, et SUR un de ses Protoglyphes s'il en croise un), même s'il est Indéplaçable (comme le Totem du Feu du
+    ///   Darkli Moon). Avant : l'effet 1022 visait les ennemis du Protozorreur, personne n'était attiré.
+    /// - Protoglyphe infectieux (4968, posé sous un joueur qui subit des dommages) : un seul glyphe par case, et pas de glyphe pour les
+    ///   dommages du glyphe lui-même. Avant : chaque dommage (y compris les 60 du glyphe) en reposait un autre sur la même case,
+    ///   en boucle : énormément de dommages.
+    /// </summary>
+    public static class Protozorreur
+    {
+        public const int Monstre = 3828, Attraction = 4967, Glyphe = 4968, SortDuGlyphe = 4966;
+
+        static bool EstProtoglyphe(MarkTrigger m) => m is Glyph g && g.GlyphSpell != null && g.GlyphSpell.Id == SortDuGlyphe;
+
+        /// <summary>false : ne pas poser de Protoglyphe pour ce dommage.</summary>
+        public static bool PeutPoserGlyphe(FightActor cible, Fights.Damage damages)
+        {
+            if (cible == null || !cible.IsAlive() || cible.Cell == null)
+                return false;
+            if (damages != null && damages.Spell != null && damages.Spell.Id == SortDuGlyphe)
+                return false;
+            return !cible.Fight.GetTriggersByCell(cible.Cell).Any(EstProtoglyphe);
+        }
+
+        static readonly System.Runtime.CompilerServices.ConditionalWeakTable<FightActor, int[]> s_derniereFrappe =
+            new System.Runtime.CompilerServices.ConditionalWeakTable<FightActor, int[]>();
+
+        public static void Attirer(FightActor proto, FightActor attaquant)
+        {
+            if (attaquant == null || proto == null || !proto.IsAlive() || !attaquant.IsAlive() || attaquant.Team == proto.Team)
+                return;
+            var fight = proto.Fight;
+            // seulement la première frappe du tour de chaque joueur (alignée ou non : une frappe non alignée « consomme » l'attraction)
+            var tour = fight.TimeLine.RoundNumber * 10000 + (fight.FighterPlaying?.Id ?? 0);
+            var dernier = s_derniereFrappe.GetValue(proto, _ => new[] { -1 });
+            if (dernier[0] == tour)
+                return;
+            dernier[0] = tour;
+            var but = attaquant.Position.Point;
+            var depart = proto.Position.Point;
+            // MYSTIC 20/10 (retour de test) : attiré seulement si l'attaquant est aligné avec lui (même ligne), en ligne droite
+            if (depart.X != but.X && depart.Y != but.Y)
+                return;
+            var dx = System.Math.Sign(but.X - depart.X);
+            var dy = System.Math.Sign(but.Y - depart.Y);
+            var pos = depart;
+            for (var i = 0; i < 64 && pos.ManhattanDistanceTo(but) > 1; i++)
+            {
+                var p = new Maps.Cells.MapPoint(pos.X + dx, pos.Y + dy);
+                if (!Maps.Cells.MapPoint.IsInMap(p.X, p.Y))
+                    break;
+                var c = fight.Map.Cells[p.CellId];
+                if (!c.Walkable || c.NonWalkableDuringFight || !fight.IsCellFree(c))
+                    break;
+                pos = p;
+                if (fight.GetTriggersByCell(c).Any(EstProtoglyphe))
+                    break;
+            }
+            if (pos.CellId == depart.CellId)
+                return;
+            var arrivee = fight.Map.Cells[pos.CellId];
+            foreach (var perso in fight.GetCharactersAndSpectators().Where(proto.IsVisibleFor))
+                Stump.Server.WorldServer.Handlers.Actions.ActionsHandler.SendGameActionFightSlideMessage(perso.Client, attaquant, proto, depart.CellId, arrivee.Id);
+            proto.Position.Cell = arrivee;
+            fight.TriggerMarks(arrivee, proto, TriggerType.MOVE);
+        }
+    }
+
+    /// <summary>
+    /// MYSTIC 20/10 (Ventre de la Baleine, décision utilisateur) : Dislocation (4935) des Krobes Disloqués (état 214, donné par la
+    /// Malamibe) : les dommages qu'un ennemi inflige au Krobe sont interceptés par la Malamibe et DOUBLÉS ; la Malamibe réduisant de
+    /// 50 % les dommages qu'elle subit (Décellularisation), taper un Krobe revient à la taper normalement (200 % x 50 % = 100 %).
+    /// Avant : renvoi calculé sur le jet brut sans les caractéristiques de l'attaquant, marqué « renvoyé » (donc sans la réduction de
+    /// 50 %), et une fois par buff Dislocation présent sur le Krobe.
+    /// </summary>
+    public static class Dislocation
+    {
+        public const int Sort = 4935, EtatDisloque = 214, Malamibe = 3822;
+
+        static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Fights.Damage, object> s_traites =
+            new System.Runtime.CompilerServices.ConditionalWeakTable<Fights.Damage, object>();
+
+        static int Modele(FightActor f) => (f as MonsterFighter)?.Monster.Template.Id ?? (f as SummonedMonster)?.Monster.Template.Id ?? 0;
+
+        public static void Intercepter(FightActor krobe, Fights.Damage damage)
+        {
+            if (krobe == null || damage == null || damage.ReflectedDamages || damage.Source == null || damage.Source.Team == krobe.Team ||
+                damage.School == EffectSchoolEnum.Pushback || damage.School == EffectSchoolEnum.Healing || !krobe.HasState(EtatDisloque))
+                return;
+            if (s_traites.TryGetValue(damage, out _))
+                return;
+            s_traites.Add(damage, null);
+            // Krobe invulnérable : le moteur déclenche avant les bonus de l'attaquant (jet brut) ; sinon les bonus sont déjà comptés
+            var brut = krobe.IsInvulnerable(damage.Source.Position.Point.ManhattanDistanceTo(krobe.Position.Point) <= 1);
+            foreach (var mala in krobe.Team.Fighters.Where(x => x.IsAlive() && Modele(x) == Malamibe).ToArray())
+            {
+                mala.InflictDamage(new Fights.Damage(damage.Amount * 2)
+                {
+                    Source = damage.Source,
+                    School = damage.School,
+                    IsCritical = damage.IsCritical,
+                    IgnoreDamageBoost = !brut,
+                    Spell = null,
+                });
             }
         }
     }
