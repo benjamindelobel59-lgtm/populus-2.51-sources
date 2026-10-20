@@ -195,6 +195,9 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
         /// <summary>MYSTIC 17/10 : combattant après lequel l'invocation joue (null = son invocateur).</summary>
         public FightActor JoueApres { get; set; }
 
+        /// <summary>MYSTIC 20/10 : joue en dernier dans la liste des tours (Boubourse du Roi Nidas : « ce n'est pas une invocation »).</summary>
+        public bool JoueEnDernier { get; set; }
+
         public override bool CanMove() => base.CanMove() &&
             (MonsterGrade.MovementPoints > 0 || MonsterGrade.MonsterId == (int)MonsterIdEnum.DISCIPLE_DU_KIMBO);
 

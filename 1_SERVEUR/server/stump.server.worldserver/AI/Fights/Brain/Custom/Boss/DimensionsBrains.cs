@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Stump.Server.WorldServer.Game.Actors.Fight;
 
 namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
@@ -17,8 +17,39 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
             : base(fighter)
         {
             SortPassif.Poser(fighter, 6231, 1);
+            fighter.Fight.TurnStarted += VerifierInvulnerabilite;
+            fighter.Fight.FightEnded += Fin;
             // MYSTIC 18/10 : La Routourne (6301) n'est plus posée ici : ses 5 niveaux sont les variantes des 5 monstres du Grand Jeu
             // (voir RoutourneBrain dans PassifsAuditDonjonsBrains.cs) ; avant, le Chalœil (déjà invulnérable) en recevait une au hasard
+        }
+
+        /// <summary>MYSTIC 20/10 (décision utilisateur) : le Chalœil ne devient vulnérable qu'au tour 20 : jusque-là, s'il a perdu son
+        /// invulnérabilité (désenvoûtement, désactivation…), elle est remise (non désenvoûtable) ; au tour 20 elle est retirée.</summary>
+        const int TourDeblocage = 20, JeuDuChaloeil = 6231;
+
+        void VerifierInvulnerabilite(Game.Fights.IFight fight, FightActor joueur)
+        {
+            if (!Fighter.IsAlive())
+                return;
+            if (fight.TimeLine.RoundNumber < TourDeblocage)
+            {
+                EtatsBoss.RetirerDesactivations(Fighter, EtatsBoss.Invulnerable);
+                if (!Fighter.HasState(EtatsBoss.Invulnerable))
+                    using (fight.StartSequence(Stump.DofusProtocol.Enums.SequenceTypeEnum.SEQUENCE_TRIGGERED))
+                        EtatsBoss.Ajouter(Fighter, Fighter, EtatsBoss.Invulnerable, JeuDuChaloeil);
+                return;
+            }
+
+            fight.TurnStarted -= VerifierInvulnerabilite;
+            using (fight.StartSequence(Stump.DofusProtocol.Enums.SequenceTypeEnum.SEQUENCE_TRIGGERED))
+                foreach (var buff in System.Linq.Enumerable.ToArray(Fighter.GetBuffs(x => x is Game.Fights.Buffs.StateBuff e && e.State.Id == EtatsBoss.Invulnerable)))
+                    Fighter.RemoveBuff(buff);
+        }
+
+        void Fin(Game.Fights.IFight fight)
+        {
+            fight.FightEnded -= Fin;
+            fight.TurnStarted -= VerifierInvulnerabilite;
         }
     }
 
@@ -34,59 +65,10 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     /// <summary>Silhouette : Détachement.</summary>
     [BrainIdentifier(3565)] public class SilhouetteBrain : BrainPassif { public SilhouetteBrain(AIFighter f) : base(f, 4117) { } }
 
-    /// <summary>Roi Nidas : Boursicotage (50 % de ses dommages subis répartis sur sa Boubourse) + Changement de camp (à sa mort).</summary>
-    /// MYSTIC 18/10 (audit) : la Boubourse n'apparaissait jamais (Toucher de Nidas 4486, relance 63, jamais choisi par l'IA) : elle est
-    /// invoquée au contact du Nidas au début du combat (case fixe 316 des données 2.51, sinon à côté de lui).
-    [BrainIdentifier(3648)]
-    public class RoiNidasBrain : Brain
-    {
-        const int ToucherDeNidas = 4486, BoubourseNidas = 3650, CaseBoubourse = 316;
-
-        public RoiNidasBrain(AIFighter fighter)
-            : base(fighter)
-        {
-            SortPassif.Poser(fighter, 4920);
-            SortPassif.Poser(fighter, 4485);
-            fighter.Spells.Remove(ToucherDeNidas);
-            fighter.Fight.FightStarted += PoserBoubourse;
-        }
-
-        void PoserBoubourse(Game.Fights.IFight fight)
-        {
-            fight.FightStarted -= PoserBoubourse;
-            if (!Fighter.IsAlive())
-                return;
-            var grade = Game.Actors.RolePlay.Monsters.MonsterManager.Instance.GetMonsterGrade(BoubourseNidas, 1);
-            if (grade == null)
-                return;
-            var cell = fight.Map.Cells[CaseBoubourse];
-            if (!fight.IsCellFree(cell))
-                cell = System.Linq.Enumerable.FirstOrDefault(System.Linq.Enumerable.Select(
-                    Fighter.Position.Point.GetAdjacentCells(c => fight.IsCellFree(fight.Map.Cells[c])), p => fight.Map.Cells[p.CellId]));
-            if (cell == null)
-                return;
-            using (fight.StartSequence(Stump.DofusProtocol.Enums.SequenceTypeEnum.SEQUENCE_SPELL))
-            {
-                var bourse = new SummonedMonster(fight.GetNextContextualId(), Fighter.Team, Fighter, grade, cell);
-                Handlers.Actions.ActionsHandler.SendGameActionFightSummonMessage(fight.Clients, bourse);
-                Fighter.AddSummon(bourse);
-                Fighter.Team.AddFighter(bourse);
-            }
-        }
-    }
-
-    /// <summary>Boubourse volée par les joueurs : Boursicotage (Cadeau Empoisonné, Coffrage, retour chez Nidas à sa mort).</summary>
-    [BrainIdentifier(3649)] public class BoubourseJoueursBrain : BrainPassif { public BoubourseJoueursBrain(AIFighter f) : base(f, 4482) { } }
-
-    /// <summary>Boubourse du Roi Nidas : Boursicotage (Coffrage des joueurs ; à sa mort, change de camp).</summary>
-    [BrainIdentifier(3650)] public class BoubourseNidasBrain : BrainPassif { public BoubourseNidasBrain(AIFighter f) : base(f, 4484) { } }
-
-    /// <summary>Kamasterisk : Partoutatice (attire et alourdit les ennemis proches à chaque début de tour).</summary>
-    [BrainIdentifier(3653)] public class KamasteriskBrain : BrainPassif { public KamasteriskBrain(AIFighter f) : base(f, 4514) { } }
+    // Roi Nidas, Boubourses, Kamastérisk : voir NidasBrains.cs (MYSTIC 20/10)
     [BrainIdentifier(3719)] public class KamasteriskObeseBrain : BrainPassif { public KamasteriskObeseBrain(AIFighter f) : base(f, 4514) { } }
 
-    /// <summary>Piloztère : Austérité (bouclier autour de lui quand il est frappé).</summary>
-    [BrainIdentifier(3657)] public class PilozteresBrain : BrainPassif { public PilozteresBrain(AIFighter f) : base(f, 4529) { } }
+    // Piloztère : voir NidasBrains.cs
 
     /// <summary>Ventre de la Baleine : les Restaurations (renaissance des microbes) de chaque monstre.</summary>
     [BrainIdentifier(3823)] public class TabacilleBrain : BrainPassif { public TabacilleBrain(AIFighter f) : base(f, 4936) { } }

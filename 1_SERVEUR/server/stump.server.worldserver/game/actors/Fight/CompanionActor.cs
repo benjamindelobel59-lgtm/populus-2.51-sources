@@ -41,7 +41,7 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
         // CONSTRUCTORS
         public CompanionActor(Character character, FightTeam team, ActorLook look, List<Spell> spell, byte companionId,
-           sbyte id) : base(team)
+           int id) : base(team)
         {
             FighterId = id;
             Master = character;

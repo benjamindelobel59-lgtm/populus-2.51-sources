@@ -259,3 +259,8 @@ Serveur (C#) :
    CastSpell.cs, SymetricTeleport, CaseInvalideCriterion, DuoChallenge.MaxJoueurs.
  - SQL 79 : audit des cartes, 287 sorties qui menaient vers une carte inexistante reliees a la bonne carte.
 Launcher : src_mystic/Fantomes.cs (Dofus restes en memoire sans fenetre fermes, pour pouvoir relancer).
+
+=== 20/10/2026 14h00 (paquet PUSH_2026-10-20_14h00) ===
+- Synchronisé avec SERVEUR_Emu : mise à jour src.rar de l'autre dev (20/10 matin : Fabrique Mallefisk, Nidas, Phorreurs, Fight, MonsterGroupPersistence, FightExternalInformations…) + nos changements du jour.
+- AuthServer (Launcher/LauncherApi.cs, LauncherApiWeb.cs) : POST /web/appairage (« Se connecter grâce au site » : le site valide un code secret, le launcher reçoit sa session), POST /web/creer_jeu (compte de jeu SANS mot de passe lié au compte web), migration des anciens comptes (1re connexion avec e-mail OU nom de compte + mot de passe du jeu -> compte web créé et comptes reliés), apparence sans la dragodinde (SansMonture), table nekfeu_launcher_appairages.
+- Nom PADGREF : bannière de la console (BaseServer/MysticConsole.cs), titres des fenêtres AuthServer / WorldServer, message « [Padgref] ». Les tables mystic_* gardent leur nom.

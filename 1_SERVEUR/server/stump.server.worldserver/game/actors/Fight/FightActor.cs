@@ -1797,9 +1797,13 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             FreeBuffId(buff.Id);
         }
 
+        // MYSTIC 20/10 : passifs dont le declencheur porte le numero du sort qu'il lance : retirer les effets de ce sort ne doit pas retirer
+        // le passif lui-meme (Ofranor 4505 de Mallefisk -> Interets 4504 : Banqueroute retirait le passif, plus aucun bouclier ensuite)
+        static readonly System.Collections.Generic.HashSet<int> PassifsProteges = new System.Collections.Generic.HashSet<int> { 9088, 4505 };
+
         public void RemoveSpellBuffs(int spellId)
         {
-            foreach (var buff in m_buffList.Where(x => (x.Spell.Id == spellId && ((x as TriggerBuff)?.ParentSpell.Id != 9088 && x.Spell.Id != 9089)) || (x as TriggerBuff)?.ParentSpell.Id == spellId).ToArray())
+            foreach (var buff in m_buffList.Where(x => (x.Spell.Id == spellId && !PassifsProteges.Contains((x as TriggerBuff)?.ParentSpell?.Id ?? 0) && x.Spell.Id != 9089) || (x as TriggerBuff)?.ParentSpell?.Id == spellId).ToArray())
             {
                 RemoveBuff(buff);
                 ActionsHandler.SendGameActionFightDispellSpellMessage(Fight.Clients, this, this, spellId);
@@ -1828,7 +1832,7 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
         public void RemoveAllCastedBuffs(FightDispellableEnum dispellable = FightDispellableEnum.REALLY_NOT_DISPELLABLE)
         {
-            foreach (var fighter in Fight.GetAllFighters())
+            foreach (var fighter in Fight.GetAllFighters().ToArray()) // MYSTIC 20/10 : la liste peut changer pendant le retrait (crash a la mort du Chaloeil)
             {
                 fighter.RemoveAndDispellAllBuffs(this, dispellable);
             }
@@ -1872,7 +1876,7 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
         /// </summary>
         public void DecrementAllCastedBuffsDuration()
         {
-            foreach (var fighter in Fight.GetAllFighters())
+            foreach (var fighter in Fight.GetAllFighters().ToArray()) // MYSTIC 20/10 : un combattant peut apparaitre pendant le decompte (Boubourse du Nidas)
                 fighter.DecrementBuffsDuration(this);
         }
 
@@ -1949,6 +1953,15 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             var rescaleBuff = Buffs.OfType<RescaleSkinBuff>().LastOrDefault(x => x.Applied);
 
             Look = skinBuff == null ? OriginalLook : skinBuff.Look;
+
+            // MYSTIC 20/10 : couleur temporaire (Reflets placides du Levitrof : le personnage vise devient vert)
+            var couleurBuff = Buffs.OfType<Effects.Handlers.Spells.Others.CouleurBuff>().LastOrDefault(x => x.Applied);
+            if (couleurBuff != null)
+            {
+                Look = Look.Clone();
+                for (var index = 1; index <= 5; index++)
+                    Look.AddColor(index, couleurBuff.Couleur);
+            }
 
             if (rescaleBuff != null)
                 Look.Rescale(rescaleBuff.RescaleFactor);

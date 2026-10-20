@@ -64,3 +64,8 @@ ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **20/10/2026**.
 ## Points connus non faits
 - Pas de système d'alliances dans l'émulateur (livre du temple inopérant).
 - Changement d'apparence en combat (masques Zobal, Karcham) qui fige le client : non reproduit côté serveur.
+
+## 20/10/2026 14h00 — paquet PUSH_2026-10-20_14h00
+- Sources à jour avec ton src.rar du 20/10 (déjà fusionné chez nous) + nos changements : AuthServer (connexion du launcher grâce au site `/web/appairage`, comptes de jeu sans mot de passe `/web/creer_jeu`, migration des anciens comptes du VPS à la 1re connexion, apparence sans dragodinde), nom **Padgref** (bannière console + titres des fenêtres ; les tables `mystic_*` ne changent pas).
+- `6_SERVEURS_COMPILES` = ces serveurs compilés (AuthServer + WorldServer). Aucun SQL nouveau (dernier : 79).
+- Côté VPS : dossiers renommés `D:\Padgref\Launcher - mises a jour` (ex-NekfeuMaj, lien `htdocs\maj` refait) et `D:\Padgref\Bot Discord` (bot relié au journal du World `admin_journal_events`).

@@ -1,4 +1,4 @@
-using Stump.DofusProtocol.Enums;
+﻿using Stump.DofusProtocol.Enums;
 using Stump.DofusProtocol.Types;
 using Stump.Server.WorldServer.Database.Monsters;
 using Stump.Server.WorldServer.Database.World;
@@ -138,13 +138,28 @@ namespace Stump.Server.WorldServer.Game.Fights.Teams
         {
             List<MonsterDungeonWaveSpawnEntity> m_waves = MonsterManager.Instance.GetMonsterDungeonsWaveSpawnsByMapId(MapId);
             if (m_waves.Count < 1) return;
+            var affaiblies = VaguesAffaiblies.Contains(MapId);
             foreach(var wavemonster in m_waves)
             {
-                Monster monster = new Monster(MonsterManager.Instance.GetMonsterGrade(wavemonster.MonsterGradeId), group);
+                var grade = MonsterManager.Instance.GetMonsterGrade(wavemonster.MonsterGradeId);
+                if (affaiblies && grade != null)
+                    grade = MonsterManager.Instance.GetMonsterGrade(grade.MonsterId, 1) ?? grade;
+                Monster monster = new Monster(grade, group);
                 var monsterFighter = new MonsterFighter(this, monster, (int)wavemonster.WaveNumber, (int)wavemonster.MinPlayerLevel);
+                if (affaiblies)
+                {
+                    var vie = monsterFighter.Stats.Health;
+                    vie.Base -= vie.TotalMax / 4;
+                }
                 m_wavesFighters.Add(monsterFighter);
             }
         }
+
+        /// <summary>
+        /// MYSTIC 20/10 : salles où les monstres qui réapparaissent (vagues) arrivent au plus petit grade avec 25 % de vitalité en moins
+        /// (Galerie du Phossile : salle du boss 130548736 ; Fabrique de Malléfisk : 130286592).
+        /// </summary>
+        public static readonly HashSet<int> VaguesAffaiblies = new HashSet<int> { 130548736, 130286592, 129500160, 143393281, 143917569, 143138823, 160564224, 161743872 }; // + Horologium de XLII, Mégalithe de Fraktale, Défi du Chalœil, Pounicheur // + Palais du Roi Nidas, Œil de Vortex
 
         public virtual bool ChangeLeader(FightActor leader)
         {

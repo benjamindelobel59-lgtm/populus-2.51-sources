@@ -144,6 +144,35 @@ namespace Stump.Server.AuthServer.Launcher
             return string.Concat(b.Select(x => x.ToString("x2")));
         }
 
+        /// <summary>MYSTIC 20/10 : apparence sans la monture (monté : la monture porte le personnage en sous-entité « 2@N={…} », catégorie cavalier).</summary>
+        static string SansMonture(string look)
+        {
+            if (string.IsNullOrEmpty(look)) return look;
+            var prof = 0;
+            for (var i = 0; i < look.Length; i++)
+            {
+                var c = look[i];
+                if (c == '{') prof++;
+                else if (c == '}') prof--;
+                else if (prof == 1 && (c == '|' || c == ',') && i + 3 < look.Length && look[i + 1] == '2' && look[i + 2] == '@')
+                {
+                    var eg = look.IndexOf('=', i + 3);
+                    if (eg < 0 || eg + 1 >= look.Length || look[eg + 1] != '{') continue;
+                    var ok = true;
+                    for (var k = i + 3; k < eg; k++) if (!char.IsDigit(look[k])) { ok = false; break; }
+                    if (!ok) continue;
+                    var p = 0;
+                    for (var j = eg + 1; j < look.Length; j++)
+                    {
+                        if (look[j] == '{') p++;
+                        else if (look[j] == '}' && --p == 0) return look.Substring(eg + 1, j - eg);
+                    }
+                    return look;
+                }
+            }
+            return look;
+        }
+
         static string Sha256(string s)
         {
             using (var sha = SHA256.Create())
@@ -278,6 +307,10 @@ namespace Stump.Server.AuthServer.Launcher
                         reponse = WebTicket(form, ip, ref code);
                     else if (methode == "POST" && chemin == "/web/deconnexion")
                         reponse = WebDeconnexion(form);
+                    else if (methode == "POST" && chemin == "/web/creer_jeu")
+                        reponse = WebCreerJeu(form, ip, ref code);
+                    else if (methode == "POST" && chemin == "/web/appairage")
+                        reponse = WebAppairage(form, ip, ref code);
                     else if (methode == "POST" && chemin == "/web/partage/creer")
                         reponse = PartageCreer(form, ip, ref code);
                     else if (methode == "POST" && chemin == "/web/partage/annuler")
@@ -539,7 +572,7 @@ namespace Stump.Server.AuthServer.Launcher
                               .Append(",\"classe\":").Append(Convert.ToInt32(r.GetValue(1)).ToString(CultureInfo.InvariantCulture))
                               .Append(",\"sexe\":").Append(Convert.ToBoolean(r.GetValue(2)) ? "1" : "0")
                               .Append(",\"niveau\":").Append(Math.Min(200, Convert.ToInt32(r.GetValue(3))).ToString(CultureInfo.InvariantCulture))
-                              .Append(",\"apparence\":").Append(Json(r.IsDBNull(4) ? "" : r.GetString(4)))
+                              .Append(",\"apparence\":").Append(Json(r.IsDBNull(4) ? "" : SansMonture(r.GetString(4))))
                               .Append(",\"depuis\":").Append(Convert.ToInt64(r.GetValue(5)).ToString(CultureInfo.InvariantCulture))
                               .Append('}');
                         }

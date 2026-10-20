@@ -215,7 +215,7 @@ namespace Stump.Server.BaseServer
             }
             catch (Exception ex)
             {
-                Console.WriteLine("[Mystic] affichage console classique (" + ex.Message + ")");
+                Console.WriteLine("[Padgref] affichage console classique (" + ex.Message + ")");
             }
             logger = LogManager.GetCurrentClassLogger();
 

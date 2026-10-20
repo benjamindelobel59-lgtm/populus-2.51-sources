@@ -1,4 +1,4 @@
-using Stump.DofusProtocol.Enums;
+﻿using Stump.DofusProtocol.Enums;
 using Stump.Server.WorldServer.Game.Actors.Fight;
 using Stump.Server.WorldServer.Game.Fights;
 
@@ -41,8 +41,7 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     /// <summary>Lucrane (vague du Toxoliath) : Carapace gardée.</summary>
     [BrainIdentifier(3737)] public class LucraneBrain : BrainPassif { public LucraneBrain(AIFighter f) : base(f, 4746) { } }
 
-    /// <summary>Malléfisk : Ofranor (+puissance sur coup reçu, bouclier sous 50 % PV).</summary>
-    [BrainIdentifier(3652)] public class MallefiskBrain : BrainPassif { public MallefiskBrain(AIFighter f) : base(f, 4505) { } }
+    // Malléfisk : voir FabriqueMallefiskBrains.cs (MYSTIC 20/10)
 
     /// <summary>Kanigroula : Phéromones bestiales.</summary>
     [BrainIdentifier(3556)] public class KanigroulaBrain : BrainPassif { public KanigroulaBrain(AIFighter f) : base(f, 4093) { } }

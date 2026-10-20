@@ -97,7 +97,7 @@ namespace Stump.Server.AuthServer
             {
                 base.Initialize();
                 ConsoleInterface = new AuthConsole();
-                ConsoleBase.SetTitle("Mystic · Serveur de connexion");
+                ConsoleBase.SetTitle("Padgref · Serveur de connexion");
 
                 logger.Info("Initializing Database...");
                 DBAccessor = new DatabaseAccessor(DatabaseConfiguration);

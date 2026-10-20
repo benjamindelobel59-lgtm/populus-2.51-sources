@@ -182,7 +182,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
         // allié / une invocation = Comte vulnérable). Avant : l'alternance des passifs était décalée d'un tour (Gousset au tour 1).
         // Une seule téléportation par sort lancé : un sort à plusieurs lignes de dégâts téléportait deux fois et ramenait tout le
         // monde à sa case de départ (« ne se téléporte pas tout le temps »).
-        const int Fuseau = 3649, Gousset = 3657;
+        const int Fuseau = 3649, Gousset = 3657, Interets = 4504;
 
         // MYSTIC 18/10 : 2160 = « la ou les N cibles les plus proches » (Chouque ; Tal Kasha : Maudification 8049, Filature 7907,
         // Transe-Perse 7909) ; égalité : la première dans le sens horaire en partant de midi
@@ -287,6 +287,43 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
             // MYSTIC 18/10 : Fulguration du Yomi Givrefoux : vrai coup d'arme seulement (sort 0), jamais poussée / renvoi / dommages directs
             if (buff.Spell.Id == 2670 && !(damages != null && damages.Spell != null && damages.Spell.Id == 0 && damages.School != EffectSchoolEnum.Pushback))
                 return;
+
+            // MYSTIC 20/10 (Palais du Roi Nidas) : changement de camp de la Boubourse et Cadeau Empoisonné codés (BoubourseNidas, NidasBrains.cs) :
+            // les chaînes 2.51 (Changement de camp 4512 lancé par la Boubourse déjà morte, retour 4483, Cadeau 4481 du passif) sont ignorées
+            if (buff.Spell.Id == 4512 || buff.Spell.Id == 4483 || (buff.Spell.Id == 4481 && buff.ParentSpell?.Id == 4482))
+                return;
+
+            // MYSTIC 20/10 (Palais du Roi Nidas, décision utilisateur) : Reflets placides (Lévitrof) : seul le joueur qui porte l'état vert
+            // (Reflets placides 4521 sur lui) échange sa place avec le Lévitrof en le frappant (et perd l'état) ; les autres coups ne font rien
+            if (buff.Spell.Id == 4520 && (triggerrer == null || !triggerrer.GetBuffs(x => x.Spell.Id == ChangementCouleur.RefletsPlacides).Any()))
+                return;
+
+            // MYSTIC 20/10 (Fabrique de Malléfisk) : Intérêts 4504 (bouclier 500 si Malléfisk ≤ 50 % PV) part quand il est frappé, mais le
+            // moteur déclenche AVANT de retirer les PV : le coup qui le faisait passer sous 50 % ne donnait jamais le bouclier. Il est
+            // maintenant lancé juste après l'application des dégâts.
+            if (buff.Spell.Id == Interets && damages != null && trigger == BuffTriggerType.OnDamaged)
+            {
+                var cible = buff.Target;
+                var sort = buff.Spell;
+                System.Action<FightActor, Fights.Damage> apres = null;
+                apres = (f, d) =>
+                {
+                    cible.DamageInflicted -= apres;
+                    // seulement pour CE coup (un coup bloqué par l'invulnérabilité ne passe jamais ici : rien n'est relancé plus tard)
+                    if (d != damages || !cible.IsAlive() || cible.Fight.State != FightState.Fighting)
+                        return;
+                    cible.CastSpell(new SpellCastInformations(cible, sort, cible.Cell)
+                    {
+                        Force = true,
+                        Silent = true,
+                        ApFree = true,
+                        TriggerEffect = this,
+                        Triggerer = triggerrer
+                    });
+                };
+                cible.DamageInflicted += apres;
+                return;
+            }
 
             if (Effect.EffectId == EffectsEnum.Effect_CastSpell_1160)
             {

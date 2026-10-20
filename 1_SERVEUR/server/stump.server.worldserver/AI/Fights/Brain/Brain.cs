@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using NLog;
 using Stump.Core.Attributes;
@@ -71,6 +71,7 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
             }
 
             m_turnLog.Clear();
+            m_lancesCeTour = 0;
             var startAP = Fighter.AP;
             var startMP = Fighter.MP;
             var startCell = Fighter.Cell.Id;
@@ -106,6 +107,9 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
                 }
             }
         }
+
+        /// <summary>MYSTIC 20/10 : sorts lancés depuis le début du tour (un fuyard ne recule qu'après avoir tapé).</summary>
+        int m_lancesCeTour;
 
         /// <summary>MYSTIC 17/10 : IA fuyarde (après ses sorts, elle s'éloigne des ennemis au lieu de s'en approcher).</summary>
         public virtual bool Fuyard => false;
@@ -212,13 +216,15 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
         /// MYSTIC 19/10 : case atteignable la plus éloignée de l'ennemi visible le plus proche, sans dépasser la portée maximale de ses
         /// attaques (il pourra retaper au tour suivant) ; aucune case à portée -> il ne bouge pas.
         /// </summary>
-        void FuirAPortee()
+        /// MYSTIC 20/10 (Mère Veilleuse du Phossile) : renvoie false si aucune case atteignable n'est à portée d'un ennemi ; avant, il
+        /// restait alors sur place et passait son tour tant qu'on ne venait pas à lui (il se rapproche maintenant comme les autres).
+        bool FuirAPortee()
         {
             if (!SpellSelector.GetRangeAttack(out _, out var portee) || portee <= 0)
                 portee = 6;
             var ennemis = Fighter.Fight.GetAllFighters(e => e.IsAlive() && e.IsEnnemyWith(Fighter) && e.IsVisibleFor(Fighter)).ToArray();
             if (ennemis.Length == 0)
-                return;
+                return true;
             int Proche(Game.Maps.Cells.MapPoint p) => ennemis.Min(e => (int)e.Position.Point.ManhattanDistanceTo(p));
             var alea = new Stump.Core.Threading.AsyncRandom();
             var meilleure = Environment.GetMovementCells()
@@ -227,11 +233,14 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
                 .Where(x => x.d <= portee)
                 .OrderByDescending(x => x.d).ThenBy(x => alea.Next())
                 .FirstOrDefault();
-            if (meilleure == null || meilleure.c.Id == Fighter.Cell.Id || meilleure.d <= Proche(Fighter.Position.Point))
-                return;
+            if (meilleure == null)
+                return false;
+            if (meilleure.c.Id == Fighter.Cell.Id || meilleure.d <= Proche(Fighter.Position.Point))
+                return true;
             foreach (var r in new MoveAction(Fighter, meilleure.c).Execute(this))
                 if (r == RunStatus.Failure)
                     break;
+            return true;
         }
 
         bool CellIsFree(Stump.Server.WorldServer.Database.World.Cell c) =>
@@ -259,12 +268,17 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
             }
 
             // MYSTIC 19/10 : monstres sans attaque au contact (MonstresFuyards) : ils s'éloignent en restant à portée
-            if (Fighter is MonsterFighter mf && MonstresFuyards.Ids.Contains(mf.Monster.Template.Id) && !Environment.AucunEnnemiVisible())
+            // MYSTIC 20/10 (Paspartou) : seulement s'il a lancé un sort ce tour ; sinon (cible hors ligne de vue...) il avançait quand même
+            // « à portée », restait loin et passait son tour : il s'approche maintenant comme les autres
+            if (Fighter is MonsterFighter mf && MonstresFuyards.Ids.Contains(mf.Monster.Template.Id) && m_lancesCeTour > 0 && !Environment.AucunEnnemiVisible())
             {
                 var avant = Fighter.Cell.Id;
-                FuirAPortee();
-                m_turnLog.Add("fuite a portee " + avant + "->" + Fighter.Cell.Id);
-                return;
+                if (FuirAPortee())
+                {
+                    m_turnLog.Add("fuite a portee " + avant + "->" + Fighter.Cell.Id);
+                    return;
+                }
+                m_turnLog.Add("trop loin pour fuir a portee : il se rapproche");
             }
 
             // MYSTIC 18/10 (retour de test) : tous les ennemis sont invisibles -> il les cherche (avant : aucun ennemi « le plus proche »,
@@ -389,6 +403,7 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
 
                 m_turnLog.Add(string.Format("sort {0} x{1}{2}", cast.Spell.Template.Id, i, i == 0 ? " (" + result + ")" : ""));
                 totalCasts += i;
+                m_lancesCeTour += i;
 
                 // sort rate : on l'ecarte pour ce tour et on essaie les autres
                 if (i == 0)

@@ -151,6 +151,19 @@ namespace MysticLauncher
             m_sessionGardee = sessionGardee;
             m_apercu = apercu;
             m_dossiers = apercu != null ? Apercu.Dossiers() : Dossiers.Charger(compte.Email);
+            // MYSTIC 20/10 : « Zaap » local → après une déconnexion, le client redemande un ticket pour SON compte (bouton « Se connecter avec »)
+            if (apercu == null)
+            {
+                Zaap.Journal = t => m_updater.Log(t);
+                Zaap.DemanderTicket = compteJeu =>
+                {
+                    var sess = m_session;
+                    if (sess == null) return null;
+                    var r = m_api.Ticket(sess, compteJeu);
+                    return r != null && r.Ok ? Tuple.Create(r.Login, r.Ticket) : null;
+                };
+                Zaap.Demarrer();
+            }
 
             Title = "Mystic";
             Width = W;
@@ -322,6 +335,7 @@ namespace MysticLauncher
             reglages = BoutonRail("", "Réglages", () =>
             {
                 var m = Menu();
+                m.Items.Add(Element("", "Créer un compte de jeu…", CreerCompteJeu));
                 m.Items.Add(Element("", "Dossier du jeu…", ChangerDossier));
                 m.Items.Add(Element("", "Vérifier les fichiers", () => Travailler(true)));
                 m.Items.Add(Element("", "Mon compte sur le site", () => Outils.OuvrirSite(m_updater.SiteUrl + "compte.html")));
@@ -1119,6 +1133,30 @@ namespace MysticLauncher
             b.BeginAnimation(OpacityProperty, a);
         }
 
+        /// <summary>MYSTIC 20/10 : crée un compte de jeu directement depuis le launcher (sans mot de passe, lié au compte web).</summary>
+        void CreerCompteJeu()
+        {
+            if (m_session == null) return;
+            var pseudo = Saisir("Pseudo du nouveau compte (affiché en jeu)", "");
+            if (pseudo == null) return;
+            var reponse = Saisir("Réponse secrète (demandée en jeu pour supprimer un personnage)", "");
+            if (reponse == null) return;
+            var session = m_session;
+            m_statut.Text = "Création du compte « " + pseudo + " »…";
+            new Thread(() =>
+            {
+                var r = m_api.CreerJeu(session, pseudo, reponse);
+                Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    if (!r.Ok) { MessageInfo(r.Erreur ?? "Création impossible.", true); m_statut.Text = ""; return; }
+                    r.Session = session;
+                    m_compte = r;
+                    m_statut.Text = "Compte « " + pseudo + " » créé : aucun mot de passe, il s'ouvre depuis le launcher.";
+                    Afficher();
+                }));
+            }) { IsBackground = true }.Start();
+        }
+
         // fenêtre de saisie (nom de groupe, renommer)
         string Saisir(string titre, string valeur, bool videPermis = false)
         {
@@ -1360,7 +1398,7 @@ namespace MysticLauncher
                     try
                     {
                         if (r != null && !r.Ok) { m_lancement.Remove(c.Id); m_statut.Text = r.Erreur ?? "Connexion automatique impossible."; m_statut.Foreground = new SolidColorBrush(Rouge); Afficher(); return; }
-                        var p = m_updater.StartGame(r?.Login, r?.Ticket);
+                        var p = m_updater.StartGame(r?.Login, r?.Ticket, c.Id);
                         if (p != null) m_enJeu[c.Id] = p;
                         m_statut.Text = "« " + m_dossiers.Nom(c) + " » lancé.";
                         Afficher();

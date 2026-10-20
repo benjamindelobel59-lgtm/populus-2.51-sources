@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -108,6 +108,8 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
         readonly List<FightActor> m_aRessusciter = new List<FightActor>();
         readonly Dictionary<FightActor, GlypheVortex> m_glyphes = new Dictionary<FightActor, GlypheVortex>();
         readonly Dictionary<CharacterFighter, Cell> m_casesDepart = new Dictionary<CharacterFighter, Cell>();
+        // MYSTIC 20/10 : case de départ de chaque monstre (début du combat, ou arrivée en vague) : il y ressuscite
+        readonly Dictionary<FightActor, Cell> m_casesBase = new Dictionary<FightActor, Cell>();
 
         public VortexControleur(AIFighter vortex)
         {
@@ -355,6 +357,8 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
 
         void Surveiller(FightActor monstre)
         {
+            if (!m_casesBase.ContainsKey(monstre) && monstre.Cell != null)
+                m_casesBase[monstre] = monstre.Cell;
             monstre.Dead -= OnMonstreDead;
             monstre.Dead += OnMonstreDead;
         }
@@ -403,8 +407,9 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
                     continue;
                 }
 
-                // corrompu : ramené à côté du Vortex ; sinon il réapparaît comme une vague (case de placement des monstres)
-                var cell = m_corrompus.Contains(monstre) ? CaseLibreAutour(m_vortex.Cell) : CaseDeVague();
+                // corrompu : ramené à côté du Vortex ; sinon (MYSTIC 20/10) à sa case de départ, ou juste à côté si elle est prise
+                // (avant : case de placement au hasard)
+                var cell = m_corrompus.Contains(monstre) ? CaseLibreAutour(m_vortex.Cell) : CaseDeBase(monstre);
                 if (cell == null)
                     continue; // aucune case libre : il reviendra au prochain tour du Vortex (avant : perdu)
 
@@ -426,6 +431,7 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
 
                 // 1re mort : aucun bonus pour le monstre (demande utilisateur) ; seul le Vortex prend le bonus, à l'élimination définitive
                 AjouterEtat(monstre, EtatZombi);
+                // MYSTIC 20/10 (décision utilisateur) : ressuscité en Zombi, il n'est PAS invulnérable (seules les vagues le sont)
             }
         }
 
@@ -579,6 +585,17 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
                 .Where(x => x.Walkable && !x.NonWalkableDuringFight && m_fight.IsCellFree(x))
                 .OrderBy(x => bleues.Min(b => new MapPoint(b).ManhattanDistanceTo(new MapPoint(x))))
                 .FirstOrDefault();
+        }
+
+        Cell CaseDeBase(FightActor monstre)
+        {
+            if (!m_casesBase.TryGetValue(monstre, out var depart))
+                return CaseDeVague();
+            if (depart.Walkable && !depart.NonWalkableDuringFight && m_fight.IsCellFree(depart))
+                return depart;
+            var point = new MapPoint(depart);
+            return m_fight.Map.Cells.Where(x => x.Walkable && !x.NonWalkableDuringFight && m_fight.IsCellFree(x))
+                .OrderBy(x => point.ManhattanDistanceTo(new MapPoint(x))).FirstOrDefault() ?? CaseDeVague();
         }
 
         Cell CaseLibreAutour(Cell centre)

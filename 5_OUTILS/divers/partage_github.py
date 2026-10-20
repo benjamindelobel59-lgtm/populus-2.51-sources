@@ -208,7 +208,7 @@ def main():
         if os.path.isdir(os.path.join(paquet, '2_BDD')):
             for f in sorted(os.listdir(os.path.join(paquet, '2_BDD'))):
                 shutil.copy2(os.path.join(paquet, '2_BDD', f), os.path.join(DEST, '3_SQL_WORLD', f))
-        for src, dst in (('6_CLIENT_64bits', '64bits'), ('7_CLIENT_32bits', '32bits')):
+        for src, dst in (('6_CLIENT_64bits', '64bits'), ('7_CLIENT_32bits', '32bits'), ('Client 64 bits', '64bits'), ('Client 32 bits', '32bits')):  # MYSTIC 20/10 : nouveaux noms
             if os.path.isdir(os.path.join(paquet, src)):
                 shutil.copytree(os.path.join(paquet, src), os.path.join(DEST, '4_CLIENT', dst), dirs_exist_ok=True)
     copier_outils(os.path.join(DEST, '5_OUTILS'))

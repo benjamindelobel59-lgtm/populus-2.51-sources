@@ -45,6 +45,11 @@ namespace Stump.Server.WorldServer.Game.Maps.Spawns
         }
 
         private readonly Dictionary<string, Queue<Entry>> m_entries = new Dictionary<string, Queue<Entry>>();
+
+        // MYSTIC 20/10 : index carte -> files des groupes normaux (clés C...). Avant, TakeClassical parcourait les ~22 000 groupes
+        // sauvegardés pour CHAQUE carte (StartsWith culturel + concaténation) : des dizaines de millions de comparaisons au démarrage
+        // (« Spawn monsters » de 35-50 s en local, beaucoup plus sur le VPS). Maintenant : un accès direct par carte.
+        private readonly Dictionary<int, List<Queue<Entry>>> m_classicalByMap = new Dictionary<int, List<Queue<Entry>>>();
         private readonly object m_lock = new object();
         private int m_restored;
         private int m_retires; // MYSTIC 19/10 : monstres retires des groupes restaures (plus de spawn actif)
@@ -96,7 +101,15 @@ namespace Stump.Server.WorldServer.Game.Maps.Spawns
 
                     var id = Id(entry.MapId, entry.Key);
                     if (!m_entries.TryGetValue(id, out var queue))
+                    {
                         m_entries[id] = queue = new Queue<Entry>();
+                        if (entry.Key.StartsWith("C", StringComparison.Ordinal))
+                        {
+                            if (!m_classicalByMap.TryGetValue(entry.MapId, out var files))
+                                m_classicalByMap[entry.MapId] = files = new List<Queue<Entry>>();
+                            files.Add(queue);
+                        }
+                    }
                     queue.Enqueue(entry);
                     count++;
                 }
@@ -125,10 +138,11 @@ namespace Stump.Server.WorldServer.Game.Maps.Spawns
             var result = new List<Entry>();
             lock (m_lock)
             {
-                foreach (var pair in m_entries.Where(x => x.Key.StartsWith(mapId + "|C")).ToArray())
+                if (m_classicalByMap.TryGetValue(mapId, out var files))
                 {
-                    while (pair.Value.Count > 0)
-                        result.Add(pair.Value.Dequeue());
+                    foreach (var queue in files)
+                        while (queue.Count > 0)
+                            result.Add(queue.Dequeue());
                 }
             }
             return result;

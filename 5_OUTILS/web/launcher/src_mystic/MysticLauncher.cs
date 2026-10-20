@@ -29,9 +29,30 @@ namespace MysticLauncher
 {
     static class Program
     {
-        public const string DefaultUrl = "http://IP_DU_VPS/maj/";
-        public const string DefaultApi = "http://IP_DU_VPS:8090/";
-        public const string DefaultSite = "http://IP_DU_VPS/";
+        // MYSTIC 20/10 : nom de domaine padgref.fr ; tant qu'il ne pointe pas vers le VPS (DNS pas encore actif, page
+        // d'attente OVH…), le launcher garde l'IP. launcher.ini (url= / api= / site=) peut toujours tout remplacer.
+        public const string Domaine = "padgref.fr";
+        public const string IpVps = "IP_DU_VPS";
+        static string s_hote;
+        public static string Hote
+        {
+            get
+            {
+                if (s_hote != null) return s_hote;
+                s_hote = IpVps;
+                try
+                {
+                    var t = System.Threading.Tasks.Task.Run(() => System.Net.Dns.GetHostAddresses(Domaine));
+                    if (t.Wait(2500) && System.Linq.Enumerable.Any(t.Result, a => a.ToString() == IpVps))
+                        s_hote = Domaine;
+                }
+                catch { }
+                return s_hote;
+            }
+        }
+        public static string DefaultUrl => "http://" + Hote + "/maj/";
+        public static string DefaultApi => "http://" + Hote + ":8090/";
+        public static string DefaultSite => "http://" + Hote + "/";
 
         [STAThread]
         static int Main(string[] args)

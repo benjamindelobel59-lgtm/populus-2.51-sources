@@ -329,6 +329,9 @@ namespace Stump.Server.WorldServer.Game.Fights
 
         /// <summary>MYSTIC : reste-t-il une vague a venir pour ce nombre de joueurs ?</summary>
         bool ResteDesVagues();
+
+        /// <summary>MYSTIC 20/10 : invulnérabilité de réapparition (icône comprise) jusqu'à la fin de son 1er tour (résurrections du Vortex).</summary>
+        void AjouterInvulnerabiliteReapparition(MonsterFighter fighter);
         event Action<IFight, FightActor> SwitchCompanion;
 
         void StopTurn();
@@ -399,11 +402,11 @@ namespace Stump.Server.WorldServer.Game.Fights
 
         TimeSpan GetPlacementTimeLeft();
 
-        sbyte GetNextContextualId();
+        int GetNextContextualId();
 
         void DeadWaveSpawn();
 
-        void FreeContextualId(sbyte id);
+        void FreeContextualId(int id);
 
         FightActor GetOneFighter(int id);
 
@@ -916,8 +919,14 @@ namespace Stump.Server.WorldServer.Game.Fights
 
         public event Action<IFight> FightStarted;
 
+        /// <summary>MYSTIC 20/10 : cases des monstres au début du combat (les vagues réapparaissent là, comme l'officiel).</summary>
+        readonly List<Cell> m_casesDepartMonstres = new List<Cell>();
+
         protected virtual void OnFightStarted()
         {
+            m_casesDepartMonstres.Clear();
+            m_casesDepartMonstres.AddRange(DefendersTeam.Fighters.OfType<MonsterFighter>().Where(x => !x.IsSummoned() && x.Cell != null).Select(x => x.Cell));
+
             foreach (var fighter in Fighters)
             {                
                 fighter.FightStartPosition = fighter.Position.Clone();
@@ -1484,7 +1493,10 @@ namespace Stump.Server.WorldServer.Game.Fights
             // MYSTIC 17/10 : une invocation peut jouer juste après un autre combattant que son invocateur (Bonbombe : équipe de
             // la Reine des Voleurs, mais joue juste après le joueur qui l'a fait apparaître)
             var apres = (fighter as SummonedMonster)?.JoueApres ?? fighter.Summoner;
-            TimeLine.InsertFighter(fighter, TimeLine.Fighters.IndexOf(apres) + 1);
+            if ((fighter as SummonedMonster)?.JoueEnDernier == true)
+                TimeLine.InsertFighter(fighter, TimeLine.Fighters.Count);
+            else
+                TimeLine.InsertFighter(fighter, TimeLine.Fighters.IndexOf(apres) + 1);
             BindFighterEvents(fighter);
             fighter.OnGetAlive();
 
@@ -1861,6 +1873,12 @@ namespace Stump.Server.WorldServer.Game.Fights
 
         public bool ResteDesVagues() => ProchaineVague().Count > 0;
 
+        public void AjouterInvulnerabiliteReapparition(MonsterFighter fighter)
+        {
+            using (StartSequence(SequenceTypeEnum.SEQUENCE_TRIGGERED))
+                AddWaveInvulnerability(fighter);
+        }
+
         public bool LancerVagueSuivante()
         {
             var vague = ProchaineVague();
@@ -1877,11 +1895,29 @@ namespace Stump.Server.WorldServer.Game.Fights
             // NEKFEU : avant, les monstres de vague prenaient toujours les cases de placement bleues (defenseurs) dans le meme ordre
             // (meme endroit a chaque vague) et la case de secours n'etait jamais donnee. Maintenant : case bleue libre tiree au
             // hasard ; si toutes sont prises, case libre la plus proche d'une case bleue.
+            // MYSTIC 20/10 : d'abord les cases où étaient les monstres au début du combat (officiel : « les vagues réapparaîtront aux
+            // cases où étaient placés les monstres au début du combat »), sinon la case libre la plus proche de l'une d'elles ;
+            // en dernier recours, l'ancien choix (case bleue).
             var blues = DefendersTeam.PlacementCells.ToList();
             var cells = blues.Where(IsCellFree).Shuffle().ToList();
+            var bases = m_casesDepartMonstres.ToList();
+            bool Praticable(Cell c) => c != null && c.Walkable && !c.NonWalkableDuringFight && IsCellFree(c);
+            var rang = 0;
             foreach(var fighter in fighters)
             {
-                var cell = cells.FirstOrDefault(IsCellFree);
+                Cell cell = null;
+                if (bases.Count > 0)
+                {
+                    cell = bases.FirstOrDefault(Praticable);
+                    if (cell == null)
+                    {
+                        var reference = new MapPoint(bases[rang % bases.Count]);
+                        cell = Map.Cells.Where(Praticable).OrderBy(v => reference.ManhattanDistanceTo(new MapPoint(v))).FirstOrDefault();
+                    }
+                    rang++;
+                }
+                if (cell == null)
+                    cell = cells.FirstOrDefault(IsCellFree);
                 if (cell == null && blues.Count > 0)
                     cell = Map.Cells.Where(IsCellFree)
                         .OrderBy(v => blues.Min(b => new MapPoint(b).ManhattanDistanceTo(new MapPoint(v))))
@@ -1926,9 +1962,22 @@ namespace Stump.Server.WorldServer.Game.Fights
                     // NEKFEU : 2 et non 1 : au debut du tour du monstre, ses bonus sont decomptes AVANT les effets de debut de tour
                     // (poison...) -> avec 1, l'invulnerabilite disparaissait juste avant le poison. Avec 2 : invulnerable pendant
                     // tout son 1er tour (poison compris), retiree au debut de son 2e tour.
-                    Duration = 2
+                    // MYSTIC 20/10 : le client affichait « 2 tours » (Phossile) : durée 1 affichée, et jamais décomptée au début de
+                    // son tour (pas de référence de décompte) : c'est la fin de son 1er tour (ci-dessous) qui la retire, poison compris.
+                    Duration = 1,
+                    DecrementReference = null
                 };
                 fighter.AddBuff(buff);
+
+                // MYSTIC 20/10 : l'icône n'apparaissait pas toujours (envoyée au moment exact de l'apparition, le client l'ignorait selon
+                // le moment) : elle est renvoyée un instant après, si le monstre l'a encore
+                Map.Area.AddMessage(() => Map.Area.CallDelayed(400, () =>
+                {
+                    if (State != FightState.Fighting || !fighter.IsAlive() || !fighter.GetBuffs().Contains(buff))
+                        return;
+                    using (StartSequence(SequenceTypeEnum.SEQUENCE_TRIGGERED))
+                        UpdateBuff(buff, false);
+                }));
 
                 // NEKFEU : retiree a la FIN de son 1er tour (avec la seule duree 2, elle durait aussi jusqu'au debut de son 2e tour)
                 Action<IFight, FightActor> onTurnEnd = null;
@@ -2347,38 +2396,53 @@ namespace Stump.Server.WorldServer.Game.Fights
         {
             PrematuredStartWaveOccured = false;
         }
-        protected async virtual void OnDead(FightActor fighter, FightActor killedBy)
+        // MYSTIC 20/10 (crash à la mort du Chalœil) : n'est plus « async void » : une erreur ici arrêtait TOUT le serveur, et la vague
+        // suivante partait sur un autre fil d'exécution, en même temps que le combat (collections modifiées pendant un parcours).
+        // Erreur maintenant journalisée, vague lancée juste après la mort dans la file de la zone (même fil que le combat).
+        protected virtual void OnDead(FightActor fighter, FightActor killedBy)
         {
-            //if (isKillEffect)
-            //    ContextHandler.SendGameActionFightKillMessage(Clients, killedBy, fighter);
-        
-
-            using (StartSequence(SequenceTypeEnum.SEQUENCE_CHARACTER_DEATH))
+            try
             {
-                fighter.KillAllSummons();
-                fighter.RemoveAndDispellAllBuffs(FightDispellableEnum.DISPELLABLE_BY_DEATH);
-                fighter.RemoveAllCastedBuffs(FightDispellableEnum.DISPELLABLE_BY_DEATH);
-
-                ActionsHandler.SendGameActionFightDeathMessage(Clients, fighter, killedBy);
-
-                // MYSTIC 17/10 : glyphes / pieges du mort retires DANS la sequence de mort, sinon le client gardait leur visuel
-                // (test Korriandre : glyphes d'un joueur mort encore affichees mais inactives)
-                foreach (var trigger in m_triggers.Where(trigger => trigger.Caster == fighter).ToArray())
+                using (StartSequence(SequenceTypeEnum.SEQUENCE_CHARACTER_DEATH))
                 {
-                    RemoveTrigger(trigger);
+                    fighter.KillAllSummons();
+                    fighter.RemoveAndDispellAllBuffs(FightDispellableEnum.DISPELLABLE_BY_DEATH);
+                    fighter.RemoveAllCastedBuffs(FightDispellableEnum.DISPELLABLE_BY_DEATH);
+
+                    ActionsHandler.SendGameActionFightDeathMessage(Clients, fighter, killedBy);
+
+                    // MYSTIC 17/10 : glyphes / pieges du mort retires DANS la sequence de mort, sinon le client gardait leur visuel
+                    // (test Korriandre : glyphes d'un joueur mort encore affichees mais inactives)
+                    foreach (var trigger in m_triggers.Where(trigger => trigger.Caster == fighter).ToArray())
+                    {
+                        RemoveTrigger(trigger);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                logger.Error("[Mort] combat {0} : erreur à la mort de {1} : {2}", Id, fighter, ex);
             }
 
             if (DefendersTeam.AreAllDead() && !PrematuredStartWaveOccured)
             {
                 PrematuredStartWaveOccured = true;
-                Task t = new Task(() => DeadWaveSpawn());
-                await Task.Delay(50);
-                t.Start();
-
-                Task td = new Task(() => DisablePrematuredStartWaveOccured());
-                await Task.Delay(100);
-                td.Start();
+                Map.Area.AddMessage(() =>
+                {
+                    try
+                    {
+                        if (State == FightState.Fighting)
+                            DeadWaveSpawn();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error("[Vagues] combat {0} : erreur à l'apparition de la vague : {1}", Id, ex);
+                    }
+                    finally
+                    {
+                        DisablePrematuredStartWaveOccured();
+                    }
+                });
             }
         }
 
@@ -3183,12 +3247,14 @@ namespace Stump.Server.WorldServer.Game.Fights
             return TimeSpan.FromMilliseconds(time > 0 ? (FighterPlaying.TurnTime - (int)time) : 0);
         }
 
-        public sbyte GetNextContextualId()
+        // MYSTIC 20/10 (Défi du Chalœil) : identifiants des combattants en int (avant : sbyte, 128 au maximum : avec ~23 dés recréés à
+        // chaque tour, le compteur débordait et redonnait l'identifiant de combattants encore en jeu : monstres invisibles, désynchro)
+        public int GetNextContextualId()
         {
-            return (sbyte)m_contextualIdProvider.Pop();
+            return m_contextualIdProvider.Pop();
         }
 
-        public void FreeContextualId(sbyte id)
+        public void FreeContextualId(int id)
         {
             m_contextualIdProvider.Push(id);
         }
@@ -3381,7 +3447,24 @@ namespace Stump.Server.WorldServer.Game.Fights
 
         public FightExternalInformations GetFightExternalInformations(Character character)
         {
-            return new FightExternalInformations((ushort)Id, (sbyte)FightType, !IsStarted ? 0 : StartTime.GetUnixTimeStamp(), SpectatorClosed);
+            // MYSTIC 20/10 : le client attend aussi les 2 équipes et leurs options (liste des combats en cours / œil spectateur)
+            return new FightExternalInformations((ushort)Id, (sbyte)FightType, !IsStarted ? 0 : StartTime.GetUnixTimeStamp(), SpectatorClosed,
+                new[] { EquipeLegere(ChallengersTeam, character), EquipeLegere(DefendersTeam, character) },
+                new[] { ChallengersTeam.GetFightOptionsInformations(), DefendersTeam.GetFightOptionsInformations() });
+        }
+
+        static FightTeamLightInformations EquipeLegere(FightTeam equipe, Character character)
+        {
+            try
+            {
+                return equipe.GetFightTeamLightInformations(character);
+            }
+            catch (Exception)
+            {
+                // équipe vide (moyenne de niveau impossible) ou personnage sans données
+                return new FightTeamLightInformations((sbyte)equipe.Id, equipe.Leader?.Id ?? 0, (sbyte)equipe.AlignmentSide, (sbyte)equipe.TeamType, 0,
+                    false, false, false, false, false, (sbyte)equipe.Fighters.Count, 0);
+            }
         }
 
         public IEnumerable<NamedPartyTeam> GetPartiesName()

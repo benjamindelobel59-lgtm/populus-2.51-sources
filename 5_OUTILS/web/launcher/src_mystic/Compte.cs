@@ -139,6 +139,13 @@ namespace MysticLauncher
         public ReponseWeb Ticket(string session, int compte) =>
             Web(Appel("web/ticket", new NameValueCollection { { "session", session }, { "compte", compte.ToString() } }));
 
+        /// <summary>MYSTIC 20/10 « Se connecter grâce au site » : session si le joueur a validé ce code sur le site (Ok faux + Erreur nulle = en attente).</summary>
+        public ReponseWeb Appairage(string code) => Web(Appel("web/appairage", new NameValueCollection { { "code", code } }));
+
+        /// <summary>MYSTIC 20/10 : crée un compte de jeu sans mot de passe, lié au compte web (renvoie les comptes à jour).</summary>
+        public ReponseWeb CreerJeu(string session, string pseudo, string reponse) =>
+            Web(Appel("web/creer_jeu", new NameValueCollection { { "session", session }, { "pseudo", pseudo }, { "reponse", reponse } }));
+
         public void Deconnexion(string session) => Appel("web/deconnexion", new NameValueCollection { { "session", session } });
 
         // ---- partage de comptes (MYSTIC 18/10) ----
@@ -450,7 +457,7 @@ namespace MysticLauncher
             var sous = Outils.Texte("Connectez-vous avec votre compte Mystic : tous vos comptes de jeu vous attendent, sans retaper de mot de passe.", 12, Brume, FontWeights.Normal);
             sous.Margin = new Thickness(0, 8, 0, 22);
             pile.Children.Add(sous);
-            pile.Children.Add(Outils.Texte("E-mail", 12, Argent2, FontWeights.SemiBold));
+            pile.Children.Add(Outils.Texte("E-mail ou nom de compte", 12, Argent2, FontWeights.SemiBold));
             m_champEmail = (TextBox)StyleChamp(new TextBox { MaxLength = 190 });
             pile.Children.Add(m_champEmail);
             pile.Children.Add(Outils.Texte("Mot de passe", 12, Argent2, FontWeights.SemiBold));
@@ -484,6 +491,26 @@ namespace MysticLauncher
             m_boutonConnexion.MouseLeave += (s, e) => lueur.BeginAnimation(DropShadowEffect.OpacityProperty, new DoubleAnimation(0.55, TimeSpan.FromSeconds(0.2)));
             m_boutonConnexion.MouseLeftButtonUp += (s, e) => SeConnecter();
             pile.Children.Add(m_boutonConnexion);
+
+            // MYSTIC 20/10 : si le joueur est déjà connecté au site, un clic suffit (il confirme sur la page qui s'ouvre)
+            m_boutonSiteTexte = Outils.Texte(Espace("SE CONNECTER GRÂCE AU SITE"), 12, VioletClair, FontWeights.Bold);
+            m_boutonSiteTexte.HorizontalAlignment = HorizontalAlignment.Center;
+            m_boutonSiteTexte.VerticalAlignment = VerticalAlignment.Center;
+            var boutonSite = new Border
+            {
+                Height = 40,
+                Margin = new Thickness(0, 10, 0, 0),
+                CornerRadius = new CornerRadius(10),
+                Background = new SolidColorBrush(Argb(0x18, VioletClair)),
+                BorderBrush = new SolidColorBrush(Argb(0x90, VioletClair)),
+                BorderThickness = new Thickness(1),
+                Child = m_boutonSiteTexte,
+                Cursor = Cursors.Hand
+            };
+            boutonSite.MouseEnter += (s, e) => boutonSite.Background = new SolidColorBrush(Argb(0x38, VioletClair));
+            boutonSite.MouseLeave += (s, e) => boutonSite.Background = new SolidColorBrush(Argb(0x18, VioletClair));
+            boutonSite.MouseLeftButtonUp += (s, e) => ConnexionParLeSite();
+            pile.Children.Add(boutonSite);
 
             m_erreurConnexion = Outils.Texte("", 12, Rouge, FontWeights.SemiBold);
             m_erreurConnexion.Margin = new Thickness(0, 12, 0, 0);
@@ -532,6 +559,7 @@ namespace MysticLauncher
             var mdp = m_champMdp.Password;
             var souvenir = m_souvenir.IsChecked == true;
             m_erreurConnexion.Text = "";
+            m_erreurConnexion.Foreground = new SolidColorBrush(Rouge);
             if (email.Length == 0 || mdp.Length == 0)
             {
                 m_erreurConnexion.Text = "Indiquez votre e-mail et votre mot de passe.";
@@ -558,6 +586,59 @@ namespace MysticLauncher
                         SessionGardee.Effacer();
                     m_updater.Log("Connecté au compte web " + r.Email);
                     OuvrirPrincipal(r, r.Session, souvenir);
+                }));
+            }) { IsBackground = true }.Start();
+        }
+
+        TextBlock m_boutonSiteTexte;
+        string m_codeSite;
+
+        /// <summary>MYSTIC 20/10 : ouvre la page du site avec un code secret, puis attend (5 min max) que le joueur l'autorise.</summary>
+        void ConnexionParLeSite()
+        {
+            if (m_connexionEnCours)
+                return;
+            var octets = new byte[32];
+            using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create()) rng.GetBytes(octets);
+            var code = BitConverter.ToString(octets).Replace("-", "").ToLowerInvariant();
+            m_codeSite = code;
+            var court = (code.Substring(0, 3) + "-" + code.Substring(3, 3)).ToUpperInvariant();
+            m_erreurConnexion.Foreground = new SolidColorBrush(VioletClair);
+            m_erreurConnexion.Text = "Confirme sur la page du site qui vient de s'ouvrir." + Environment.NewLine + "Code à vérifier : " + court;
+            m_boutonSiteTexte.Text = "EN ATTENTE DU SITE…";
+            Outils.OuvrirSite(m_updater.SiteUrl + "connexion-launcher.html#" + code);
+            new Thread(() =>
+            {
+                var fin = DateTime.Now.AddMinutes(5);
+                while (DateTime.Now < fin && m_codeSite == code && !m_ouvert)
+                {
+                    Thread.Sleep(2000);
+                    var r = m_api.Appairage(code);
+                    if (r.Ok)
+                    {
+                        Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            if (m_ouvert) return;
+                            m_codeSite = null;
+                            if (r.Session != null) SessionGardee.Ecrire(r.Session);
+                            m_updater.Log("Connecté au compte web " + r.Email + " (par le site)");
+                            OuvrirPrincipal(r, r.Session, true);
+                        }));
+                        return;
+                    }
+                    if (r.Erreur != null && !r.Erreur.StartsWith("Serveur"))
+                    {
+                        Dispatcher.BeginInvoke((Action)(() => { m_erreurConnexion.Foreground = new SolidColorBrush(Rouge); m_erreurConnexion.Text = r.Erreur; m_boutonSiteTexte.Text = Espace("SE CONNECTER GRÂCE AU SITE"); }));
+                        return;
+                    }
+                }
+                Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    if (m_codeSite != code || m_ouvert) return;
+                    m_codeSite = null;
+                    m_erreurConnexion.Foreground = new SolidColorBrush(Rouge);
+                    m_erreurConnexion.Text = "Temps écoulé : clique de nouveau sur « Se connecter grâce au site ».";
+                    m_boutonSiteTexte.Text = Espace("SE CONNECTER GRÂCE AU SITE");
                 }));
             }) { IsBackground = true }.Start();
         }

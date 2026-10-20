@@ -40,6 +40,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Targets
         {
             3787, 3793, 3805, 4504, 3643, 4008, 5101, 5091, 5058, 5038, 5044, 5047, 4037,
             6163, 6164, 6165, 6166, 6167, 4483, 4512, 4115,
+            4520, // MYSTIC 20/10 : Reflets placides du Lévitrof (échange avec le joueur vert qui le frappe)
         };
 
         public static bool Concerne(SpellEffectHandler handler) => handler?.CastHandler?.Spell != null && Sorts.Contains(handler.CastHandler.Spell.Id);

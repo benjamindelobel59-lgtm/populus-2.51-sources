@@ -21,15 +21,7 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
 
             if (fighter.Fight.State == FightState.Fighting)
             {
-                Action<FightTeam, FightActor> arrivee = null;
-                arrivee = (team, actor) =>
-                {
-                    if (actor != fighter)
-                        return;
-                    team.FighterAdded -= arrivee;
-                    fighter.CastAutoSpell(new Spell(spellId, (short)level), fighter.Cell);
-                };
-                fighter.Team.FighterAdded += arrivee;
+                PoserALArrivee(fighter, spellId, level);
             }
             else
             {
@@ -37,11 +29,28 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
                 debut = fight =>
                 {
                     fight.FightStarted -= debut;
-                    if (fighter.IsAlive())
+                    // MYSTIC 20/10 : monstre de vague (créé avant le combat, pas encore en jeu) : passif posé à son arrivée réelle
+                    // (avant : posé au lancement alors qu'il n'était pas sur la carte, perdu : Piloztère sans Austérité aux vagues 2 à 4)
+                    if (!fighter.Team.Fighters.Contains(fighter))
+                        PoserALArrivee(fighter, spellId, level);
+                    else if (fighter.IsAlive())
                         fighter.CastAutoSpell(new Spell(spellId, (short)level), fighter.Cell);
                 };
                 fighter.Fight.FightStarted += debut;
             }
+        }
+
+        static void PoserALArrivee(AIFighter fighter, int spellId, int level)
+        {
+            Action<FightTeam, FightActor> arrivee = null;
+            arrivee = (team, actor) =>
+            {
+                if (actor != fighter)
+                    return;
+                team.FighterAdded -= arrivee;
+                fighter.CastAutoSpell(new Spell(spellId, (short)level), fighter.Cell);
+            };
+            fighter.Team.FighterAdded += arrivee;
         }
     }
 }

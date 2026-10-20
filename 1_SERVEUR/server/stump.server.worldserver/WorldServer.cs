@@ -96,7 +96,7 @@ namespace Stump.Server.WorldServer
             base.Initialize();
             ConsoleInterface = new WorldConsole();
             VirtualConsoleInterface = new WorldVirtualConsole();
-            ConsoleBase.SetTitle($"Mystic · Serveur de jeu · {ServerInformation.Name} · démarrage...");
+            ConsoleBase.SetTitle($"Padgref · Serveur de jeu · {ServerInformation.Name} · démarrage...");
 
             logger.Info("Initializing Database...");
             DBAccessor = new DatabaseAccessor(DatabaseConfiguration);
@@ -174,7 +174,7 @@ namespace Stump.Server.WorldServer
             try
             {
                 var online = World.Instance.CharacterCount;
-                ConsoleBase.SetTitle($"Mystic · Serveur de jeu · {ServerInformation.Name} · {online} joueur{(online > 1 ? "s" : "")} en ligne");
+                ConsoleBase.SetTitle($"Padgref · Serveur de jeu · {ServerInformation.Name} · {online} joueur{(online > 1 ? "s" : "")} en ligne");
             }
             catch
             {

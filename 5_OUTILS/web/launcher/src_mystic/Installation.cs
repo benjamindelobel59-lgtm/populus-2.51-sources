@@ -1,5 +1,5 @@
 // MYSTIC 18/10/2026 : installation et mises à jour du jeu pour le launcher Mystic.
-// Sur le serveur (URL de base, par défaut http://IP_DU_VPS/maj/) :
+// Sur le serveur (URL de base, par défaut http://padgref.fr/maj/, ou l'IP du VPS tant que le domaine ne pointe pas dessus) :
 //   complet.txt           : TOUS les fichiers du client (installation complète) : « version=… » puis sha256 <TAB> taille <TAB> chemin
 //   manifest.txt          : les fichiers modifiés par Mystic (mises à jour), même format
 //   files/<sha256>.bin    : contenu de chaque fichier
@@ -351,12 +351,15 @@ namespace MysticLauncher
         }
 
         /// <summary>Lance le jeu ; avec login + ticket, le client se connecte tout seul (arguments --username / --ticket du client 2.51).</summary>
-        public Process StartGame(string login = null, string ticket = null)
+        public Process StartGame(string login = null, string ticket = null, int compte = 0)
         {
             var prefs = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Dofus-x64");
             var args = "\"--prefs=" + prefs + "\"";
             if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(ticket) && login.IndexOfAny(new[] { '"', '=', ' ' }) < 0)
                 args += " --username=" + login + " --ticket=" + ticket;
+            // MYSTIC 20/10 : relie la fenêtre au Zaap local du launcher (reconnexion au même compte après une déconnexion)
+            if (compte > 0 && !string.IsNullOrEmpty(login) && login.IndexOfAny(new[] { '"', '=', ' ' }) < 0)
+                args += Zaap.Arguments(compte, login);
             var psi = new ProcessStartInfo(System.IO.Path.Combine(AppDir, "Dofus.exe"), args)
             {
                 WorkingDirectory = AppDir,

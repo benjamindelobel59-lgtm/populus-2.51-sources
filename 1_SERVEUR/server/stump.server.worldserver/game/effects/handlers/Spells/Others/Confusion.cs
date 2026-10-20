@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Stump.DofusProtocol.Enums;
 using Stump.DofusProtocol.Types;
@@ -117,7 +117,6 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
     /// MYSTIC 17/10 : effets purement visuels / techniques du client 2.51 (333, 666, 2018, 2019) : rien à appliquer côté serveur,
     /// déclarés pour ne plus être signalés comme « effet non géré ».
     /// </summary>
-    [EffectHandler(EffectsEnum.Effect_333)]
     [EffectHandler(EffectsEnum.Effect_666)]
     [EffectHandler(EffectsEnum.Effect_2018)]
     [EffectHandler(EffectsEnum.Effect_2019)]
@@ -129,5 +128,57 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
         }
 
         protected override bool InternalApply() => true;
+    }
+
+    /// <summary>
+    /// MYSTIC 20/10 : effet 333 (changement de couleur). Reflets placides 4521 du Lévitrof (Palais du Roi Nidas) : le personnage visé
+    /// devient vert tant que l'effet dure (avant : effet ignoré, aucun visuel). Les autres sorts restent sans effet visuel.
+    /// </summary>
+    [EffectHandler(EffectsEnum.Effect_333)]
+    public class ChangementCouleur : SpellEffectHandler
+    {
+        public const int RefletsPlacides = 4521;
+
+        public ChangementCouleur(EffectDice effect, FightActor caster, SpellCastHandler castHandler, Cell targetedCell, bool critical)
+            : base(effect, caster, castHandler, targetedCell, critical)
+        {
+        }
+
+        protected override bool InternalApply()
+        {
+            if (Spell.Id != RefletsPlacides || Effect.Duration == 0)
+                return true;
+
+            foreach (var actor in GetAffectedActors())
+                actor.AddBuff(new CouleurBuff(actor.PopNextBuffId(), actor, Caster, this, Spell, System.Drawing.Color.FromArgb(0x2E, 0xC2, 0x3A)));
+
+            return true;
+        }
+    }
+
+    public class CouleurBuff : Buff
+    {
+        public CouleurBuff(int id, FightActor target, FightActor caster, SpellEffectHandler effect, Spell spell, System.Drawing.Color couleur)
+            : base(id, target, caster, effect, spell, false, FightDispellableEnum.DISPELLABLE_BY_DEATH)
+        {
+            Couleur = couleur;
+        }
+
+        public System.Drawing.Color Couleur { get; }
+
+        public override void Apply()
+        {
+            base.Apply();
+            Target.UpdateLook(Caster);
+        }
+
+        public override void Dispell()
+        {
+            base.Dispell();
+            Target.UpdateLook(Caster);
+        }
+
+        public override AbstractFightDispellableEffect GetAbstractFightDispellableEffect() =>
+            new FightTemporaryBoostEffect((uint)Id, Target.Id, Duration, (sbyte)Dispellable, (ushort)Spell.Id, (uint)(EffectFix?.ClientEffectId ?? Effect.Id), 0, 0);
     }
 }

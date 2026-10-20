@@ -28,7 +28,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
         {
         }
 
-        public const int FouxDamourSpellId = 2683;
+        public const int FouxDamourSpellId = 2683, DeChaloeil = 4282;
 
         bool InvoquerTonneaux()
         {
@@ -110,6 +110,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
 
             // MYSTIC 18/10 (retour de test) : Gourlo invoque 1 tonneau par lancer (1 lancer par tour, grade tiré au hasard par les effets à
             // 20 %), au plus 3 en vie (GourloBrain). Avant : 3 tonneaux d'un coup puis plus rien (InvoquerTonneaux n'est plus appelée).
+
+            // MYSTIC 20/10 (Défi du Chalœil, décision utilisateur) : dé dont la case est occupée (ou injouable) : il n'apparaît pas
+            if (monster.Template.Id == DeChaloeil && (TargetedCell == null || !TargetedCell.Walkable || Fight.GetOneFighter(TargetedCell) != null))
+                return false;
 
             if (Fight.GetOneFighter(TargetedCell) != null)
             {

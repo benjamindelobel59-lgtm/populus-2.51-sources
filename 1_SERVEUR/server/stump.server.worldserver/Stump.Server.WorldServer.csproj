@@ -225,6 +225,9 @@
     <Compile Include="AI\Fights\Brain\Custom\Boss\VortexBrain.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\GrolloumBrain.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\MysticCorrectifsBrains.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\PhorreursBrains.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\FabriqueMallefiskBrains.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\NidasBrains.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\PassifsDonjonsBrains.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\PapaNowelBrain.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\PassifsAuditDonjonsBrains.cs" />
@@ -303,7 +306,7 @@
     <Compile Include="Game\Heroique\ButinHeroique.cs" />
     <Compile Include="Commands\Commands\HeroiqueCommands.cs" />
     <Compile Include="Game\Alliances\Alliance.cs" />
-    <Compile Include="Game\Alliances\AvAManager.cs" />
+    <Compile Include="Game\Alliances\AvAManager.cs" />
     <Compile Include="Game\Alliances\BalanceAvA.cs" />
     <Compile Include="Game\Alliances\PrismModules.cs" />
     <Compile Include="Game\Alliances\VillagesConquete.cs" />
@@ -1038,8 +1041,8 @@
     <Compile Include="Game\Items\Player\MountItems.cs" />
     <Compile Include="Game\Items\TaxCollector\TaxCollectorBag.cs" />
     <Compile Include="Game\Items\TaxCollector\TaxCollectorItem.cs" />
-    <Compile Include="Game\Jobs\JobManager.cs" />
-    <Compile Include="Game\Jobs\Collecteurs.cs" />
+    <Compile Include="Game\Jobs\JobManager.cs" />
+    <Compile Include="Game\Jobs\Collecteurs.cs" />
     <Compile Include="Game\Jobs\CollecteursTable.cs" />
     <Compile Include="Game\Actors\RolePlay\Mounts\Mount.cs" />
     <Compile Include="Game\Actors\RolePlay\Mounts\MountManager.cs" />
