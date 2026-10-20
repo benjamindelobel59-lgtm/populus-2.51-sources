@@ -170,7 +170,7 @@ package ui
       
       public function openTab(uiName:String = null, uiParams:Object = null) : void
       {
-         var shieldUp:Boolean = false;
+         var shieldUp:Boolean = true;   // PADGREF : jamais le « mode restreint » (bouclier Ankama) devant la boutique
          if(uiName == WebTabEnum.BAK_TAB || uiName == WebTabEnum.VET_RWDS_TAB)
          {
             uiName = WebTabEnum.SHOP_TAB;

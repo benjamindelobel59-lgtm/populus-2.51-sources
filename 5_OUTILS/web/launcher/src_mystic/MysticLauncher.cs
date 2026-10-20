@@ -3,7 +3,8 @@
 // puis grand launcher (Principal.cs) : comptes de jeu du compte web, installation complète et mises à jour du jeu
 // (Installation.cs), JOUER avec connexion automatique. Plus d'intro animée.
 //
-// Options : --auto (met à jour sans fenêtre, code 0 = à jour) ; --portable (ne s'installe pas, voir Installeur.cs) ; --apercu <dossier> (captures PNG des écrans, aucun accès
+// Options : --auto (met à jour sans fenêtre, code 0 = à jour) ; --portable (ne s'installe pas, voir Installeur.cs) ;
+// --installer-silencieux (installe sans fenêtre) ; --apercu-installeur <dossier> (captures de la fenêtre d'installation) ; --apercu <dossier> (captures PNG des écrans, aucun accès
 // réseau au serveur) ; launcher.ini à côté de l'exe : « url=http://… » pour changer de serveur.
 
 using System;
@@ -58,6 +59,24 @@ namespace MysticLauncher
         public static string DefaultApi => "http://" + Hote + ":8090/";
         public static string DefaultSite => "http://" + Hote + "/";
 
+        static System.Threading.Mutex s_instance;
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")] static extern bool ShowWindow(IntPtr h, int cmd);
+        [System.Runtime.InteropServices.DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr h);
+
+        static void MontrerAutreFenetre()
+        {
+            var moi = System.Diagnostics.Process.GetCurrentProcess().Id;
+            foreach (var nom in new[] { "Padgref", "PadgrefLauncher", "MysticLauncher" })
+                foreach (var p in System.Diagnostics.Process.GetProcessesByName(nom))
+                    if (p.Id != moi && p.MainWindowHandle != IntPtr.Zero)
+                    {
+                        ShowWindow(p.MainWindowHandle, 9); // SW_RESTORE
+                        SetForegroundWindow(p.MainWindowHandle);
+                        return;
+                    }
+        }
+
         [STAThread]
         static int Main(string[] args)
         {
@@ -80,9 +99,42 @@ namespace MysticLauncher
 
             // rendus des personnages en HTTPS (TLS 1.2)
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
-            // PADGREF 20/10 : installation dans %LOCALAPPDATA%\Padgref\Launcher + raccourcis + mise à jour de l'exe (Installeur.cs)
-            if (apercu == null && Array.IndexOf(args, "--portable") < 0 && InstallationLauncher.Preparer(updater, args))
+            // PADGREF 20/10 : installeur + copie installée %LOCALAPPDATA%\Padgref\Launcher\Padgref.exe + mise à jour de l'exe (Installeur.cs)
+            // --installer-silencieux : installe sans fenêtre (scripts, tests) puis s'arrête
+            if (Array.IndexOf(args, "--installer-silencieux") >= 0)
+            {
+                try { InstallationLauncher.Installer(updater, true); return 0; }
+                catch (Exception ex) { updater.Log("Installation impossible : " + ex.Message); return 1; }
+            }
+            var ia = Array.IndexOf(args, "--apercu-installeur");
+            if (ia >= 0 && ia + 1 < args.Length)
+            {
+                new Application { ShutdownMode = ShutdownMode.OnMainWindowClose }.Run(new FenetreInstallation(updater, args, args[ia + 1]));
                 return 0;
+            }
+            if (apercu == null && Array.IndexOf(args, "--portable") < 0)
+            {
+                var suite = InstallationLauncher.Preparer(updater, args);
+                if (suite == InstallationLauncher.Suite.Quitter)
+                    return 0;
+                if (suite == InstallationLauncher.Suite.Installeur)
+                {
+                    new Application { ShutdownMode = ShutdownMode.OnMainWindowClose }.Run(new FenetreInstallation(updater, args));
+                    return 0;
+                }
+            }
+            // une seule fenêtre Padgref à la fois : un 2e lancement remet la fenêtre déjà ouverte au premier plan
+            if (apercu == null)
+            {
+                s_instance = new System.Threading.Mutex(false, @"Local\PadgrefLauncher");
+                bool libre;
+                try { libre = s_instance.WaitOne(1500); } catch (System.Threading.AbandonedMutexException) { libre = true; }
+                if (!libre)
+                {
+                    MontrerAutreFenetre();
+                    return 0;
+                }
+            }
             var app = new Application { ShutdownMode = ShutdownMode.OnMainWindowClose };
             var fenetre = new LauncherWindow(updater, apercu);
             app.Run(fenetre);

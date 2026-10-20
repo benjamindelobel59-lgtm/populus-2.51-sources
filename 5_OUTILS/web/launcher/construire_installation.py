@@ -17,7 +17,7 @@ def exclu(rel):
     nom = os.path.basename(rel).lower()
     if nom.endswith(('.bak', '.log', '.mystic-dl', '.nekfeu-dl', '.tmp')) or '.avant_' in nom or '.avant-' in nom:
         return True
-    if nom in ('debug.txt', 'nekfeulauncher.exe', 'mysticlauncher.exe', 'launcher.ini'):
+    if nom in ('debug.txt', 'nekfeulauncher.exe', 'mysticlauncher.exe', 'padgreflauncher.exe', 'padgref.exe', 'launcher.ini'):
         return True
     # ajouts locaux absents du client 2.51 d'origine (et des clients des joueurs)
     if rel in ('DofusCmd.exe', 'configa.xml', 'menuadmin.xml'):

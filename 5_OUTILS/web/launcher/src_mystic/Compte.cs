@@ -537,6 +537,11 @@ namespace MysticLauncher
             }) { IsBackground = true }.Start();
         }
 
+        /// <summary>
+        /// Reprend la session gardée. PADGREF 20/10 : si le serveur de connexion ne répond pas (démarrage du PC, réseau pas
+        /// encore prêt, serveur en redémarrage…), la session est GARDÉE et le launcher réessaie toutes les 5 s au lieu de
+        /// retomber sur l'écran de connexion. Elle n'est effacée que si le serveur dit qu'elle a expiré.
+        /// </summary>
         void ReprendreSession()
         {
             var session = SessionGardee.Lire();
@@ -546,19 +551,30 @@ namespace MysticLauncher
             EtatZaap(1);
             new Thread(() =>
             {
-                var r = m_api.Session(session);
-                Dispatcher.BeginInvoke((Action)(() =>
+                for (var essai = 0; !m_ouvert; essai++)
                 {
-                    if (!r.Ok)
+                    var r = m_api.Session(session);
+                    if (r.Ok)
                     {
-                        if (r.Erreur != null && r.Erreur.StartsWith("Session"))
-                            SessionGardee.Effacer();
-                        m_sousTitre.Text = TexteAccueil;
-                        EtatZaap(0);
+                        Dispatcher.BeginInvoke((Action)(() => OuvrirPrincipal(r, session, true)));
                         return;
                     }
-                    OuvrirPrincipal(r, session, true);
-                }));
+                    if (r.Erreur != null && r.Erreur.StartsWith("Session"))
+                    {
+                        SessionGardee.Effacer();
+                        m_updater.Log("Session gardée expirée : nouvelle connexion demandée");
+                        Dispatcher.BeginInvoke((Action)(() => { m_sousTitre.Text = TexteAccueil; EtatZaap(0); Message("Ta connexion a expiré : reconnecte-toi.", true); }));
+                        return;
+                    }
+                    if (essai == 0) m_updater.Log("Reprise de session : " + r.Erreur + " (nouvel essai toutes les 5 s)");
+                    Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        if (m_ouvert || m_connexionEnCours || m_codeSite != null) return;
+                        m_sousTitre.Text = "Ta connexion est gardée : le serveur ne répond pas encore, nouvel essai…";
+                    }));
+                    Thread.Sleep(5000);
+                    if (m_connexionEnCours || m_codeSite != null) return; // le joueur se connecte autrement
+                }
             }) { IsBackground = true }.Start();
         }
 
