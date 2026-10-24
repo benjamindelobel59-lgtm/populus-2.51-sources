@@ -40,7 +40,13 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Heal
                 if (integerEffect == null)
                     return false;
 
-                if (Effect.Duration != 0 || Effect.Delay != 0)
+                // PADGREF 21/10 (Liqueur de Fée Ling 3586 de la Nileza : 5 % PV max quand elle est frappée au contact, « DM ») : le
+                // déclencheur du sort était ignoré (soin toujours en début de tour) ; il est maintenant respecté s'il est indiqué
+                if (IsTriggerBuff())
+                {
+                    AddTriggerBuff(actor, OnBuffTriggered);
+                }
+                else if (Effect.Duration != 0 || Effect.Delay != 0)
                 {
                     AddTriggerBuff(actor, BuffTriggerType.OnTurnBegin, OnBuffTriggered);
                 }

@@ -38,11 +38,16 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
     [ChallengeIdentifier((int)ChallengeEnum.MAÎTRE_PANDORE__CHALLENGE_2_)]
     [ChallengeIdentifier((int)ChallengeEnum.CROCABULIA__CHALLENGE_1_)]
     [ChallengeIdentifier((int)ChallengeEnum.OUGAH__CHALLENGE_1_)]
-    [ChallengeIdentifier((int)ChallengeEnum.GLOURSÉLESTE__CHALLENGE_1_)]
+    [ChallengeIdentifier((int)ChallengeEnum.GLOURSÉLESTE__CHALLENGE_2_)] // PADGREF 21/10 : Collant = 240 (239 = Premier, VolunteerChallenge)
+    [ChallengeIdentifier((int)ChallengeEnum.MANSOT_ROYAL__CHALLENGE_2_)] // PADGREF 21/10 : Collants manquants
+    [ChallengeIdentifier((int)ChallengeEnum.GROZILLA_ET_GRASMERA_ÉPUISÉS__CHALLENGE_2_)]
+    [ChallengeIdentifier(402)] // Mawabouaino (Collant)
     [ChallengeIdentifier((int)ChallengeEnum.OMBRE__CHALLENGE_2_)]
     [ChallengeIdentifier((int)ChallengeEnum.MISSIZ_FRIZZ___CHALLENGE_2_)]
     [ChallengeIdentifier((int)ChallengeEnum.REINE_DES_VOLEURS__CHALLENGE_2_)]
     [ChallengeIdentifier((int)ChallengeEnum.XLII__CHALLENGE_2_)]
+    [ChallengeIdentifier(431)] // PADGREF 23/10 : Misère (Hardi), Eliocalypse 2.74
+    [ChallengeIdentifier(422)] // PADGREF 23/10 : Corruption (Collant), Eliocalypse 2.74
     public class ImpertinenceChallenge : DefaultChallenge
     {
         private readonly FightTeam m_team;
@@ -61,11 +66,15 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
             (int) ChallengeEnum.MAÎTRE_PANDORE__CHALLENGE_2_,
             (int) ChallengeEnum.CROCABULIA__CHALLENGE_1_,
             (int) ChallengeEnum.OUGAH__CHALLENGE_1_,
-            (int) ChallengeEnum.GLOURSÉLESTE__CHALLENGE_1_,
+            (int) ChallengeEnum.GLOURSÉLESTE__CHALLENGE_2_,
+            (int) ChallengeEnum.MANSOT_ROYAL__CHALLENGE_2_,
+            (int) ChallengeEnum.GROZILLA_ET_GRASMERA_ÉPUISÉS__CHALLENGE_2_,
+            402,
             (int) ChallengeEnum.OMBRE__CHALLENGE_2_,
             (int) ChallengeEnum.MISSIZ_FRIZZ___CHALLENGE_2_,
             (int) ChallengeEnum.REINE_DES_VOLEURS__CHALLENGE_2_,
             (int) ChallengeEnum.XLII__CHALLENGE_2_,
+            422,
         };
 
         public ImpertinenceChallenge(int id, IFight fight)

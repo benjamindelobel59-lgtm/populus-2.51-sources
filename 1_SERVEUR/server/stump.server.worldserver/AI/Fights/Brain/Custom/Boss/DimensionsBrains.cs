@@ -266,10 +266,9 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
             Fighter.Die();
         }
 
+        /// <summary>PADGREF 22/10 (demande utilisateur) : plus aucun message des Krobes dans le chat (règle, compteur, échec).</summary>
         protected void Annoncer(string texte)
         {
-            foreach (var joueur in Fighter.Fight.GetAllFighters<CharacterFighter>())
-                joueur.Character.SendServerMessage(texte, System.Drawing.Color.FromArgb(120, 200, 255));
         }
 
         protected System.Collections.Generic.IEnumerable<FightActor> Ennemis =>
@@ -318,6 +317,34 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
         protected override string Echec => "personne à son contact";
         protected override bool ConditionRemplie() =>
             Ennemis.OfType<CharacterFighter>().Any(x => x.Position.Point.ManhattanDistanceTo(Fighter.Position.Point) == 1);
+
+        /// <summary>PADGREF 21/10 (retour utilisateur) : « Gonflement » (4943 : sur lui, attire de 3 cases et dégâts Eau en étoile de 3)
+        /// n'était jamais lancé par l'IA normale. Tenté au début du tour et après le déplacement, dès qu'un ennemi est en ligne ou en
+        /// diagonale à 3 cases ou moins.</summary>
+        const int Gonflement = 4943;
+
+        public override void Play()
+        {
+            LancerGonflement();
+            base.Play();
+            LancerGonflement();
+        }
+
+        void LancerGonflement()
+        {
+            if (!Fighter.IsAlive())
+                return;
+            var p = Fighter.Position.Point;
+            var cible = Ennemis.Any(x =>
+            {
+                var dx = System.Math.Abs(x.Position.Point.X - p.X);
+                var dy = System.Math.Abs(x.Position.Point.Y - p.Y);
+                var d = System.Math.Max(dx, dy);
+                return d >= 1 && d <= 3 && (dx == 0 || dy == 0 || dx == dy);
+            });
+            if (cible)
+                SortsForces.Lancer(Fighter, Gonflement, Fighter.Cell);
+        }
     }
 
     /// <summary>Bacterrib : Restauration éloignée : aucun adversaire à 5 cases ou moins au début de son tour, 3 tours.</summary>

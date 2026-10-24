@@ -278,7 +278,19 @@ namespace Stump.Server.WorldServer.Game.Achievements.Criterions
                 case (int)ChallengeEnum.KORRIANDRE__CHALLENGE_1_:
                 case (int)ChallengeEnum.KORRIANDRE__CHALLENGE_2_:
                 case (int)ChallengeEnum.KORRIANDRE__CHALLENGE_DUO_:
-                    return (int)MonsterIdEnum.XLII;
+                    return (int)MonsterIdEnum.KORRIANDRE; // PADGREF 21/10 : renvoyait XLII (succès du Korriandre affichés au XLII)
+
+                // PADGREF 21/10 : boss absents de la table (leurs succès de challenge n'étaient jamais affichés)
+                case (int)ChallengeEnum.GROZILLA_ET_GRASMERA_ÉPUISÉS__CHALLENGE_CHRONO_:
+                case (int)ChallengeEnum.GROZILLA_ET_GRASMERA_ÉPUISÉS__CHALLENGE_1_:
+                case (int)ChallengeEnum.GROZILLA_ET_GRASMERA_ÉPUISÉS__CHALLENGE_2_:
+                case (int)ChallengeEnum.GROZILLA_ET_GRASMERA_ÉPUISÉS__CHALLENGE_DUO_:
+                    return 3294;
+                case 401: // Mawabouaino (Duo)
+                case 402: // Mawabouaino (Collant)
+                case 403: // Mawabouaino (Versatile)
+                case 410: // Mawabouaino (Chrono)
+                    return 5653;
 
                 case (int)ChallengeEnum.BETHEL_AKARNA__CHALLENGE_1_:
                 case (int)ChallengeEnum.BETHEL_AKARNA__CHALLENGE_2_:
@@ -554,6 +566,17 @@ namespace Stump.Server.WorldServer.Game.Achievements.Criterions
                 case (int)ChallengeEnum.ILYZAELLE__CHALLENGE_2_:
                 case (int)ChallengeEnum.ILYZAELLE__DUO_:
                     return (int)MonsterIdEnum.ILYZAELLE;
+
+                // PADGREF 23/10 : succès des 4 donjons de l'Eliocalypse (2.74) : Corruption (Collant, Mains propres, Duo), Guerre (Zombie,
+                // Misanthrope, Duo), Servitude (Focus, Versatile, Duo), Misère (Hardi, Mains propres, Duo)
+                case 422: case 423: case 424:
+                    return 6026;
+                case 425: case 426: case 427:
+                    return 6014;
+                case 428: case 429: case 430:
+                    return 5955;
+                case 431: case 432: case 433:
+                    return 5990;
 
                 default:
                     return 0;

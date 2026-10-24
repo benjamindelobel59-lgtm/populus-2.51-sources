@@ -11,6 +11,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
     [ChallengeIdentifier((int)ChallengeEnum.TAL_KASHA__CHALLENGE_1_)]
     [ChallengeIdentifier((int)ChallengeEnum.ILYZAELLE__CHALLENGE_2_)]
     [ChallengeIdentifier((int)ChallengeEnum.SOLAR__CHALLENGE_2_)]
+    [ChallengeIdentifier(428)] // PADGREF 23/10 : succès Eliocalypse (2.74)
     public class FocusChallenge : DefaultChallenge
     {
         public FocusChallenge(int id, IFight fight)

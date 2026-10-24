@@ -38,9 +38,22 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Targets
     {
         static readonly HashSet<int> Sorts = new HashSet<int>
         {
-            3787, 3793, 3805, 4504, 3643, 4008, 5101, 5091, 5058, 5038, 5044, 5047, 4037,
+            3787, 3793, 3805, 4504, 3643, 3649, // PADGREF 23/10 : 3649 Fuseau (Comte, tour impair) : vise l'attaquant
+            4008, 5101, 5091, 5058, 5038, 5044, 5047, 4037,
             6163, 6164, 6165, 6166, 6167, 4483, 4512, 4115,
             4520, // MYSTIC 20/10 : Reflets placides du Lévitrof (échange avec le joueur vert qui le frappe)
+            // PADGREF 21/10 (retours bêta-testeur, audit des sorts déclenchés « quand il est frappé » à une case) : l'effet vise
+            // l'attaquant (avant : la case du monstre, donc rien) : Poison incurable (Scoliopode), Dard contemporain (Termystique),
+            // Sporange mécanique (Biofiente, Drosérâle), Retour historique (Kanimate), Hiboum (Granduk), Indigestion (Cawotman),
+            // Détentrave (Caznoar), Distanss (Hin), Crève-cœur (Dame du Hasard), Instabilité (Krosmoglob, Énergie du portail),
+            // Ailurophilie (Chasquatch, Gardien de la Flamme)
+            4736, 3540, 3544, 3590, 3625, 3812, 4130, 5086, 6311, 4418, 6391,
+            // PADGREF 21/10 (retour utilisateur) : Ovagodra (Cohobation de la Nileza) : frappée à distance, elle échange sa place avec
+            // l'attaquant (avant : sort lancé sur sa propre case, aucun échange), puis Molalité illéplochable frappe autour d'elle
+            3566,
+            // PADGREF 22/10 (audit Belvédère d'Ilyzaelle) : Brûle-âme : le joueur qui déplace un monstre / tente de lui retirer des PM
+            // prend l'état Brûlure (avant : sort lancé sur la case du monstre, la Brûlure n'était jamais posée)
+            9079,
         };
 
         public static bool Concerne(SpellEffectHandler handler) => handler?.CastHandler?.Spell != null && Sorts.Contains(handler.CastHandler.Spell.Id);

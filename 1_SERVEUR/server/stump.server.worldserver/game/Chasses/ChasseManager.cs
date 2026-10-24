@@ -60,6 +60,8 @@ namespace Stump.Server.WorldServer.Game.Chasses
         {
             public int Id { get; set; } public int NameId { get; set; } public int Niveau { get; set; }
             public int CoffreId { get; set; } public int MonstreId { get; set; } public int CarteId { get; set; } public double RatioXp { get; set; }
+            /// <summary>PADGREF 22/10 : ressource ultra rare donnée par le coffre (Poil de Katigrou… ; 0 = aucune). SQL 96.</summary>
+            public int RessourceId { get; set; }
         }
         class Ligne { public int CharacterId { get; set; } public string Donnees { get; set; } }
 
@@ -84,7 +86,8 @@ namespace Stump.Server.WorldServer.Game.Chasses
                     catch (Exception ex) { logger.Warn($"[Chasses] chasse illisible pour le personnage {l.CharacterId} : {ex.Message}"); }
                 }
                 m_indices = Database.Fetch<IndiceRecord>("SELECT Id, NameId FROM mystic_chasses_indices");
-                m_legendaires = Database.Fetch<Legendaire>("SELECT Id, NameId, Niveau, CoffreId, MonstreId, CarteId, RatioXp FROM mystic_chasses_legendaires").ToDictionary(x => x.Id);
+                Database.Execute("ALTER TABLE mystic_chasses_legendaires ADD COLUMN IF NOT EXISTS RessourceId INT NOT NULL DEFAULT 0");
+                m_legendaires = Database.Fetch<Legendaire>("SELECT Id, NameId, Niveau, CoffreId, MonstreId, CarteId, RatioXp, RessourceId FROM mystic_chasses_legendaires").ToDictionary(x => x.Id);
                 m_fragments = ItemManager.Instance.GetTemplates().Where(x => x.TypeId == TypeFragment).Select(x => x.Id).ToList();
 
                 // objets : coffres de niveau et légendaires, boîtes de fragments
@@ -461,6 +464,24 @@ namespace Stump.Server.WorldServer.Game.Chasses
                 c.Client?.Send(new TreasureHuntFlagRequestAnswerMessage(type, (sbyte)TreasureHuntFlagRequestEnum.TREASURE_HUNT_FLAG_ERROR_IMPOSSIBLE, (sbyte)index));
                 return;
             }
+            // PADGREF 24/10 (retour utilisateur : « on ne peut pas retirer un jalon ») : clic sur un jalon ROUGE (faux après une fouille
+            // ratée) = le client 2.51 redemande ce jalon (TreasureHuntFlagRequest à son index) : il est reposé sur la carte actuelle.
+            // Avant : refusé (« mauvais index »), le jalon rouge restait bloqué.
+            if (index >= 0 && index < ch.Jalons.Count && ch.JalonsFaux.Contains(index))
+            {
+                if (ch.Jalons.Where((m, i) => i != index).Contains(c.Map.Id))
+                {
+                    c.Client?.Send(new TreasureHuntFlagRequestAnswerMessage(type, (sbyte)TreasureHuntFlagRequestEnum.TREASURE_HUNT_FLAG_SAME_MAP, (sbyte)index));
+                    return;
+                }
+                ch.Jalons[index] = c.Map.Id;
+                ch.JalonsFaux.Remove(index);
+                Sauver(c.Id, ch);
+                c.Client?.Send(new TreasureHuntFlagRequestAnswerMessage(type, (sbyte)TreasureHuntFlagRequestEnum.TREASURE_HUNT_FLAG_OK, (sbyte)index));
+                Envoyer(c, ch);
+                AnnoncerIndice(c, ch);
+                return;
+            }
             if (index != ch.Jalons.Count)
             {
                 c.Client?.Send(new TreasureHuntFlagRequestAnswerMessage(type, (sbyte)TreasureHuntFlagRequestEnum.TREASURE_HUNT_FLAG_WRONG_INDEX, (sbyte)index));
@@ -654,7 +675,12 @@ namespace Stump.Server.WorldServer.Game.Chasses
                     lock (m_lock) m_enCombat.Remove(c.Id);
                     var gagne = f.Winners != null && f.Winners == f.ChallengersTeam;
                     if (gagne)
+                    {
                         DonnerRecompenses(c, ch);
+                        // PADGREF 24/10 : gardien de chasse légendaire = recherché -> son succès d'avis de recherche est aussi validé
+                        if (ch.Type == (int)TreasureHuntTypeEnum.TREASURE_HUNT_LEGENDARY)
+                            Recherches.RecherchesManager.Instance.ValiderSucces(c, monstreId);
+                    }
                     else
                         Message(c, "Le Trésor t'a vaincu… Clique à nouveau sur « Fouiller » pour retenter le combat.");
                 };
@@ -732,16 +758,26 @@ namespace Stump.Server.WorldServer.Game.Chasses
         public uint OuvrirCoffre(Character c, int coffreId)
         {
             int baseRoses, multiplicateurCoffre = 1;
+            Legendaire legendaire = null;
             var idx = Array.IndexOf(CoffresDeNiveau, coffreId);
             if (idx >= 0)
                 baseRoses = RosesDeBase[idx];
             else
             {
-                var l = m_legendaires.Values.FirstOrDefault(x => x.CoffreId == coffreId);
-                if (l == null)
+                legendaire = m_legendaires.Values.FirstOrDefault(x => x.CoffreId == coffreId);
+                if (legendaire == null)
                     return 0;
-                baseRoses = RosesDeBase[IndexNiveau(Math.Max(20, l.Niveau))];
+                baseRoses = RosesDeBase[IndexNiveau(Math.Max(20, legendaire.Niveau))];
                 multiplicateurCoffre = MultiplicateurCoffreLegendaire;
+            }
+
+            // PADGREF 22/10 (demande utilisateur) : le coffre d'une chasse légendaire donne aussi la ressource ultra rare du recherché
+            // (1 exemplaire, comme le 2.74) : c'est elle qui sert à fabriquer sa panoplie (Poil de Katigrou -> Panoplie de Katigrou)
+            var rare = legendaire != null && legendaire.RessourceId > 0 ? ItemManager.Instance.TryGetTemplate(legendaire.RessourceId) : null;
+            if (rare != null)
+            {
+                c.Inventory.AddItem(rare, 1);
+                c.SendInformationMessage(TextInformationTypeEnum.TEXT_INFORMATION_MESSAGE, 21, 1, rare.Id);
             }
 
             int quantite;

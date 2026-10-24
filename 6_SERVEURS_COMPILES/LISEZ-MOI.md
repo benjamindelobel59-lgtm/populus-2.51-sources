@@ -4,7 +4,7 @@ Ce dossier contient l'AuthServer et le WorldServer **déjà compilés** à parti
 Ce sont des **fichiers binaires** (.NET Framework 4.8, Debug AnyCPU) : **il n'y a rien à lire ni à modifier ici**. Pour comprendre ou changer
 le code, travailler dans `1_SERVEUR/` (sources C#) puis recompiler.
 
-- Compilé le : **20/10/2026 23h30** (WorldServer, avec toutes les modifications du `JOURNAL_DES_MODIFICATIONS.txt` jusqu'à cette date).
+- Compilé le : **24/10/2026 15h41** (WorldServer, avec toutes les modifications du `JOURNAL_DES_MODIFICATIONS.txt` jusqu'à cette date).
 - `AuthServer/` : `Stump.*.dll` / `.pdb`, `Stump.GUI.AuthConsole.exe` (+ `.config` de liaison des DLL), `swf_patchs/AuthPatch.swf`
   (connexion automatique du launcher).
 - `WorldServer/` : `Stump.*.dll` / `.pdb`, `Stump.GUI.WorldConsole.exe` (+ `.config` de liaison des DLL).

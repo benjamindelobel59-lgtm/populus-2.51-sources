@@ -65,10 +65,13 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Damage
         {
             var triggerDmg = token as Fights.Damage;
 
-            if (triggerDmg == null)
+            // PADGREF 23/10 : déclenché par un déplacement (Couche Pampars : 5 % de sa vie à chaque fois qu'il est déplacé) : pas de coup reçu
+            var deplacement = trigger == BuffTriggerType.OnMoved || trigger == BuffTriggerType.OnPushed || trigger == BuffTriggerType.OnPulled;
+
+            if (triggerDmg == null && !deplacement)
                 return;
 
-            if (triggerDmg.ReflectedDamages)
+            if (triggerDmg != null && triggerDmg.ReflectedDamages)
                 return;
 
             var damage = new Fights.Damage(buff.Dice, GetEffectSchool(buff.Dice.EffectId), buff.Target, buff.Spell, buff.Target.Cell)

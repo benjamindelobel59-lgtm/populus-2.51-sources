@@ -16,7 +16,8 @@ namespace Stump.Server.WorldServer.Game.Conditions.Criterions
 
         public override bool Eval(Character character)
         {
-            return character.Quests.Where(x => !x.Finished && x.Id == QuestId).Count() > 0;
+            var vrai = character.Quests.Where(x => !x.Finished && x.Id == QuestId).Count() > 0;
+            return Operator == ComparaisonOperatorEnum.INEQUALS ? !vrai : vrai; // PADGREF 21/10 : « ! » était ignoré
         }
 
         public override void Build()

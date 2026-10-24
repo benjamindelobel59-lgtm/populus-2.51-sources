@@ -288,6 +288,12 @@ namespace Stump.Server.WorldServer.Game
             }
         }
 
+        /// <summary>(identifiant de l'élément, carte de la copie, case de la copie sur cette carte)</summary>
+        static readonly (int, int, short)[] InteractifsMiroirs =
+        {
+            (457993, 54160201, 294),
+        };
+
         public void SpawnInteractives()
         {
             foreach (var interactive in InteractiveManager.Instance.GetInteractiveSpawns())
@@ -301,6 +307,22 @@ namespace Stump.Server.WorldServer.Game
                 }
 
                 map.SpawnInteractive(interactive);
+            }
+
+            // PADGREF 23/10 (retour utilisateur : « sur la map 54160201 le bateau n'est pas utilisable ») : certains éléments sont
+            // dessinés par le client sur DEUX cartes voisines avec le même identifiant (ex. barque du Berceau d'Alma 457993, sur 54160713
+            // case 302 et 54160201 case 294). La base n'a qu'une ligne par identifiant : on en pose une copie sur l'autre carte.
+            foreach (var (spawnId, mapId, cellId) in InteractifsMiroirs)
+            {
+                var source = InteractiveManager.Instance.GetInteractiveSpawns().FirstOrDefault(x => x.Id == spawnId);
+                var map = GetMap(mapId);
+                if (source == null || map == null || map.GetInteractiveObject(spawnId) != null)
+                    continue;
+                map.SpawnInteractive(new Database.Interactives.InteractiveSpawn
+                {
+                    Id = source.Id, TemplateId = source.TemplateId, MapId = mapId, CellId = cellId,
+                    ElementId = source.ElementId, Animated = source.Animated, CustomSkills = source.CustomSkills
+                });
             }
 
             foreach (var map in m_maps)

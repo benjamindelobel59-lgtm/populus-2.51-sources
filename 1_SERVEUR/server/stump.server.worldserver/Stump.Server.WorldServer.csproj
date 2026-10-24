@@ -237,6 +237,7 @@
     <Compile Include="AI\Fights\Brain\Custom\Boss\DimensionsBrains.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\DonjonsRecentsBrains.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\KralamoureBrain.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\PandalaBrains.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\KwakwaBrain.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\MansotRoyalBrain.cs" />
     <Compile Include="AI\Fights\Brain\Custom\Boss\MorcacBrain.cs" />
@@ -302,6 +303,8 @@
     <Compile Include="Game\Admin\AdminPanelBridge.cs" />
     <Compile Include="Game\Recherches\RecherchesManager.cs" />
     <Compile Include="Game\Bugs\JournalCombat.cs" />
+    <Compile Include="Game\Bugs\ReplayCombat.cs" />
+    <Compile Include="Game\Bugs\ReplayLecteur.cs" />
     <Compile Include="Game\Bugs\SignalementsBugs.cs" />
     <Compile Include="Game\Donjons\RepriseDonjons.cs" />
     <Compile Include="Game\Ogrines\OgrinesWeb.cs" />
@@ -347,6 +350,8 @@
     <Compile Include="Commands\Commands\PassCommand.cs" />
     <Compile Include="Commands\Commands\SasaCommand.cs" />
     <Compile Include="Commands\Commands\BugCommand.cs" />
+    <Compile Include="Commands\Commands\PauseCommand.cs" />
+    <Compile Include="Commands\Commands\ReplayCommand.cs" />
     <Compile Include="Commands\Commands\RecherchesCommand.cs" />
     <Compile Include="Commands\Commands\SeuilSoinCommand.cs" />
     <Compile Include="Commands\Commands\InvoCommand.cs" />
@@ -358,6 +363,7 @@
     <Compile Include="Commands\Commands\FightPlacementCommand.cs" />
     <Compile Include="Commands\Commands\FollowCommand.cs" />
     <Compile Include="Commands\Commands\GodCommand.cs" />
+    <Compile Include="Commands\Commands\FrigostCommand.cs" />
     <Compile Include="Commands\Commands\GuildCommand.cs" />
     <Compile Include="Commands\Commands\resurection.cs" />
     <Compile Include="Commands\Commands\Hp.cs" />
@@ -543,6 +549,7 @@
     <Compile Include="Database\Npcs\Replies\CompleteQuestObjectiveReply.cs" />
     <Compile Include="Database\Npcs\Replies\ContinueDialogReply.cs" />
     <Compile Include="Database\Npcs\Replies\EndDialogReply.cs" />
+    <Compile Include="Database\Npcs\Replies\FinishQuestReply.cs" />
     <Compile Include="Database\Npcs\Replies\GuildCreate.cs" />
     <Compile Include="Database\Npcs\Replies\LightRestatReply.cs" />
     <Compile Include="Database\Npcs\Replies\NpcReply.cs" />
@@ -778,6 +785,8 @@
     <Compile Include="Game\Effects\Handlers\Spells\Others\ReviveActor.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Others\ReviveLastDeadAlly.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Others\EffetsDonjons.cs" />
+    <Compile Include="Game\Effects\Handlers\Spells\Others\EffetsEliocalypse.cs" />
+    <Compile Include="AI\Fights\Brain\SortsDeDepart.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Others\TriggerBomb.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Summon\Bomb.cs" />
     <Compile Include="Game\Effects\Handlers\Spells\Summon\Illusions.cs" />
@@ -1023,6 +1032,9 @@
     <Compile Include="Game\Items\Player\Custom\TrousseauManager.cs" />
     <Compile Include="Game\Items\Player\Custom\VipPotion.cs" />
     <Compile Include="Game\Items\Player\Custom\ObjetsInfinis.cs" />
+    <Compile Include="Game\Items\Player\Custom\BoxDeBoss.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\ToxoliathMonstresBrains.cs" />
+    <Compile Include="AI\Fights\Brain\Custom\Boss\BrasserieDazakBrains.cs" />
     <Compile Include="Game\Items\Player\Custom\Watches.cs" />
     <Compile Include="Game\Items\Player\Custom\WrapperObjectItem.cs" />
     <Compile Include="Game\Items\Player\Custom\Pets\PetItem.cs" />
@@ -1098,6 +1110,7 @@
     <Compile Include="Game\Maps\Placements\PlacementPattern.cs" />
     <Compile Include="Game\Maps\Spawns\ClassicalSpawningPool.cs" />
     <Compile Include="Game\Maps\Spawns\DungeonSpawningPool.cs" />
+    <Compile Include="Game\Maps\Spawns\PlacementsFixes.cs" />
     <Compile Include="Game\Maps\Spawns\GroupSize.cs" />
     <Compile Include="Game\Maps\Spawns\MonsterGroupPersistence.cs" />
     <Compile Include="Game\Maps\Spawns\SpawningPoolBase.cs" />

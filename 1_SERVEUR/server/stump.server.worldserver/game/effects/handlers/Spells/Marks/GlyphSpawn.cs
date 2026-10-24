@@ -58,6 +58,11 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Marks
                             Effect.EffectId == EffectsEnum.Effect_Glyph_402 ? TriggerType.OnTurnEnd : TriggerType.OnTurnBegin);
             }
 
+            // PADGREF 23/10 : zone en liste de cases fixes -> une seule glyphe sur toutes les cases (voir MarkShape.RemplacerCases)
+            var fixes = Effect.CasesFixes;
+            if (fixes != null && fixes.Length > 1)
+                glyph.Shape.RemplacerCases(fixes.Where(id => id >= 0 && id < Fight.Map.Cells.Length).Select(id => Fight.Map.Cells[id]));
+
             Fight.AddTriger(glyph);
 
             return true;

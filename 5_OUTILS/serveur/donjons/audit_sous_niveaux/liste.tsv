@@ -1,0 +1,68 @@
+monstre	nom	sort	nom du sort	grades:niveau	ids
+217	Fourbasse	6080	L'Attaque du Chasseur	2:2 3:2 4:2 5:2	2610,2611,2612,2613
+2484	Fourapin le Chaud	6080	L'Attaque du Chasseur	2:2 3:2 4:2 5:2	16414,16415,16416,16417
+4015	Fojumo	5585	Dissimulation nocive	2:2 3:2 4:2 5:2 6:2 7:2	34109,34110,34111,34112,34113,34114
+4044	Ombre Astrale	5703	Bond astral	2:2 3:3	34500,34501
+4044	Ombre Astrale	5707	Bond double	2:2 3:3	34505,34506
+4068	Ombre Astrale	5779	Rappel de l'Esprit	2:2 3:2 4:2 5:2	34635,34636,34637,34638
+4238	Bagoo	6068	Cocktail Rhumotov	2:2 3:2 4:2 5:2	36648,36649,36650,36651
+4311	Esprit en Fusion	6655	Guérison Volcanique	2:2 3:2 4:2 5:2	37427,37428,37429,37430
+4359	Chachaton	6525	Glyphe Boueux	2:2 3:3 4:4 5:4	37997,37998,37999,38000
+4398	Sectateur de Leng	6649	Fioléum	2:2 3:3 4:3 5:3	38277,38278,38279,38280
+4399	Homme de Leng	6650	Flacontrepié	2:2 3:3 4:3 5:3	38282,38283,38284,38285
+4450	Shokkoth	6734	Triangle Dément	2:2 3:2 4:2 5:2	38882,38883,38884,38885
+4451	Li-Fo	6739	Duplication Grotesque	2:2 3:2 4:2 5:2	38897,38898,38899,38900
+4455	Mol Usk	6761	Traînée Collante	2:2 3:2 4:2 5:2	38932,38933,38934,38935
+4472	Chapelain d'Ansôh	6810	Glyphe Ventouse	2:2 3:2 4:2 5:2	39192,39193,39194,39195
+4475	Shokkoth fourbasse	6734	Triangle Dément	2:2 3:2 4:2 5:2	39227,39228,39229,39230
+4487	Li-Fo affamé	6739	Duplication Grotesque	2:2 3:2 4:2 5:2	39472,39473,39474,39475
+4489	Shokkoth mystificateur	6734	Triangle Dément	2:2 3:2 4:2 5:2	39507,39508,39509,39510
+4499	Collectionneur Li-Fo	6739	Duplication Grotesque	2:2 3:2 4:2 5:2	39652,39653,39654,39655
+4506	Buldalazred	6830	Piège dimensionnel	2:2 3:2 4:2 5:2 6:2 7:2	39712,39713,39714,39715,39716,39717
+4515	Shokkoth Violent	6734	Triangle Dément	2:2 3:2 4:2 5:2	39825,39826,39827,39828
+4520	Shokkoth Insensible	6734	Triangle Dément	2:2 3:2 4:2 5:2	39850,39851,39852,39853
+4552	Gliglitch	6960	Gliglag	2:2 3:3 4:4 5:4	40126,40127,40128,40129
+4552	Gliglitch	6961	Gligliplication	2:2 3:2 4:2 5:2	40136,40137,40138,40139
+4552	Gliglitch	7181	Embrochement Déphasé	2:2 3:2 4:2 5:2	40131,40132,40133,40134
+4605	Cactana	7189	Bonussocac	3:3 4:3 5:3	40839,40840,40841
+4619	Léolhyène	7222	Mort sûre	2:2 3:2	40973,40974
+4623	Kalisthe	7267	Flèche élémentaire	2:2 3:2 4:2 5:2	41038,41039,41040,41041
+4643	Vieux Cactana	7189	Bonussocac	3:3 4:3 5:3	41349,41350,41351
+4651	Adepte du dieu cornu	8374	Glyphe Brûlant	2:2 3:3 4:3 5:3	41473,41474,41475,41476
+4662	L'Ombre Blanche	7222	Mort sûre	2:2 3:2	41683,41684
+4674	Immortano Piko	7189	Bonussocac	3:3 4:3 5:3	41854,41855,41856
+4677	Léolhyène Affamée	7222	Mort sûre	2:2 3:2	41893,41894
+4685	Léolhyène Agaçante	7222	Mort sûre	2:2 3:2	42003,42004
+4688	Ancien Cactana	7189	Bonussocac	3:3 4:3 5:3	42049,42050,42051
+4691	Dobby Gleux	7189	Bonussocac	3:3 4:3 5:3	42094,42095,42096
+4695	Léolhyène Abominable	7222	Mort sûre	2:2 3:2	42153,42154
+4702	Enkolair	7189	Bonussocac	3:3 4:3 5:3	42259,42260,42261
+4710	Léolhyène Enragée	7222	Mort sûre	2:2 3:2	42363,42364
+4711	Cactana Terrifiant	7189	Bonussocac	3:3 4:3 5:3	42379,42380,42381
+4728	Trémorse	7393	Crachat Amer	3:3 4:3 5:3	42524,42525,42526
+4738	Élémentaire de vent	7821	Fusion élémentaire	2:2 3:2 4:2 5:2	42668,42669,42670,42671
+4747	Vieux trémorse vorace	7393	Crachat Amer	3:3 4:3 5:3	42774,42775,42776
+4798	Trémorse frénétique	7393	Crachat Amer	3:3 4:3 5:3	43248,43249,43250
+4855	Raymond Bar	8611	Gnnnh	2:2 3:3 4:3 5:3	44098,44099,44100,44101
+4947	Minikrone	8922	Pirouette majestueuse	3:3 4:3	45470,45471
+4998	Chazrael	9211	Erbasha	2:2 3:3 4:4 5:4	46204,46205,46206,46207
+5012	Fée Khale	9131	Mot Diurétique	3:3 4:3 5:3	46365,46366,46367
+5025	Comte Ess	9162	Bouillonnement du Sang	3:3 4:3 5:3	46530,46531,46532
+5042	Llerk	9245	Brise Mortuaire	3:3 4:3 5:3	46760,46761,46762
+5076	Darma	8985	Vue en Noir	3:3 4:3 5:3	47105,47106,47107
+5084	Carter le Pillard	9031	Dans les vapes	2:2 3:3 4:3 5:3	47189,47190,47191,47192
+5084	Carter le Pillard	9032	Ce qui est à toi est à moi	2:2 3:3 4:2 5:2	47179,47180,47181,47182
+5110	Bethel Akarna	9555	Étoile de Mer	2:2 3:3 4:3 5:3	47560,47561,47562,47563
+5113	Funespadon	9460	Piquants	3:3 4:3 5:3	47596,47597,47598
+5212	Nécrobacterrib	10145	Sécrétion mortelle	2:2 3:2 4:2 5:2	48913,48914,48915,48916
+5214	Nécroverminocule	10147	Diffusion micro-cellulaire	3:3 4:3 5:3	48944,48945,48946
+5227	Garglyphe	10241	Gare aux Glyphes	2:2 3:3 4:4 5:5	49068,49069,49070,49071
+5242	Garglyphe en colère	10241	Gare aux Glyphes	2:2 3:3 4:4 5:5	49203,49204,49205,49206
+5462	Ce qui a été	11627	Suis-le des yeux	2:2 3:2	51865,51866
+5488	Prysmaradoth Chimérique	11433	Éveil Brutal	2:2 3:3 4:3 5:3	52170,52171,52172,52173
+5775	Esprit d'Abra Kadabra	12456	Abraronces	2:2 3:3 4:3 5:3	54328,54329,54330,54331
+5776	Esprit d'Abra Kadabra	12456	Abraronces	2:2 3:3 4:3 5:3	54343,54344,54345,54346
+5777	Esprit de Bilby	12460	Bilbhoquet	3:3 4:3 5:3	54349,54350,54351
+5778	Esprit de Bilby	12460	Bilbhoquet	3:3 4:3 5:3	54364,54365,54366
+5779	Esprit de Crocodaille	12466	Épines dorsales	3:3 4:3 5:3	54389,54390,54391
+5780	Esprit de Crocodaille	12466	Épines dorsales	3:3 4:3 5:3	54404,54405,54406

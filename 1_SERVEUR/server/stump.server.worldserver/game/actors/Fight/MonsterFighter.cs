@@ -126,7 +126,9 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
         public override bool CanPlay() => base.CanPlay() && Monster.Template.CanPlay;
 
-        public override bool CanMove() => base.CanMove() && MonsterGrade.MovementPoints > 0;
+        // PADGREF 23/10 (retour utilisateur, Pyramide Maudite) : un monstre sans PM de base ne bouge pas, sauf le Chakanoubis sous Pouvoir
+        // antique (état 492, +10 PM quand il est frappé) : il doit aller au contact pour Pyrâmide (avant : jamais lancée)
+        public override bool CanMove() => base.CanMove() && (MonsterGrade.MovementPoints > 0 || HasState(492));
 
         public override IEnumerable<DroppedItem> RollLoot(IFightResult looter)
         {
@@ -139,6 +141,7 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
             var prospectingSum = OpposedTeam.GetAllFighters<CharacterFighter>().Sum(entry => entry.Stats[PlayerFields.Prospecting].Total);
             var droppedGroups = new List<int>();
+            var enDonjon = Fight.Map != null && Fight.Map.IsDungeon();
 
             foreach (var droppableItem in Monster.Template.DroppableItems.Where(droppableItem => prospectingSum >= droppableItem.ProspectingLock).Shuffle())
             {
@@ -146,6 +149,11 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                     continue;
 
                 if (looter is TaxCollectorProspectingResult && droppableItem.TaxCollectorCannotLoot)
+                    continue;
+
+                // PADGREF 21/10 : condition du drop (ex. ressource de quête : « Qa=385&PO<2269,10 » = quête en cours et moins de 10
+                // exemplaires) évaluée pour le personnage qui loote ; avant, la colonne Condition n'était jamais lue
+                if (!ConditionDeDropRemplie(droppableItem, looter))
                     continue;
 
                 // MYSTIC : un seul tirage par objet ; le taux de drop multiplie deja la chance (FightFormulas.AdjustDropChance).
@@ -157,6 +165,9 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
                     var chance = ( random.Next(0, 100) + random.NextDouble() );
                     var dropRate = FightFormulas.AdjustDropChance(looter, droppableItem, Monster, Fight.AgeBonus);
+                    var ressource = EstRessourceHeroique(droppableItem);
+                    if (ressource && enDonjon)
+                        dropRate /= 2;
 
                     if (!(dropRate >= chance))
                         continue;
@@ -164,7 +175,13 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                     if (droppableItem.DropGroup != 0)
                         droppedGroups.Add(droppableItem.DropGroup);
 
-                    items.Add(new DroppedItem(droppableItem.ItemId, 1));
+                    // PADGREF 22/10 : hors donjon, une ressource tombée a ChanceRessourceDouble % de chances de tomber en 2 exemplaires
+                    var quantite = ressource && !enDonjon && random.Next(0, 100) < ChanceRessourceDouble ? 2u : 1u;
+                    items.Add(new DroppedItem(droppableItem.ItemId, quantite));
+                    // PADGREF 23/10 (demande utilisateur) : message au joueur quand sa ressource tombe en double
+                    if (quantite == 2)
+                        World.Instance.GetCharacter(looter.Id)?.SendServerMessage(
+                            $"Butin doublé ! {ItemManager.Instance.TryGetTemplate(droppableItem.ItemId)?.Name ?? "Ressource"} x2", System.Drawing.Color.Gold);
 
                     if (!m_dropsCount.ContainsKey(droppableItem))
                         m_dropsCount.Add(droppableItem, 1);
@@ -175,6 +192,55 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
 
             return items;
+        }
+
+        /// <summary>
+        /// PADGREF 22/10 (demande utilisateur, serveur héroïque : tout le monde farme les donjons, plus personne en zone) : les
+        /// RESSOURCES (super-type 9) tombent 2 fois moins en donjon ; hors donjon, taux normal mais chaque ressource tombée a
+        /// <see cref="ChanceRessourceDouble"/> % de chances de tomber en double. Ressources de quête (drop avec condition) non touchées.
+        /// Seulement quand le mode héroïque est activé.
+        /// </summary>
+        public const int ChanceRessourceDouble = 10;
+
+        static bool EstRessourceHeroique(DroppableItem item)
+        {
+            if (!Heroique.HeroicManager.Enabled || !string.IsNullOrWhiteSpace(item.Condition))
+                return false;
+            return ItemManager.Instance.TryGetTemplate(item.ItemId)?.Type?.SuperTypeId == 9;
+        }
+
+        static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Conditions.ConditionExpression> s_conditionsDrops =
+            new System.Collections.Concurrent.ConcurrentDictionary<string, Conditions.ConditionExpression>();
+
+        /// <summary>PADGREF 21/10 : vrai si le drop n'a pas de condition, ou si le personnage qui loote la remplit (percepteur : non).</summary>
+        static bool ConditionDeDropRemplie(Database.Monsters.DroppableItem item, IFightResult looter)
+        {
+            if (string.IsNullOrWhiteSpace(item.Condition))
+                return true;
+            var perso = World.Instance.GetCharacter(looter.Id);
+            if (perso == null)
+                return false;
+            Conditions.ConditionExpression expr;
+            try
+            {
+                expr = s_conditionsDrops.GetOrAdd(item.Condition, c => Conditions.ConditionExpression.Parse(c));
+            }
+            catch (System.Exception ex)
+            {
+                s_conditionsDrops.TryAdd(item.Condition, null);
+                logger.Warn("[Drops] condition illisible « {0} » (objet {1}) : {2}", item.Condition, item.ItemId, ex.Message);
+                return false;
+            }
+            if (expr == null)
+                return false;
+            try
+            {
+                return expr.Eval(perso);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public override int CalculateDamageResistance(int damage, EffectSchoolEnum type, bool critical, bool withArmor, bool poison, bool isRanged)

@@ -179,6 +179,11 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
         {
             NumeroDernierSort++;
             SpellCasting?.Invoke(this, castHandler);
+            // PADGREF 24/10 (retour utilisateur : sort en delai de relance apres un echec critique) : comme le client 2.51
+            // (FightSequenceFrame : castSpell seulement si critical != CRITICAL_FAIL), un echec critique ne compte ni pour le
+            // delai de relance ni pour les lancers du tour / par cible : on peut relancer le sort.
+            if (castHandler.Informations?.Critical == FightSpellCastCriticalEnum.CRITICAL_FAIL)
+                return;
             SpellHistory.RegisterCastedSpell(castHandler.SpellLevel, Fight.GetOneFighter(castHandler.TargetedCell), castHandler.Informations?.Triggered == true);
         }
 
@@ -540,6 +545,14 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             OnPrePlacementChanged(Position);
         }
 
+        // PADGREF 24/10 : placement fixe d'une salle de boss (PlacementsFixes) : la case peut ne pas être une case bleue de la carte
+        public void ForcerPrePlacement(Cell cell)
+        {
+            Position.Cell = cell;
+
+            OnPrePlacementChanged(Position);
+        }
+
         public void SwapPrePlacement(FightActor actor)
         {
             var oldCell = Position.Cell;
@@ -566,7 +579,7 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
         public void PassTurn()
         {
-            if (!IsFighterTurn() || Fight.Freezed)
+            if (!IsFighterTurn() || Fight.Freezed || Fight.EnPause)
                 return;
 
             if (UsedMP != 0)
@@ -696,7 +709,11 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                 return SpellCastResult.NOT_ENOUGH_AP;
             }
 
-            var cellfree = Fight.IsCellFree(cast.TargetedCell);
+            // PADGREF 23/10 : confusion (Comtoise du Comte Harebourg) : le sort part sur la case TOURNÉE, c'est donc elle qui doit être
+            // libre / occupée (avant : la case cliquée -> les sorts à cible obligatoire étaient refusés, « la cellule visée n'est pas valide »)
+            var caseEffective = cast.Triggered || cast.Force ? cast.TargetedCell
+                : Game.Effects.Handlers.Spells.Others.ConfusionBuff.CaseConfuse(this, cast.TargetedCell);
+            var cellfree = Fight.IsCellFree(caseEffective);
             if (!cast.IsConditionBypassed(SpellCastResult.CELL_NOT_FREE) &&
                 ((spellLevel.NeedFreeCell && !cellfree) || (spellLevel.NeedTakenCell && cellfree)))
             {
@@ -875,6 +892,8 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                 }
                 if (cast.Critical == FightSpellCastCriticalEnum.CRITICAL_FAIL)
                 {
+                    if (this is CharacterFighter)
+                        NLog.LogManager.GetCurrentClassLogger().Info("[Lancer] {0} sort {1} case {2} : ECHEC CRITIQUE{3}", this, cast.Spell.Id, cast.TargetedCell.Id, echecConfusion ? " (confusion : case dans un mur ou sans ligne de vue)" : "");
                     OnSpellCasting(new DefaultSpellCastHandler(cast));
 
                     if (!cast.ApFree)
@@ -890,6 +909,8 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
                 if (!handler.Initialize())
                 {
+                    if (this is CharacterFighter)
+                        NLog.LogManager.GetCurrentClassLogger().Info("[Lancer] {0} sort {1} case {2} : REFUSE a l'initialisation", this, cast.Spell.Id, cast.TargetedCell.Id);
                     OnSpellCastFailed(cast);
 
                     return false;
@@ -901,6 +922,12 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                
                 
                 handler.Execute();
+
+                // PADGREF 24/10 (diagnostic, retour utilisateur : au Comte, Mot Sélectif / Flèche Explosive « rien ne se passe ») : sort de
+                // joueur lancé -> case finale, critique et nombre de cibles touchées par effet
+                if (this is CharacterFighter && handler is DefaultSpellCastHandler dh)
+                    NLog.LogManager.GetCurrentClassLogger().Info("[Lancer] {0} sort {1} case {2} ({3}) : {4}", this, cast.Spell.Id, cast.TargetedCell.Id, cast.Critical,
+                        string.Join(" ; ", dh.Handlers.Select(h => (int)h.Dice.EffectId + ":" + h.GetAffectedActors().Count())));
 
                 OnSpellCasted(handler);
             }
@@ -952,6 +979,12 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                     damage.Source.TriggerBuffs(damage.Source, BuffTriggerType.OnMakeDistanceDamage);
                 }
             }
+
+            // PADGREF 23/10 (retour utilisateur : "les glyphes du Kimbo se sont declenchees sans que j'ai tape le Kimbo") : des degats
+            // RENVOYES (renvoi de sort : le sort Air du Kimbo revient sur lui) declenchaient les effets "subit des dommages Air / Feu..."
+            // (Boum Boh -> Glyphe paire / impaire). Comme pour OnDamaged ci-dessus, un renvoi ne declenche plus rien.
+            if (damage.ReflectedDamages)
+                return;
 
             if (damage.Source.IsSummoned())
                 TriggerBuffs(damage.Source, BuffTriggerType.OnDamagedBySummon, damage);
@@ -1093,7 +1126,11 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
 
                 if (damage.Source != null && !damage.ReflectedDamages && !isPoisonSpell)
                 {
+                    // PADGREF 21/10 : renvois limites a un type de coup (Drako du Nessil : distance seulement...) retires du calcul
+                    var exclu = RenvoiExclu(damage, isCloseRangeAttack);
+                    Stats[PlayerFields.DamageReflection].Context -= exclu;
                     var reflected = CalculateDamageReflection(damage.Amount);
+                    Stats[PlayerFields.DamageReflection].Context += exclu;
 
                     if (reflected > 0)
                     {
@@ -1132,6 +1169,19 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             TriggerDamageBuffs(damage);
             AvantPerteVie?.Invoke(this, damage);
 
+            // PADGREF 23/10 (Eliocalypse, effet 2872) : seuils de PV : les PV sont bloqués au seuil, puis les déclencheurs « TR<sort> »
+            var seuilsAtteints = new System.Collections.Generic.List<Effects.Handlers.Spells.Others.SeuilBuff>();
+            foreach (var seuil in GetBuffs(b => b is Effects.Handlers.Spells.Others.SeuilBuff).Cast<Effects.Handlers.Spells.Others.SeuilBuff>()
+                         .OrderByDescending(x => x.PV).ToArray())
+            {
+                if (LifePoints > seuil.PV && LifePoints - damage.Amount <= seuil.PV)
+                {
+                    damage.Amount = LifePoints - seuil.PV;
+                    seuilsAtteints.Add(seuil);
+                    break;          // un seuil à la fois : le coup s'arrête au premier
+                }
+            }
+
             if (damage.IgnoreDamageReduction)
                 permanentDamages = CalculateErosionDamage(damage.Amount);
 
@@ -1156,6 +1206,11 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             }
 
             Stats.Health.DamageTaken += damage.Amount;
+            foreach (var seuil in seuilsAtteints)
+            {
+                RemoveBuff(seuil);
+                TriggerBuffs(damage.Source ?? this, BuffTriggerType.OnThresholdReached, seuil.SortSeuil);
+            }
             Stats.Health.PermanentDamages += permanentDamages;
             Stats.Shield.Context -= shieldDamages;
 
@@ -1506,6 +1561,21 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             }
         }
 
+        /// <summary>PADGREF 21/10 : part du renvoi qui ne s'applique pas a ce coup (StatBuff.RenvoiLimite : R distance, M contact,
+        /// S sort, C arme).</summary>
+        int RenvoiExclu(Damage damage, bool auContact)
+        {
+            var exclu = 0;
+            foreach (var b in m_buffList.OfType<StatBuff>().Where(x => x.Caracteristic == PlayerFields.DamageReflection && x.RenvoiLimite != null))
+            {
+                var ok = (b.RenvoiLimite == "R" && !auContact) || (b.RenvoiLimite == "M" && auContact) ||
+                         (b.RenvoiLimite == "S" && !damage.IsWeaponAttack) || (b.RenvoiLimite == "C" && damage.IsWeaponAttack);
+                if (!ok)
+                    exclu += b.Value;
+            }
+            return exclu;
+        }
+
         public virtual int CalculateDamageReflection(int damage)
         {
             // only spell damage reflection are mutlplied by wisdom
@@ -1759,6 +1829,9 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                                                                              && (buff.Critical || entry.Critical || Enumerable.SequenceEqual(entry.Effect.GetValues(), buff.Effect.GetValues()))
                                                                              && entry.GetType().Name == buff.GetType().Name
                                                                              && buff.Delay == 0);
+        /// <summary>PADGREF 23/10 : sorts dont les bonus declenches hors du tour du lanceur gagnent un tour (voir AddBuff).</summary>
+        public static readonly HashSet<int> BonusDeclenchesHorsTour = new HashSet<int> { 6115, 4726 };
+
         public bool AddBuff(Buff buff, bool bypassMaxStack = false)
         {
             if (!CanAddBuff(buff))
@@ -1771,6 +1844,12 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             {
                 if ((buff as StateBuff).State.Id == (int)SpellStatesEnum.AFFAIBLI_42 && !(this is CharacterFighter)) return false;
             }
+
+            // PADGREF 23/10 (retours utilisateur : Nakunbra "A l'abordage" et Sramourai "Sens du devoir" ne donnent pas le PM) : ces
+            // bonus sont declenches pendant le tour adverse pour 1 tour ; les durees etant decomptees au DEBUT du tour du lanceur, ils
+            // disparaissaient avant de servir. Poses hors du tour de leur lanceur, ils gagnent un tour.
+            if (buff.Duration > 0 && BonusDeclenchesHorsTour.Contains(buff.Spell.Id) && Fight.FighterPlaying != buff.Caster)
+                buff.Duration++;
 
             if (!bypassMaxStack && BuffMaxStackReached(buff))
             {
@@ -1847,6 +1926,9 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
                 // du combat, meme apres la mort de la Reine
                 if (dispellable == FightDispellableEnum.DISPELLABLE_BY_DEATH && buff.Spell != null && SortsGardesApresMort.Contains(buff.Spell.Id))
                     continue;
+                // PADGREF 21/10 : bonus d'un passif « à la mort » (Deuil de la Fuji, Mansomon du Mansot Royal...) : lancé par le mort, il reste
+                if (dispellable == FightDispellableEnum.DISPELLABLE_BY_DEATH && buff.LanceParUnMort)
+                    continue;
                 RemoveBuff(buff);
             }
         }
@@ -1868,9 +1950,12 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             }
         }
 
-        public void DecrementBuffsDuration(FightActor reference)
+        public void DecrementBuffsDuration(FightActor reference) => DecrementBuffsDuration(reference, null);
+
+        /// <summary>PADGREF 21/10 : seulement = buffs existant AVANT le decompte (voir DecrementAllCastedBuffsDuration).</summary>
+        public void DecrementBuffsDuration(FightActor reference, HashSet<Buff> seulement)
         {
-            var buffsToRemove = m_buffList.ToArray().Where(buff => buff.DecrementReference == reference && buff.DecrementDuration()).OrderBy(x => x.Priority);
+            var buffsToRemove = m_buffList.ToArray().Where(buff => buff.DecrementReference == reference && (seulement == null || seulement.Contains(buff)) && buff.DecrementDuration()).OrderBy(x => x.Priority);
 
             foreach (var buff in buffsToRemove)
             {
@@ -1897,8 +1982,13 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
         /// </summary>
         public void DecrementAllCastedBuffsDuration()
         {
-            foreach (var fighter in Fight.GetAllFighters().ToArray()) // MYSTIC 20/10 : un combattant peut apparaitre pendant le decompte (Boubourse du Nidas)
-                fighter.DecrementBuffsDuration(this);
+            // PADGREF 21/10 (Pacifiste / Insoignable de la Nileza, 2 tours affiches mais 1 seul tenu) : un effet a retard qui part
+            // PENDANT ce decompte pose des buffs sur les combattants traites ensuite, qui perdaient aussitot 1 tour. Seuls les buffs
+            // presents avant le decompte sont decomptes.
+            var fighters = Fight.GetAllFighters().ToArray(); // MYSTIC 20/10 : un combattant peut apparaitre pendant le decompte (Boubourse du Nidas)
+            var avant = new HashSet<Buff>(fighters.SelectMany(f => f.GetBuffs()));
+            foreach (var fighter in fighters)
+                fighter.DecrementBuffsDuration(this, avant);
         }
 
         public void DecrementSummonsCastedBuffsDuration()
@@ -2403,6 +2493,9 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             if (target == this)
                 return false;
 
+            if (TeleportationBloquee())
+                return false;
+
             if (caster != this)
             {
                 NeedTelefragState = true;
@@ -2490,6 +2583,10 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
         public bool GetGravi() => GetStates().Where(x => x.Spell.Id == 5161).Any();
 
         public virtual bool CanBePushed() => GetStates().Where(x => !x.IsDisabled).All(x => !x.State.CantBeMoved && !x.State.CantBePushed);
+
+        // PADGREF 24/10 (demande utilisateur) : Enraciné (6, Stabilisation du Pandawa) et Pesanteur (7) empêchent toute téléportation,
+        // subie ou lancée par le combattant lui-même (le Comte Harebourg se téléportait encore sous Stabilisation)
+        public bool TeleportationBloquee() => HasState(6) || HasState(7);
 
         public virtual bool CanSwitchPos() => GetStates().Where(x => !x.IsDisabled).All(x => !x.State.CantBeMoved && !x.State.CantSwitchPosition);
 

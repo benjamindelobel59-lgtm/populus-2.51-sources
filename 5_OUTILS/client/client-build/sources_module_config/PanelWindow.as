@@ -56,6 +56,25 @@ package populus
          return new Rectangle(0,0,_stage.stageWidth,_stage.stageHeight);
       }
       
+      // PADGREF 23/10 : la barre du panel (assets/ingame.js : deplacer, agrandir, reduire, fermer) et l'ordre « close » passent
+      // par Edge WebView2 (<UseWebView2> de application.xml), qui n'existe qu'a partir d'Adobe AIR 50. Avec un moteur plus ancien
+      // (AIR 33 du client 2.73), la page s'ouvrait dans le jeu SANS barre ni bouton fermer : on l'ouvre alors dans le navigateur.
+      private static function webView2Possible() : Boolean
+      {
+         var NA:Class = null;
+         var v:String = null;
+         try
+         {
+            NA = getDefinitionByName("flash.desktop.NativeApplication") as Class;
+            v = String(NA["nativeApplication"].runtimeVersion);
+            return int(v.split(".")[0]) >= 50;
+         }
+         catch(e:Error)
+         {
+         }
+         return false;
+      }
+      
       public static function open(param1:Stage, param2:String) : void
       {
          var stage:Stage = param1;
@@ -68,7 +87,7 @@ package populus
          catch(e:Error)
          {
          }
-         if(!stage || !C || !C["isSupported"])
+         if(!stage || !C || !C["isSupported"] || !webView2Possible())
          {
             navigateToURL(new URLRequest(url),"_blank");
             return;

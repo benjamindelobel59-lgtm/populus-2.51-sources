@@ -65,6 +65,14 @@ namespace Stump.Server.WorldServer.Game.Fights.Triggers
 
         public Cell[] GetCells() => m_cells;
 
+        /// <summary>PADGREF 23/10 (Étoile de Mer de Bethel : -200 PA) : marque posée sur une liste de cases fixes (zone « ;a,b,c… ») :
+        /// UNE seule marque sur toutes ces cases (avant : une glyphe par case, 53 auras cumulées).</summary>
+        public void RemplacerCases(IEnumerable<Cell> cases)
+        {
+            m_cells = cases.Where(c => c != null && c.Walkable).Distinct().ToArray();
+            m_customForm = true;
+        }
+
         public GameActionMarkedCell[] GetGameActionMarkedCells()
         {
             if (!m_customForm && m_cells.Length > 1 && MinSize == 0 && Shape == GameActionMarkCellsTypeEnum.CELLS_CIRCLE || Shape == GameActionMarkCellsTypeEnum.CELLS_CROSS)

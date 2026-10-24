@@ -23,7 +23,10 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             m_stats = new StatsFields(this);
             m_stats.Initialize(template);
 
-            if (Monster.Template.Race.SuperRaceId == 28) //Invocations
+            // PADGREF 23/10 (retour utilisateur : Monolithe et Dagon de Bethel avec trop de PV) : le bonus de caractéristiques selon le
+            // niveau de l'invocateur ne vaut que pour les invocations des JOUEURS (pas celles d'un monstre / boss, ni le Dagon insoumis
+            // de Bethel, invoqué « pour » le joueur par la mécanique du boss)
+            if (Monster.Template.Race?.SuperRaceId == 28 && summoner is CharacterFighter && !InvocationsDeMecanique.Contains(template.MonsterId))
             {
                 AdjustStats();
             }
@@ -31,146 +34,150 @@ namespace Stump.Server.WorldServer.Game.Actors.Fight
             CreerCerveau(template.MonsterId);
         }
 
+        static readonly System.Collections.Generic.HashSet<int> InvocationsDeMecanique = new System.Collections.Generic.HashSet<int> { 5123 };
+
+        // PADGREF 23/10 (Monolithe de Bethel jamais en jeu) : PV × 3 au-dessus du niveau 200 mis dans un short -> 13 000 × 3 = 39 000
+        // débordait en négatif : invocation née morte. Conversions en int.
         void AdjustStats()
         {
             if (Summoner.Level <= 200)
             {
-                m_stats.Health.Base = (short)(Monster.LifePoints * (1 + ((Summoner.Level) / 100d)));
+                m_stats.Health.Base = (int)(Monster.LifePoints * (1 + ((Summoner.Level) / 100d)));
 
                 #region Int Monsters
                 //  Dragão )
                 if (Monster.MonsterId == (int)MonsterIdEnum.DRAGONNET_ROUGE_4565 || Monster.MonsterId == (int)MonsterIdEnum.DRAGONNET_NOIR)
                 {
-                    m_stats.Health.Base = (short)(Monster.LifePoints * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Health.Base = (int)(Monster.LifePoints * (1 + ((Summoner.Level) / 100d)));
 
-                    m_stats.Intelligence.Base = (short)(Monster.Intelligence * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Intelligence.Base = (int)(Monster.Intelligence * (1 + ((Summoner.Level) / 100d)));
                 }
 
                 // Inflável
                 else if (Monster.MonsterId == (int)MonsterIdEnum.LA_GONFLABLE)
                 {
-                    m_stats.Intelligence.Base = (short)(Monster.Intelligence * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Intelligence.Base = (int)(Monster.Intelligence * (1 + ((Summoner.Level) / 100d)));
 
                 }
                 else
                 {
-                    m_stats.Intelligence.Base = (short)(Monster.Intelligence * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Intelligence.Base = (int)(Monster.Intelligence * (1 + ((Summoner.Level) / 100d)));
                 }
                 #endregion
 
                 // ( Gato )
                 if (Monster.MonsterId == (int)MonsterIdEnum.CHATON_ENRAGE)
                 {
-                    m_stats.Chance.Base = (short)(Monster.Chance * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Chance.Base = (int)(Monster.Chance * (1 + ((Summoner.Level) / 100d)));
                 }
                 else
 
                 {
-                    m_stats.Chance.Base = (short)(Monster.Chance * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Chance.Base = (int)(Monster.Chance * (1 + ((Summoner.Level) / 100d)));
                 }
 
                 // ( Gobbal )
                 if (Monster.MonsterId == (int)MonsterIdEnum.BOUFTOU || Monster.MonsterId == (int)MonsterIdEnum.BOUFTOU_NOIR_4564)
                 {
-                    m_stats.Health.Base = (short)(Monster.LifePoints * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Health.Base = (int)(Monster.LifePoints * (1 + ((Summoner.Level) / 100d)));
 
-                    m_stats.Strength.Base = (short)(Monster.Strength * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Strength.Base = (int)(Monster.Strength * (1 + ((Summoner.Level) / 100d)));
                 }
                 else
                 {
-                    m_stats.Strength.Base = (short)(Monster.Strength * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Strength.Base = (int)(Monster.Strength * (1 + ((Summoner.Level) / 100d)));
                 }
 
                 #region Agi Monsters
                 // 10% por level ( Tofu )
                 if (Monster.MonsterId == (int)MonsterIdEnum.TOFU_DODU_4562 || Monster.MonsterId == (int)MonsterIdEnum.TOFU_NOIR_4561)
                 {
-                    m_stats.Health.Base = (short)(Monster.LifePoints * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Health.Base = (int)(Monster.LifePoints * (1 + ((Summoner.Level) / 100d)));
 
-                    m_stats.Agility.Base = (short)(Monster.Agility * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Agility.Base = (int)(Monster.Agility * (1 + ((Summoner.Level) / 100d)));
                 }
 
                 // Explosiva
                 else if (Monster.MonsterId == (int)MonsterIdEnum.LA_SACRIFIEE)
                 {
-                    m_stats.Agility.Base = (short)(Monster.Agility * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Agility.Base = (int)(Monster.Agility * (1 + ((Summoner.Level) / 100d)));
                 }
                 else
                 {
-                    m_stats.Agility.Base = (short)(Monster.Agility * (1 + ((Summoner.Level) / 100d)));
+                    m_stats.Agility.Base = (int)(Monster.Agility * (1 + ((Summoner.Level) / 100d)));
                 }
                 #endregion
 
-                m_stats.Wisdom.Base = (short)(Monster.Wisdom * (1 + ((Summoner.Level) / 100d)));
+                m_stats.Wisdom.Base = (int)(Monster.Wisdom * (1 + ((Summoner.Level) / 100d)));
             }
             else
             {
-                m_stats.Health.Base = (short)(Monster.LifePoints * (1 + (200 / 100d)));
+                m_stats.Health.Base = (int)(Monster.LifePoints * (1 + (200 / 100d)));
 
                 #region Int Monsters
                 //  Dragão )
                 if (Monster.MonsterId == (int)MonsterIdEnum.DRAGONNET_ROUGE_4565 || Monster.MonsterId == (int)MonsterIdEnum.DRAGONNET_NOIR)
                 {
-                    m_stats.Health.Base = (short)(Monster.LifePoints * (1 + (200 / 100d)));
+                    m_stats.Health.Base = (int)(Monster.LifePoints * (1 + (200 / 100d)));
 
-                    m_stats.Intelligence.Base = (short)(Monster.Intelligence * (1 + (200 / 100d)));
+                    m_stats.Intelligence.Base = (int)(Monster.Intelligence * (1 + (200 / 100d)));
                 }
 
                 // Inflável
                 else if (Monster.MonsterId == (int)MonsterIdEnum.LA_GONFLABLE)
                 {
-                    m_stats.Intelligence.Base = (short)(Monster.Intelligence * (1 + (200 / 100d)));
+                    m_stats.Intelligence.Base = (int)(Monster.Intelligence * (1 + (200 / 100d)));
 
                 }
                 else
                 {
-                    m_stats.Intelligence.Base = (short)(Monster.Intelligence * (1 + (200 / 100d)));
+                    m_stats.Intelligence.Base = (int)(Monster.Intelligence * (1 + (200 / 100d)));
                 }
                 #endregion
 
                 // ( Gato )
                 if (Monster.MonsterId == (int)MonsterIdEnum.CHATON_ENRAGE)
                 {
-                    m_stats.Chance.Base = (short)(Monster.Chance * (1 + (200 / 100d)));
+                    m_stats.Chance.Base = (int)(Monster.Chance * (1 + (200 / 100d)));
                 }
                 else
                 {
-                    m_stats.Chance.Base = (short)(Monster.Chance * (1 + (200 / 100d)));
+                    m_stats.Chance.Base = (int)(Monster.Chance * (1 + (200 / 100d)));
                 }
 
                 // ( Gobbal )
                 if (Monster.MonsterId == (int)MonsterIdEnum.BOUFTOU || Monster.MonsterId == (int)MonsterIdEnum.BOUFTOU_NOIR_4564)
                 {
-                    m_stats.Health.Base = (short)(Monster.LifePoints * (1 + (200 / 100d)));
+                    m_stats.Health.Base = (int)(Monster.LifePoints * (1 + (200 / 100d)));
 
-                    m_stats.Strength.Base = (short)(Monster.Strength * (1 + (200 / 100d)));
+                    m_stats.Strength.Base = (int)(Monster.Strength * (1 + (200 / 100d)));
                 }
                 else
                 {
-                    m_stats.Strength.Base = (short)(Monster.Strength * (1 + (200 / 100d)));
+                    m_stats.Strength.Base = (int)(Monster.Strength * (1 + (200 / 100d)));
                 }
 
                 #region Agi Monsters
                 // 10% por level ( Tofu )
                 if (Monster.MonsterId == (int)MonsterIdEnum.TOFU_DODU_4562 || Monster.MonsterId == (int)MonsterIdEnum.TOFU_NOIR_4561)
                 {
-                    m_stats.Health.Base = (short)(Monster.LifePoints * (1 + (200 / 100d)));
+                    m_stats.Health.Base = (int)(Monster.LifePoints * (1 + (200 / 100d)));
 
-                    m_stats.Agility.Base = (short)(Monster.Agility * (1 + (200 / 100d)));
+                    m_stats.Agility.Base = (int)(Monster.Agility * (1 + (200 / 100d)));
                 }
 
                 // Explosiva
                 else if (Monster.MonsterId == (int)MonsterIdEnum.LA_SACRIFIEE)
                 {
-                    m_stats.Agility.Base = (short)(Monster.Agility * (1 + (200 / 100d)));
+                    m_stats.Agility.Base = (int)(Monster.Agility * (1 + (200 / 100d)));
                 }
                 else
                 {
-                    m_stats.Agility.Base = (short)(Monster.Agility * (1 + (200 / 100d)));
+                    m_stats.Agility.Base = (int)(Monster.Agility * (1 + (200 / 100d)));
                 }
                 #endregion
 
-                m_stats.Wisdom.Base = (short)(Monster.Wisdom * (1 + (200 / 100d)));
+                m_stats.Wisdom.Base = (int)(Monster.Wisdom * (1 + (200 / 100d)));
             }
 
         }

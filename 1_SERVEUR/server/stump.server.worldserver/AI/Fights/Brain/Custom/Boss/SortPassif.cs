@@ -70,14 +70,14 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
         public const int Invulnerable = 56;
 
         public static void Ajouter(FightActor cible, FightActor lanceur, int etat, int spellId,
-            FightDispellableEnum dispellable = FightDispellableEnum.REALLY_NOT_DISPELLABLE)
+            FightDispellableEnum dispellable = FightDispellableEnum.REALLY_NOT_DISPELLABLE, bool affiche = true)
         {
             var state = Game.Spells.SpellManager.Instance.GetSpellState((uint)etat);
             if (state == null)
                 return;
 
             var handler = new AddState(new EffectDice(EffectsEnum.Effect_AddState, etat, 0, 0) { Duration = -1 }, cible, null, cible.Cell, false);
-            var buff = new StateBuff(cible.PopNextBuffId(), cible, lanceur, handler, new Spell(spellId, 1), dispellable, state) { Duration = -1000 };
+            var buff = new StateBuff(cible.PopNextBuffId(), cible, lanceur, handler, new Spell(spellId, 1), dispellable, state) { Duration = -1000, NonAffiche = !affiche };
             cible.AddBuff(buff, true);
         }
 

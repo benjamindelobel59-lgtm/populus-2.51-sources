@@ -132,8 +132,9 @@ namespace Stump.Server.AuthServer.Managers
 
         public int FindTokens(string login)
         {
+            // PADGREF 21/10 : compte introuvable -> 0 au lieu d'un plantage
             return Database.Query<Account, WorldCharacter, Account>(new AccountRelator().Map,
-              AccountRelator.FindAccountByLogin, login).SingleOrDefault().Tokens;
+              AccountRelator.FindAccountByLogin, login).SingleOrDefault()?.Tokens ?? 0;
         }
 
         public Account FindAccountById(int id)
@@ -291,8 +292,19 @@ namespace Stump.Server.AuthServer.Managers
 
             if (server != null && server.Connected && server.IPCClient != null)
             {
+                // PADGREF 21/10 : réponse du World attendue 3 s au plus. Avant : attente sans fin si le World ne répondait pas (compte resté
+                // « bloqué » côté World, ex. AuthServer redémarré pendant la sauvegarde d'un personnage) -> « le serveur met trop de temps à
+                // répondre » à chaque connexion. Après le délai, la connexion continue.
+                var fait = 0;
+                var minuteur = new System.Threading.Timer(_ =>
+                {
+                    if (System.Threading.Interlocked.Exchange(ref fait, 1) != 0) return;
+                    logger.Warn("[Connexion] le World n'a pas confirme la deconnexion du compte {0} en 3 s : connexion poursuivie", account.Id);
+                    callback(false);
+                }, null, 3000, System.Threading.Timeout.Infinite);
                 server.IPCClient.SendRequest<DisconnectedClientMessage>(new DisconnectClientMessage(account.Id),
-                    msg => callback(msg.Disconnected), msg => errorCallBack());
+                    msg => { if (System.Threading.Interlocked.Exchange(ref fait, 1) == 0) { minuteur.Dispose(); callback(msg.Disconnected); } },
+                    msg => { if (System.Threading.Interlocked.Exchange(ref fait, 1) == 0) { minuteur.Dispose(); errorCallBack(); } });
             }
             else
             {

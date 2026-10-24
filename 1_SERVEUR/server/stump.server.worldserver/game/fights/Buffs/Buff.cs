@@ -39,6 +39,30 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
 
             BuffTriggered = triggerer != null;
             DecrementReference = triggerer ?? Caster;
+
+            // PADGREF 21/10 (Deuil 2675 de la Fuji Givrefoux, Mansomon 2609 du Mansot Royal… : bonus aux alliés lancé par l'allié qui
+            // MEURT) : un effet lancé par un combattant déjà mort était retiré aussitôt (RemoveAllCastedBuffs à sa mort) et décompté sur
+            // lui, qui ne joue plus. Il reste maintenant, et se décompte au tour du joueur en cours (sinon sur la cible, avec 1 tour de
+            // plus) : les alliés profitent du PM pendant leur prochain tour. Vaut pour tous les passifs « à la mort ».
+            if (caster != null && caster.IsDead())
+            {
+                LanceParUnMort = true;
+                var joueur = caster.Fight?.FighterPlaying;
+                if (joueur != null && joueur != caster && joueur.IsAlive())
+                    DecrementReference = joueur;
+                else
+                {
+                    DecrementReference = target;
+                    if (Duration > 0)
+                        Duration++;
+                }
+            }
+        }
+
+        /// <summary>PADGREF 21/10 : effet lancé par un combattant déjà mort (passif « à la mort ») : pas retiré avec les effets du mort.</summary>
+        public bool LanceParUnMort
+        {
+            get;
         }
 
         public SpellEffectHandler EffectHandler
@@ -122,6 +146,13 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
             private set;
         }
 
+        /// <summary>PADGREF 23/10 : état caché (Lourd du Morsquale, « non visible » en 2.51) : le buff agit mais n'est pas envoyé au client.</summary>
+        public bool NonAffiche
+        {
+            get;
+            set;
+        }
+
         public bool BuffTriggered
         {
             get;
@@ -203,6 +234,13 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
 
         public FightDispellableEffectExtendedInformations GetFightDispellableEffectExtendedInformations()
             => new FightDispellableEffectExtendedInformations((ushort)GetActionId(), Caster.Id, GetAbstractFightDispellableEffect());
+
+        /// <summary>
+        /// PADGREF 23/10 : le client 2.51 range ce champ dans « dataUid » et le compare à l'effectUid des effets du sort pour savoir si le
+        /// buff s'affiche (visibleInBuffUi), son ordre, etc. On envoyait le numéro d'action (ex. 792) : jamais trouvé, tout s'affichait
+        /// (« _PUT HUB PLAYER », « _IF HEAL OR SELF HEAL » des sorts techniques de l'Eliocalypse). Numéro unique de l'effet s'il existe.
+        /// </summary>
+        protected int EffetUidClient => Effect.Uid > 0 ? Effect.Uid : Effect.Id;
 
         public abstract AbstractFightDispellableEffect GetAbstractFightDispellableEffect();
     }

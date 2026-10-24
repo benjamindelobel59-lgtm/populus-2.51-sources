@@ -149,12 +149,16 @@ namespace Stump.Server.WorldServer.Game.Recherches
 
         #region MYSTIC 19/10 : Chasseur de primes (PNJ du zaap d'Astrub)
 
+        // PADGREF 24/10 (demande utilisateur : « un bouton par recherché, sur plusieurs pages, au lieu de tout afficher dans le dialogue,
+        // et payer 50 000 kamas pour savoir s'il est là ») : une réponse par recherché (client : Npcs.d2o PNJ 10062, réponses 60100+,
+        // SQL 156 : action « voir:<MonsterId> »), 10 par page (« suivant » / « retour ») ; le renseignement dit seulement s'il est en
+        // liberté ou non (choix utilisateur), contre 50 000 kamas.
         public const int MessageResume = 60003, MessageListe = 60004;
         public const int LignesParPage = 10;
+        public const int PrixRenseignement = 50000;
 
-        // Mode : 0 = résumé, 1 = en liberté, 2 = vaincus. Le client ne redessine pas un dialogue quand on lui renvoie le MÊME
-        // message : chaque réponse alterne donc entre les messages 60003 et 60004 (même texte « #1 », mêmes réponses).
-        class Consultation { public int Mode; public int Page; public bool EnCours; }
+        // Le client ne redessine pas un dialogue quand on lui renvoie le MÊME message : chaque réponse alterne entre 60003 et 60004.
+        class Consultation { public int Page; public string Resultat; public bool EnCours; }
         readonly Dictionary<int, Consultation> m_consultations = new Dictionary<int, Consultation>();
 
         Consultation Etat(Character character)
@@ -167,37 +171,19 @@ namespace Stump.Server.WorldServer.Game.Recherches
             }
         }
 
-        List<string> Lignes(bool libres)
+        static readonly StringComparer s_ordreNoms = StringComparer.Create(new System.Globalization.CultureInfo("fr-FR"), true);
+
+        List<Recherche> Tous()
         {
-            List<Recherche> liste;
             lock (m_lock)
-                liste = m_recherches.Values.OrderBy(x => x.Row.Nom).ToList();
-
-            var lignes = new List<string>();
-            foreach (var r in liste)
-            {
-                var vivant = IsAlive(r);
-                if (vivant != libres)
-                    continue;
-
-                if (vivant)
-                {
-                    var map = r.Group.Fight != null ? r.Group.Fight.Map : r.Group.Map;
-                    var zone = map?.SubArea?.Record?.Name ?? "?";
-                    lignes.Add($"• Le recherché {r.Row.Nom} est présent dans sa zone ({zone}), attrape-le !" + (r.Group.Fight != null ? " (en combat)" : ""));
-                }
-                else
-                {
-                    var retour = r.Row.ProchainSpawn == null || r.Row.ProchainSpawn <= DateTime.Now ? "retour imminent" : "retour vers " + r.Row.ProchainSpawn.Value.ToString("HH:mm");
-                    lignes.Add($"• Le recherché {r.Row.Nom} a déjà été vaincu ({retour}).");
-                }
-            }
-            return lignes;
+                return m_recherches.Values.OrderBy(x => x.Row.Nom, s_ordreNoms).ThenBy(x => x.Row.MonsterId).ToList();
         }
+
+        int NombrePages() => Math.Max(1, (Tous().Count + LignesParPage - 1) / LignesParPage);
 
         /// <summary>
         /// Paramètres (#1) des messages du Chasseur de primes, null pour tout autre message. Appelé AVANT le calcul des réponses
-        /// (NpcDialog.ChangeMessage) : une nouvelle discussion (pas déclenchée par une réponse) repart du résumé.
+        /// (NpcDialog.ChangeMessage) : une nouvelle discussion (pas déclenchée par une réponse) repart de la première page.
         /// </summary>
         public string[] ParametresDialogue(int messageId, Character character)
         {
@@ -205,51 +191,58 @@ namespace Stump.Server.WorldServer.Game.Recherches
                 return null;
 
             var c = Etat(character);
-            if (!c.EnCours) { c.Mode = 0; c.Page = 0; }
+            if (!c.EnCours) { c.Page = 0; c.Resultat = null; }
             c.EnCours = false;
 
-            if (c.Mode == 0)
-            {
-                var libres = Lignes(true).Count;
-                var vaincus = Lignes(false).Count;
-                return new[] { $"Salut {character.Name} ! Je tiens le registre des avis de recherche.\n" +
-                               $"{libres} recherché(s) rôdent en ce moment dans le monde, {vaincus} ont déjà été vaincus et reviendront plus tard.\n" +
-                               "Lequel veux-tu traquer ?" };
-            }
-
-            var lignes = Lignes(c.Mode == 1);
-            var pages = Math.Max(1, (lignes.Count + LignesParPage - 1) / LignesParPage);
+            var pages = NombrePages();
             if (c.Page >= pages) c.Page = 0;
-            var titre = (c.Mode == 1 ? "Recherchés en liberté" : "Recherchés déjà vaincus") + (pages > 1 ? $" (page {c.Page + 1}/{pages})" : "") + " :\n";
-            var corps = lignes.Count == 0
-                ? (c.Mode == 1 ? "Aucun recherché n'est en liberté pour le moment." : "Aucun recherché n'a été vaincu récemment.")
-                : string.Join("\n", lignes.Skip(c.Page * LignesParPage).Take(LignesParPage));
-            return new[] { titre + corps };
+            var entete = c.Resultat ?? $"Salut {character.Name} ! Je tiens le registre des avis de recherche.";
+            return new[] { entete + "\n\n" + $"Choisis un recherché : pour {PrixRenseignement:N0} kamas, je te dis s'il est en liberté en ce moment." +
+                           (pages > 1 ? $"\n(page {c.Page + 1}/{pages})" : "") };
         }
 
-        /// <summary>Réponse choisie (« libres », « vaincus », « suivant », « retour ») : renvoie le message à afficher (alterné).</summary>
+        /// <summary>Réponse choisie (« voir:<MonsterId> », « suivant », « retour ») : renvoie le message à afficher (alterné).</summary>
         public int Consulter(Character character, string action, int messageActuel)
         {
             var c = Etat(character);
-            if (action == "libres") { c.Mode = 1; c.Page = 0; }
-            else if (action == "vaincus") { c.Mode = 2; c.Page = 0; }
-            else if (action == "suivant") c.Page++;
-            else if (action == "retour") { c.Mode = 0; c.Page = 0; }
+            c.Resultat = null;
+            if (action.StartsWith("voir:") && int.TryParse(action.Substring(5), out var monstre))
+            {
+                Recherche r;
+                lock (m_lock)
+                    m_recherches.TryGetValue(monstre, out r);
+                if (r == null)
+                    c.Resultat = "Je n'ai pas d'avis de recherche pour celui-là.";
+                else if (character.Kamas < PrixRenseignement)
+                    c.Resultat = $"Ce renseignement coûte {PrixRenseignement:N0} kamas, et tu ne les as pas.";
+                else
+                {
+                    character.Inventory.SubKamas(PrixRenseignement);
+                    c.Resultat = IsAlive(r)
+                        ? $"Le recherché {r.Row.Nom} est en liberté en ce moment : à toi de le trouver !"
+                        : $"Le recherché {r.Row.Nom} n'est pas en liberté pour le moment : il a déjà été vaincu.";
+                }
+            }
+            else if (action == "suivant") c.Page = (c.Page + 1) % NombrePages();
+            else c.Page = 0;      // « retour » (et anciennes réponses « libres » / « vaincus »)
             c.EnCours = true;
             return messageActuel == MessageResume ? MessageListe : MessageResume;
         }
 
-        /// <summary>Réponse visible dans l'état actuel ?</summary>
+        /// <summary>Réponse visible dans l'état actuel ? (un recherché : seulement sur sa page)</summary>
         public bool ReponseVisible(Character character, string action)
         {
             var c = Etat(character);
+            if (action.StartsWith("voir:") && int.TryParse(action.Substring(5), out var monstre))
+            {
+                var rang = Tous().FindIndex(x => x.Row.MonsterId == monstre);
+                return rang >= c.Page * LignesParPage && rang < (c.Page + 1) * LignesParPage;
+            }
             switch (action)
             {
-                case "libres": return c.Mode != 1;
-                case "vaincus": return c.Mode != 2;
-                case "retour": return c.Mode != 0;
-                case "suivant": return c.Mode != 0 && (c.Page + 1) * LignesParPage < Lignes(c.Mode == 1).Count;
-                default: return false;
+                case "suivant": return (c.Page + 1) * LignesParPage < Tous().Count;
+                case "retour": return c.Page > 0;
+                default: return false;   // « libres » / « vaincus » : remplacées par un bouton par recherché
             }
         }
 
@@ -364,25 +357,41 @@ namespace Stump.Server.WorldServer.Game.Recherches
                 delai = m_random.Next(RespawnMinMinutes, Math.Max(RespawnMinMinutes, RespawnMaxMinutes) + 1);
             SetNextSpawn(r, DateTime.Now.AddMinutes(delai), true);
 
-            var achievement = Singleton<AchievementManager>.Instance.TryGetAchievement((uint)r.Row.AchievementId);
             foreach (var fighter in fight.ChallengersTeam.GetAllFighters<CharacterFighter>().Where(x => !x.HasLeft()))
+                DonnerSucces(fighter.Character, r);
+        }
+
+        /// <summary>
+        /// PADGREF 24/10 (demande utilisateur : « les succès recherchés doivent aussi être débloqués si on les tue après le combat de leur
+        /// chasse légendaire ») : appelé par ChasseManager quand le gardien d'une chasse légendaire est un recherché et qu'il est vaincu.
+        /// Mêmes règles que le recherché en zone (niveau minimum, succès une seule fois) ; ne touche pas à son apparition en zone.
+        /// </summary>
+        public void ValiderSucces(Character character, int monsterId)
+        {
+            Recherche r;
+            lock (m_lock)
+                m_recherches.TryGetValue(monsterId, out r);
+            if (r != null)
+                DonnerSucces(character, r);
+        }
+
+        private void DonnerSucces(Character character, Recherche r)
+        {
+            if (character == null)
+                return;
+
+            if (character.Level < r.Row.NiveauMin)
             {
-                var character = fighter.Character;
-                if (character == null)
-                    continue;
-
-                if (character.Level < r.Row.NiveauMin)
-                {
-                    character.SendServerMessage(string.Format("Recherché {0} vaincu, mais il faut être niveau {1} pour valider son succès.", r.Row.Nom, r.Row.NiveauMin));
-                    continue;
-                }
-
-                if (achievement == null || character.Achievement.AchievementIsCompleted((uint)achievement.Id))
-                    continue;
-
-                character.Achievement.CompleteAchievement(achievement);
-                character.SendServerMessage(string.Format("Recherché {0} capturé ! Succès gagné : récupère ta récompense dans les succès (Avis de recherche).", r.Row.Nom));
+                character.SendServerMessage(string.Format("Recherché {0} vaincu, mais il faut être niveau {1} pour valider son succès.", r.Row.Nom, r.Row.NiveauMin));
+                return;
             }
+
+            var achievement = Singleton<AchievementManager>.Instance.TryGetAchievement((uint)r.Row.AchievementId);
+            if (achievement == null || character.Achievement.AchievementIsCompleted((uint)achievement.Id))
+                return;
+
+            character.Achievement.CompleteAchievement(achievement);
+            character.SendServerMessage(string.Format("Recherché {0} capturé ! Succès gagné : récupère ta récompense dans les succès (Avis de recherche).", r.Row.Nom));
         }
 
         private void SetNextSpawn(Recherche r, DateTime date, bool save)

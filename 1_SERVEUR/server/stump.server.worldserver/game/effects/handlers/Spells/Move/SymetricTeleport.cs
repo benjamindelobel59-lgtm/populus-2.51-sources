@@ -56,6 +56,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
                 deplace.TeleporteSurCaseInvalide = false;
                 deplace.EchecTeleportSort = CastHandler;
 
+                // PADGREF 24/10 : Enraciné (6) / Pesanteur (7) bloquent les téléportations (Stabilisation sur le Comte : il ne se téléporte plus)
+                if (deplace.TeleportationBloquee())
+                    continue;
+
                 if (!cell.IsInMap())
                 {
                     deplace.TeleporteSurCaseInvalide = true;
@@ -127,16 +131,33 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
 
         protected override bool InternalApply()
         {
+            // PADGREF 23/10 (retour utilisateur, Cycloporth) : dans Aspiration Gourmande (7857), 2017 = chaque cible (ici les personnages
+            // collés au Cycloporth après l'attirance) lance le sort 7858 (interception des dommages) sur le lanceur. Avant : saut symétrique
+            // + poussée -> le Cycloporth bougeait alors qu'il est immobile (Lasccar) et l'interception n'existait pas.
+            if (Spell.Template.Id == 7857)
+            {
+                var sort = new Stump.Server.WorldServer.Game.Spells.Spell(Dice.DiceNum, (short)System.Math.Max(1, (int)Dice.DiceFace));
+                foreach (var cible in GetAffectedActors().Where(x => x != Caster && x.IsAlive()).ToArray())
+                    cible.CastAutoSpell(sort, Caster.Cell);
+                return true;
+            }
+
             DoIt();
             return true;
         }
 
+        // PADGREF 21/10 : crash du World (Ninfluence 10335 du Tanklume, lancé sur lui-même) : cible = lanceur → pas de direction,
+        // case voisine nulle → exception dans un async void = arrêt du serveur. Lanceur / même case / hors carte ignorés, et toute
+        // erreur est maintenant journalisée au lieu de tuer le serveur.
         public async void DoIt()
         {
             foreach (var target in GetAffectedActors())
             {
                 try
                 {
+                    if (target == Caster || target.Position.Point.CellId == Caster.Position.Point.CellId)
+                        continue;
+
                     var custtarget = target;
 
                     var casterPoint = Caster.Position.Point;
@@ -206,6 +227,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
                     if (!dstCell.Walkable && !dstCell.NonWalkableDuringFight)
                         continue;
 
+                    // PADGREF 24/10 : Enraciné (6) / Pesanteur (7) bloquent les téléportations
+                    if (Caster.TeleportationBloquee())
+                        continue;
+
                     var fighter = Fight.GetOneFighter(dstCell);
                     if (fighter != null && fighter != custtarget)
                     {
@@ -231,7 +256,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
                         using (Fight.StartSequence(SequenceTypeEnum.SEQUENCE_SPELL)) hand2.Apply();
                     });
                 }
-                finally { }
+                catch (System.Exception ex)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Warn($"[Recurse] {Caster} -> {target} (sort {CastHandler?.Spell?.Id}) : {ex.Message}");
+                }
             }
         }
     }

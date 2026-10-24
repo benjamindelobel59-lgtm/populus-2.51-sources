@@ -54,7 +54,20 @@ namespace Stump.Server.WorldServer.Database.Npcs.Replies
             private set;
         }
 
-        public virtual bool CanShow(Npc npc, Character character) => true;
+        /// <summary>PADGREF 24/10 : condition d'AFFICHAGE facultative, écrite dans AdditionalParameters sous la forme « afficher:<critères> »
+        /// (ex. « afficher:Qf!649 »). Les critères (colonne Criteria) ne jouent qu'au clic : une réponse qu'on ne doit pas voir restait
+        /// affichée puis refusait. Seules les réponses qui ont « afficher: » sont concernées.</summary>
+        public virtual bool CanShow(Npc npc, Character character)
+        {
+            var extra = Record.AdditionalParameters;
+            if (string.IsNullOrEmpty(extra) || !extra.StartsWith("afficher:"))
+                return true;
+            if (m_afficher == null)
+                m_afficher = Game.Conditions.ConditionExpression.Parse(extra.Substring("afficher:".Length));
+            return m_afficher == null || m_afficher.Eval(character);
+        }
+
+        Game.Conditions.ConditionExpression m_afficher;
 
         public virtual bool CanExecute(Npc npc, Character character) => Record.CriteriaExpression == null || Record.CriteriaExpression.Eval(character);
 

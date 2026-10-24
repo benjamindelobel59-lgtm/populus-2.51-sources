@@ -368,7 +368,8 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
                 // MYSTIC 19/10 : chaque nouveau personnage reçoit « Le tour du monde » (1/2) et (2/2) (quêtes 2005 et 2006,
                 // une étape par donjon, voir _OUTILS/serveur/quetes/generer_tour_du_monde.py)
                 // (1re étape lue dans la quête : les étapes ont été refaites, une par donjon, SQL 69)
-                foreach (var queteTourDuMonde in new[] { 2005, 2006 })
+                // PADGREF 24/10 (demande utilisateur) : « Le nouveau monde » (quête 231, accès à Otomaï) donnée à la création
+                foreach (var queteTourDuMonde in new[] { 2005, 2006, 231 })
                 {
                     var premiere = QuestManager.Instance.GetQuestTemplate(queteTourDuMonde)?.Steps?.FirstOrDefault();
                     if (premiere != null)
@@ -905,7 +906,8 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
             RequestBox = null;
         }
 
-        public bool IsBusy() => IsInRequest() || IsDialoging();
+        // PADGREF 23/10 : replay de combat en cours dans le client (Game/Bugs/ReplayLecteur)
+        public bool IsBusy() => IsInRequest() || IsDialoging() || Game.Bugs.ReplayLecteur.EnCours(this);
 
         public bool IsDialoging() => Dialog != null;
 
@@ -3972,6 +3974,9 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
             bool praticable(Cell c) => c != null && carte.IsCellWalkable(c) && !c.NonWalkableDuringRP;
             var vues = new HashSet<short>();
             var meilleure = new HashSet<short>();
+            // PADGREF 24/10 (retour utilisateur, map 139784 : la zone du PNJ, petite, renvoyait dans la grande) : les zones reliées à
+            // un bord de carte (case de changement de carte) sont aussi gardées, on y arrive depuis la carte voisine
+            var auBord = new HashSet<short>();
             foreach (var c in carte.Cells)
             {
                 if (!praticable(c) || vues.Contains(c.Id))
@@ -3989,7 +3994,10 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
                         }
                 if (groupe.Count > meilleure.Count)
                     meilleure = groupe;
+                if (groupe.Any(id => carte.Cells[id].MapChangeData != 0))
+                    auBord.UnionWith(groupe);
             }
+            meilleure.UnionWith(auBord);
             return meilleure;
         });
 
@@ -4500,6 +4508,13 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Characters
 
         public void OnCharacterContextReady(int mapId)
         {
+            // PADGREF 23/10 : replay de combat : la carte du combat est chargée côté client
+            if (Game.Bugs.ReplayLecteur.EnCours(this))
+            {
+                Map?.Area?.AddMessage(() => Game.Bugs.ReplayLecteur.ContextePret(this));
+                return;
+            }
+
             // Reconnexion en combat : le client a fini de charger la map → étape 2
             var pending = m_pendingFightRejoin;
             if (pending != null)

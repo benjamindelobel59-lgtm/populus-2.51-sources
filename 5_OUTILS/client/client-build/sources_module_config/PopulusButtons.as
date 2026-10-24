@@ -2,12 +2,15 @@ package ui
 {
    import com.ankamagames.berilia.api.UiApi;
    import com.ankamagames.dofus.uiApi.SystemApi;
+   import com.ankamagames.dofus.uiApi.ConfigApi;
    import d2hooks.TextInformation;
    import com.ankamagames.dofus.uiApi.FightApi;
    import flash.events.TimerEvent;
    import flash.utils.Timer;
    import flash.display.Stage;
    import flash.net.SharedObject;
+   import flash.net.URLRequest;
+   import flash.net.navigateToURL;
    import populus.ChatTextOutput;
    import populus.PanelWindow;
 
@@ -24,7 +27,10 @@ package ui
       private static const OR:uint = 13148746;
 
       // nom du bouton, commande, debut du message serveur, infobulle
-      private static const BOUTONS:Array = [["groupe",".groupe",null,"Groupe : invite tous vos personnages"],["onewindow",".onewindow","One Window","One Window : vos personnages vous suivent et vous jouez leurs tours"],["ipdrop",".ipdrop","IP Drop","IP Drop : ce personnage reçoit le drop de tous vos personnages"],["sasa",".sasa","Sasa auto","Sasa auto : les points de caractéristique vont dans la sagesse"],["pass",".passturn","Passe-tour auto","Passe-tour auto : les tours de ce personnage sont passés automatiquement"],["invo",".invo","Contrôle invocations","Contrôle des invocations : vous jouez vous-même vos invocations"],["bug",".bug",null,"Signaler un bug : titre, description, logs du combat et du client"]];
+      private static const BOUTONS:Array = [["groupe",".groupe",null,"Groupe : invite tous vos personnages"],["onewindow",".onewindow","One Window","One Window : vos personnages vous suivent et vous jouez leurs tours"],["ipdrop",".ipdrop","IP Drop","IP Drop : ce personnage reçoit le drop de tous vos personnages"],["sasa",".sasa","Sasa auto","Sasa auto : les points de caractéristique vont dans la sagesse"],["pass",".passturn","Passe-tour auto","Passe-tour auto : les tours de ce personnage sont passés automatiquement"],["invo",".invo","Contrôle invocations","Contrôle des invocations : vous jouez vous-même vos invocations"],["bug",".bug",null,"Signaler un bug : titre, description, logs du combat et du client"],["noanim",null,null,"No anim : animations des sorts désactivées en combat"],["vitesse",null,null,"Vitesse ×2 : combats deux fois plus rapides (animations et déplacements)"]];
+
+      // PADGREF 23/10 : boutons réglés dans le client (pas de commande) : nom -> [option du jeu, valeur activée, valeur désactivée]
+      private static const LOCAUX:Object = {"noanim":["noAnimAdvanced",true,false],"vitesse":["vitesseCombat",2,1]};
 
       private var _store:SharedObject;
 
@@ -56,6 +62,8 @@ package ui
       public var ctr_v_bg_mini:*;
 
       public var sysApi:SystemApi;
+
+      public var configApi:ConfigApi;
 
       // Mystic : horloge de l'Oeil de Vortex (etat « Xe heure » 221..232 de l'Auroraire 3833), affichee en haut de l'ecran
       public var fightApi:FightApi;
@@ -107,6 +115,14 @@ package ui
 
       public var btn_bug2:*;
 
+      public var btn_noanim:*;
+
+      public var btn_noanim2:*;
+
+      public var btn_vitesse:*;
+
+      public var btn_vitesse2:*;
+
       public var f_groupe:*;
 
       public var f_onewindow:*;
@@ -134,6 +150,14 @@ package ui
       public var f_invo2:*;
 
       public var f_bug2:*;
+
+      public var f_noanim:*;
+
+      public var f_noanim2:*;
+
+      public var f_vitesse:*;
+
+      public var f_vitesse2:*;
 
       public function PopulusButtons()
       {
@@ -163,6 +187,19 @@ package ui
             _loc6_ = this.ctr_h || this.ctr_v;
             PanelWindow.open(_loc6_ ? _loc6_.stage : null,_bug[1]);
             PanelWindow.envoyerLog(_bug[1] + "&log=1");
+         }
+         // PADGREF 23/10 : bouton Replay de fin de combat -> le serveur renvoie le lien de la page du replay : ouverture
+         // dans le navigateur (le replay se joue aussi dans le jeu)
+         var _replay:Array = param1.match(/(https?:\/\/[^\s,{}]+\/replay\.html\?r=[a-f0-9]{32})/);
+         if(_replay && param1.indexOf("Replay") >= 0)
+         {
+            try
+            {
+               navigateToURL(new URLRequest(_replay[1]),"_blank");
+            }
+            catch(e:Error)
+            {
+            }
          }
          // etat des boutons : « <nom> active » -> vert, « <nom> desactive » -> gris
          for each(_loc7_ in BOUTONS)
@@ -194,7 +231,7 @@ package ui
          var _loc3_:* = undefined;
          for each(_loc1_ in BOUTONS)
          {
-            _loc2_ = !_loc1_[2] ? OR : (this._etat[_loc1_[0]] ? VERT : GRIS);
+            _loc2_ = LOCAUX[_loc1_[0]] ? (this.optionActive(_loc1_[0]) ? VERT : GRIS) : (!_loc1_[2] ? OR : (this._etat[_loc1_[0]] ? VERT : GRIS));
             for each(_loc3_ in [this["f_" + _loc1_[0]],this["f_" + _loc1_[0] + "2"]])
             {
                if(_loc3_)
@@ -228,7 +265,11 @@ package ui
       {
          var _loc2_:String = param1 ? String(param1.name) : "";
          var _loc3_:Array = this.bouton(_loc2_);
-         if(_loc3_)
+         if(_loc3_ && LOCAUX[_loc3_[0]])
+         {
+            this.basculerOption(_loc3_[0]);
+         }
+         else if(_loc3_)
          {
             this.send(_loc3_[1]);
          }
@@ -254,7 +295,11 @@ package ui
             return;
          }
          var _loc3_:String = _loc2_[3];
-         if(_loc2_[2])
+         if(LOCAUX[_loc2_[0]])
+         {
+            _loc3_ += this.optionActive(_loc2_[0]) ? " (activé)" : " (désactivé)";
+         }
+         else if(_loc2_[2])
          {
             _loc3_ += this._etat[_loc2_[0]] ? " (activé)" : " (désactivé)";
          }
@@ -283,6 +328,34 @@ package ui
          this._hidden = !this._hidden;
          this.save();
          this.apply();
+      }
+
+      // PADGREF 23/10 : état d'un bouton local = valeur de l'option du jeu (aussi réglable dans les options)
+      private function optionActive(nom:String) : Boolean
+      {
+         var l:Array = LOCAUX[nom];
+         try
+         {
+            return this.configApi.getConfigProperty("dofus",l[0]) == l[1];
+         }
+         catch(e:Error)
+         {
+         }
+         return false;
+      }
+
+      private function basculerOption(nom:String) : void
+      {
+         var l:Array = LOCAUX[nom];
+         var actif:Boolean = this.optionActive(nom);
+         try
+         {
+            this.configApi.setConfigProperty("dofus",l[0],actif ? l[2] : l[1]);
+         }
+         catch(e:Error)
+         {
+         }
+         this.peindre();
       }
 
       private function send(param1:String) : void
@@ -366,6 +439,7 @@ package ui
       public function onMinuteur(param1:* = null) : void
       {
          this.horloge();
+         this.peindre(); // PADGREF : No anim / vitesse peuvent aussi changer dans les options
       }
 
       // cherche l'Auroraire dans le combat et son etat d'heure ; rien trouve -> bandeau cache

@@ -85,14 +85,21 @@ namespace Stump.Server.WorldServer.Game.Fights
             var tackles = new List<FightTackle>();
             var cell = StartCell;
 
+            // PADGREF 24/10 : glyphes-auras -PM (Féca…) : les PM sont retirés dès la case d'entrée (une fois par aura)
+            var aurasEntrees = new List<Triggers.GlyphAura>();
+
             var obstaclesCells = Fight.GetAllFighters(entry => entry != Fighter && entry.Position.Cell != Fighter.Cell && entry.IsAlive()).Select(entry => entry.Cell.Id).ToList();
 
+
+            // PADGREF 24/10 (retour utilisateur : « porté par le Pandawa et collé à un ennemi, en descendant je perds des PA / PM ») : celui
+            // qui quitte son porteur n'est pas taclé sur la case de départ (case du porteur)
+            var descendDuPorteur = Fighter.IsCarried();
 
             while (i < Cells.Length && mp > 0 && !obstaclesCells.Contains(Cells[i].Id) && (cell == StartCell || !Fight.ShouldTriggerOnMove(cell, Fighter)))
             {
                 int tackledMP = 0;
                 int tackledAP = 0;
-                if ((tackledMP = Fighter.GetTackledMP(mp, cell)) > 0)
+                if (!(descendDuPorteur && cell == StartCell) && (tackledMP = Fighter.GetTackledMP(mp, cell)) > 0)
                 {
                     if (tackledMP > mp)
                         tackledMP = mp;
@@ -100,7 +107,7 @@ namespace Stump.Server.WorldServer.Game.Fights
                     mp -= tackledMP;
                 }
 
-                if ((tackledAP = Fighter.GetTackledAP(ap, cell)) > 0)
+                if (!(descendDuPorteur && cell == StartCell) && (tackledAP = Fighter.GetTackledAP(ap, cell)) > 0)
                 {
                     if (tackledAP > ap)
                         tackledAP = ap;
@@ -118,6 +125,12 @@ namespace Stump.Server.WorldServer.Game.Fights
                     cell = Cells[i];
                     mp--;
                     i++;
+
+                    foreach (var aura in Fight.GetTriggers().OfType<Triggers.GlyphAura>().Where(a => a.ContainsCell(cell) && !a.ContainsCell(StartCell) && !aurasEntrees.Contains(a)).ToArray())
+                    {
+                        aurasEntrees.Add(aura);
+                        mp = System.Math.Max(0, mp - aura.MalusPM(Fighter));
+                    }
                 }
             }
 

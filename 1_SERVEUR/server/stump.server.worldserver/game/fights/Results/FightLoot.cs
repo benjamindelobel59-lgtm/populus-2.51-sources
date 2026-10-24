@@ -48,9 +48,18 @@ namespace Stump.Server.WorldServer.Game.Fights.Results
 
         public DofusProtocol.Types.FightLoot GetFightLoot()
         {
-            return new DofusProtocol.Types.FightLoot(m_items.Values.SelectMany(entry => new[] {
+            // PADGREF 22/10 (demande utilisateur) : dans la ligne de fin de combat, les box de boss d'abord, puis les Dofus, puis le
+            // reste dans l'ordre du drop (le client affiche les objets dans l'ordre reçu)
+            return new DofusProtocol.Types.FightLoot(m_items.Values.OrderBy(Priorite).SelectMany(entry => new[] {
                 (uint) entry.ItemId, entry.Amount
             }).ToArray(), (ulong)Kamas);
+        }
+
+        static int Priorite(DroppedItem item)
+        {
+            if (Game.Items.Player.Custom.BoxDeBoss.EstBox(item.ItemId))
+                return 0;
+            return Game.Items.ItemManager.Instance.TryGetTemplate(item.ItemId)?.TypeId == (int)DofusProtocol.Enums.ItemTypeEnum.DOFUS ? 1 : 2;
         }
 
         public string FightItemsString()

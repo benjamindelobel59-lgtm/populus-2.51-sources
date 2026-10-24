@@ -150,6 +150,10 @@ namespace Stump.Server.WorldServer.Game.Formulas
 
         public static double AdjustDropChance(IFightResult looter, DroppableItem item, Monster dropper, int monsterAgeBonus)
         {
+            // PADGREF 21/10 : drop à taux fixe (DofusDB x2) : aucun bonus
+            if (item.TauxFixe)
+                return item.GetDropRate((int)dropper.Grade.GradeId);
+
             var challengeBonus = looter.Fight.GetChallengesBonus();
             var idolsBonus = looter.Fight.GetIdolsDropBonus();
 

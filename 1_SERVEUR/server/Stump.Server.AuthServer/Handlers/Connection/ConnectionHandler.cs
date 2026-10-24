@@ -169,7 +169,9 @@ namespace Stump.Server.AuthServer.Handlers.Connection
                 }
 
                 // update tokens
-                client.Account.Tokens = AccountManager.Instance.FindTokens(message.username);
+                // PADGREF 21/10 : compte connecté (avant : identifiant envoyé par le jeu, qui après « Déconnecter » est l'ancien identifiant
+                // mémorisé, parfois inexistant -> plantage, la connexion n'aboutissait jamais : « le serveur met trop de temps à répondre »)
+                client.Account.Tokens = AccountManager.Instance.FindTokens(client.Account.Login);
 
                 SendIdentificationSuccessMessage(client, false);
 
@@ -188,6 +190,19 @@ namespace Stump.Server.AuthServer.Handlers.Connection
         [AuthHandler(IdentificationMessage.Id)]
         public static void HandleIdentificationMessage(AuthClient client, IdentificationMessage message)
         {
+            // PADGREF 21/10 : mise a jour obligatoire. Le client envoie le n de patch lu dans son fichier app/VERSION (« 2.51.4.N »,
+            // publie par le launcher avec chaque mise a jour du jeu) ; en dessous du minimum de patch_client.txt (a cote de l'AuthServer,
+            // ecrit par l'installeur des paquets), connexion refusee avec le message officiel de version incorrecte.
+            var requis = PatchClientRequis();
+            if (requis > 0 && message.Version != null && message.Version.Patch < requis)
+            {
+                logger.Info("[Version] client refuse : patch {0} < {1} requis", message.Version.Patch, requis);
+                SendIdentificationFailedForBadVersionMessage(client, new Version(message.Version.Major, message.Version.Minor, message.Version.Release,
+                    message.Version.Revision, (sbyte)requis, message.Version.BuildType));
+                client.DisconnectLater(1000);
+                return;
+            }
+
             /* Wrong Version */
             /*if (!message.version.IsUpToDate())
             {
@@ -199,6 +214,33 @@ namespace Stump.Server.AuthServer.Handlers.Connection
             var patch = AuthServer.Instance.GetConnectionSwfPatch();
             if (patch != null)
                 client.Send(new RawDataMessageFixed(patch));
+        }
+
+        static int s_patchRequis;
+        static DateTime s_patchLu = DateTime.MinValue;
+
+        /// <summary>PADGREF 21/10 : n de patch client minimum (patch_client.txt, relu quand il change ; 0 = pas de verification).</summary>
+        public static int PatchClientRequis()
+        {
+            try
+            {
+                var chemin = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "patch_client.txt");
+                if (!System.IO.File.Exists(chemin))
+                    return 0;
+                var date = System.IO.File.GetLastWriteTimeUtc(chemin);
+                if (date != s_patchLu)
+                {
+                    int.TryParse(System.IO.File.ReadAllText(chemin).Trim(), out s_patchRequis);
+                    s_patchRequis = Math.Max(0, Math.Min(127, s_patchRequis));
+                    s_patchLu = date;
+                }
+                return s_patchRequis;
+            }
+            catch (Exception e)
+            {
+                logger.Error("[Version] lecture de patch_client.txt impossible : {0}", e.Message);
+                return 0;
+            }
         }
 
         public static void SendIdentificationSuccessMessage(AuthClient client, bool wasAlreadyConnected)

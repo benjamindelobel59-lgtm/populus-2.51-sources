@@ -1,4 +1,4 @@
-using Stump.DofusProtocol.Enums;
+﻿using Stump.DofusProtocol.Enums;
 using Stump.Server.WorldServer.Database.World;
 using Stump.Server.WorldServer.Game.Actors.Fight;
 using Stump.Server.WorldServer.Game.Effects.Instances;
@@ -28,6 +28,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
                 if (surLanceur && !t.IsTargetValid(Caster, this))
                     return false;
             }
+
+            // PADGREF 24/10 : Enraciné (6) / Pesanteur (7) bloquent les téléportations
+            if (Caster.TeleportationBloquee())
+                return true;
 
             var carryingActor = Caster.GetCarryingActor();                
 

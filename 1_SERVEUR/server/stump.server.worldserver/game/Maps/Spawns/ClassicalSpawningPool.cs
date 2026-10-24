@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using Stump.Core.Attributes;
 using Stump.Core.Extensions;
 using Stump.Core.Threading;
 using Stump.Server.WorldServer.Game.Actors.RolePlay.Monsters;
@@ -13,6 +14,13 @@ namespace Stump.Server.WorldServer.Game.Maps.Spawns
     public class ClassicalSpawningPool : SpawningPoolBase
     {
         public const int NumberOfGroupSizes = 3;
+
+        /// <summary>
+        /// PADGREF 23/10 : un groupe qui part en combat est remplacé au bout de ce délai (secondes) au lieu d'attendre le minuteur
+        /// normal de la zone (60 à 220 s). 0 = comportement d'origine.
+        /// </summary>
+        [Variable(true)]
+        public static int DelaiRespawnApresCombat = 15;
 
         protected Dictionary<GroupSize, Tuple<int, int>> GroupSizes = new Dictionary<GroupSize, Tuple<int, int>>()
         {
@@ -163,6 +171,34 @@ namespace Stump.Server.WorldServer.Game.Maps.Spawns
             }
 
             return (int) ((Interval + (rand.NextDouble()*Interval/4))*1000);
+        }
+
+        protected override void OnGroupSpawned(MonsterGroup group)
+        {
+            group.EnterFight -= OnEnterFightRespawn;
+            group.EnterFight += OnEnterFightRespawn;
+
+            base.OnGroupSpawned(group);
+        }
+
+        // PADGREF 23/10 : combat lancé sur un groupe -> un nouveau groupe apparaît vite (DelaiRespawnApresCombat)
+        void OnEnterFightRespawn(MonsterGroup group, Actors.RolePlay.Characters.Character character)
+        {
+            group.EnterFight -= OnEnterFightRespawn;
+
+            if (DelaiRespawnApresCombat <= 0)
+                return;
+
+            Map.Area.CallDelayed(DelaiRespawnApresCombat * 1000, () =>
+            {
+                if (State != SpawningPoolState.Running || !Map.CanSpawnMonsters())
+                    return;
+
+                lock (this)
+                {
+                    SpawnNextGroup();
+                }
+            });
         }
 
         protected override void OnGroupUnSpawned(MonsterGroup monster)

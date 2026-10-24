@@ -25,6 +25,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
             var direction = CastPoint.OrientationTo(TargetedPoint, false);
             var isEven = (short)direction % 2 == 0;
 
+            // PADGREF 24/10 : Enraciné (6) / Pesanteur (7) bloquent les téléportations (Multicomte : pas de téléportation ni d'illusions)
+            if (Caster.TeleportationBloquee())
+                return true;
+
             Caster.Position.Cell = TargetedCell;
 
             Caster.SetInvisibilityState(GameActionFightInvisibilityStateEnum.INVISIBLE);

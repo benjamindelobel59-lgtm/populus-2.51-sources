@@ -43,9 +43,11 @@ namespace Stump.Server.AuthServer.Managers
                 // MYSTIC 18/10 : connexion depuis le launcher (ticket à usage unique transmis par le patch de connexion)
                 if (password != null && password.StartsWith(Launcher.LauncherApi.PREFIXE_TICKET))
                 {
-                    if (!Launcher.LauncherApi.Instance.ConsommerTicket(username, password.Substring(Launcher.LauncherApi.PREFIXE_TICKET.Length)))
+                    // PADGREF 21/10 : compte pris dans le ticket (pas l'identifiant envoyé, qui peut être l'ancien identifiant mémorisé)
+                    var loginTicket = Launcher.LauncherApi.Instance.LoginDuTicket(password.Substring(Launcher.LauncherApi.PREFIXE_TICKET.Length));
+                    if (loginTicket == null)
                         return false;
-                    account = AccountManager.Instance.FindAccountByLogin(username);
+                    account = AccountManager.Instance.FindAccountByLogin(loginTicket);
                     return account != null;
                 }
 

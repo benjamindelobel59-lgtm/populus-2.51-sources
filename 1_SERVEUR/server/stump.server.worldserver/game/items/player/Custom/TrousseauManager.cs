@@ -119,6 +119,30 @@ namespace Stump.Server.WorldServer.Game.Items.Player.Custom
             return template != null && character.Inventory.HasItem(template);
         }
 
+        static int[] s_clefs;
+
+        /// <summary>PADGREF 23/10 : clefs de tous les donjons à clef (dungeons_entries), objets existants seulement, triées.</summary>
+        static int[] Clefs
+        {
+            get
+            {
+                if (s_clefs == null)
+                {
+                    try
+                    {
+                        s_clefs = Database.Fetch<int>("SELECT DISTINCT KeyItemId FROM dungeons_entries WHERE KeyItemId > 0")
+                            .Where(k => ItemManager.Instance.TryGetTemplate(k) != null).OrderBy(k => k).ToArray();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error("[Trousseau] liste des clefs : {0}", ex.Message);
+                        s_clefs = new int[0];
+                    }
+                }
+                return s_clefs;
+            }
+        }
+
         /// <summary>À la connexion : chaque personnage a son trousseau, non échangeable.</summary>
         public void EnsureTrousseau(Character character)
         {
@@ -135,10 +159,26 @@ namespace Stump.Server.WorldServer.Game.Items.Player.Custom
                 // etat lu en base sur le fil des E/S (evite la lecture dans le fil de la map au 1er gardien)
                 WorldServer.Instance.IOTaskPool.AddMessage(() => GetEtat(character));
 
+                var change = false;
                 if (!item.Effects.Any(x => x.EffectId == EffectsEnum.Effect_NonExchangeable_981))
                 {
                     item.Effects.Clear();
                     item.Effects.Add(new EffectInteger(EffectsEnum.Effect_NonExchangeable_981, 1));
+                    change = true;
+                }
+
+                // PADGREF 23/10 (retour utilisateur : « dans les anciens trousseaux il n'y a pas les nouveaux donjons ») : une ligne
+                // « clef » (effet 814) par clef de donjon (dungeons_entries), ajoutée si elle manque (nouveaux donjons : Eliocalypse...)
+                foreach (var clef in Clefs)
+                {
+                    if (item.Effects.Any(x => (int)x.EffectId == 814 && x is EffectDice d && d.DiceNum == clef))
+                        continue;
+                    item.Effects.Add(new EffectDice((EffectsEnum)814, 0, clef, 0));
+                    change = true;
+                }
+
+                if (change)
+                {
                     item.Invalidate();
                     character.Inventory.RefreshItem(item);
                 }

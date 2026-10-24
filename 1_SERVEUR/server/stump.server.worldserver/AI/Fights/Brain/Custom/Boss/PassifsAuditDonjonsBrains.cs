@@ -49,6 +49,20 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     [BrainIdentifier(147)] public class BouftouRoyalBrain : BrainFuyard { public BouftouRoyalBrain(AIFighter f) : base(f) { } }
     [BrainIdentifier(800)] public class BatofuBrain : BrainFuyard { public BatofuBrain(AIFighter f) : base(f) { } }
     [BrainIdentifier(4294)] public class GeriatiqueBrain : BrainFuyard { public GeriatiqueBrain(AIFighter f) : base(f) { } }
+    // PADGREF 23/10 (demande utilisateur) : Sinistrofu (et sa version déréglée) = IA Fuyard
+    [BrainIdentifier(3414, 3444)] public class SinistrofuBrain : BrainFuyard { public SinistrofuBrain(AIFighter f) : base(f) { } }
+    // PADGREF 23/10 (demande utilisateur) : Strigide = IA Fuyard aussi (après Stricannement / Strictus, il s'éloigne)
+    // PADGREF 23/10 (log VPS : « le Strigide ne joue pas ») : ses attaques sont au contact (Stricannement en croix autour de lui, Strictus
+    // à 1-2 PO) ; en fuyard permanent il restait loin et ne lançait plus que Stridicule. Il ne fuit plus qu'APRÈS avoir lancé
+    // Stricannement ou Strictus dans le tour ; sinon il s'approche comme un monstre normal.
+    [BrainIdentifier(3411)]
+    public class StrigideBrain : Brain
+    {
+        public StrigideBrain(AIFighter f) : base(f) { }
+
+        public override bool Fuyard => Fighter.SpellHistory.GetEntries(e => !e.Declenche && e.CastRound == Fighter.Fight.TimeLine.RoundNumber &&
+            (e.Spell.SpellId == 3626 || e.Spell.SpellId == 3627)).Any();
+    }
 
     /// <summary>Chalœil : La Routourne (6301) ; chaque niveau = la variante d'un monstre du Grand Jeu (cycle de 3 bonus).</summary>
     public abstract class RoutourneBrain : Brain
@@ -117,7 +131,43 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     }
 
     /// <summary>Masticroc et Trémorse (Père Ver) : Inébranlable + Lourd tout le combat.</summary>
-    [BrainIdentifier(4729)] public class MasticrocBrain : BrainEtats { public MasticrocBrain(AIFighter f) : base(f, 7367, 157, 63) { } }
+    /// PADGREF 23/10 (retour utilisateur) : sorts dans l'ordre Surgissement, Gueule des Sables, Déplacement Sablonneux, puis Ensablage
+    /// (qui contient « passer le tour » : lancé en premier, il finissait le tour avant les autres sorts).
+    [BrainIdentifier(4729)]
+    public class MasticrocBrain : BrainEtats
+    {
+        const int Ensablage = 7395;
+        static readonly int[] Ordre = { 7396, 7398, 7399 };
+
+        public MasticrocBrain(AIFighter f) : base(f, 7367, 157, 63) { }
+
+        public override void Play()
+        {
+            var tous = Fighter.Spells.Values.ToList();
+            try
+            {
+                foreach (var id in Ordre)
+                {
+                    if (!Fighter.IsAlive() || Fighter.Fight.FighterPlaying != Fighter)
+                        return;
+                    Fighter.Spells.Clear();
+                    foreach (var s in tous.Where(x => x.Id == id))
+                        Fighter.Spells.Add(s.Id, s);
+                    if (Fighter.Spells.Count > 0)
+                        base.Play();
+                }
+            }
+            finally
+            {
+                Fighter.Spells.Clear();
+                foreach (var s in tous)
+                    Fighter.Spells[s.Id] = s;
+            }
+
+            if (Fighter.IsAlive() && Fighter.Fight.FighterPlaying == Fighter && Fighter.Spells.TryGetValue(Ensablage, out var ensablage))
+                Fighter.CastSpell(ensablage, Fighter.Cell);
+        }
+    }
     [BrainIdentifier(4728)] public class TremorseBrain : BrainEtats { public TremorseBrain(AIFighter f) : base(f, 7367, 157, 63) { } }
 
     /// <summary>
@@ -256,7 +306,196 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     [BrainIdentifier(5110)]
     public class BethelAkarnaBrain : BrainPassifGrade
     {
-        public BethelAkarnaBrain(AIFighter f) : base(f, 9542, 5) { FinPetrification.Surveiller(f); }
+        public BethelAkarnaBrain(AIFighter f) : base(f, 9542, 5)
+        {
+            FinPetrification.Surveiller(f);
+            // PADGREF 23/10 (retour utilisateur, 2 fois : « Bethel n'invoque pas le Monolithe ») : le passif (posé juste avant, au même
+            // début de combat) doit invoquer le Monolithe en 302 et le Dagon en 316 ; s'il ne l'a pas fait, on les invoque ici.
+            System.Action<IFight> debut = null;
+            debut = fight =>
+            {
+                fight.FightStarted -= debut;
+                InvoquerSiAbsent(f, 5121, 302);
+                InvoquerSiAbsent(f, 5122, 316);
+            };
+            f.Fight.FightStarted += debut;
+
+            // PADGREF 23/10 (demande utilisateur) : quand le Dagon passé dans le camp des joueurs (Dagon insoumis 5123) meurt, Bethel
+            // réinvoque au début de son tour suivant le Monolithe (302) et son Dagon (316), et reprend l'état 884 (Offrande
+            // Monolithique de nouveau possible, Étoile de Mer de nouveau interdite) : le cycle recommence.
+            var reinvoquer = false;
+            f.OpposedTeam.FighterAdded += (team, ajoute) =>
+            {
+                if (ajoute is SummonedMonster s && s.Monster.Template.Id == DagonInsoumis)
+                    ajoute.Dead += (mort, tueur) => reinvoquer = true;
+            };
+            // PADGREF 23/10 (test : « j'ai réussi à taper Bethel avec mon perso ») : Souffle Chaud (9568) du Dagon désactive
+            // l'invulnérabilité de Bethel pour le seul tour du Dagon (« seul le Dagon peut frapper Bethel »). Le Dagon insoumis mourant
+            // ensuite, sa désactivation n'était plus jamais décomptée : Bethel restait vulnérable à tous. Au début de chaque tour
+            // d'un autre combattant, on la retire.
+            f.Fight.TurnStarted += (fight, joueur) =>
+            {
+                foreach (var buff in f.GetBuffs(x => x is Game.Fights.Buffs.Customs.DisableStateBuff && x.Spell.Id == 9568 && x.Caster != joueur).ToArray())
+                    f.RemoveBuff(buff);
+            };
+            f.Fight.TurnStarted += (fight, joueur) =>
+            {
+                if (joueur != f || !reinvoquer || !f.IsAlive())
+                    return;
+                reinvoquer = false;
+                InvoquerSiAbsent(f, 5121, 302);
+                InvoquerSiAbsent(f, 5122, 316);
+                if (!f.HasState(EtatMonolithe))
+                    EtatsBoss.Ajouter(f, f, EtatMonolithe, 9542);
+                NLog.LogManager.GetCurrentClassLogger().Info("[Bethel] Dagon insoumis mort : Monolithe et Dagon réinvoqués");
+            };
+        }
+
+        const int DagonInsoumis = 5123, EtatMonolithe = 884, OffrandeMonolithique = 9552, Monolithe = 5121;
+
+        /// <summary>Tour du dernier lancer d'Offrande (règle : à partir du tour 2, puis tous les 3 tours).</summary>
+        int m_derniereOffrande;
+
+        /// <summary>PADGREF 23/10 (retour utilisateur) : Offrande Monolithique (9552) se lance SUR le Monolithe, Bethel à son contact : le
+        /// Monolithe relance alors 9553 (+puissance à Bethel et aux monstres, -puissance aux joueurs, Amas de Tentacules Vaporeux au
+        /// contact des joueurs). Log VPS : Bethel souvent à 0 PM, loin du Monolithe -> l'IA de base lançait le sort sur une case
+        /// quelconque (aucun effet). Désormais : il s'approche s'il peut, sinon il le lance quand même sur le Monolithe ; l'IA de base
+        /// ne lance plus jamais 9552 elle-même.</summary>
+        public override void Play()
+        {
+            try
+            {
+                TenterOffrande();
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Warn("[Bethel] Offrande Monolithique : {0}", ex);
+            }
+            var offrande = Fighter.Spells.TryGetValue(OffrandeMonolithique, out var s) ? s : null;
+            if (offrande != null)
+                Fighter.Spells.Remove(OffrandeMonolithique);
+            try
+            {
+                base.Play();
+            }
+            finally
+            {
+                if (offrande != null)
+                    Fighter.Spells[OffrandeMonolithique] = offrande;
+            }
+        }
+
+        void TenterOffrande()
+        {
+            var log = NLog.LogManager.GetCurrentClassLogger();
+            var offrande = Fighter.Spells.Values.FirstOrDefault(x => x.Id == OffrandeMonolithique);
+            var mono = Fighter.Team.Fighters.FirstOrDefault(x => x.IsAlive() && x is SummonedMonster sm && sm.Monster.Template.Id == Monolithe);
+            var tour = Fighter.Fight.TimeLine?.RoundNumber ?? 0;
+            string raison = null;
+            if (offrande == null) raison = "sort absent";
+            else if (mono == null) raison = "Monolithe absent";
+            else if (!Fighter.HasState(EtatMonolithe)) raison = "état 884 absent";
+            else if (Fighter.AP < offrande.CurrentSpellLevel.ApCost) raison = "PA";
+            else if (tour < 2) raison = "tour 1";
+            else if (m_derniereOffrande > 0 && tour - m_derniereOffrande < 3) raison = "relance (dernière au tour " + m_derniereOffrande + ")";
+            if (raison != null)
+            {
+                log.Info("[Bethel] Offrande Monolithique non lancée : {0}", raison);
+                return;
+            }
+
+            if (!Fighter.Position.Point.GetAdjacentCells().Contains(mono.Position.Point) && Fighter.MP > 0)
+                foreach (var resultat in new Actions.MoveNearTo(Fighter, mono).Execute(this))
+                    if (resultat == TreeSharp.RunStatus.Failure)
+                        break;
+
+            // « au contact de tous vos personnages » : les joueurs sans la marque de Pantang (885) la reçoivent, sinon 9553 -> 9554
+            // (cible E885) n'invoque aucun tentacule
+            foreach (var joueur in Fighter.OpposedTeam.Fighters.Where(x => x.IsAlive() && x is CharacterFighter && !x.HasState(885)).ToArray())
+                EtatsBoss.Ajouter(joueur, Fighter, 885, 9544, FightDispellableEnum.DISPELLABLE);
+
+            var contact = Fighter.Position.Point.GetAdjacentCells().Contains(mono.Position.Point);
+            var ok = contact
+                ? Fighter.CastSpell(offrande, mono.Cell, Game.Spells.SpellCastResult.HISTORY_ERROR)
+                : Fighter.CastSpell(offrande, mono.Cell, Game.Spells.SpellCastResult.HISTORY_ERROR, Game.Spells.SpellCastResult.NOT_IN_ZONE, Game.Spells.SpellCastResult.NO_LOS);
+            if (ok)
+            {
+                m_derniereOffrande = tour;
+                TentaculesAutourDesJoueurs(mono);
+            }
+            log.Info("[Bethel] Offrande Monolithique sur le Monolithe (case {0}, {1}) : {2}", mono.Cell.Id, contact ? "au contact" : "à distance", ok ? "lancée" : "refusée");
+        }
+
+        /// <summary>PADGREF 23/10 (test : « je vois pas les tentacules ») : 9554 n'invoquait qu'un Amas (zone Q1 réduite à une case) et
+        /// le rendait invisible. Règle : Amas de Tentacules Vaporeux (110 PV) au contact de tous les personnages, « là pour vous
+        /// bloquer » -> un Amas VISIBLE sur chaque case libre au contact de chaque personnage, invoqué par le Monolithe.</summary>
+        void TentaculesAutourDesJoueurs(FightActor mono)
+        {
+            const int Tentacules = 5124;
+            var fight = Fighter.Fight;
+            var grade = Game.Actors.RolePlay.Monsters.MonsterManager.Instance.GetMonsterGrade(Tentacules, 1);
+            var invoques = 0;
+            if (grade != null)
+                foreach (var joueur in Fighter.OpposedTeam.Fighters.Where(x => x.IsAlive() && x is CharacterFighter).ToArray())
+                    foreach (var point in joueur.Position.Point.GetAdjacentCells().ToArray())
+                    {
+                        var cell = fight.Map.Cells[point.CellId];
+                        if (!cell.Walkable || cell.NonWalkableDuringFight || fight.GetOneFighter(cell) != null)
+                            continue;
+                        var amas = new SummonedMonster(fight.GetNextContextualId(), mono.Team, mono, grade, cell);
+                        using (fight.StartSequence(SequenceTypeEnum.SEQUENCE_SPELL))
+                        {
+                            Handlers.Actions.ActionsHandler.SendGameActionFightSummonMessage(fight.Clients, amas);
+                            mono.AddSummon(amas);
+                            mono.Team.AddFighter(amas);
+                        }
+                        invoques++;
+                    }
+            foreach (var combattant in Fighter.Team.Fighters.ToArray())
+                foreach (var buff in combattant.GetBuffs(x => x is Game.Fights.Buffs.Customs.InvisibilityBuff && x.Spell.Id == 9554).ToArray())
+                    combattant.RemoveBuff(buff);
+            NLog.LogManager.GetCurrentClassLogger().Info("[Bethel] Offrande : {0} Amas de Tentacules invoqués au contact des joueurs", invoques);
+        }
+
+        static void InvoquerSiAbsent(AIFighter bethel, int monstre, int caseVoulue)
+        {
+            var log = NLog.LogManager.GetCurrentClassLogger();
+            var fight = bethel.Fight;
+            if (!bethel.IsAlive())
+                return;
+            if (bethel.Team.Fighters.Any(x => x.IsAlive() && x is SummonedMonster s && s.Monster.Template.Id == monstre))
+            {
+                log.Info("[Bethel] monstre {0} déjà invoqué par le passif", monstre);
+                return;
+            }
+            var gradeId = (bethel as MonsterFighter)?.MonsterGrade?.GradeId ?? 1;
+            var grade = Game.Actors.RolePlay.Monsters.MonsterManager.Instance.GetMonsterGrade(monstre, (int)Math.Max(1, Math.Min(5, (int)gradeId)));
+            if (grade == null)
+            {
+                log.Warn("[Bethel] grade introuvable pour le monstre {0}", monstre);
+                return;
+            }
+            var voulue = new Game.Maps.Cells.MapPoint((short)caseVoulue);
+            var cell = fight.Map.Cells
+                .Where(c => c.Walkable && !c.NonWalkableDuringFight && fight.GetOneFighter(c) == null)
+                .OrderBy(c => voulue.ManhattanDistanceTo(new Game.Maps.Cells.MapPoint(c)))
+                .FirstOrDefault();
+            if (cell == null)
+            {
+                log.Warn("[Bethel] aucune case libre pour le monstre {0}", monstre);
+                return;
+            }
+            // PADGREF 23/10 (portraits vides dans la frise après réinvocation) : invocation envoyée dans une séquence, comme une
+            // invocation par sort (hors séquence, le client n'affichait pas l'apparence dans la frise)
+            var invoc = new SummonedMonster(fight.GetNextContextualId(), bethel.Team, bethel, grade, cell);
+            using (fight.StartSequence(SequenceTypeEnum.SEQUENCE_SPELL))
+            {
+                Handlers.Actions.ActionsHandler.SendGameActionFightSummonMessage(fight.Clients, invoc);
+                bethel.AddSummon(invoc);
+                bethel.Team.AddFighter(invoc);
+            }
+            log.Info("[Bethel] passif sans invocation : monstre {0} invoqué case {1} (voulue {2})", monstre, cell.Id, caseVoulue);
+        }
     }
 
     [BrainIdentifier(5121)] public class MonolitheBrain : BrainPassif { public MonolitheBrain(AIFighter f) : base(f, 9559) { } }
@@ -617,14 +856,11 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     /// <summary>Tilamproie (Meno) : Mutation Instable.</summary>
     [BrainIdentifier(4459)] public class TilamproieBrain : BrainPassif { public TilamproieBrain(AIFighter f) : base(f, 6758) { } }
 
-    /// <summary>Dazak : Nimpatience (sans lui, résistances jamais baissées).</summary>
-    [BrainIdentifier(5319)] public class DazakBrain : BrainPassif { public DazakBrain(AIFighter f) : base(f, 10346) { } }
+    // Dazak : Nimpatience + Nintrépidité : voir BrasserieDazakBrains.cs (PADGREF 21/10)
 
-    /// <summary>Tanklume (Dazak) : Nimpatience.</summary>
-    [BrainIdentifier(5314)] public class TanklumeBrain : BrainPassif { public TanklumeBrain(AIFighter f) : base(f, 10346) { } }
+    // Tanklume (Dazak) : voir BrasserieDazakBrains.cs (PADGREF 21/10)
 
-    /// <summary>Boufbos (Dazak) : Nimpatience.</summary>
-    [BrainIdentifier(5315)] public class BoufbosBrain : BrainPassif { public BoufbosBrain(AIFighter f) : base(f, 10346) { } }
+    // Boufbos (Dazak) : voir BrasserieDazakBrains.cs (PADGREF 21/10)
 
     /// <summary>Barbelier (Dazak) : Nimpatience.</summary>
     [BrainIdentifier(5316)] public class BarbelierBrain : BrainPassif { public BarbelierBrain(AIFighter f) : base(f, 10346) { } }
@@ -632,8 +868,7 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     /// <summary>Kasrok (Dazak) : Nimpatience.</summary>
     [BrainIdentifier(5317)] public class KasrokBrain : BrainPassif { public KasrokBrain(AIFighter f) : base(f, 10346) { } }
 
-    /// <summary>Vatenbiere (Dazak) : Nimpatience.</summary>
-    [BrainIdentifier(5318)] public class VatenbiereBrain : BrainPassif { public VatenbiereBrain(AIFighter f) : base(f, 10346) { } }
+    // Vatenbière (Dazak) : voir BrasserieDazakBrains.cs (PADGREF 21/10)
 
     /// <summary>Tal Kasha.</summary>
     /// <summary>
@@ -654,7 +889,49 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
         public override void Play()
         {
             Controleur.DebutDeTour();
+            CheveuxPartirDeLa();
             base.Play();
+        }
+
+        /// <summary>PADGREF 23/10 (retour utilisateur : « Tal Kasha ne lance pas son sort qui la téléporte », 2 fois) : Cheveux partir de là
+        /// (7904, téléportation à 1-4 cases, interdit tant qu'elle est invulnérable) était jugé sans effet par l'IA. Hors invulnérabilité et
+        /// sans ennemi au contact, elle se téléporte (avant de marcher) sur la case libre à portée la plus proche de l'ennemi visible le plus
+        /// proche, puis l'IA normale joue (déplacement, Filature, Transe-Perse). 1re version : seulement si un ennemi était à 2-4 cases -> rien.</summary>
+        void CheveuxPartirDeLa()
+        {
+            const int Sort = 7904;
+            if (!Fighter.IsAlive() || !Fighter.Spells.TryGetValue(Sort, out var sort) || sort.CurrentSpellLevel == null)
+                return;
+
+            var ennemis = Fighter.OpposedTeam.Fighters.Where(x => x.IsAlive() && x.IsVisibleFor(Fighter)).ToList();
+            if (ennemis.Count == 0 || ennemis.Any(e => e.Position.Point.ManhattanDistanceTo(Fighter.Position.Point) <= 1))
+                return;
+
+            var carte = Fighter.Fight.Map;
+            var moi = Fighter.Position.Point;
+            int min = (int)sort.CurrentSpellLevel.MinRange, max = (int)sort.CurrentSpellLevel.Range;
+            int Proche(Stump.Server.WorldServer.Game.Maps.Cells.MapPoint p) => ennemis.Min(e => (int)e.Position.Point.ManhattanDistanceTo(p));
+            var actuelle = Proche(moi);
+
+            var cases = carte.Cells
+                .Where(c => c.Walkable && !c.NonWalkableDuringFight && Fighter.Fight.IsCellFree(c))
+                .Select(c => new { c, p = new Stump.Server.WorldServer.Game.Maps.Cells.MapPoint(c) })
+                .Select(x => new { x.c, d = (int)x.p.ManhattanDistanceTo(moi), e = Proche(x.p) })
+                .Where(x => x.d >= System.Math.Max(1, min) && x.d <= max && x.e < actuelle)
+                .OrderBy(x => x.e).ThenBy(x => x.d)
+                .Take(20);
+
+            foreach (var x in cases)
+            {
+                if (Fighter.CanCastSpell(sort, x.c) != Stump.Server.WorldServer.Game.Spells.SpellCastResult.OK)
+                    continue;
+                if (Fighter.CastSpell(sort, x.c))
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info("[Tal Kasha] Cheveux partir de là : case {0} -> {1} (ennemi à {2} au lieu de {3})", moi.CellId, x.c.Id, x.e, actuelle);
+                    return;
+                }
+            }
+            NLog.LogManager.GetCurrentClassLogger().Info("[Tal Kasha] Cheveux partir de là : aucune case lançable (case {0}, ennemi à {1})", moi.CellId, actuelle);
         }
 
         public TalKashaControleur Controleur { get; }
@@ -878,20 +1155,20 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     /// <summary>Cabosseur (Kao) : Chocolatomanie.</summary>
     [BrainIdentifier(5672)] public class CabosseurBrain : BrainPassif { public CabosseurBrain(AIFighter f) : base(f, 11994) { } }
 
-    /// <summary>Chause (Katrepat).</summary>
-    [BrainIdentifier(4968)] public class ChauseBrain : BrainPassif { public ChauseBrain(AIFighter f) : base(f, 9078) { } }
+    /// <summary>Chause (Belvédère d'Ilyzaelle) : Brûle-âme + Doublâme sur un joueur en Brûlure (PADGREF 22/10, voir IlyzaelleBrain.cs).</summary>
+    [BrainIdentifier(4968)] public class ChauseBrain : BrulureBrain { public ChauseBrain(AIFighter f) : base(f, 9078, 9060) { } }
 
-    /// <summary>Ectorche (Katrepat).</summary>
-    [BrainIdentifier(4969)] public class EctorcheBrain : BrainPassif { public EctorcheBrain(AIFighter f) : base(f, 9078) { } }
+    /// <summary>Ectorche (Belvédère d'Ilyzaelle) : Brûle-âme + sort spécial sur un joueur en Brûlure (voir IlyzaelleBrain.cs).</summary>
+    [BrainIdentifier(4969)] public class EctorcheBrain : BrulureBrain { public EctorcheBrain(AIFighter f) : base(f, 9078, 9064) { } }
 
-    /// <summary>Esprigne (Katrepat).</summary>
-    [BrainIdentifier(4970)] public class EsprigneBrain : BrainPassif { public EsprigneBrain(AIFighter f) : base(f, 9078) { } }
+    /// <summary>Esprigne (Belvédère d'Ilyzaelle) : Brûle-âme + sort spécial sur un joueur en Brûlure (voir IlyzaelleBrain.cs).</summary>
+    [BrainIdentifier(4970)] public class EsprigneBrain : BrulureBrain { public EsprigneBrain(AIFighter f) : base(f, 9078, 9068) { } }
 
-    /// <summary>Feutome (Katrepat).</summary>
-    [BrainIdentifier(4971)] public class FeutomeBrain : BrainPassif { public FeutomeBrain(AIFighter f) : base(f, 9078) { } }
+    /// <summary>Feutome (Belvédère d'Ilyzaelle) : Brûle-âme + sort spécial sur un joueur en Brûlure (voir IlyzaelleBrain.cs).</summary>
+    [BrainIdentifier(4971)] public class FeutomeBrain : BrulureBrain { public FeutomeBrain(AIFighter f) : base(f, 9078, 9073) { } }
 
-    /// <summary>Crâme (Katrepat).</summary>
-    [BrainIdentifier(4972)] public class CrameBrain : BrainPassif { public CrameBrain(AIFighter f) : base(f, 9075) { } }
+    /// <summary>Crâme (Belvédère d'Ilyzaelle) : Brûle-âme + sort spécial sur un joueur en Brûlure (voir IlyzaelleBrain.cs).</summary>
+    [BrainIdentifier(4972)] public class CrameBrain : BrulureBrain { public CrameBrain(AIFighter f) : base(f, 9075, 9076) { } }
 
     /// <summary>Père Ver.</summary>
     [BrainIdentifier(4726)] public class PereVerBrain : BrainPassif { public PereVerBrain(AIFighter f) : base(f, 7367) { } }
@@ -900,7 +1177,25 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     [BrainIdentifier(4731)] public class CycloporthBrain : BrainPassif { public CycloporthBrain(AIFighter f) : base(f, 7851) { } }
 
     /// <summary>Morsquale (Père Ver).</summary>
-    [BrainIdentifier(4730)] public class MorsqualeBrain : BrainPassif { public MorsqualeBrain(AIFighter f) : base(f, 7845) { } }
+    /// <summary>PADGREF 23/10 (retour utilisateur : « passif Les Dents de la Mer de Sable et état Lourd (non visible) ») : le passif ne donne
+    /// qu'Inébranlable (157) ; l'état Lourd (63, ne peut pas être porté) est ajouté sans être envoyé au client.</summary>
+    [BrainIdentifier(4730)]
+    public class MorsqualeBrain : BrainPassif
+    {
+        public MorsqualeBrain(AIFighter f) : base(f, 7845)
+        {
+            if (f.Fight.State == FightState.Fighting)
+                EtatsBoss.Ajouter(f, f, (int)SpellStatesEnum.LOURD_63, 7845, affiche: false);
+            else
+                f.Fight.FightStarted += Debut;
+        }
+
+        void Debut(IFight fight)
+        {
+            fight.FightStarted -= Debut;
+            EtatsBoss.Ajouter(Fighter, Fighter, (int)SpellStatesEnum.LOURD_63, 7845, affiche: false);
+        }
+    }
 
     /// <summary>Comte Razof (sans lui, résistances jamais baissées).</summary>
     [BrainIdentifier(4803)] public class ComteRazofBrain : BrainPassif { public ComteRazofBrain(AIFighter f) : base(f, 8512) { } }
@@ -1019,4 +1314,139 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     /// <summary>Pipisteuse (Anerice) : Marche des goules.</summary>
     [BrainIdentifier(4881)] public class PipisteuseBrain : BrainPassif { public PipisteuseBrain(AIFighter f) : base(f, 8726) { } }
 
+}
+
+namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
+{
+    /// <summary>PADGREF 23/10 (retour utilisateur : « Coraillement Magistral : le lance mais ne prend pas -3 PM ») : Coraillement Magistral
+    /// (1026) donne +12 PA et +400 puissance pendant 4 tours, et à la fin de chacun de ces tours le Corailleur Magistral perd ses 3 PM.
+    /// Dans les données, le -3 PM est un déclencheur « fin de tour » de durée 1 : posé en fin de tour pour 1 tour, il était décompté
+    /// au début du tour suivant, avant de servir. Ici : à chaque fin de tour où le +12 PA est actif, -3 PM pour le tour suivant.</summary>
+    [BrainIdentifier(1027)]
+    public class CorailleurMagistralBrain : Brain
+    {
+        const int Coraillement = 1026;
+
+        public CorailleurMagistralBrain(AIFighter f) : base(f)
+        {
+            f.Fight.TurnStopped += (fight, joueur) =>
+            {
+                if (joueur != f || !f.IsAlive() || !f.GetBuffs(x => x.Spell.Id == Coraillement && x is StatBuff s && s.Value > 0).Any())
+                    return;
+                BonusTemporaire.Stat(f, Coraillement, EffectsEnum.Effect_SubMP, PlayerFields.MP, -3, 2);
+            };
+        }
+
+        /// <summary>PADGREF 23/10 (log VPS : « 1026 Coraillement Magistral jamais lancé ») : pour l'IA, +12 PA / +400 puissance et le -3 PM
+        /// sur soi s'annulaient (score nul) : le sort n'était jamais choisi. Lancé au début du tour dès qu'il est disponible.</summary>
+        public override void Play()
+        {
+            if (Fighter.Spells.TryGetValue(Coraillement, out var sort) && Fighter.CanCastSpell(sort, Fighter.Cell) == Game.Spells.SpellCastResult.OK)
+                Fighter.CastSpell(sort, Fighter.Cell);
+            base.Play();
+        }
+    }
+}
+
+namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
+{
+    /// <summary>PADGREF 23/10 (retour utilisateur : « Ivremort ne gagne pas son boost infini de 100 intel ») : Ivremor (4161, Énervé 4224) :
+    /// « Et une bouteille de Rhum ! » (6070 : +100 Intelligence jusqu'à la fin du combat, 1 PA, 1 fois par tour) lancé au début de
+    /// CHAQUE tour, donc cumulé (avant : jamais, ou une seule fois — l'IA de soutien ne relance pas un sort déjà actif).</summary>
+    [BrainIdentifier(4161), BrainIdentifier(4224)]
+    public class IvremorBrain : Brain
+    {
+        const int BouteilleDeRhum = 6070;
+
+        public IvremorBrain(AIFighter f) : base(f) { }
+
+        public override void Play()
+        {
+            if (Fighter.Spells.TryGetValue(BouteilleDeRhum, out var sort) && Fighter.CanCastSpell(sort, Fighter.Cell) == Game.Spells.SpellCastResult.OK)
+                Fighter.CastSpell(sort, Fighter.Cell);
+            base.Play();
+        }
+    }
+
+    /// <summary>PADGREF 23/10 (retour utilisateur : « Milimaître ne lance pas Feintrigue ») : Feintrigue (4717 : téléportation 1-4 PO sur une
+    /// case libre, -3 PM aux ennemis autour à l'arrivée) est un malus, évalué après les dégâts : ses 10 PA partaient en Coupression /
+    /// Plantonyme. Au début de son tour, s'il n'est au contact d'aucun ennemi, il se téléporte à côté de l'ennemi le plus proche.</summary>
+    [BrainIdentifier(3730)]
+    public class MilimaitreBrain : Brain
+    {
+        const int Feintrigue = 4717;
+
+        public MilimaitreBrain(AIFighter f) : base(f) { }
+
+        public override void Play()
+        {
+            try
+            {
+                LancerFeintrigue();
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Warn("[Milimaître] Feintrigue : {0}", ex.Message);
+            }
+            base.Play();
+        }
+
+        void LancerFeintrigue()
+        {
+            if (!Fighter.Spells.TryGetValue(Feintrigue, out var sort))
+                return;
+            var ennemis = Fighter.OpposedTeam.Fighters.Where(x => x.IsAlive() && x.IsVisibleFor(Fighter)).ToList();
+            var point = Fighter.Position.Point;
+            if (ennemis.Count == 0 || ennemis.Any(x => x.Position.Point.IsAdjacentTo(point)))
+                return;
+            var cible = Fighter.Map.Cells
+                .Where(c => Fighter.Fight.IsCellFree(c) && c.Walkable && !c.NonWalkableDuringFight)
+                .Select(c => new { c, p = new Game.Maps.Cells.MapPoint(c) })
+                .Where(x => ennemis.Any(e => e.Position.Point.IsAdjacentTo(x.p)))
+                .OrderByDescending(x => ennemis.Count(e => e.Position.Point.ManhattanDistanceTo(x.p) <= 2))
+                .ThenBy(x => x.p.ManhattanDistanceTo(point))
+                .Select(x => x.c)
+                .FirstOrDefault(c => Fighter.CanCastSpell(sort, c) == Game.Spells.SpellCastResult.OK);
+            if (cible != null)
+                Fighter.CastSpell(sort, cible);
+        }
+    }
+
+    /// <summary>PADGREF 23/10 (retour utilisateur : « Sramouraï ne se donne pas son PM avec Sens du devoir ») : sous Sens du devoir (4727),
+    /// chaque coup reçu donne +1 PM aux combattants autour (4726, zone 1 à 3 cases : le Sramouraï lui-même n'y est pas). Il gagne
+    /// aussi +1 PM par coup reçu, pour son prochain tour.</summary>
+    [BrainIdentifier(3732), BrainIdentifier(3776)]
+    public class SramouraiBrain : Brain
+    {
+        const int SensDuDevoir = 4727, SensDuDevoirDeclenche = 4726;
+
+        public SramouraiBrain(AIFighter f) : base(f)
+        {
+            f.DamageInflicted += (moi, degats) =>
+            {
+                // PADGREF 23/10 (2e retour « Sens du devoir ne donne pas les boosts PM ») : sur le déclencheur, Spell = sort DÉCLENCHÉ
+                // (4726) et ParentSpell = 4727 ; le test sur 4727 ne trouvait jamais le déclencheur -> aucun PM.
+                if (degats == null || degats.Amount <= 0 || degats.Source == null || !moi.IsEnnemyWith(degats.Source) || !moi.IsAlive() ||
+                    moi.Fight.State != FightState.Fighting || !SousSensDuDevoir(moi))
+                    return;
+                BonusTemporaire.Stat(moi, SensDuDevoir, EffectsEnum.Effect_AddMP_128, PlayerFields.MP, 1, moi.Fight.FighterPlaying == moi ? 1 : 2);
+                NLog.LogManager.GetCurrentClassLogger().Info("[Sramouraï] Sens du devoir : {0} frappé par {1}, +1 PM", moi, degats.Source);
+            };
+        }
+
+        static bool SousSensDuDevoir(FightActor moi) => moi.GetBuffs(x => x is TriggerBuff tb &&
+            (tb.Spell.Id == SensDuDevoirDeclenche || tb.Spell.Id == SensDuDevoir || tb.ParentSpell?.Id == SensDuDevoir)).Any();
+
+        /// <summary>Sens du devoir (3 PA, relance 3) lancé en début de tour dès qu'il est disponible (l'IA de base le jugeait sans effet).</summary>
+        public override void Play()
+        {
+            if (Fighter.Spells.TryGetValue(SensDuDevoir, out var sort) && !SousSensDuDevoir(Fighter) &&
+                Fighter.CanCastSpell(sort, Fighter.Cell) == Game.Spells.SpellCastResult.OK)
+            {
+                Fighter.CastSpell(sort, Fighter.Cell);
+                NLog.LogManager.GetCurrentClassLogger().Info("[Sramouraï] Sens du devoir lancé par {0}", Fighter);
+            }
+            base.Play();
+        }
+    }
 }

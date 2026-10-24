@@ -138,7 +138,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Teams
         {
             List<MonsterDungeonWaveSpawnEntity> m_waves = MonsterManager.Instance.GetMonsterDungeonsWaveSpawnsByMapId(MapId);
             if (m_waves.Count < 1) return;
-            var affaiblies = VaguesAffaiblies.Contains(MapId);
+            var affaiblies = EstAffaiblie(MapId);
             foreach(var wavemonster in m_waves)
             {
                 var grade = MonsterManager.Instance.GetMonsterGrade(wavemonster.MonsterGradeId);
@@ -160,6 +160,11 @@ namespace Stump.Server.WorldServer.Game.Fights.Teams
         /// (Galerie du Phossile : salle du boss 130548736 ; Fabrique de Malléfisk : 130286592).
         /// </summary>
         public static readonly HashSet<int> VaguesAffaiblies = new HashSet<int> { 130548736, 130286592, 129500160, 143393281, 143917569, 143138823, 160564224, 161743872, 162004992, 137102336 }; // PADGREF 20/10 : + Reine des Voleurs (137102336) // + Horologium de XLII, Mégalithe de Fraktale, Défi du Chalœil, Pounicheur, Plateau de Ush // + Palais du Roi Nidas, Œil de Vortex
+
+        /// <summary>PADGREF 23/10 (demande utilisateur : « même système des vagues 2/3/4/5, -25 % de PV et monstres plus bas niveau, sur
+        /// tous les donjons à vagues (12 au total) ») : toute salle qui a des vagues (avant : seulement les 10 de VaguesAffaiblies, il
+        /// manquait 136578048 et 136840192).</summary>
+        public static bool EstAffaiblie(int mapId) => VaguesAffaiblies.Contains(mapId) || MonsterManager.Instance.GetMonsterDungeonsWaveSpawnsByMapId(mapId).Count > 0;
 
         public virtual bool ChangeLeader(FightActor leader)
         {

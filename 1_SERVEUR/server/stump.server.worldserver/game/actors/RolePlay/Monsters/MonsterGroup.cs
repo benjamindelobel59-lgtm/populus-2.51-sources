@@ -316,6 +316,9 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Monsters
         {
             Fight = null;
 
+            // PADGREF 24/10 : monstres limités à délai (Dark Vlad, archimonstres) : délai de réapparition après leur mort
+            Maps.Spawns.MonstresLimites.SurFinDeCombat(this, fight);
+
             var handler = ExitFight;
             if (handler != null) handler(this, fight);
         }
@@ -327,7 +330,9 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Monsters
             monster.SetMonsterGroup(this);
             m_monsters.Add(monster);
 
-            if (m_monsters.Count == 1)
+            // PADGREF 24/10 (demande utilisateur : « les boss de donjon doivent toujours être le monstre qu'on voit sur la carte ») : un boss
+            // devient le chef du groupe (monstre affiché), même s'il n'est pas le premier ajouté
+            if (m_monsters.Count == 1 || monster.Template.IsBoss && (Leader == null || !Leader.Template.IsBoss))
                 Leader = monster;
 
             Map.Refresh(this);
@@ -358,12 +363,59 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Monsters
         protected virtual int CountInitialFighters() => Count();
 
         public override GameContextActorInformations GetGameContextActorInformations(Character character)
+        {
+            // PADGREF 21/10 : salle à vagues (monsters_spawns_dungeons_waves) : le groupe est envoyé avec ses vagues, le client affiche
+            // l'icône de vague « x N » et l'XP des vagues dans l'infobulle (officiel 2.51, jamais envoyé avant)
+            var vagues = InfosVagues(character);
+            if (vagues != null && vagues.Length > 0)
+                return new GameRolePlayGroupMonsterWaveInformations(Id, Leader.Look.GetEntityLook(), GetEntityDispositionInformations(), false,
+                    Heroique.ButinHeroique.Instance.PorteButin(this), ContientRecherche(), GetGroupMonsterStaticInformations(character), 0, 0,
+                    (sbyte)vagues.Length, vagues) { AgeBonus = DisplayedAgeBonus };
+            return InfosSansVagues(character);
+        }
+
+        /// <summary>PADGREF 21/10 : monstres de chaque vague de la salle, pour le nombre de joueurs du groupe du personnage (1 à 4 : palier 1).</summary>
+        GroupMonsterStaticInformations[] InfosVagues(Character character)
+        {
+            if (Map == null)
+                return null;
+            var toutes = MonsterManager.Instance.GetMonsterDungeonsWaveSpawnsByMapId(Map.Id);
+            if (toutes.Count == 0)
+                return null;
+            var joueurs = character?.Party?.MembersCount ?? 1;
+            var palier = joueurs < 5 ? 1 : joueurs;
+            var vagues = toutes.Where(v => (v.MinPlayerLevel ?? 1) == palier).ToList();
+            if (vagues.Count == 0)
+                vagues = toutes.Where(v => (v.MinPlayerLevel ?? 1) == 1).ToList();
+            if (vagues.Count == 0)
+                vagues = toutes;
+            var affaiblies = FightTeam.EstAffaiblie(Map.Id);
+            return vagues.GroupBy(v => v.WaveNumber ?? 0).OrderBy(g => g.Key).Select(g =>
+            {
+                var monstres = g.Select(v =>
+                {
+                    var grade = MonsterManager.Instance.GetMonsterGrade(v.MonsterGradeId);
+                    if (affaiblies && grade != null)
+                        grade = MonsterManager.Instance.GetMonsterGrade(grade.MonsterId, 1) ?? grade;
+                    return grade == null ? null : new Monster(grade, this);
+                }).Where(m => m != null).ToList();
+                return monstres.Count == 0 ? null : new GroupMonsterStaticInformations(monstres[0].GetMonsterInGroupLightInformations(),
+                    monstres.Skip(1).Select(m => m.GetMonsterInGroupInformations()).ToArray());
+            }).Where(x => x != null).ToArray();
+        }
+
+        /// <summary>PADGREF 24/10 (demande utilisateur) : groupe avec un recherché -> drapeau hasAVARewardToken (jeton AvA, jamais utilisé
+        /// sur Padgref) : le client 2.51 affiche l'icône « nugget » de conquestIcon.swf, remplacée par une flamme ORANGE (copie de la
+        /// flamme bleue des archimonstres). Les archimonstres gardent leur flamme bleue (calculée par le client depuis Monsters.d2o).</summary>
+        bool ContientRecherche() => GetMonsters().Any(m => Recherches.RecherchesManager.IsWanted(m.Template.Id));
+
+        GameContextActorInformations InfosSansVagues(Character character)
                                                         => new GameRolePlayGroupMonsterInformations(Id,
                                                             Leader.Look.GetEntityLook(),
                                                             GetEntityDispositionInformations(),
                                                             false,
                                                             Heroique.ButinHeroique.Instance.PorteButin(this), // MYSTIC : coffre héroïque (butin d'un joueur mort)
-                                                            false,
+                                                            ContientRecherche(), // PADGREF 24/10 : flamme orange (icône « nugget » du client remplacée)
                                                             GetGroupMonsterStaticInformations(character),
                                                             0,
                                                             0,

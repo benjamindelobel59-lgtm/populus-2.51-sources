@@ -33,6 +33,17 @@ namespace Stump.Server.WorldServer.Game.Dialogs.Interactives
 
         public const int HavenBagSubAreaId = 851;
 
+        // PADGREF 23/10 (demande utilisateur) : le zaap de l'Arche de Vili (Eliocalypse) mène SEULEMENT aux 4 salles des portails
+        // (une par zone), gratuitement ; le joueur arrive à côté du portail (carte -> case du portail)
+        public const int ArcheDeVili = 202899464;
+        public static readonly Dictionary<int, short> SallesPortails = new Dictionary<int, short>
+        {
+            { 201588736, 438 },   // Blessures de Guerre
+            { 201850882, 340 },   // Désert de Misère
+            { 201458178, 341 },   // Royaume Corrompu (portail 518009)
+            { 202246150, 273 },   // Galère de Servitude
+        };
+
         public DialogTypeEnum DialogType => DialogTypeEnum.DIALOG_TELEPORTER;
 
         public Character Character
@@ -81,7 +92,13 @@ namespace Stump.Server.WorldServer.Game.Dialogs.Interactives
 
             Cell cell;
 
-            if (map.Zaap != null)
+            short casePortail;
+            var pres = Zaap.Map.Id == ArcheDeVili && SallesPortails.TryGetValue(map.Id, out casePortail)
+                ? new Maps.Cells.MapPoint(casePortail).GetAdjacentCells(entry => map.GetCell(entry).Walkable).FirstOrDefault()
+                : null;
+            if (pres != null)
+                cell = map.GetCell(pres.CellId);
+            else if (map.Zaap != null)
             {
                 cell = map.GetCell(map.Zaap.Position.Point.GetCellInDirection(DirectionsEnum.DIRECTION_SOUTH_WEST, 1).CellId);
 
@@ -125,6 +142,8 @@ namespace Stump.Server.WorldServer.Game.Dialogs.Interactives
 
         public short GetCostTo(Map map)
         {
+            if (Zaap.Map.Id == ArcheDeVili)
+                return 0;
             var pos = map.Position;
             var pos2 = Zaap.Map.Position;
 

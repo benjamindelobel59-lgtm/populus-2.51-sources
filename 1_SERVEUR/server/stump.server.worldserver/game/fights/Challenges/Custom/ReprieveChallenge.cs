@@ -34,6 +34,16 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
 
             Target = Fight.GetRandomFighter<MonsterFighter>();
 
+            // PADGREF 21/10 (retour utilisateur) : Kolosso (challenge 1) = « En dernier (Blérom) » : la cible est un Blérom, jamais le
+            // Kolosso (avant : monstre au hasard, le Kolosso pouvait être désigné)
+            if (Id == (int)ChallengeEnum.KOLOSSO__CHALLENGE_1_)
+            {
+                var blerom = Fight.GetAllFighters<MonsterFighter>(x => x.Monster.Template.Id == (int)Stump.DofusProtocol.Enums.MonsterIdEnum.BLEROM)
+                    .OrderBy(x => System.Guid.NewGuid()).FirstOrDefault();
+                if (blerom != null)
+                    Target = blerom;
+            }
+
             foreach (var fighter in Target.Team.Fighters)
                 fighter.Dead += OnDead;
         }

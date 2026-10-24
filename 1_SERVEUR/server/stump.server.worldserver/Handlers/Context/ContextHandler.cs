@@ -76,7 +76,7 @@ namespace Stump.Server.WorldServer.Handlers.Context
             // MYSTIC 19/10 : le joueur bouge lui-meme -> arret du trajet automatique de chasse au tresor
             if (Game.Chasses.Autopilote.EstEnCours(client.Character))
                 Game.Chasses.Autopilote.Arreter(client.Character, "Trajet automatique arrete. Reclique sur le lien pour repartir.");
-            if (!client.Character.CanMove())
+            if (!client.Character.CanMove() || Game.Bugs.ReplayLecteur.EnCours(client.Character))
             {
                 SendGameMapNoMovementMessage(client, (short)client.Character.Position.Point.X, (short)client.Character.Position.Point.Y);
                 return;
@@ -88,6 +88,13 @@ namespace Stump.Server.WorldServer.Handlers.Context
                 movementPath.SetWalk();
             if (client.Character.IsFighting())
             {
+                // PADGREF 23/10 : combat en pause (.pause) -> pas de déplacement
+                if (client.Character.Fight.EnPause)
+                {
+                    client.Character.SendServerMessage("Combat en pause : attends la reprise.");
+                    SendGameMapNoMovementMessage(client, (short)client.Character.Position.Point.X, (short)client.Character.Position.Point.Y);
+                    return;
+                }
                 if (client.Character.Fight.FighterPlaying is CompanionActor)
                     client.Character.Fight.FighterPlaying.StartMove(movementPath);
                 else

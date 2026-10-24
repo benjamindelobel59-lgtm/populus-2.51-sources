@@ -2,7 +2,7 @@
 
 Dépôt de **partage** des modifications faites côté Mystic (serveur Dofus 2.51, émulateur Stump C# .NET 4.8). Ce dépôt n'est relié à
 aucun serveur : il sert seulement à récupérer nos changements. Le détail fichier par fichier, daté, est dans **`JOURNAL_DES_MODIFICATIONS.txt`** ;
-ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **20/10/2026**.
+ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **24/10/2026**.
 
 ## Contenu du dépôt
 | Dossier | Contenu |
@@ -76,3 +76,43 @@ ce fichier-ci donne la vue d'ensemble. Dernière mise à jour : **20/10/2026**.
   - `DimensionsBrains.cs` : `KrobeBrain` (passif 2.51 gardé + condition de mort officielle sur N tours consécutifs, évaluée au début du tour du Krobe, mort à la fin de son tour, messages dans le chat) : Tabacille (aucun soin, vol de vie autorisé), Verminocule (personnage au contact), Bacterrib (aucun adversaire ≤ 5 cases), Virustine (ni déplacée ni PM retirés), Protozorreur (Infection 6 tours) ; `PataugermeBrain` (4 éléments entre deux de ses tours, 3 tours, meurt au coup qui complète).
   - `CastSpell.cs` : classes `Protozorreur` (Attraction cellulaire codée : attiré en ligne droite jusqu'au contact seulement si l'attaquant est aligné, 1re frappe du tour, arrêt sur un Protoglyphe ; un Protoglyphe par case, pas relancé par ses propres dégâts) et `Dislocation` (dégâts d'un Krobe Disloqué → Malamibe x2 avec les stats de l'attaquant, puis son -50 %).
   - `FightActor.cs` : événement statique `SoinApplique` (Tabacille) ; Protozorreur jamais porté (`CarryActor`).
+
+## 21/10 → 24/10/2026 — SQL 82 à 166, serveurs, client
+- `3_SQL_WORLD` : SQL 82 à 166 à jouer dans l'ordre (89 et 93 absents, voir `3_SQL_WORLD/LISEZ-MOI.md`). Plusieurs tables `padgref_*` sont créées au démarrage du World.
+- `4_CLIENT` : versions actuelles de tous les fichiers client modifiés (Npcs.d2o, Spells/SpellLevels.d2o, i18n, maps, icônes, modules UI…).
+- `6_SERVEURS_COMPILES` : WorldServer (debug53) et AuthServer (40 comptes de jeu par compte web) du 24/10.
+- **21/10**
+- Panoplies et drops DofusDB (SQL 82-89), box de boss (SQL 87 : 108 box, table padgref_box_boss), Panoplie du Corbac (SQL 88).
+- Vagues de monstres (timeline, infobulle), trophées de succès, mise à jour obligatoire du client (AuthServer : patch_client.txt).
+- IA de soutien, Obsidiantre, Toxoliath (+ enclos : PaddockManager.LeaveHub, SQL 90), Dazak (crash du Tanklume corrigé),
+  passifs « à la mort » (LanceParUnMort), Ventre de la Baleine, Kolosso, Nileza, Missiz Frizz, Klime (SQL 91), Sylargh, Ilyzaelle.
+- **22/10**
+- Quêtes de Frigost et drops de quête (SQL 92-93), Moumoute du Royalmouth, Village enseveli (SQL 94), ressources de donjon,
+  monstres rares en zone (SQL 95), recherchés de Frigost (import 2.74), Éliocalypse (4 Cavaliers : salles, passages, portails).
+- **23/10**
+- Comte Harebourg (5 salles DPLN, Strigide fuyard, Stricannement), Éliocalypse salles modulaires (SQL 112-113), icônes d'états 2.7x,
+  combat : No anim, vitesse x2, respawn rapide, .pause, replay, vote ; launcher (session gardée) ; menu admin (téléport donjons) ;
+  chasses légendaires (SQL 137), Kralamoure (138), Mantiscore (139), Père Ver (140), Pandala (SQL 143-148), accès Frigost.
+- **24/10**
+- Enraciné / Pesanteur bloquent les téléportations (FightActor.TeleportationBloquee + tous les effets de téléportation).
+- Glyphes : pas de déclenchement à la traversée, malus de PM à l'entrée d'une aura (FightPath, GlyphAura).
+- Comte : duos de boss (SQL 152), Multicomte seulement vulnérable, Pendultimatum aléatoire 1-3 Pi/2 (Confusion.cs, journal
+  « [Confusion] pose »), confusion du joueur porté.
+- Sorts « sans cible » (Agular, Flèches, Rassemblement : SQL 153 + Spells/SpellLevels.d2o : zone principale, sans zone additionnelle).
+- Placements FIXES des salles de boss (SQL 154, PlacementsFixes.cs, table padgref_placements_fixes).
+- Boss toujours visible en tête de groupe ; flamme orange au-dessus des groupes avec un recherché ; succès des recherchés en fin de
+  chasse légendaire ; jalon rouge reposable ; « Y aller » depuis la Malle aux trésors.
+- Limites de réapparition : archimonstres 1/zone/espèce, 4 h (SQL 155) ; Dark Vlad 3 h ; Gardienne des égouts 10 min
+  (MonstresLimites.cs, table padgref_limites_reapparition).
+- Chasseur de primes : un bouton par recherché, 50 000 kamas (SQL 156) ; Marin frigostien / barque du Berceau d'Alma.
+- Quêtes d'accès Otomaï (231, 232, donnée à la création) et Frigost (649) : maisons / enclos / zaaps / prismes (SQL 157,
+  AccesFrigost.QueteAcces, FinishQuestReply « QuestFinish », réponses « afficher: »).
+- Maisons : village des Éleveurs d'Otomaï (SQL 158), Pandala (SQL 159 + 165 : anciennes Téléportations retirées des portes).
+- PNJ : Warko Linch Kaliptus <-> Cimetière primitif, Agathe Mainate Cania <-> Nimotopia (SQL 160) ; 7 gardiens de donjon dont la
+  réponse « Entrer » avait aussi l'ancienne téléportation officielle (SQL 164).
+- Donjons : Minotoror 3 salles du labyrinthe avant le boss (SQL 161 + 166), Château Ensablé que des Pichons (SQL 162), entrée du
+  Maître Corbac sur la salle 1 (SQL 163).
+- Changement de carte : voisin du client utilisé si la base diffère + journal « [Changement de carte] » ; petites zones reliées à un
+  bord gardées (Map.GetLandingCells, Character.ZonePrincipale).
+- 40 comptes de jeu par compte web (site, AuthServer LauncherApiWeb, launcher) ; launcher sans placement des fenêtres.
+

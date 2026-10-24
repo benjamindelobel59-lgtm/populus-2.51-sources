@@ -28,6 +28,14 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
             set;
         }
 
+        /// <summary>PADGREF 21/10 : renvoi de dommages limite a un type de coup (declencheur du client : DR distance, DM/DCAC contact,
+        /// DS sort, DC arme) ; null = tous les coups. Voir StatsBuff et FightActor.RenvoiExclu.</summary>
+        public string RenvoiLimite
+        {
+            get;
+            set;
+        }
+
         public override void Apply()
         {
             base.Apply();
@@ -49,13 +57,13 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
         public override AbstractFightDispellableEffect GetAbstractFightDispellableEffect()
         {
             if (Delay == 0)
-                return new FightTemporaryBoostEffect((uint)Id, Target.Id, Duration, (sbyte)Dispellable, (ushort)Spell.Id, (uint)(EffectFix?.ClientEffectId ?? Effect.Id), 0, Math.Abs(Value));
+                return new FightTemporaryBoostEffect((uint)Id, Target.Id, Duration, (sbyte)Dispellable, (ushort)Spell.Id, (uint)(EffectFix?.ClientEffectId ?? EffetUidClient), 0, Math.Abs(Value));
 
-            var values = Effect.GetValues();
+            var values = TriggerBuff.ValeursPourClient(Effect); // PADGREF 23/10 : min / max lisibles par le client
 
             return new FightTriggeredEffect((uint)Id, Target.Id, Delay,
                 (sbyte)Dispellable,
-                (ushort)Spell.Id, (uint)(EffectFix?.ClientEffectId ?? Effect.Id), 0,
+                (ushort)Spell.Id, (uint)(EffectFix?.ClientEffectId ?? EffetUidClient), 0,
                 (values.Length > 0 ? Convert.ToInt32(values[0]) : 0),
                 (values.Length > 1 ? Convert.ToInt32(values[1]) : 0),
                 (values.Length > 2 ? Convert.ToInt32(values[2]) : 0),

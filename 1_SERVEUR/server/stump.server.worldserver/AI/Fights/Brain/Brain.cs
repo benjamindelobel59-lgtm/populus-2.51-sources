@@ -29,6 +29,110 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
             Fighter = fighter;
             Environment = new EnvironmentAnalyser(Fighter);
             SpellSelector = new SpellSelector(Fighter, Environment);
+
+            // PADGREF 23/10 : sorts de départ des monstres de l'Eliocalypse (passifs : voir SortsDeDepart)
+            SortsDeDepart.Poser(fighter);
+
+            // PADGREF 21/10 : journal des sorts jamais lancés pendant le combat
+            try
+            {
+                Fighter.SpellCasted += (caster, handler) => { if (handler?.Spell != null) m_sortsLances.Add(handler.Spell.Id); };
+                if (Fighter.Fight != null)
+                    Fighter.Fight.FightEnded += JournalSortsJamaisLances;
+            }
+            catch (System.Exception ex)
+            {
+                logger.Warn("[IA-sorts] journal impossible pour {0} : {1}", Fighter, ex.Message);
+            }
+        }
+
+        /// <summary>PADGREF 21/10 : l'IA de base lance aussi ses sorts de SOUTIEN (sur un allié ou sur soi) que le choix de sorts
+        /// normal ignorait (ex. Démère, Crapitulation, Soufre douleur, Neuthron). Seulement les monstres SANS IA à nous.</summary>
+        [Variable(true)]
+        public static bool SoutienAuto = true;
+
+        /// <summary>PADGREF 21/10 : fin de combat : une ligne [IA-sorts] par monstre qui a joué et n'a jamais lancé certains sorts.</summary>
+        [Variable(true)]
+        public static bool LogSortsJamaisLances = true;
+
+        readonly System.Collections.Generic.HashSet<int> m_sortsLances = new System.Collections.Generic.HashSet<int>();
+        int m_toursJoues;
+
+        static readonly System.Collections.Concurrent.ConcurrentDictionary<int, int> s_typeSoutien =
+            new System.Collections.Concurrent.ConcurrentDictionary<int, int>();
+
+        static readonly System.Collections.Generic.HashSet<int> s_effetsInvocation = new System.Collections.Generic.HashSet<int> { 180, 181, 185, 405, 1008, 1011, 1097, 2796 };
+        static readonly System.Collections.Generic.HashSet<int> s_effetsSoin = new System.Collections.Generic.HashSet<int> { 81, 108, 143, 1109 };
+
+        /// <summary>0 = pas un sort de soutien ; bit 1 = sur un allié (sinon sur soi) ; bit 2 = soigne.
+        /// Soutien = aucun effet visant un ennemi (« A »), au moins une cible alliée / soi, pas d'invocation, coût en PA &gt; 0.</summary>
+        static int TypeSoutien(Spell sort)
+        {
+            return s_typeSoutien.GetOrAdd(sort.Id * 100 + sort.CurrentLevel, _ =>
+            {
+                var niveau = sort.CurrentSpellLevel;
+                if (niveau == null || niveau.ApCost == 0 || niveau.Effects == null || niveau.Effects.Count == 0)
+                    return 0;
+                bool allie = false, soin = false, autre = false;
+                foreach (var e in niveau.Effects)
+                {
+                    if (s_effetsInvocation.Contains((int)e.EffectId))
+                        return 0;
+                    var jetons = (e.TargetMask ?? "").Split(',').Select(t => t.Trim()).Where(t => t.Length > 0 && "EeFf*".IndexOf(t[0]) < 0).ToList();
+                    if (jetons.Count == 0 || jetons.Any(t => t[0] == 'A'))
+                        return 0;
+                    allie |= jetons.Any(t => t[0] != 'c' && t[0] != 'C');
+                    soin |= s_effetsSoin.Contains((int)e.EffectId);
+                    autre |= !s_effetsSoin.Contains((int)e.EffectId);
+                }
+                // PADGREF 23/10 (Repousse de la Brouture : soin + portée) : un sort qui donne aussi un bonus n'attend pas qu'un allié soit blessé
+                return 4 | (allie ? 1 : 0) | (soin && !autre ? 2 : 0);
+            });
+        }
+
+        /// <summary>PADGREF 21/10 : début de tour (IA de base) : UN sort de soutien au plus (d'abord ceux jamais lancés), sur l'allié blessé
+        /// le plus proche puis l'allié le plus proche (sinon soi), jamais sur une cible qui a déjà son effet ; un soin seulement si la
+        /// cible a perdu au moins 10 % de ses PV. Portée, ligne de vue, relance et PA : règles normales (CanCastSpell).</summary>
+        void LancerSoutien()
+        {
+            var point = Fighter.Position.Point;
+            foreach (var sort in Fighter.Spells.Values.Where(x => TypeSoutien(x) != 0).OrderBy(x => m_sortsLances.Contains(x.Id)).ToList())
+            {
+                var type = TypeSoutien(sort);
+                if (Fighter.AP < sort.CurrentSpellLevel.ApCost)
+                    continue;
+                var cibles = (type & 1) != 0
+                    ? Fighter.Team.Fighters.Where(x => x != Fighter && x.IsAlive())
+                        .OrderByDescending(x => x.LifePoints < x.MaxLifePoints)
+                        .ThenBy(x => x.Position.Point.ManhattanDistanceTo(point))
+                        .Concat(new FightActor[] { Fighter })
+                    : new FightActor[] { Fighter };
+                foreach (var cible in cibles)
+                {
+                    if ((type & 2) != 0 && cible.LifePoints * 10 >= cible.MaxLifePoints * 9)
+                        continue;
+                    if (cible.GetBuffs(b => b.Spell != null && b.Spell.Id == sort.Id).Any())
+                        continue;
+                    if (Fighter.CanCastSpell(sort, cible.Cell) != SpellCastResult.OK)
+                        continue;
+                    if (Fighter.CastSpell(sort, cible.Cell))
+                    {
+                        m_turnLog.Add(string.Format("soutien {0} -> {1}", sort.Id, cible));
+                        return;
+                    }
+                }
+            }
+        }
+
+        void JournalSortsJamaisLances(Game.Fights.IFight fight)
+        {
+            fight.FightEnded -= JournalSortsJamaisLances;
+            if (!LogSortsJamaisLances || m_toursJoues == 0 || !(Fighter is MonsterFighter monstre))
+                return;
+            var jamais = Fighter.Spells.Values.Where(x => x.CurrentSpellLevel != null && x.CurrentSpellLevel.ApCost > 0 && !m_sortsLances.Contains(x.Id)).ToList();
+            if (jamais.Count > 0)
+                logger.Info("[IA-sorts] {0} (monstre {1}, IA {2}, {3} tours) jamais lances : {4}", Fighter, monstre.Monster.Template.Id, GetType().Name,
+                    m_toursJoues, string.Join(", ", jamais.Select(x => x.Id + " " + x.Template.Name + (TypeSoutien(x) != 0 ? " (soutien)" : ""))));
         }
 
         public AIFighter Fighter
@@ -72,12 +176,21 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
 
             m_turnLog.Clear();
             m_lancesCeTour = 0;
+            m_toursJoues++;
             var startAP = Fighter.AP;
             var startMP = Fighter.MP;
             var startCell = Fighter.Cell.Id;
 
             Environment.ResetMoveZone();
             MemoireInvisibles.NoterVisibles(Fighter);
+
+            // PADGREF 21/10 : sorts de soutien (IA de base seulement : les IA à nous ne changent pas)
+            if (SoutienAuto && GetType() == typeof(Brain) && Fighter is MonsterFighter)
+            {
+                try { LancerSoutien(); }
+                catch (System.Exception ex) { logger.Warn("[IA] soutien {0} : {1}", Fighter, ex.Message); }
+                Environment.ResetMoveZone();
+            }
 
             SpellSelector.AnalysePossibilities();
             var possibles = SpellSelector.Possibilities.Select(x => x.Spell.Template.Id + ":" + x.Impacts.Count).ToCSV(",");
@@ -113,6 +226,20 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
 
         /// <summary>MYSTIC 17/10 : IA fuyarde (après ses sorts, elle s'éloigne des ennemis au lieu de s'en approcher).</summary>
         public virtual bool Fuyard => false;
+
+        /// <summary>PADGREF 23/10 : Corruption (6026) fuit tant qu'il est monté (état 1627 : sorts « monté »), comme dans les vidéos.</summary>
+        bool FuyardSelonEtat => Fighter is MonsterFighter mc && mc.Monster.Template.Id == 6026 && Fighter.HasState(1627);
+
+        /// <summary>PADGREF 23/10 : monstre ancré (MonstresAncres) qui a encore un allié non invoqué en vie : il reste sur place.</summary>
+        bool Ancre
+        {
+            get
+            {
+                var id = (Fighter as MonsterFighter)?.Monster?.Template?.Id ?? (Fighter as Game.Actors.Fight.SummonedMonster)?.MonsterGrade?.MonsterId ?? 0;
+                return MonstresAncres.Ids.Contains(id) &&
+                       Fighter.Team.Fighters.Any(x => x != Fighter && x.IsAlive() && !(x is Game.Actors.Fight.SummonedFighter));
+            }
+        }
 
         /// <summary>MYSTIC 18/10 : va vers la dernière case connue de l'invisible le plus proche ; sur place ou bloqué : case au hasard
         /// (de préférence parmi les cases où il peut être).</summary>
@@ -257,7 +384,13 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
             if (!Fighter.CanMove()) 
                 return;
 
-            if (Fuyard)
+            if (Ancre)
+            {
+                m_turnLog.Add("ancré : reste sur place");
+                return;
+            }
+
+            if (Fuyard || FuyardSelonEtat)
             {
                 var avantFuite = Fighter.Cell.Id;
                 foreach (var resultat in new FleeAction(Fighter).Execute(this))
@@ -346,6 +479,13 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain
             while (rounds++ < MaxCastLimit && totalCasts < MaxCastLimit && Fighter.AP > 0 &&
                    (cast = SpellSelector.FindFirstSpellCast(excluded)) != null)
             {
+                // PADGREF 23/10 : monstre ancré : pas de déplacement pour lancer un sort (il tire depuis sa case ou passe au suivant)
+                if (cast.MoveBefore != null && Ancre)
+                {
+                    excluded.Add(cast.Spell);
+                    continue;
+                }
+
                 if (cast.MoveBefore != null)
                 {
                     var success = Fighter.StartMove(cast.MoveBefore);

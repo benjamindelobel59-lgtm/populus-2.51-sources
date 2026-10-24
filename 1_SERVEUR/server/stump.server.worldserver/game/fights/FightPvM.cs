@@ -253,6 +253,9 @@ namespace Stump.Server.WorldServer.Game.Fights
 
             // MYSTIC : mode héroïque, les vainqueurs récupèrent le coffre du groupe (butin des joueurs morts dans la zone),
             // les perdants voient ce qu'ils perdent dans l'écran de fin de combat
+            // PADGREF 21/10 : box de boss (combat de boss gagné en donjon : une box à un joueur au hasard)
+            Items.Player.Custom.BoxDeBoss.DonnerBox(this, results);
+
             Heroique.ButinHeroique.Instance.RecupererButin(this, results);
             Heroique.HeroicManager.Instance.AfficherPertes(this, results);
 

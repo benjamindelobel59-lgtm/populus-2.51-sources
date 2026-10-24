@@ -39,8 +39,7 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     /// <summary>Toxoliath : Toxmose (dégâts eau par PM sur coup reçu).</summary>
     [BrainIdentifier(3752)] public class ToxoliathBrain : BrainPassif { public ToxoliathBrain(AIFighter f) : base(f, 4796) { } }
 
-    /// <summary>Lucrane (vague du Toxoliath) : Carapace gardée.</summary>
-    [BrainIdentifier(3737)] public class LucraneBrain : BrainPassif { public LucraneBrain(AIFighter f) : base(f, 4746) { } }
+    // Lucrane (vague du Toxoliath) : Carapace gardée codée dans ToxoliathMonstresBrains.cs (PADGREF 21/10)
 
     // Malléfisk : voir FabriqueMallefiskBrains.cs (MYSTIC 20/10)
 
@@ -48,7 +47,62 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     [BrainIdentifier(3556)] public class KanigroulaBrain : BrainPassif { public KanigroulaBrain(AIFighter f) : base(f, 4093) { } }
 
     /// <summary>Missiz Frizz : Congère (invulnérabilité glaciale des monstres, pièges, Antigel quand on pousse).</summary>
-    [BrainIdentifier(3391)] public class MissizFrizzBrain : BrainPassif { public MissizFrizzBrain(AIFighter f) : base(f, 3517) { } }
+    [BrainIdentifier(3391)]
+    public class MissizFrizzBrain : BrainPassif
+    {
+        /// <summary>PADGREF 21/10 (retour utilisateur) : elle se soigne de 15 % de ses PV max (valeur d'Antigel 3520) à chaque dommage
+        /// de poussée, sauf ceux du Piège glacial (3522, Vergladiateur posé par les joueurs en début de tour).</summary>
+        public const int PiegeGlacial = 3522, SoinPourcent = 15;
+
+        public MissizFrizzBrain(AIFighter f) : base(f, 3517)
+        {
+            f.DamageInflicted += (cible, d) =>
+            {
+                if (d.School != Game.Effects.EffectSchoolEnum.Pushback || d.Amount <= 0 || d.SortPoussee == PiegeGlacial || !cible.IsAlive())
+                    return;
+                var soin = cible.Heal((int)(cible.MaxLifePoints * SoinPourcent / 100d), cible, true);
+                NLog.LogManager.GetCurrentClassLogger().Info("[Frizz] poussée (sort {0}) : -{1} PV, soin +{2}", d.SortPoussee, d.Amount, soin);
+            };
+        }
+    }
+
+    /// <summary>
+    /// PADGREF 22/10 (retour utilisateur, Antre du Klime) : Harrogant : « Fierté » (3471 : sur lui, 1 tour : frappé → Insolence 3470 :
+    /// soin de 101 à 120 à ses alliés à 1-5 cases et répartition des dommages subis) n'était jamais lancé par l'IA normale, donc
+    /// Insolence ne soignait jamais. Lancé au début de chacun de ses tours.
+    /// </summary>
+    [BrainIdentifier((int)MonsterIdEnum.HARROGANT)]
+    public class HarrogantBrain : Brain
+    {
+        public const int Fierte = 3471;
+
+        public HarrogantBrain(AIFighter fighter) : base(fighter) { }
+
+        public override void Play()
+        {
+            SortsForces.Lancer(Fighter, Fierte, Fighter.Cell);
+            base.Play();
+        }
+    }
+
+    /// <summary>
+    /// PADGREF 21/10 (retour utilisateur) : Verglasseur : « Braconnage » (3511 : sur lui, +2 PM à ses alliés au contact, et 1 tour
+    /// frappé à distance → Braquage 3512 : -75 % PV aux ennemis et -25 % à ses alliés à 1-5 cases) n'était pas lancé par l'IA
+    /// normale, donc Braquage ne partait jamais. Lancé au début de chacun de ses tours.
+    /// </summary>
+    [BrainIdentifier((int)MonsterIdEnum.VERGLASSEUR)]
+    public class VerglasseurBrain : Brain
+    {
+        public const int Braconnage = 3511;
+
+        public VerglasseurBrain(AIFighter fighter) : base(fighter) { }
+
+        public override void Play()
+        {
+            SortsForces.Lancer(Fighter, Braconnage, Fighter.Cell);
+            base.Play();
+        }
+    }
 
     /// <summary>Daïgoro : Corps de Dolomite (états Pandawush qui débloquent ses sorts).</summary>
     [BrainIdentifier(3208)] public class DaigoroBrain : BrainPassif { public DaigoroBrain(AIFighter f) : base(f, 3037) { } }

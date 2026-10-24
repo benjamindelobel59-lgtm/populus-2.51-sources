@@ -92,6 +92,14 @@ namespace Stump.Server.WorldServer.Game.Guilds
             return m_emblems.TryGetValue(id, out record) ? record : null;
         }
 
+        /// <summary>PADGREF 23/10 : symbole d'emblème choisissable (guilde / alliance) : connu de guilds_emblems (symboles du 2.74
+        /// compris, SQL 126) et hors catégorie « Admins » (13). Remplace l'ancienne limite « id &lt; 324 ».</summary>
+        public bool SymboleAutorise(int id)
+        {
+            var symbole = TryGetEmblem(id);
+            return symbole != null && symbole.CategoryId != 13;
+        }
+
         public GuildMember TryGetGuildMember(int characterId)
         {
             lock (m_lock)
@@ -144,7 +152,7 @@ namespace Stump.Server.WorldServer.Game.Guilds
                 return SocialGroupCreationResultEnum.SOCIAL_GROUP_CREATE_ERROR_NAME_INVALID;
             }
 
-            if (emblem.SymbolShape >= 324)
+            if (!SymboleAutorise(emblem.SymbolShape))
                 return SocialGroupCreationResultEnum.SOCIAL_GROUP_CREATE_ERROR_EMBLEM_INVALID;
 
             if (DoesNameExist(name))

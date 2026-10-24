@@ -69,11 +69,15 @@ namespace Stump.Server.WorldServer.Game.Actors.RolePlay.Monsters
 
         public override GroupMonsterStaticInformations GetGroupMonsterStaticInformations(Character character)
         {
-            var displayedGroup = m_monstersByMembersCount.OrderByDescending(x => x.Key).FirstOrDefault().Value;
+            // PADGREF 24/10 : le boss en tête (monstre affiché sur la carte et premier de l'infobulle), à chaque palier
+            var displayedGroup = BossDevant(m_monstersByMembersCount.OrderByDescending(x => x.Key).FirstOrDefault().Value);
 
             return new GroupMonsterStaticInformationsWithAlternatives(displayedGroup.FirstOrDefault()?.GetMonsterInGroupLightInformations() ?? new MonsterInGroupLightInformations(),
                 displayedGroup.Skip(1).Select(x => x.GetMonsterInGroupInformations()).ToArray(),
-                m_monstersByMembersCount.OrderBy(x => x.Key).Select(x => new AlternativeMonstersInGroupLightInformations(x.Key, x.Value.Select(y => y.GetMonsterInGroupLightInformations()).ToArray())).ToArray());
+                m_monstersByMembersCount.OrderBy(x => x.Key).Select(x => new AlternativeMonstersInGroupLightInformations(x.Key, BossDevant(x.Value).Select(y => y.GetMonsterInGroupLightInformations()).ToArray())).ToArray());
         }
+
+        static List<Monster> BossDevant(List<Monster> monstres)
+            => monstres == null ? null : monstres.Where(m => m.Template.IsBoss).Concat(monstres.Where(m => !m.Template.IsBoss)).ToList();
     }
 }

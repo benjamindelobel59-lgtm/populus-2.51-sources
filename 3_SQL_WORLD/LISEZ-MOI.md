@@ -12,3 +12,6 @@ Avec la ligne de commande MariaDB / MySQL, un fichier à la fois :
 Avec Navicat : base `world` → Requête → coller le fichier → Exécuter.
 
 Le serveur compilé depuis ces sources est nécessaire (certains scripts utilisent des colonnes ou types de réponse ajoutés dans le code).
+
+Numéros absents : 89 et 93 = anciennes versions régénérées des butins DofusDB, déjà contenues dans `86_drops_dofusdb.sql`.
+`57_auth_comptes_web_launcher.sql` se joue aussi sur **`auth`**.

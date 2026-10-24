@@ -131,9 +131,17 @@ namespace Stump.Server.WorldServer.AI.Fights.Actions
             {
                 // cible injoignable à pied : ancien comportement (case adjacente la plus proche à vol d'oiseau)
                 var proche = Target.Position.Point.GetAdjacentCells(cellInfoProvider.IsCellWalkable).OrderBy(entry => entry.ManhattanDistanceTo(Fighter.Position.Point)).FirstOrDefault();
-                if (proche == null)
+                if (proche != null)
+                    return new MoveAction(Fighter, proche).YieldExecute(context);
+
+                // PADGREF 21/10 (log VPS : Tanklume restait sur place avec ses PM) : aucune case libre autour de la cible (déjà
+                // entourée par d'autres combattants) : il s'avance quand même sur la case atteignable la plus proche d'elle
+                var cibleP = Target.Position.Point;
+                var plusProche = cout.Keys.OrderBy(c => new MapPoint(Fighter.Fight.Map.Cells[c]).ManhattanDistanceTo(cibleP)).ThenBy(c => cout[c]).First();
+                if (plusProche == Fighter.Cell.Id ||
+                    new MapPoint(Fighter.Fight.Map.Cells[plusProche]).ManhattanDistanceTo(cibleP) >= Fighter.Position.Point.ManhattanDistanceTo(cibleP))
                     return RunStatus.Failure;
-                return new MoveAction(Fighter, proche).YieldExecute(context);
+                return new MoveAction(Fighter, Fighter.Fight.Map.Cells[plusProche]).YieldExecute(context);
             }
 
             var meilleure = atteignables.OrderBy(c => distCible[c]).ThenBy(c => cout[c]).First();

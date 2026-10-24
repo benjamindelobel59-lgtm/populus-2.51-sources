@@ -1,4 +1,5 @@
 ﻿using Stump.DofusProtocol.Enums;
+using System.Linq;
 using Stump.Server.BaseServer.Database;
 using Stump.Server.WorldServer.Database.Interactives;
 using Stump.Server.WorldServer.Game.Actors.RolePlay.Characters;
@@ -22,7 +23,10 @@ namespace Stump.Server.WorldServer.Game.Interactives.Skills
 
         public override int StartExecute(Character character)
         {
-            var dialog = new ZaapDialog(character, InteractiveObject, character.KnownZaaps);
+            // PADGREF 23/10 : zaap de l'Arche de Vili = seulement les 4 salles des portails de l'Eliocalypse
+            var dialog = InteractiveObject.Map.Id == ZaapDialog.ArcheDeVili
+                ? new ZaapDialog(character, InteractiveObject, ZaapDialog.SallesPortails.Keys.Select(id => Game.World.Instance.GetMap(id)).Where(m => m != null))
+                : new ZaapDialog(character, InteractiveObject, character.KnownZaaps);
             dialog.Open();
 
             return base.StartExecute(character);

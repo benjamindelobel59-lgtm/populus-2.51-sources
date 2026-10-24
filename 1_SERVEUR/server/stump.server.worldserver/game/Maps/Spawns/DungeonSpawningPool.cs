@@ -75,6 +75,13 @@ namespace Stump.Server.WorldServer.Game.Maps.Spawns
                 return m_groupsSpawn.TryGetValue(group, out var spawn) ? "D" + spawn.Id : null;
         }
 
+        // PADGREF 24/10 : numéro du spawn d'un groupe posé par cette salle (placements fixes)
+        public int? SpawnIdDe(MonsterGroup group)
+        {
+            lock (m_locker)
+                return group != null && m_groupsSpawn.TryGetValue(group, out var spawn) ? spawn.Id : (int?)null;
+        }
+
         protected override MonsterGroup DequeueNextGroupToSpawn()
         {
             if (!Map.CanSpawnMonsters())

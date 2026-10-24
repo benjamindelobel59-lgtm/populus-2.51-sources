@@ -1,7 +1,7 @@
 // MYSTIC 18/10/2026 → PADGREF 20/10/2026 : grand launcher Padgref, maquette v2 « launcher-padgref.html » (thème Azur) :
 // rail d'icônes à gauche (Comptes, Partages, Site, Boutique, Voter, Discord, Paramètres, Déconnexion) ; barre du haut
 // (recherche, serveur en ligne / hors ligne, compte web) ; colonne Dossiers (glisser-déposer, double-clic = renommer) ;
-// grille de cartes de comptes (cocher jusqu'à 8, double-clic sur le nom = renommer, double-clic sur la carte = jouer) ;
+// grille de cartes de comptes (cocher jusqu'à 40, double-clic sur le nom = renommer, double-clic sur la carte = jouer) ;
 // dock du bas (pile des comptes cochés, Fenêtres, gros bouton JOUER avec la mise à jour dans le bouton) ; colonne de droite
 // (prochain événement, notes de mise à jour, actualités : launcher.json du site si présent) ; tiroir Paramètres.
 // Partage de comptes par code à 6 chiffres, création de comptes de jeu sans mot de passe, Zaap local, Dofus fantômes.
@@ -41,12 +41,25 @@ namespace MysticLauncher
             public string Nom;
             public bool Replie;
             public List<string> Comptes = new List<string>();
+            public string Icone;      // PADGREF 21/10 : icône officielle du jeu (Icones.Catalogue), null = dossier
         }
 
         public List<Dossier> Liste = new List<Dossier>();
         public bool SansDossierReplie;
         public Dictionary<string, string> Alias = new Dictionary<string, string>();
+        public Dictionary<string, List<string>> Tags = new Dictionary<string, List<string>>();   // PADGREF 21/10 : login -> icônes
         string m_fichier;
+
+        public List<string> TagsDe(string login) => Tags.TryGetValue(login.ToLowerInvariant(), out var l) && l != null ? l : new List<string>();
+
+        public void BasculerTag(string login, string cle)
+        {
+            var k = login.ToLowerInvariant();
+            if (!Tags.TryGetValue(k, out var l) || l == null) Tags[k] = l = new List<string>();
+            if (!l.Remove(cle)) l.Add(cle);
+            if (l.Count == 0) Tags.Remove(k);
+            Sauver();
+        }
 
         public static Dossiers Charger(string email)
         {
@@ -65,6 +78,7 @@ namespace MysticLauncher
                         d.Liste = lu.Liste ?? new List<Dossier>();
                         d.SansDossierReplie = lu.SansDossierReplie;
                         d.Alias = lu.Alias ?? new Dictionary<string, string>();
+                        d.Tags = lu.Tags ?? new Dictionary<string, List<string>>();
                     }
                 }
             }
@@ -152,7 +166,7 @@ namespace MysticLauncher
                 for (var i = 0; i < n; i++) l.Add(new Rect(marge + i * pas, marge + i * pas, 0.55, 0.55));
                 return l;
             }
-            var cols = dispo == "grille" ? (int)Math.Ceiling(Math.Sqrt(n)) : n <= 2 ? n : n <= 4 ? 2 : n <= 6 ? 3 : 4;
+            var cols = dispo == "grille" ? (int)Math.Ceiling(Math.Sqrt(n)) : n <= 2 ? n : n <= 4 ? 2 : n <= 6 ? 3 : n <= 8 ? 4 : (int)Math.Ceiling(Math.Sqrt(n));
             var lignes = (int)Math.Ceiling(n / (double)cols);
             var w = (utile - (cols - 1) * ecart) / cols;
             var h = (utile - (lignes - 1) * ecart) / lignes;
@@ -188,7 +202,7 @@ namespace MysticLauncher
     class PrincipalWindow : Window
     {
         const double W = Theme.W, H = Theme.H, RAIL = 74;
-        const int MAX_COCHES = 8;
+        const int MAX_COCHES = 40; // PADGREF 24/10 (demande utilisateur) : 8 -> 40
 
         static readonly Color[] CouleursDossiers =
         {
@@ -369,7 +383,34 @@ namespace MysticLauncher
 
         // ---------------------------------------------------------------- petits outils
 
-        static ContextMenu Menu() => new ContextMenu { Background = B(Fond2), BorderBrush = B(Ligne), Foreground = B(Texte), Padding = new Thickness(4) };
+        static ContextMenu Menu()
+        {
+            // PADGREF 21/10 : menu du clic droit stylé (cadre arrondi, survol, coche, flèche) au lieu du menu Windows standard
+            var m = new ContextMenu { Foreground = B(Texte), FontFamily = Police };
+            var styles = Icones.Styles();
+            m.Resources.MergedDictionaries.Add(styles);
+            if (styles[typeof(ContextMenu)] is Style st) m.Style = st;
+            return m;
+        }
+
+        /// <summary>PADGREF 21/10 : sous-menus d'icônes officielles (classes, épées, divers) ; choix = coché.</summary>
+        void AjouterIcones(ItemsControl parent, Func<string, bool> choisie, Action<string> clic)
+        {
+            foreach (var groupe in Icones.Catalogue(m_updater.AppDir).GroupBy(x => x.Groupe))
+            {
+                var sous = Element(null, groupe.Key, null);
+                sous.Icon = Icones.Vue(m_updater.AppDir, groupe.First().Cle, 18);
+                foreach (var ic in groupe)
+                {
+                    var cle = ic.Cle;
+                    var e = Element(null, ic.Nom, () => clic(cle));
+                    e.Icon = Icones.Vue(m_updater.AppDir, cle, 18);
+                    e.IsChecked = choisie(cle);
+                    sous.Items.Add(e);
+                }
+                parent.Items.Add(sous);
+            }
+        }
 
         static MenuItem Element(string icone, string texte, Action clic)
         {
@@ -408,7 +449,7 @@ namespace MysticLauncher
             rail.Children.Add(haut);
             var bas = new StackPanel { VerticalAlignment = VerticalAlignment.Bottom, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 0, 0, 12) };
             bas.Children.Add(BoutonRail(Ic(IcReglages, 22, null), "Paramètres", OuvrirTiroir, false));
-            bas.Children.Add(BoutonRail(Ic(IcDeconnexion, 20, null), "Se déconnecter", SeDeconnecter, false));
+            bas.Children.Add(BoutonRail(Ic(IcDeconnexion, 20, null), "Se déconnecter (oublie la connexion sur ce PC)", DemanderDeconnexion, false));
             rail.Children.Add(bas);
             return rail;
         }
@@ -574,7 +615,8 @@ namespace MysticLauncher
             g.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             b.Child = g;
             var couleur = CouleurDossier(d);
-            g.Children.Add(new Border { Width = 26, Height = 26, CornerRadius = new CornerRadius(8), Background = B(A(0x22, couleur)), Child = Ic(IcDossier, 15, B(couleur), true) });
+            var iconeDossier = d?.Icone == null ? null : Icones.Vue(m_updater.AppDir, d.Icone, 20);
+            g.Children.Add(new Border { Width = 26, Height = 26, CornerRadius = new CornerRadius(8), Background = B(A(0x22, couleur)), Child = iconeDossier ?? Ic(IcDossier, 15, B(couleur), true) });
             var nb = d == null ? m_compte.Comptes.Count : ComptesDe(d).Count();
             if (d != null && m_renommerDossier == d)
             {
@@ -583,6 +625,7 @@ namespace MysticLauncher
                     m_renommerDossier = null;
                     if (!string.IsNullOrEmpty(nom)) { d.Nom = nom; m_dossiers.Sauver(); }
                     Afficher();
+                    if (m_dossierACreer == d) { m_dossierACreer = null; ChoisirIconeDossier(d); }
                 });
                 champ.Margin = new Thickness(9, 0, 0, 0);
                 Grid.SetColumn(champ, 1);
@@ -665,6 +708,15 @@ namespace MysticLauncher
             var m = Menu();
             m.Items.Add(Element(IcJouer, "Jouer le dossier", () => JouerListe(ComptesDe(d).ToList())));
             m.Items.Add(Element(IcCrayon, "Renommer", () => { m_renommerDossier = d; Afficher(); }));
+            var icMenu = Element(null, "Icône du dossier", null);
+            icMenu.Icon = d.Icone != null ? Icones.Vue(m_updater.AppDir, d.Icone, 18) : Ic(IcDossier, 14, B(Doux));
+            AjouterIcones(icMenu, cle => d.Icone == cle, cle => { d.Icone = cle; m_dossiers.Sauver(); Afficher(); });
+            if (d.Icone != null)
+            {
+                icMenu.Items.Add(new Separator());
+                icMenu.Items.Add(Element(IcFermer, "Icône de dossier normale", () => { d.Icone = null; m_dossiers.Sauver(); Afficher(); }));
+            }
+            m.Items.Add(icMenu);
             m.Items.Add(Element(IcFermer, "Supprimer le dossier (les comptes restent)", () =>
             {
                 m_dossiers.Liste.Remove(d);
@@ -675,6 +727,24 @@ namespace MysticLauncher
             m.PlacementTarget = cible;
             m.Placement = PlacementMode.Bottom;
             m.IsOpen = true;
+        }
+
+        Dossiers.Dossier m_dossierACreer;
+
+        /// <summary>PADGREF 21/10 : à la création d'un dossier, menu des icônes officielles sous la souris (Échap = garder le dossier).</summary>
+        void ChoisirIconeDossier(Dossiers.Dossier d)
+        {
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                var m = Menu();
+                var titre = Element(null, "Icône du dossier « " + d.Nom + " »", null);
+                titre.IsEnabled = false;
+                m.Items.Add(titre);
+                m.Items.Add(new Separator());
+                AjouterIcones(m, cle => d.Icone == cle, cle => { d.Icone = cle; m_dossiers.Sauver(); Afficher(); });
+                m.Placement = PlacementMode.MousePoint;
+                m.IsOpen = true;
+            }), DispatcherPriority.Background);
         }
 
         void NouveauDossier()
@@ -688,6 +758,7 @@ namespace MysticLauncher
             foreach (var c in coches) m_dossiers.Ranger(c.Login, d);
             m_dossiers.Sauver();
             m_renommerDossier = d;
+            m_dossierACreer = d;      // PADGREF 21/10 : le nom validé, on propose l'icône
             Afficher();
             if (coches.Count > 0) Toast(coches.Count + " compte" + (coches.Count > 1 ? "s cochés rangés" : " coché rangé") + " dans le nouveau dossier");
         }
@@ -904,6 +975,21 @@ namespace MysticLauncher
             etat.Children.Add(T(enJeu && !connexion ? "En jeu" : connexion ? "Connexion…" : "Prêt" + (p0 != null && p0.Depuis >= 0 ? " · " + Outils.IlYA(p0.Depuis) : ""), 11.5, couleurEtat, FontWeights.Bold));
             pile.Children.Add(etat);
 
+            // PADGREF 21/10 : tags du compte (icônes officielles : classes, épées…)
+            var tags = m_dossiers.TagsDe(c.Login);
+            if (tags.Count > 0)
+            {
+                var rangee = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 7, 0, 0) };
+                foreach (var t in tags)
+                {
+                    var v = Icones.Vue(m_updater.AppDir, t, 20);
+                    if (v == null) continue;
+                    v.Margin = new Thickness(2, 0, 2, 0);
+                    rangee.Children.Add(v);
+                }
+                pile.Children.Add(rangee);
+            }
+
             var caseCoche = Case(coche);
             caseCoche.HorizontalAlignment = HorizontalAlignment.Right;
             caseCoche.VerticalAlignment = VerticalAlignment.Top;
@@ -970,11 +1056,23 @@ namespace MysticLauncher
             var m = Menu();
             m.Items.Add(Element(IcJouer, "Jouer", () => Jouer(c)));
             m.Items.Add(Element(IcCrayon, "Renommer", () => { m_renommerCompte = c.Id; Afficher(); }));
+            var tagsMenu = Element(null, "Tags", null);
+            tagsMenu.Icon = Icones.Vue(m_updater.AppDir, "epees", 18);
+            var actuels = m_dossiers.TagsDe(c.Login);
+            AjouterIcones(tagsMenu, cle => actuels.Contains(cle), cle => { m_dossiers.BasculerTag(c.Login, cle); Afficher(); });
+            if (actuels.Count > 0)
+            {
+                tagsMenu.Items.Add(new Separator());
+                tagsMenu.Items.Add(Element(IcFermer, "Retirer tous les tags", () => { m_dossiers.Tags.Remove(c.Login.ToLowerInvariant()); m_dossiers.Sauver(); Afficher(); }));
+            }
+            m.Items.Add(tagsMenu);
             var deplacer = Element(IcDossier, "Ranger dans", null);
             foreach (var d in m_dossiers.Liste)
             {
                 var cible2 = d;
-                deplacer.Items.Add(Element(null, d.Nom, () => RangerGlisse(c, cible2)));
+                var el = Element(null, d.Nom, () => RangerGlisse(c, cible2));
+                if (d.Icone != null) el.Icon = Icones.Vue(m_updater.AppDir, d.Icone, 18);
+                deplacer.Items.Add(el);
             }
             if (m_dossiers.Liste.Count > 0) deplacer.Items.Add(new Separator());
             deplacer.Items.Add(Element(IcPlus, "Nouveau dossier…", () =>
@@ -982,8 +1080,10 @@ namespace MysticLauncher
                 var nom = Saisir("Nouveau dossier", "");
                 if (nom == null) return;
                 var d = m_dossiers.Liste.FirstOrDefault(x => string.Equals(x.Nom, nom, StringComparison.OrdinalIgnoreCase));
+                var nouveau = d == null;
                 if (d == null) { d = new Dossiers.Dossier { Nom = nom }; m_dossiers.Liste.Add(d); }
                 RangerGlisse(c, d);
+                if (nouveau) ChoisirIconeDossier(d);
             }));
             m.Items.Add(deplacer);
             if (m_dossiers.DossierDe(c.Login) != null)
@@ -1438,11 +1538,11 @@ namespace MysticLauncher
             fenetre.Loaded += (s, e) => pseudo.Focus();
         }
 
-        /// <summary>« Fenêtres » : plan de placement des fenêtres de Dofus (jusqu'à 8 comptes).</summary>
+        /// <summary>« Fenêtres » : plan de placement des fenêtres de Dofus (jusqu'à 40 comptes).</summary>
         void OuvrirPlan()
         {
             var fenetre = Fenetre("MULTI-COMPTES", "Plan des fenêtres", out var pile, 660);
-            pile.Children.Add(Paragraphe("Choisis comment ranger les fenêtres de Dofus (jusqu'à 8) : le launcher les place tout seul à chaque lancement."));
+            pile.Children.Add(Paragraphe("Choisis comment ranger les fenêtres de Dofus (jusqu'à 40) : le launcher les place tout seul à chaque lancement."));
             const double l = 612, h = l * 9 / 16;
             var ecran = new Canvas { Width = l - 4, Height = h - 4, ClipToBounds = true };
             pile.Children.Add(new Border
@@ -1545,7 +1645,7 @@ namespace MysticLauncher
                     if (p.MainWindowHandle != IntPtr.Zero) vue++;
                 }
                 catch { t.Stop(); return; }
-                if (vue == 2 || vue == 6) PlacerFenetres(false);
+                // PADGREF 24/10 : plus de placement automatique des fenêtres (les joueurs les rangent eux-mêmes)
                 if (vue >= 6 || essais > 40) t.Stop();
             };
             t.Start();
@@ -1659,7 +1759,7 @@ namespace MysticLauncher
             ajouter2(SecondTexte("Mon compte sur le site", () => Outils.OuvrirSite(m_updater.SiteUrl + "compte.html"), 34, 12.5));
             ajouter2(SecondTexte("Créer un compte de jeu", CreerCompteJeu, 34, 12.5));
             ajouter2(SecondTexte("Code partagé", AjouterComptePartage, 34, 12.5));
-            ajouter2(SecondTexte("Se déconnecter", SeDeconnecter, 34, 12.5));
+            ajouter2(SecondTexte("Se déconnecter", DemanderDeconnexion, 34, 12.5));
             compte.Children.Add(bc);
             pile.Children.Add(new Border { Child = compte, Padding = new Thickness(0, 12, 0, 6) });
 
@@ -1863,6 +1963,7 @@ namespace MysticLauncher
             g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             g.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             g.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             m_pile = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(10, 0, 0, 0) };
             g.Children.Add(m_pile);
             var txt = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(12, 0, 12, 0) };
@@ -1874,12 +1975,16 @@ namespace MysticLauncher
             Grid.SetColumn(txt, 1);
             g.Children.Add(txt);
 
-            var fenetres = SecondIcone(IcFenetres, "Fenêtres", OuvrirPlan, 62, 14);
-            fenetres.CornerRadius = new CornerRadius(16);
-            fenetres.Padding = new Thickness(18, 0, 18, 0);
-            fenetres.ToolTip = "Plan des fenêtres (multi-comptes)";
-            Grid.SetColumn(fenetres, 2);
-            g.Children.Add(fenetres);
+            // PADGREF 24/10 (demande utilisateur : « enlève ce système de placement des fenêtres, laisse les joueurs faire ») : plus de bouton Fenêtres
+
+            // PADGREF 21/10 : « Vérifier les mises à jour » à côté de JOUER (relit la liste du serveur et télécharge ce qui manque)
+            var maj = SecondIcone(IcActualiser, "Mises à jour", VerifierMaintenant, 62, 14);
+            maj.CornerRadius = new CornerRadius(16);
+            maj.Padding = new Thickness(18, 0, 18, 0);
+            maj.Margin = new Thickness(12, 0, 0, 0);
+            maj.ToolTip = "Vérifier les mises à jour du jeu";
+            Grid.SetColumn(maj, 3);
+            g.Children.Add(maj);
 
             // JOUER : dégradé, remplissage = progression de la mise à jour, reflet qui balaye
             var interieur = new Grid();
@@ -1909,7 +2014,7 @@ namespace MysticLauncher
             m_bouton.MouseEnter += (s, e) => { if (Actif()) lueur.BeginAnimation(DropShadowEffect.OpacityProperty, new DoubleAnimation(0.9, TimeSpan.FromSeconds(0.15))); };
             m_bouton.MouseLeave += (s, e) => lueur.BeginAnimation(DropShadowEffect.OpacityProperty, new DoubleAnimation(0.5, TimeSpan.FromSeconds(0.2)));
             Clic(m_bouton, ClicBouton);
-            Grid.SetColumn(m_bouton, 3);
+            Grid.SetColumn(m_bouton, 4);
             g.Children.Add(m_bouton);
 
             return new Border
@@ -1992,6 +2097,20 @@ namespace MysticLauncher
             Travailler(false);
         }
 
+        /// <summary>PADGREF 21/10 : bouton « Mises à jour » : relance la recherche de mises à jour (sauf pendant un téléchargement).</summary>
+        void VerifierMaintenant()
+        {
+            if (m_etat == Etat.Travail || m_etat == Etat.Verification)
+                return;
+            m_derniereVerif = DateTime.MinValue;
+            Verifier();
+        }
+
+        // PADGREF 21/10 : JOUER revérifie les mises à jour si la dernière vérification date de plus d'une minute (launcher resté
+        // ouvert pendant une mise à jour : sinon le jeu, pas à jour, serait refusé à la connexion), puis lance le jeu
+        DateTime m_derniereVerif = DateTime.MinValue;
+        bool m_jouerApres;
+
         void Travailler(bool complet)
         {
             if (m_etat == Etat.Travail) return;
@@ -2005,6 +2124,7 @@ namespace MysticLauncher
                 {
                     if (ok)
                     {
+                        m_derniereVerif = DateTime.Now;
                         m_etat = Etat.Pret;
                         m_aJourJusqua = DateTime.Now.AddSeconds(1.6);
                         m_statut.Text = "Le jeu est à jour" + (m_updater.Version != null && m_updater.Version != "?" ? " · version du " + m_updater.Version : "") + ".";
@@ -2019,6 +2139,12 @@ namespace MysticLauncher
                     RemplirDroite(null);
                     ChargerInfos();
                     MajBouton();
+                    if (m_jouerApres)
+                    {
+                        m_jouerApres = false;
+                        if (ok && Actif())
+                            JouerListe(m_compte.Comptes.Where(c => m_coches.Contains(c.Id)).ToList());
+                    }
                 }));
             }) { IsBackground = true }.Start();
         }
@@ -2042,6 +2168,11 @@ namespace MysticLauncher
         {
             if (!Actif()) return;
             if (m_etat == Etat.AInstaller) Travailler(true);
+            else if (m_updater.GameExists && (DateTime.Now - m_derniereVerif).TotalSeconds > 60)
+            {
+                m_jouerApres = true;
+                Travailler(false);
+            }
             else JouerListe(m_compte.Comptes.Where(c => m_coches.Contains(c.Id)).ToList());
         }
 
@@ -2119,6 +2250,29 @@ namespace MysticLauncher
             MajBouton();
         }
 
+        /// <summary>
+        /// PADGREF 23/10 (retour utilisateur : « il faut se reconnecter à chaque fois ») : le bouton « Se déconnecter » du rail,
+        /// juste sous Paramètres, était pris pour « quitter » : un clic effaçait la connexion gardée. On demande confirmation.
+        /// </summary>
+        void DemanderDeconnexion()
+        {
+            if (m_etat == Etat.Travail) return;
+            var fenetre = Fenetre("COMPTE PADGREF", "Se déconnecter ?", out var pile, 460);
+            pile.Children.Add(Paragraphe("Le launcher oubliera ta connexion sur ce PC : au prochain lancement, il faudra te reconnecter." +
+                Environment.NewLine + "Pour simplement fermer le launcher, utilise la croix en haut à droite : tu resteras connecté."));
+            var boutons = new Grid { Margin = new Thickness(0, 6, 0, 0) };
+            boutons.ColumnDefinitions.Add(new ColumnDefinition());
+            boutons.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(10) });
+            boutons.ColumnDefinitions.Add(new ColumnDefinition());
+            boutons.Children.Add(SecondTexte("Rester connecté", FermerFenetre, 46, 14));
+            var oui = SecondTexte("Se déconnecter", () => { FermerFenetre(); SeDeconnecter(); }, 46, 14);
+            ((TextBlock)oui.Child).Foreground = B(Rouge);
+            Grid.SetColumn(oui, 2);
+            boutons.Children.Add(oui);
+            pile.Children.Add(boutons);
+            Ouvrir(fenetre);
+        }
+
         void SeDeconnecter()
         {
             if (m_etat == Etat.Travail) return;
@@ -2175,7 +2329,6 @@ namespace MysticLauncher
                 Tuple.Create(1.6, (Action)(() => { m_etat = Etat.Pret; m_statut.Text = "Le jeu est à jour · version du 20/10/2026."; m_coches.Add(1); m_coches.Add(2); m_coches.Add(3); Afficher(); }), "principal_02_comptes"),
                 Tuple.Create(2.6, (Action)(() => { m_dossierActif = m_dossiers.Liste[0]; Afficher(); }), "principal_03_dossier"),
                 Tuple.Create(3.6, (Action)(() => { m_dossierActif = null; Afficher(); OuvrirTiroir(); }), "principal_04_parametres"),
-                Tuple.Create(4.6, (Action)(() => { m_tiroir.Visibility = Visibility.Collapsed; OuvrirPlan(); }), "principal_05_fenetres"),
                 Tuple.Create(5.6, (Action)(() => { FermerFenetre(); CreerCompteJeu(); }), "principal_06_creer"),
                 Tuple.Create(6.6, (Action)(() => { FermerFenetre(); Partager(m_compte.Comptes.Take(2).ToList()); }), "principal_07_partager"),
                 Tuple.Create(7.6, (Action)(() => { FermerFenetre(); m_vuePartages = true; Afficher(); }), "principal_08_partages"),

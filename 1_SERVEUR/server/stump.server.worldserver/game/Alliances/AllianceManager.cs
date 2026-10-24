@@ -168,7 +168,7 @@ namespace Stump.Server.WorldServer.Game.Alliances
 
             if (emblem != null)
             {
-                if (emblem.SymbolShape >= 324)
+                if (!Guilds.GuildManager.Instance.SymboleAutorise(emblem.SymbolShape))
                     return SocialGroupCreationResultEnum.SOCIAL_GROUP_CREATE_ERROR_EMBLEM_INVALID;
                 if (BlasonExiste(emblem, sauf))
                     return SocialGroupCreationResultEnum.SOCIAL_GROUP_CREATE_ERROR_EMBLEM_ALREADY_EXISTS;

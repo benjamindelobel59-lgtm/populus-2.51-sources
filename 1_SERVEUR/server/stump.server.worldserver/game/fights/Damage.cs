@@ -137,6 +137,13 @@ namespace Stump.Server.WorldServer.Game.Fights
             set;
         }
 
+        /// <summary>PADGREF 21/10 : dommages de poussée : sort qui a poussé (Missiz Frizz : soin sauf Piège glacial).</summary>
+        public int? SortPoussee
+        {
+            get;
+            set;
+        }
+
         public Cell TargetCell
         {
             get;

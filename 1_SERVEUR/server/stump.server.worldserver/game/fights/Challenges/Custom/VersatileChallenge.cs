@@ -22,6 +22,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
     [ChallengeIdentifier((int)ChallengeEnum.GROLLOUM__CHALLENGE_1_)]
     [ChallengeIdentifier((int)ChallengeEnum.HAREBOURG__CHALLENGE_1_)]
     [ChallengeIdentifier((int)ChallengeEnum.SOLAR__CHALLENGE_1_)]
+    [ChallengeIdentifier(429)] // PADGREF 23/10 : succès Eliocalypse (2.74)
     public class VersatileChallenge : DefaultChallenge
     {
         readonly List<Pair<FightActor, int>> m_weaponsUsed = new List<Pair<FightActor, int>>();

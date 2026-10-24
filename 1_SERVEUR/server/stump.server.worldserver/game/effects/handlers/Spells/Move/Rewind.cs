@@ -29,6 +29,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
 
         public void TriggerBuffApply(TriggerBuff buff, FightActor triggerrer, BuffTriggerType trigger, object token)
         {
+            // PADGREF 24/10 : Enraciné (6) / Pesanteur (7) bloquent les téléportations
+            if (buff.Target.TeleportationBloquee())
+                return;
+
             var dstCell = buff.Target.TurnStartPosition.Cell;
             var fighter = Fight.GetOneFighter(dstCell);
 

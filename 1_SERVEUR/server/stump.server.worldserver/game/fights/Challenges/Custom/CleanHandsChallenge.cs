@@ -13,6 +13,8 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
     [ChallengeIdentifier((int)ChallengeEnum.KOULOSSE__CHALLENGE_2_)]
     [ChallengeIdentifier((int)ChallengeEnum.MINOTOROR__CHALLENGE_2_)]
     [ChallengeIdentifier((int)ChallengeEnum.ROYALMOUTH__CHALLENGE_1_)]
+    [ChallengeIdentifier(423)] // PADGREF 23/10 : succès Eliocalypse (2.74)
+    [ChallengeIdentifier(432)] // PADGREF 23/10 : succès Eliocalypse (2.74)
     public class CleanHandsChallenge : DefaultChallenge
     {
         public CleanHandsChallenge(int id, IFight fight)

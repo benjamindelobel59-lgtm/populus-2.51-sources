@@ -31,6 +31,72 @@ namespace Stump.Server.WorldServer.Game.Maps
         const uint Royalmouth = 72, Mansot = 59, Ben = 58, Obsidiantre = 63, Tengu = 31, TenguFuji = 134, Korriandre = 23, Kolosso = 30,
             Glourseleste = 20, Nileza = 887, Sylargh = 877, Klime = 882, Frizz = 872;
 
+        /// <summary>
+        /// PADGREF 22/10 (demande utilisateur) : un boss compte comme VAINCU (sans condition de niveau) si l'une de ces preuves existe :
+        ///   - l'objectif « vaincre le boss » (critère EM, enregistré par le serveur à chaque victoire en donjon, même si le succès
+        ///     entier n'est pas validé à cause de son niveau : Royalmouth niv. 120, Mansot 140, Ben 150, Obsidiantre 160, Tengu 170…) ;
+        ///   - la quête de donjon du boss terminée, ou son objectif « vaincre » déjà passé (619 à 626, 1309 pour les 4 maîtres) ;
+        ///   - le succès du donjon (ancienne règle, gardée pour ceux qui l'ont déjà).
+        /// Avant, seul le succès comptait : un niveau 50 ne pouvait jamais avancer.
+        /// </summary>
+        class Boss
+        {
+            public string Nom;
+            public int MonstreId;
+            public int QueteId, ObjectifKill;
+        }
+
+        static readonly Dictionary<uint, Boss> BossParSucces = new Dictionary<uint, Boss>
+        {
+            { Royalmouth,   new Boss { Nom = "le Royalmouth", MonstreId = 2854, QueteId = 619, ObjectifKill = 3667 } },
+            { Mansot,       new Boss { Nom = "le Mansot Royal", MonstreId = 2848, QueteId = 620, ObjectifKill = 3813 } },
+            { Ben,          new Boss { Nom = "Ben le Ripate", MonstreId = 2877, QueteId = 621, ObjectifKill = 4057 } },
+            { Obsidiantre,  new Boss { Nom = "l'Obsidiantre", MonstreId = 2924, QueteId = 622, ObjectifKill = 4060 } },
+            { Tengu,        new Boss { Nom = "le Tengu Givrefoux", MonstreId = 2967, QueteId = 623, ObjectifKill = 4143 } },
+            { TenguFuji,    new Boss { Nom = "la Fuji Givrefoux Nourricière", MonstreId = 3234 } },
+            { Korriandre,   new Boss { Nom = "le Korriandre", MonstreId = 2968, QueteId = 624, ObjectifKill = 4256 } },
+            { Kolosso,      new Boss { Nom = "le Kolosso", MonstreId = 2986, QueteId = 625, ObjectifKill = 4281 } },
+            { Glourseleste, new Boss { Nom = "le Glourséleste", MonstreId = 2864, QueteId = 626, ObjectifKill = 4284 } },
+            { Nileza,       new Boss { Nom = "Nileza", MonstreId = 3397, QueteId = 1309, ObjectifKill = 7164 } },
+            { Sylargh,      new Boss { Nom = "Sylargh", MonstreId = 3409, QueteId = 1309, ObjectifKill = 7166 } },
+            { Klime,        new Boss { Nom = "Klime", MonstreId = 3384, QueteId = 1309, ObjectifKill = 7168 } },
+            { Frizz,        new Boss { Nom = "Missiz Frizz", MonstreId = 3391, QueteId = 1309, ObjectifKill = 7170 } },
+        };
+
+        static bool BossVaincu(Character c, uint succes)
+        {
+            if (c.Achievement.AchievementIsCompleted(succes))
+                return true;
+            if (!BossParSucces.TryGetValue(succes, out var b))
+                return false;
+            // objectif de succès « EM>monstre,0,d » validé à la victoire (sans condition de niveau)
+            if (c.Achievement.ContainsCriterion("EM>" + b.MonstreId + ",0,d"))
+                return true;
+            if (b.QueteId == 0)
+                return false;
+            var quete = c.Quests.FirstOrDefault(q => q.Template != null && q.Template.Id == b.QueteId);
+            if (quete == null)
+                return false;
+            if (quete.Finished)
+                return true;
+            var etape = quete.CurrentStep;
+            if (etape == null)
+                return false;
+            var objectif = etape.Objectives.FirstOrDefault(o => o.ObjectiveRecord.ObjectiveId == b.ObjectifKill);
+            if (objectif != null)
+                return objectif.Finished;
+            // objectif « vaincre » dans une étape déjà passée : vaincu si l'étape en cours vient après la sienne
+            var etapes = quete.Template.Steps;
+            if (etapes == null)
+                return false;
+            var iKill = System.Array.FindIndex(etapes, st => st.Objectives != null && st.Objectives.Any(o => o.Id == b.ObjectifKill));
+            var iEnCours = System.Array.FindIndex(etapes, st => st.Id == etape.Id);
+            return iKill >= 0 && iEnCours > iKill;
+        }
+
+        static string NomBoss(uint succes) => BossParSucces.TryGetValue(succes, out var b) ? b.Nom
+            : "« " + (AchievementManager.Instance.TryGetAchievement(succes)?.Name ?? ("succès " + succes)) + " »";
+
         /// <summary>Une condition = une liste d'alternatives (OU), chacune une liste de succès à avoir tous (ET).</summary>
         static uint[][] Et(params uint[] succes) => new[] { succes };
         static uint[][] Ou(params uint[] succes) => succes.Select(x => new[] { x }).ToArray();
@@ -54,6 +120,7 @@ namespace Stump.Server.WorldServer.Game.Maps
             { 606, ConditionTengu },        // Crevasse Perge (gardien Givrihaltès)
             { 622, ConditionTengu },        // Cavernes des Givrefoux
             { 621, ConditionTengu },        // Tanière Givrefoux (Tengu)
+            { 603, ConditionKorriandre },   // Village enseveli (PADGREF 22/10, demande utilisateur : Tengu OU Tengu + Fuji, comme son zaap)
             { 605, ConditionKorriandre },   // Forêt pétrifiée (gardienne Sylvie Barbe)
             { 623, ConditionKorriandre },   // Antre du Korriandre
             { 608, ConditionKolosso },      // Crocs de verre (Professeur Xa)
@@ -84,9 +151,104 @@ namespace Stump.Server.WorldServer.Game.Maps
 
         static readonly System.Drawing.Color Couleur = System.Drawing.Color.FromArgb(0x7F, 0xD3, 0xF7);
 
-        static bool EstStaff(Character c) => c?.Account != null && c.Account.UserGroupId >= (int)RoleEnum.Moderator && (c.GodMode || c.Invisible);
+        // PADGREF 23/10 (demande utilisateur) : les personnages ayant reçu l'accès libre (commande « .frigost acces ») sont exemptés
+        // de toutes les conditions de Frigost (niveau, boss vaincus), comme le staff en mode dieu / invisible.
+        static bool EstStaff(Character c) => (c?.Account != null && c.Account.UserGroupId >= (int)RoleEnum.Moderator && (c.GodMode || c.Invisible)) || AccesLibre(c);
+
+        /// <summary>PADGREF 23/10 : personnages avec l'accès libre à Frigost (testeurs), table mystic_acces_frigost (gardée au redémarrage).</summary>
+        static HashSet<int> s_accesLibre;
+        static readonly object s_verrou = new object();
+        static Stump.ORM.Database Base => WorldServer.Instance.DBAccessor.Database;
+
+        static HashSet<int> Libres
+        {
+            get
+            {
+                lock (s_verrou)
+                {
+                    if (s_accesLibre == null)
+                    {
+                        Base.Execute("CREATE TABLE IF NOT EXISTS mystic_acces_frigost (CharacterId INT NOT NULL PRIMARY KEY, " +
+                                     "Depuis DATETIME NOT NULL, Par VARCHAR(64) NOT NULL DEFAULT '') DEFAULT CHARSET=utf8");
+                        s_accesLibre = new HashSet<int>(Base.Fetch<int>("SELECT CharacterId FROM mystic_acces_frigost"));
+                    }
+                    return s_accesLibre;
+                }
+            }
+        }
+
+        public static bool AccesLibre(Character c)
+        {
+            if (c == null)
+                return false;
+            var libres = Libres;
+            lock (s_verrou)
+                return libres.Contains(c.Id);
+        }
+
+        /// <summary>Donne (<paramref name="oui"/>) ou retire l'accès libre à toutes les zones de Frigost.</summary>
+        public static void DonnerAccesLibre(Character c, bool oui, string par)
+        {
+            var libres = Libres;
+            lock (s_verrou)
+            {
+                if (oui)
+                    libres.Add(c.Id);
+                else
+                    libres.Remove(c.Id);
+            }
+            if (oui)
+                Base.Execute("REPLACE INTO mystic_acces_frigost (CharacterId, Depuis, Par) VALUES (@0, NOW(), @1)", c.Id, par ?? "");
+            else
+                Base.Execute("DELETE FROM mystic_acces_frigost WHERE CharacterId = @0", c.Id);
+        }
 
         static bool EstFrigost(Map map) => map?.SubArea != null && ZonesFrigost.Contains(map.SubArea.Record.AreaId);
+
+        // PADGREF 24/10 (demande utilisateur) : quêtes d'accès. Frigost : « Bienvenue à Frigost » (649), donnée par le Capitaine Ardier
+        // (baie de Cania) au départ et terminée en lui reparlant à l'arrivée. Otomaï : « Le nouveau monde » (231, donnée à la création du
+        // personnage) puis « L'île des naufragés » (232), avec le Capitaine Kradoc. Sans elles : ni maison, ni enclos, ni zaap, ni prisme
+        // de l'île (l'accès à l'île elle-même passe par ces capitaines).
+        public const int QueteFrigost = 649;
+        public static readonly int[] QuetesOtomai = { 231, 232 };
+        const int ZoneOtomai = 46;
+
+        static bool EstOtomai(Map map) => map?.SubArea != null && map.SubArea.Record.AreaId == ZoneOtomai;
+        static bool QueteFinie(Character c, int id) => c.Quests.Any(q => q.Finished && q.Id == id);
+
+        /// <summary>Quête d'accès de l'île de la carte faite ? (vrai hors Frigost / Otomaï)</summary>
+        public static bool QueteAcces(Character c, Map map, bool message)
+        {
+            if (c == null || map == null || EstStaff(c))
+                return true;
+            if (EstFrigost(map) && !QueteFinie(c, QueteFrigost))
+            {
+                if (message)
+                    Message(c, "Accès refusé : termine d'abord la quête « Bienvenue à Frigost » (Capitaine Ardier, baie de Cania).");
+                return false;
+            }
+            if (EstOtomai(map) && !QuetesOtomai.All(q => QueteFinie(c, q)))
+            {
+                if (message)
+                    Message(c, "Accès refusé : termine d'abord les quêtes « Le nouveau monde » et « L'île des naufragés » (Capitaine Kradoc, port de Sufokia).");
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>PADGREF 24/10 : téléportation par prisme vers cette carte : quête d'accès + règles de Frigost (niveau, zones).</summary>
+        public static bool PrismeAutorise(Character c, Map map, bool message)
+        {
+            if (map == null || EstStaff(c))
+                return true;
+            if (!QueteAcces(c, map, message))
+                return false;
+            if (ZoneAutorisee(c, map))
+                return true;
+            if (message)
+                Message(c, "Accès refusé : cette zone de Frigost n'est pas encore débloquée.");
+            return false;
+        }
 
         public static bool PeutEntrer(Character c, Map destination, bool message = true)
         {
@@ -137,7 +299,11 @@ namespace Stump.Server.WorldServer.Game.Maps
 
         public static bool ZaapAutorise(Character c, Map zaap, bool message)
         {
-            if (zaap == null || EstStaff(c) || !EstFrigost(zaap))
+            if (zaap == null || EstStaff(c))
+                return true;
+            if (!QueteAcces(c, zaap, message))
+                return false;
+            if (!EstFrigost(zaap))
                 return true;
 
             if (c.Level < NiveauMinimum)
@@ -156,7 +322,11 @@ namespace Stump.Server.WorldServer.Game.Maps
         /// <summary>Maisons et enclos de Frigost : niveau 50 (ailleurs, aucune limite).</summary>
         public static bool NiveauMaisonEnclos(Character c, Map map, bool message)
         {
-            if (!EstFrigost(map) || EstStaff(c))
+            if (EstStaff(c))
+                return true;
+            if (!QueteAcces(c, map, message))
+                return false;
+            if (!EstFrigost(map))
                 return true;
             if (c.Level < NiveauMinimum)
             {
@@ -168,6 +338,9 @@ namespace Stump.Server.WorldServer.Game.Maps
             // (zaap du Village enseveli : Tengu OU Tengu Fuji)
             if (map.SubArea?.Id == SousZoneVillageEnseveli)
                 return Verifier(c, ConditionKorriandre, message);
+            // PADGREF 24/10 (demande utilisateur) : maisons / enclos de chaque zone de Frigost = mêmes conditions que l'accès à la zone
+            if (map.SubArea != null && ParSousZone.TryGetValue(map.SubArea.Id, out var condition))
+                return Verifier(c, condition, message);
             return true;
         }
 
@@ -175,16 +348,15 @@ namespace Stump.Server.WorldServer.Game.Maps
 
         static bool Verifier(Character c, uint[][] condition, bool message)
         {
-            if (condition.Any(alt => alt.All(id => c.Achievement.AchievementIsCompleted(id))))
+            if (condition.Any(alt => alt.All(id => BossVaincu(c, id))))
                 return true;
 
             if (message)
             {
-                string Nom(uint id) => "« " + (AchievementManager.Instance.TryGetAchievement(id)?.Name ?? ("succès " + id)) + " »";
                 var texte = condition.Length > 1
-                    ? "il faut d'abord avoir validé l'un de ces succès : " + string.Join(" ou ", condition.Select(a => Nom(a[0])))
-                    : "il faut d'abord avoir validé le succès " + string.Join(", ", condition[0].Where(id => !c.Achievement.AchievementIsCompleted(id)).Select(Nom));
-                Message(c, "Accès refusé : " + texte + ".");
+                    ? "il faut d'abord avoir vaincu " + string.Join(" ou ", condition.Select(a => NomBoss(a[0])))
+                    : "il faut d'abord avoir vaincu " + string.Join(", ", condition[0].Where(id => !BossVaincu(c, id)).Select(NomBoss));
+                Message(c, "Accès refusé : " + texte + " (quête de son donjon).");
             }
             return false;
         }

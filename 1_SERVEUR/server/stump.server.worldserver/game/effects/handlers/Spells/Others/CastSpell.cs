@@ -64,6 +64,9 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
             {
                 if (Dice.Duration != 0 || Dice.Delay != 0)
                 {
+                    // PADGREF 23/10 : PAS de dédoublonnage des déclencheurs passifs identiques posés par plusieurs monstres (essayé pour
+                    // Aquazomb 9451 chez Bethel) : chaque monstre doit garder le sien, c'est lui qui se lance son propre bonus (« les mobs
+                    // ne font plus leur boost »).
                     var buffId = affectedActor.PopNextBuffId();
 
                     var spell = new Spell(Dice.DiceNum, (byte)Dice.DiceFace);
@@ -120,6 +123,9 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
                     }
                     else
                     {
+                        // PADGREF 22/10 : Défense des Rois d'Ilyzaelle : la case 437 est d'abord libérée (occupant poussé à côté)
+                        if (spell.Id == AI.Fights.Brain.Custom.Boss.IlyzaelleBrain.DefenseDesRois)
+                            AI.Fights.Brain.Custom.Boss.IlyzaelleBrain.LibererCase(affectedActor);
                         affectedActor.CastAutoSpell(spell, affectedActor.Cell);
                     }
                 }
@@ -129,8 +135,8 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
         }
 
         /// <summary>
-        /// MYSTIC 19/10 (audit Antre du Mantiscore) : frappé à distance, le Mantiscore se téléporte au contact de l'attaquant (case libre
-        /// la plus proche de lui) ; s'il ne peut pas, il prend le niveau 3 de Garde-bouclier (-50 % résistances, +200 % dommages,
+        /// MYSTIC 19/10 (audit Antre du Mantiscore) : frappé à distance, le Mantiscore se téléporte sur une de ses cases adjacentes (la
+        /// plus loin de l'attaquant, PADGREF 23/10) ; s'il ne peut pas, il prend le niveau 3 de Garde-bouclier (-50 % résistances, +200 % dommages,
         /// Déréglé 2 tours). Déréglé (état 237) : plus de téléportation. Avant : le sort visait la propre case du Mantiscore, il ne se
         /// téléportait jamais et se mettait à -50 % / Déréglé à chaque coup à distance.
         /// </summary>
@@ -139,12 +145,12 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
             if (attaquant == null || !manti.IsAlive() || !attaquant.IsAlive() || attaquant.Team == manti.Team || manti.HasState(237))
                 return;
             var fight = manti.Fight;
-            if (manti.Position.Point.IsAdjacentTo(attaquant.Position.Point))
-                return;
-            var cible = attaquant.Position.Point.GetAdjacentCells()
+            // PADGREF 23/10 (retour utilisateur : « quand on le frappe il se rapproche du lanceur au lieu de s'éloigner ») : règle officielle,
+            // il se téléporte sur UNE DE SES cases adjacentes (avant : au contact de l'attaquant) : la case libre la plus loin de l'attaquant
+            var cible = manti.Position.Point.GetAdjacentCells()
                 .Select(p => fight.Map.Cells[p.CellId])
                 .Where(c => c.Walkable && !c.NonWalkableDuringFight && fight.IsCellFree(c))
-                .OrderBy(c => new Maps.Cells.MapPoint(c).ManhattanDistanceTo(manti.Position.Point))
+                .OrderByDescending(c => new Maps.Cells.MapPoint(c).ManhattanDistanceTo(attaquant.Position.Point))
                 .FirstOrDefault();
             if (cible != null)
             {
@@ -209,7 +215,9 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
 
             var impair = comte.Fight.TimeLine.RoundNumber % 2 == 1;
             var sort = new Spell(impair ? Fuseau : Gousset, 1);
-            comte.CastSpell(new SpellCastInformations(impair ? comte : attaquant, sort, comte.Cell)
+            // PADGREF 23/10 (retour utilisateur : « les tours impairs doivent téléporter le lanceur, ça ne le fait pas ») : Fuseau vise la
+            // case de l'ATTAQUANT (zone 1 case, masque ennemi) ; lancé sur la case du Comte, il ne touchait personne
+            comte.CastSpell(new SpellCastInformations(impair ? comte : attaquant, sort, impair ? attaquant.Cell : comte.Cell)
             {
                 Force = true,
                 Silent = true,
@@ -236,6 +244,12 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
                 GardeBouclier(manti, triggerrer);
                 return;
             }
+
+            // PADGREF 21/10 : Poison incurable du Scoliopode (4736) : vise l'attaquant via CibleDeclencheur (LastAttackerCriterion.cs)
+
+            // PADGREF 21/10 : Carapace gardée de la Lucrane (4746 -> 4745 -> 4744) : codée dans LucraneBrain (le renvoi touchait la Lucrane)
+            if (buff.Spell.Id == 4745 || buff.Spell.Id == 4744)
+                return;
 
             var damages = token as Fights.Damage;
 
@@ -278,6 +292,14 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
             if (buff.Spell.Id == 4006)
                 return;
 
+            // PADGREF 21/10 (retour utilisateur, Missiz Frizz) : Monogel (11943, Congère, déclencheur « P » = poussé) part seulement
+            // quand un JOUEUR (ou son piège / son invocation) pousse ; les poussées des monstres (Braguette / Bralong du Verglasseur)
+            // ne lancent plus Monogel
+            if (buff.Spell.Id == 11943 && trigger == BuffTriggerType.OnPushed && triggerrer != null && buff.Caster != null &&
+                triggerrer.Team == buff.Caster.Team)
+                return;
+
+
             // MYSTIC 18/10 (retour de test, site) : Mer Veille (Merkator) : le déclencheur MPA est la cible ; c'est celui qui retire les
             // PM (le combattant qui joue) qui subit le vol de vie
             if (buff.Spell.Id == 4008)
@@ -286,6 +308,24 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
                 if (voleur == null || !voleur.IsAlive() || voleur.Team == buff.Target.Team)
                     return;
                 triggerrer = voleur;
+            }
+
+            // PADGREF 22/10 (audit Belvédère d'Ilyzaelle) : Brûle-âme (9079, déclencheurs M|MPA|EON8) : pour un retrait de PM tenté ou un
+            // monstre porté, le moteur donne le monstre lui-même comme déclencheur : c'est le joueur qui joue qui prend la Brûlure
+            if (buff.Spell.Id == 9079 && (triggerrer == null || triggerrer == buff.Target))
+            {
+                var joueur = buff.Target.Fight.FighterPlaying;
+                if (joueur == null || !joueur.IsAlive() || joueur.Team == buff.Target.Team)
+                    return;
+                triggerrer = joueur;
+            }
+
+            // PADGREF 22/10 : Éradication d'Ilyzaelle (2e palier) codée : les monstres puis elle (voir IlyzaelleBrain.Eradiquer)
+            if (buff.Spell.Id == AI.Fights.Brain.Custom.Boss.IlyzaelleBrain.Eradication && buff.Target is MonsterFighter ily &&
+                ily.Monster.Template.Id == (int)MonsterIdEnum.ILYZAELLE)
+            {
+                AI.Fights.Brain.Custom.Boss.IlyzaelleBrain.Eradiquer(ily);
+                return;
             }
 
             // MYSTIC 18/10 (site) : Mer Cure posée sur un joueur ne part que si un ALLIÉ le frappe avec une arme (côté monstres inchangé)

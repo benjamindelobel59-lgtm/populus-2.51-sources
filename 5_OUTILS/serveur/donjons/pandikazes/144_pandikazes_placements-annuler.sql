@@ -1,0 +1,5 @@
+-- PADGREF 23/10 annulation du SQL 144
+UPDATE world_maps SET BlueCellsCSV = '172,175,197,242,282,373,390,444,469,514', RedCellsCSV = '145,202,212,238,311,347,429,474,485,529' WHERE Id = 17304576;
+UPDATE world_maps SET BlueCellsCSV = '35,266,279,511,48,281,265,496', RedCellsCSV = '231,259,271,272,273,274,287,315' WHERE Id = 17308672;
+UPDATE monsters_spawns_dungeons SET CellId = NULL WHERE Id = 215;
+UPDATE monsters_spawns_dungeons SET TeleportCell = NULL WHERE Id = 214;

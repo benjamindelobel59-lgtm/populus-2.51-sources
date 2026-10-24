@@ -44,6 +44,60 @@ namespace Stump.Server.WorldServer.Game.Fights.Triggers
             catch { }
         }
 
+        /// <summary>PADGREF 23/10 (retour utilisateur : « on court sur la glyphe et on sort direct, on ne prend rien ») : glyphe-aura
+        /// TRAVERSÉE pendant un déplacement (sans s'y arrêter) : ses effets sont appliqués et gardés jusqu'à la fin du tour de celui
+        /// qui l'a traversée (ex. Étoile de Mer de Bethel : -4 PA / -2 PM).</summary>
+        public void Traverser(FightActor actor)
+        {
+            if (!CanTrigger(actor) || ContainsCell(actor.Cell))
+                return;
+            try
+            {
+                NotifyTriggered(actor, GlyphSpell);
+                var handler = SpellManager.Instance.GetSpellCastHandler(Caster, GlyphSpell, actor.Cell, false);
+                handler.MarkTrigger = this;
+                handler.Initialize();
+                foreach (var effectHandler in handler.GetEffectHandlers())
+                    effectHandler.SetAffectedActors(effectHandler.IsValidTarget(actor) ? new[] { actor } : new FightActor[0]);
+                handler.Execute();
+            }
+            catch { }
+
+            System.Action<Stump.Server.WorldServer.Game.Fights.IFight, FightActor> fin = null;
+            fin = (fight, joueur) =>
+            {
+                if (joueur != actor)
+                    return;
+                fight.TurnStopped -= fin;
+                if (m_actorsInside.Contains(actor) || ContainsCell(actor.Cell))
+                    return;                                   // revenu dedans : l'aura normale gère
+                foreach (var buff in actor.GetBuffs(x => x.Caster == Caster && x.Spell.Id == GlyphSpell.Id).ToArray())
+                    actor.RemoveBuff(buff);
+            };
+            Fight.TurnStopped += fin;
+        }
+
+        /// <summary>PADGREF 24/10 (demande utilisateur : « je cours 5 cases dans la glyphe du Féca qui retire des PM : quand je rentre dedans,
+        /// ça doit m'enlever les PM ») : PM retirés par cette aura à celui qui y ENTRE (0 s'il y est déjà ou n'est pas visé). Lu par
+        /// FightPath pour raccourcir le déplacement dès la case d'entrée ; le malus réel est posé à l'arrivée (Enter), retiré en sortant.</summary>
+        public int MalusPM(FightActor actor)
+        {
+            if (!CanTrigger(actor))
+                return 0;
+            try
+            {
+                var handler = SpellManager.Instance.GetSpellCastHandler(Caster, GlyphSpell, actor.Cell, false);
+                handler.MarkTrigger = this;
+                handler.Initialize();
+                return handler.GetEffectHandlers().Where(h => (h.Dice.EffectId == EffectsEnum.Effect_SubMP_Roll || h.Dice.EffectId == EffectsEnum.Effect_SubMP ||
+                    h.Dice.EffectId == EffectsEnum.Effect_LostMP) && h.IsValidTarget(actor)).Sum(h => (int)System.Math.Max(h.Dice.DiceNum, (short)0));
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
         private void OnPositionChanged(ContextActor actor, ObjectPosition position)
         {
             var fighter = actor as FightActor;

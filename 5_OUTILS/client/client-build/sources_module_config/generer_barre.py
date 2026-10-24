@@ -10,7 +10,9 @@ B = [("groupe", "[config.ui.skin]texture/btnIcon/btnIcon_invite.png"),
      ("sasa", "[config.ui.skin]texture/Characteristics/tx_wisdom.png"),
      ("pass", "[config.ui.skin]texture/Quetes_tx_PictoSablier.png"),
      ("invo", "[config.ui.skin]texture/Characteristics/tx_summonableCreaturesBoost.png"),
-     ("bug", "[config.ui.skin]texture/btnIcon/btnIcon_bug.png")]  # Mystic : Signaler un bug (.bug)
+     ("bug", "[config.ui.skin]texture/btnIcon/btnIcon_bug.png"),  # Mystic : Signaler un bug (.bug)
+     ("noanim", "[config.ui.skin]texture/btnIcon_spiral.png"),  # PADGREF 23/10 : No anim (option noAnimAdvanced)
+     ("vitesse", "[config.ui.skin]texture/btnIcon/btnIcon_arrowClaim.png")]  # PADGREF 23/10 : vitesse ×2 (option vitesseCombat)
 
 
 def bouton(n, icon, suf, x, y):

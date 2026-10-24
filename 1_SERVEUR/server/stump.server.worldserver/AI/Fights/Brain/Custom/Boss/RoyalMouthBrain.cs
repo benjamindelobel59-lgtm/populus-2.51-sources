@@ -1,4 +1,5 @@
-﻿using Stump.DofusProtocol.Enums;
+﻿using System.Linq;
+using Stump.DofusProtocol.Enums;
 using Stump.Server.WorldServer.Game.Actors.Fight;
 using Stump.Server.WorldServer.Game.Fights;
 using Stump.Server.WorldServer.Game.Spells;
@@ -18,6 +19,20 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
             : base(fighter)
         {
             fighter.Fight.FightStarted += Fight_FightStarted;
+        }
+
+        /// <summary>PADGREF 21/10 (log VPS) : « Lichemouth » (2231, dégâts en croix autour de lui) dès qu'un ennemi est au contact,
+        /// « Regroupmouth » (2230, attire de 2 cases et -1 PM, en croix de 2 autour de lui) dès qu'un ennemi est en ligne à 2 cases :
+        /// l'IA normale ne les lançait jamais.</summary>
+        public override void Play()
+        {
+            var point = Fighter.Position.Point;
+            var ennemis = SortsForces.Ennemis(Fighter).ToList();
+            if (ennemis.Any(e => e.Position.Point.ManhattanDistanceTo(point) == 1))
+                SortsForces.Lancer(Fighter, 2231, Fighter.Cell);
+            if (ennemis.Any(e => (e.Position.Point.X == point.X || e.Position.Point.Y == point.Y) && e.Position.Point.ManhattanDistanceTo(point) == 2))
+                SortsForces.Lancer(Fighter, 2230, Fighter.Cell);
+            base.Play();
         }
 
         private void Fight_FightStarted(IFight obj)

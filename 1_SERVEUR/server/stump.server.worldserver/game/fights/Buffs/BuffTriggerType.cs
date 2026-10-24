@@ -31,6 +31,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
         OnPushDamaged, // PD
         OnMakeMeleeDamage, // CDM
         OnMakeDistanceDamage, // CDR
+        OnThresholdReached, // TR<sort> (PADGREF 23/10, Eliocalypse : seuil de PV de l'effet 2872 atteint)
         OnInderctlyPush, // PPD
         OnPushDamagedInMelee, // PMD
 

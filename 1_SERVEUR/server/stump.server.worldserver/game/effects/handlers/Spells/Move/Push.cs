@@ -258,7 +258,8 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
                                 Source = actor,
                                 School = EffectSchoolEnum.Pushback,
                                 IgnoreDamageBoost = true,
-                                IgnoreDamageReduction = false
+                                IgnoreDamageReduction = false,
+                                SortPoussee = Spell?.Id
                             };
 
                             fighter.InflictDamage(pushDamage);

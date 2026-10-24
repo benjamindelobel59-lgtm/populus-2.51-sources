@@ -40,8 +40,24 @@ namespace Stump.Server.WorldServer.Core.Network
             get { return m_singleClient != null ? 1 : m_underlyingList.Count; }
         }
 
+        /// <summary>PADGREF 23/10 : reçoit chaque message envoyé à la collection (replay des combats, Game/Bugs/ReplayCombat).</summary>
+        public Action<Message> Observateur;
+
         public void Send(Message message)
         {
+            var observateur = Observateur;
+            if (observateur != null)
+            {
+                try
+                {
+                    observateur(message);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Observateur de messages : {0}", ex.Message);
+                }
+            }
+
             if (m_singleClient != null)
             {
                 m_singleClient.Send(message);

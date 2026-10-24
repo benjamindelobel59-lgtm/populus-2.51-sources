@@ -11,6 +11,9 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Heal
 {
     [EffectHandler(EffectsEnum.Effect_FixedNeutralDamage)]
     [EffectHandler(EffectsEnum.Effect_1063)] // MYSTIC 17/10 : « dommages Terre fixes » (Comte, XLII, Ombre…)
+    [EffectHandler(EffectsEnum.Effect_1064)] // PADGREF 23/10 : Air / Eau / Feu fixes (maladies de Corruption, Eliocalypse)
+    [EffectHandler(EffectsEnum.Effect_1065)]
+    [EffectHandler(EffectsEnum.Effect_1066)]
     public class FixedNeutralDamage : SpellEffectHandler
     {
         public FixedNeutralDamage(EffectDice effect, FightActor caster, SpellCastHandler castHandler, Cell targetedCell, bool critical)
@@ -33,7 +36,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Heal
                 }
                 else
                 {
-                    var damages = new Fights.Damage(Dice, Effect.EffectId == EffectsEnum.Effect_1063 ? EffectSchoolEnum.Earth : EffectSchoolEnum.Neutral, Caster, Spell, TargetedCell, EffectZone)
+                    var damages = new Fights.Damage(Dice, Ecole(Effect.EffectId), Caster, Spell, TargetedCell, EffectZone)
                     {
                         IsCritical = Critical,
                         IgnoreDamageBoost = true,
@@ -46,6 +49,18 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Heal
             }
 
             return true;
+        }
+
+        static EffectSchoolEnum Ecole(EffectsEnum e)
+        {
+            switch (e)
+            {
+                case EffectsEnum.Effect_1063: return EffectSchoolEnum.Earth;
+                case EffectsEnum.Effect_1064: return EffectSchoolEnum.Air;
+                case EffectsEnum.Effect_1065: return EffectSchoolEnum.Water;
+                case EffectsEnum.Effect_1066: return EffectSchoolEnum.Fire;
+                default: return EffectSchoolEnum.Neutral;
+            }
         }
 
         static void OnBuffTriggered(TriggerBuff buff, FightActor triggerrer, BuffTriggerType trigger, object token)

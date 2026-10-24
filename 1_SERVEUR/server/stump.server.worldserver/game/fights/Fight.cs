@@ -258,6 +258,14 @@ namespace Stump.Server.WorldServer.Game.Fights
             set;
         }
 
+        /// <summary>PADGREF 23/10 : combat mis en pause par un admin (.pause).</summary>
+        bool EnPause
+        {
+            get;
+        }
+
+        bool BasculerPause(Character par);
+
         event Action<IFight> FightStarted;
 
         event Action<IFight> FightEnded;
@@ -544,6 +552,8 @@ namespace Stump.Server.WorldServer.Game.Fights
 
             // MYSTIC 17/10 : journal du combat pour le bouton « Signaler un bug »
             Bugs.JournalCombat.Suivre(this);
+            // PADGREF 23/10 : replay complet (messages envoyés aux combattants) pour le bouton « Replay »
+            Bugs.ReplayCombat.Suivre(this, m_clients);
         }
 
         #endregion Constructor
@@ -1282,6 +1292,10 @@ namespace Stump.Server.WorldServer.Game.Fights
             if (State != FightState.Placement)
                 throw new Exception("State != Placement, cannot random placement position");
 
+            // PADGREF 24/10 : salle avec placement fixe des monstres (padgref_placements_fixes) : toujours les mêmes cases
+            if (Stump.Server.WorldServer.Game.Maps.Spawns.PlacementsFixes.Placer(this, team))
+                return;
+
             if (PlacerPremierCombatBoss(team))
                 return;
 
@@ -1702,6 +1716,9 @@ namespace Stump.Server.WorldServer.Game.Fights
             ContextHandler.SendGameFightTurnListMessage(spectator.Client, this);
             ContextHandler.SendGameFightSpectateMessage(spectator.Client, this);
             ContextHandler.SendGameFightNewRoundMessage(spectator.Client, TimeLine.RoundNumber);
+            var vague = MessageVague();
+            if (vague != null)
+                spectator.Client.Send(vague);
 
             CharacterHandler.SendCharacterStatsListMessage(spectator.Client);
 
@@ -1942,6 +1959,45 @@ namespace Stump.Server.WorldServer.Game.Fights
                     AddWaveInvulnerability(fighter);
 
             NextWaveNumber++;
+            EnvoyerVague();
+        }
+
+        /// <summary>
+        /// PADGREF 21/10 : icône de vague de la timeline (GameFightNewWaveMessage, jamais envoyé avant). id = vague en cours + 10 × nombre
+        /// total de groupes (départ compris) : le module Fight modifié affiche « Vague 2/4 (2 restantes) » ; tours avant la prochaine
+        /// vague (-1 : plus de vague). Envoyé à chaque nouveau tour (après le compteur de tours du client) et à chaque vague.
+        /// </summary>
+        public void EnvoyerVague()
+        {
+            var message = MessageVague();
+            if (message != null)
+                Clients.Send(message);
+        }
+
+        /// <summary>PADGREF 21/10 : message de vague (null : pas de vague dans ce combat) ; aussi envoyé à un joueur qui revient en combat
+        /// (reconnexion) et aux spectateurs, sinon l'icône n'apparaissait qu'au tour suivant.</summary>
+        public Stump.DofusProtocol.Messages.GameFightNewWaveMessage MessageVague()
+        {
+            if (DefendersTeam == null || ChallengersTeam == null)
+                return null;
+            var joueurs = ChallengersTeam.Fighters.OfType<CharacterFighter>().Count();
+            var palier = joueurs < 5 ? 1 : joueurs;
+            var numeros = DefendersTeam.m_wavesFighters.Where(x => x.MinPlayerLevel == palier).Select(x => x.WaveNumber).Distinct().ToList();
+            if (numeros.Count == 0)
+                return null;
+            var total = Math.Min(numeros.Count + 1, 9);
+            var actuelle = Math.Min(NextWaveNumber, total);
+            var avant = -1;
+            if (numeros.Contains(NextWaveNumber))
+            {
+                var tour = TimeLine.RoundNumber;
+                var prochains = WaveTurns.Where(t => t > tour).OrderBy(t => t).ToList();
+                if (PrematuredWave && prochains.Count > 0)
+                    prochains.RemoveAt(0);      // vague anticipée (tous morts) : le prochain tour de vague est sauté
+                if (prochains.Count > 0)
+                    avant = prochains[0] - tour;
+            }
+            return new Stump.DofusProtocol.Messages.GameFightNewWaveMessage((sbyte)(actuelle + 10 * total), (sbyte)DefendersTeam.Id, (short)avant);
         }
 
         /// <summary>
@@ -2024,6 +2080,7 @@ namespace Stump.Server.WorldServer.Game.Fights
                     }
                 }
                 ContextHandler.SendGameFightNewRoundMessage(Clients, TimeLine.RoundNumber);
+                EnvoyerVague();
             }
 
             var actor = FighterPlaying as CompanionActor;
@@ -2215,6 +2272,13 @@ namespace Stump.Server.WorldServer.Game.Fights
         {
             if (ReadyChecker == null)
                 return;
+
+            // PADGREF 23/10 : combat en pause -> le tour suivant commencera à la reprise
+            if (EnPause)
+            {
+                m_reprisePause = PassTurnAndCheck;
+                return;
+            }
 
             ReadyChecker = null;
             logger.Info("[Chrono combat] {0} {1:HH:mm:ss.fff} : clients prets, tour suivant", Id, DateTime.Now);
@@ -2411,6 +2475,13 @@ namespace Stump.Server.WorldServer.Game.Fights
 
                     ActionsHandler.SendGameActionFightDeathMessage(Clients, fighter, killedBy);
 
+                    // PADGREF 22/10 (Pacifiste de Zombidule au Sylargh, retour utilisateur) : à la mort, le client efface tous les effets
+                    // dont le mort est la source (BuffManager.removeLinkedBuff) ; ceux lancés par un mort (passifs « à la mort » : Zombidule,
+                    // Deuil, Mansomon…) restent côté serveur (Buff.LanceParUnMort) mais disparaissaient de l'écran : renvoyés au client
+                    foreach (var actor in GetAllFighters().ToArray())
+                        foreach (var buff in actor.GetBuffs(b => b.LanceParUnMort && b.Caster == fighter).ToArray())
+                            ContextHandler.SendGameActionFightDispellableEffectMessage(Clients, buff);
+
                     // MYSTIC 17/10 : glyphes / pieges du mort retires DANS la sequence de mort, sinon le client gardait leur visuel
                     // (test Korriandre : glyphes d'un joueur mort encore affichees mais inactives)
                     foreach (var trigger in m_triggers.Where(trigger => trigger.Caster == fighter).ToArray())
@@ -2557,7 +2628,55 @@ namespace Stump.Server.WorldServer.Game.Fights
 
             fighter.UseMP((short)path.MPCost);
 
+            // PADGREF 24/10 (choix utilisateur) : plus AUCUN declenchement de glyphe a la traversee (Korriandre : passer sur une Daipipay
+            // one-shotait). Glyphe normale : seulement debut / fin de tour de celui qui est dedans. Glyphe-aura : malus tant qu'on est
+            // dedans (case d'arrivee), perdu en sortant (GlyphAura.Enter / Leave). DeclencherGlyphesTraversees n'est plus appele.
+
             PortalsManager.RefreshClientsPortals();
+        }
+
+        /// <summary>
+        /// PADGREF 23/10 (retour utilisateur : glyphes d'Ilyzaelle, du Féca, de Bethel… « on court sur la glyphe et on sort direct, on ne
+        /// prend ni les dégâts ni rien ») : une glyphe sur le chemin d'un déplacement est déclenchée UNE fois quand on y ENTRE (pas si on
+        /// y était déjà au départ) : glyphe normale -> ses effets (dégâts, malus…) ; glyphe-aura traversée sans s'y arrêter -> ses effets
+        /// gardés jusqu'à la fin du tour (s'arrêter dedans reste géré par l'aura elle-même). Avant : seule la case d'arrivée comptait,
+        /// et une glyphe normale ne frappait qu'en début de tour.
+        /// </summary>
+        static readonly System.Collections.Generic.HashSet<int> GlyphesSansTraversee = new System.Collections.Generic.HashSet<int> { 1077, 1078, 3645 };
+
+        // PADGREF 24/10 (demande utilisateur) : glyphe Bon vieux temps du Comte Harebourg (3644 -> 3645, tue) : comme le Kimbo, elle ne tue
+        // que celui qui COMMENCE son tour dedans (ni a la traversee, ni en finissant son deplacement / son tour dedans)
+        void DeclencherGlyphesTraversees(FightActor fighter, Path path)
+        {
+            var cases = path?.Cells;
+            if (cases == null || cases.Length < 2)
+                return;
+            var depart = cases[0];
+            var arrivee = cases[cases.Length - 1];
+            // PADGREF 23/10 (demande utilisateur) : les glyphes paire / impaire du Disciple du Kimbo (sorts 1077 / 1078) ne marchent PAS
+            // a la traversee : le Kimbo ne perd ses resistances que s'il COMMENCE son tour dedans (regle normale des glyphes).
+            var glyphes = m_triggers.OfType<Glyph>().Where(g => !(g is GlyphBuff) && !g.ContainsCell(depart) && !GlyphesSansTraversee.Contains(g.GlyphSpell.Id)).ToArray();
+            if (glyphes.Length == 0)
+                return;
+            using (StartSequence(SequenceTypeEnum.SEQUENCE_GLYPH_TRAP))
+                foreach (var glyphe in glyphes)
+                {
+                    if (!fighter.IsAlive() || !m_triggers.Contains(glyphe))
+                        continue;
+                    var touchee = cases.Skip(1).FirstOrDefault(glyphe.ContainsCell);
+                    if (touchee == null)
+                        continue;
+                    if (glyphe is GlyphAura aura)
+                    {
+                        if (!aura.ContainsCell(arrivee))
+                            aura.Traverser(fighter);
+                    }
+                    // PADGREF 23/10 (retour utilisateur : "les glyphes paire / impaire du Kimbo ne doivent pas tuer quand on finit son tour
+                    // dessus") : une glyphe dans laquelle on S'ARRêTE ne se declenche pas ici (regle normale : au debut du tour de celui
+                    // qui est dessus) ; seulement celles qu'on traverse et dont on ressort.
+                    else if (!glyphe.TriggerType.HasFlag(TriggerType.MOVE) && !glyphe.ContainsCell(arrivee))
+                        glyphe.Trigger(fighter, touchee);
+                }
         }
 
         protected virtual void OnPositionChanged(ContextActor actor, ObjectPosition objectPosition)
@@ -2682,7 +2801,13 @@ namespace Stump.Server.WorldServer.Game.Fights
                 var portals = PortalsManager.PortalAnimation(castHandler);
                 ForEach(entry => ContextHandler.SendGameActionFightSpellCastMessage(entry.Client, ActionsEnum.ACTION_FIGHT_CAST_SPELL,
                     caster, target, castHandler.SeeCast(entry) ? castHandler.Informations.TargetedCell : GetInvisibleSpellCastCell(caster.Cell, castHandler.Informations.TargetedCell),
-                    castHandler.Informations.Critical, !caster.IsVisibleFor(entry) || castHandler.Informations.Silent, castHandler.Spell, portals), true);
+                    castHandler.Informations.Critical, !caster.IsVisibleFor(entry) || castHandler.Informations.Silent, castHandler.Spell, portals,
+                    // PADGREF 23/10 (retour utilisateur : « Padécédé » ×3, « Aquazomb », passifs de l'Eliocalypse dans le chat) : un sort
+                    // déclenché (passif, réaction, sous-sort) n'est plus annoncé « X lance … » ; le sort lancé lui-même suit verbose_cast.
+                    // PADGREF 23/10 (« X lance Aquazomb » à chaque fin de tour) : lancers automatiques (CastAutoSpell : forcés / silencieux,
+                    // passifs, sorts lancés par un effet) cachés aussi
+                    castHandler.Spell.Template.VerboseCast && !castHandler.Informations.Triggered && !castHandler.Informations.Force &&
+                    !castHandler.Informations.Silent), true);
 
             }
 
@@ -2718,7 +2843,8 @@ namespace Stump.Server.WorldServer.Game.Fights
         protected virtual void OnBuffAdded(FightActor target, Buff buff)
         {
             m_buffs.Add(buff);
-            ContextHandler.SendGameActionFightDispellableEffectMessage(Clients, buff);
+            if (!buff.NonAffiche)
+                ContextHandler.SendGameActionFightDispellableEffectMessage(Clients, buff);
 
             // MYSTIC (diagnostic, meme interrupteur que les lignes [IA] : Brain.LogTurns) : buffs envoyes au client, pour comprendre pourquoi un buff declenche n'apparait pas dans le chat
             if (AI.Fights.Brain.Brain.LogTurns)
@@ -2968,6 +3094,9 @@ namespace Stump.Server.WorldServer.Game.Fights
 
             ContextHandler.SendGameFightTurnResumeMessage(client, FighterPlaying);
             ContextHandler.SendGameFightNewRoundMessage(client, TimeLine.RoundNumber);
+            var vague = MessageVague();
+            if (vague != null)
+                client.Send(vague);
             ContextHandler.SendGameFightUpdateTeamMessage(client, this, ChallengersTeam);
             ContextHandler.SendGameFightUpdateTeamMessage(client, this, DefendersTeam);
 
@@ -3149,6 +3278,62 @@ namespace Stump.Server.WorldServer.Game.Fights
         }
 
         #endregion Freeze
+
+        #region Pause (PADGREF 23/10)
+
+        private bool m_enPause;
+        private DateTime m_debutPause;
+        private Action m_reprisePause;
+
+        public bool EnPause => m_enPause;
+
+        /// <summary>
+        /// .pause (admins) : met le combat en pause ou le reprend. En pause : chrono du tour arrêté, sorts / déplacements / fin de
+        /// tour refusés, le tour suivant attend la reprise ; les clients reçoivent GameFightPauseMessage (géré par le client 2.51).
+        /// </summary>
+        public bool BasculerPause(Character par)
+        {
+            if (State != FightState.Fighting)
+                return false;
+
+            if (!m_enPause)
+            {
+                m_enPause = true;
+                m_debutPause = DateTime.Now;
+                m_turnTimer?.Dispose();
+                m_turnTimer = null;
+                Clients.Send(new Stump.DofusProtocol.Messages.GameFightPauseMessage(true));
+                ForEach(c => c.SendServerMessage("<b>Combat en pause</b> (par " + par.Name + ").", System.Drawing.Color.Orange), true);
+                logger.Info("[Pause] combat {0} mis en pause par {1}", Id, par.Name);
+                return true;
+            }
+
+            m_enPause = false;
+            var duree = DateTime.Now - m_debutPause;
+            Clients.Send(new Stump.DofusProtocol.Messages.GameFightPauseMessage(false));
+            ForEach(c => c.SendServerMessage("<b>Reprise du combat</b> (par " + par.Name + ").", System.Drawing.Color.Orange), true);
+            logger.Info("[Pause] combat {0} repris par {1} apres {2:0} s", Id, par.Name, duree.TotalSeconds);
+
+            var reprise = m_reprisePause;
+            m_reprisePause = null;
+            if (reprise != null)
+            {
+                reprise();
+                return true;
+            }
+
+            // le temps passé en pause ne compte pas dans le tour en cours
+            TurnStartTime += duree;
+            if (FighterPlaying != null && !Freezed)
+            {
+                var reste = (int)GetTurnTimeLeft().TotalMilliseconds;
+                m_turnTimer = Map.Area.CallDelayed(Math.Max(1000, reste), StopTurn);
+                ContextHandler.SendGameFightTurnResumeMessage(Clients, FighterPlaying);
+            }
+            return true;
+        }
+
+        #endregion Pause
 
         #region Send Methods
 

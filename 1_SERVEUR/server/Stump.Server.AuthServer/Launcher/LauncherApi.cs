@@ -120,6 +120,16 @@ namespace Stump.Server.AuthServer.Launcher
         // ------------------------------------------------------------------ tickets (appelé par CredentialManager)
 
         /// <summary>Vérifie et consomme un ticket du launcher (usage unique). Le login doit être celui du compte du ticket.</summary>
+        /// <summary>PADGREF 21/10 : compte du ticket (usage unique, non expiré), null sinon. Le ticket (24 octets aléatoires) suffit à
+        /// prouver le compte : après « Déconnecter », le jeu renvoie l'identifiant mémorisé de l'ancien écran de connexion (autre compte)
+        /// au lieu de celui du launcher, la connexion était refusée (« identifiant ou mot de passe incorrect »).</summary>
+        public string LoginDuTicket(string ticket)
+        {
+            if (string.IsNullOrEmpty(ticket) || !m_tickets.TryRemove(ticket, out var t))
+                return null;
+            return t.Expire > DateTime.Now ? t.Login : null;
+        }
+
         public bool ConsommerTicket(string login, string ticket)
         {
             if (string.IsNullOrEmpty(ticket) || !m_tickets.TryRemove(ticket, out var t))

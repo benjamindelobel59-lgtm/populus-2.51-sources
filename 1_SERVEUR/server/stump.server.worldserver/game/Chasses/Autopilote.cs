@@ -65,6 +65,13 @@ namespace Stump.Server.WorldServer.Game.Chasses
                 Message(c, "Tu es déjà sur la carte de l'indice : pose ton jalon !");
                 return;
             }
+            // PADGREF 24/10 (retour utilisateur : « Y aller depuis la Malle aux Trésors nous téléporte dehors, faut pas ») : plus de
+            // téléportation hors de la Malle ; le trajet automatique part seulement de l'extérieur
+            if (CartesMalle.Contains(c.Map.Id))
+            {
+                Message(c, "Tu es dans la Malle aux Trésors : sors par la porte, puis reclique sur « Y aller ».");
+                return;
+            }
 
             var t = new Trajet { Perso = c, Cible = carteCible };
             lock (m_trajets)
@@ -124,14 +131,10 @@ namespace Stump.Server.WorldServer.Game.Chasses
                     return;
                 }
 
-                // dans la Malle aux Trésors (intérieur) : on sort devant la porte
+                // dans la Malle aux Trésors (intérieur) : plus de téléportation dehors (PADGREF 24/10)
                 if (CartesMalle.Contains(c.Map.Id))
                 {
-                    var sortie = World.Instance.GetMap(CarteSortieMalle);
-                    if (sortie != null && c.Teleport(new ObjectPosition(sortie, sortie.GetRandomFreeCell(), c.Direction)))
-                        Planifier(t, AttenteApresChangement);
-                    else
-                        Arreter(c, "Trajet automatique impossible depuis ici : sors de la Malle aux Trésors.");
+                    Arreter(c, "Tu es dans la Malle aux Trésors : sors par la porte, puis reclique sur « Y aller ».");
                     return;
                 }
 

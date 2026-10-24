@@ -1,0 +1,510 @@
+package ui
+{
+   import com.ankamagames.berilia.api.UiApi;
+   import com.ankamagames.dofus.uiApi.ConfigApi;
+   import com.ankamagames.dofus.uiApi.FightApi;
+   import com.ankamagames.dofus.uiApi.SystemApi;
+   import d2hooks.TextInformation;
+   import flash.events.TimerEvent;
+   import flash.net.SharedObject;
+   import flash.net.URLRequest;
+   import flash.net.navigateToURL;
+   import flash.utils.Timer;
+   import populus.ChatTextOutput;
+   import populus.PanelWindow;
+   
+   public class PopulusButtons
+   {
+      
+      private static const GRIS:uint = 5921370;
+      
+      private static const VERT:uint = 3059774;
+      
+      private static const OR:uint = 13148746;
+      
+      private static const BOUTONS:Array = [["groupe",".groupe",null,"Groupe : invite tous vos personnages"],["onewindow",".onewindow","One Window","One Window : vos personnages vous suivent et vous jouez leurs tours"],["ipdrop",".ipdrop","IP Drop","IP Drop : ce personnage reçoit le drop de tous vos personnages"],["sasa",".sasa","Sasa auto","Sasa auto : les points de caractéristique vont dans la sagesse"],["pass",".passturn","Passe-tour auto","Passe-tour auto : les tours de ce personnage sont passés automatiquement"],["invo",".invo","Contrôle invocations","Contrôle des invocations : vous jouez vous-même vos invocations"],["bug",".bug",null,"Signaler un bug : titre, description, logs du combat et du client"],["noanim",null,null,"No anim : animations des sorts désactivées en combat"],["vitesse",null,null,"Vitesse ×2 : combats deux fois plus rapides (animations et déplacements)"]];
+      
+      private static const LOCAUX:Object = {
+         "noanim":["noAnimAdvanced",true,false],
+         "vitesse":["vitesseCombat",2,1]
+      };
+      
+      private static const AURORAIRE:int = 3833;
+      
+      private static const HEURES:Array = ["","1re","2e","3e","4e","5e","6e","7e","8e","9e","10e","11e","12e"];
+      
+      private var _store:SharedObject;
+      
+      public var uiApi:UiApi;
+      
+      private var _hidden:Boolean;
+      
+      private var _reduit:Boolean;
+      
+      public var btn_reduire:*;
+      
+      public var btn_agrandir:*;
+      
+      public var btn_reduire2:*;
+      
+      public var btn_agrandir2:*;
+      
+      public var ctr_h_btns:*;
+      
+      public var ctr_v_btns:*;
+      
+      public var ctr_h_bg:*;
+      
+      public var ctr_h_bg_mini:*;
+      
+      public var ctr_v_bg:*;
+      
+      public var ctr_v_bg_mini:*;
+      
+      public var sysApi:SystemApi;
+      
+      public var configApi:ConfigApi;
+      
+      public var fightApi:FightApi;
+      
+      public var ctr_horloge:*;
+      
+      public var lbl_horloge:*;
+      
+      private var _minuteur:Timer;
+      
+      public var ctr_h:*;
+      
+      private var _vertical:Boolean;
+      
+      public var ctr_v:*;
+      
+      private var _etat:Object = {"invo":true};
+      
+      public var btn_groupe:*;
+      
+      public var btn_onewindow:*;
+      
+      public var btn_ipdrop:*;
+      
+      public var btn_sasa:*;
+      
+      public var btn_pass:*;
+      
+      public var btn_invo:*;
+      
+      public var btn_bug:*;
+      
+      public var btn_groupe2:*;
+      
+      public var btn_onewindow2:*;
+      
+      public var btn_ipdrop2:*;
+      
+      public var btn_sasa2:*;
+      
+      public var btn_pass2:*;
+      
+      public var btn_invo2:*;
+      
+      public var btn_bug2:*;
+      
+      public var btn_noanim:*;
+      
+      public var btn_noanim2:*;
+      
+      public var btn_vitesse:*;
+      
+      public var btn_vitesse2:*;
+      
+      public var f_groupe:*;
+      
+      public var f_onewindow:*;
+      
+      public var f_ipdrop:*;
+      
+      public var f_sasa:*;
+      
+      public var f_pass:*;
+      
+      public var f_invo:*;
+      
+      public var f_bug:*;
+      
+      public var f_groupe2:*;
+      
+      public var f_onewindow2:*;
+      
+      public var f_ipdrop2:*;
+      
+      public var f_sasa2:*;
+      
+      public var f_pass2:*;
+      
+      public var f_invo2:*;
+      
+      public var f_bug2:*;
+      
+      public var f_noanim:*;
+      
+      public var f_noanim2:*;
+      
+      public var f_vitesse:*;
+      
+      public var f_vitesse2:*;
+      
+      public function PopulusButtons()
+      {
+         super();
+      }
+      
+      public function onTextInformation(param1:String = null, param2:* = null, param3:* = null, param4:* = null) : void
+      {
+         var _loc5_:Array;
+         var _bug:Array;
+         var _replay:Array;
+         var _loc6_:* = undefined;
+         var _loc7_:Array = null;
+         var _loc8_:int = 0;
+         var _loc9_:String = null;
+         if(!param1)
+         {
+            return;
+         }
+         _loc5_ = param1.match(/(https?:\/\/[^\s,{}]+\/populus-admin\/\?t=[a-f0-9]{48})/);
+         if(_loc5_)
+         {
+            _loc6_ = this.ctr_h || this.ctr_v;
+            PanelWindow.open(_loc6_ ? _loc6_.stage : null,_loc5_[1]);
+         }
+         _bug = param1.match(/(https?:\/\/[^\s,{}]+\/populus-admin\/bug\.php\?t=[a-f0-9]{48})/);
+         if(_bug)
+         {
+            _loc6_ = this.ctr_h || this.ctr_v;
+            PanelWindow.open(_loc6_ ? _loc6_.stage : null,_bug[1]);
+            PanelWindow.envoyerLog(_bug[1] + "&log=1");
+         }
+         _replay = param1.match(/(https?:\/\/[^\s,{}]+\/replay\.html\?r=[a-f0-9]{32})/);
+         if(_replay && param1.indexOf("Replay") >= 0)
+         {
+            try
+            {
+               navigateToURL(new URLRequest(_replay[1]),"_blank");
+            }
+            catch(e:Error)
+            {
+            }
+         }
+         for each(_loc7_ in BOUTONS)
+         {
+            if(_loc7_[2])
+            {
+               _loc8_ = param1.indexOf(_loc7_[2] + " ");
+               if(_loc8_ >= 0)
+               {
+                  _loc9_ = param1.substr(_loc8_ + String(_loc7_[2]).length + 1,5);
+                  if(_loc9_ == "activ")
+                  {
+                     this._etat[_loc7_[0]] = true;
+                  }
+                  else if(_loc9_.charAt(0) == "d")
+                  {
+                     this._etat[_loc7_[0]] = false;
+                  }
+               }
+            }
+         }
+         this.peindre();
+      }
+      
+      private function peindre() : void
+      {
+         var _loc1_:Array = null;
+         var _loc2_:uint = 0;
+         var _loc3_:* = undefined;
+         for each(_loc1_ in BOUTONS)
+         {
+            _loc2_ = LOCAUX[_loc1_[0]] ? (this.optionActive(_loc1_[0]) ? VERT : GRIS) : (!_loc1_[2] ? OR : (this._etat[_loc1_[0]] ? VERT : GRIS));
+            for each(_loc3_ in [this["f_" + _loc1_[0]],this["f_" + _loc1_[0] + "2"]])
+            {
+               if(_loc3_)
+               {
+                  _loc3_.bgColor = _loc2_;
+               }
+            }
+         }
+      }
+      
+      private function bouton(param1:String) : Array
+      {
+         var _loc2_:Array = null;
+         for each(_loc2_ in BOUTONS)
+         {
+            if(param1 == "btn_" + _loc2_[0] || param1 == "btn_" + _loc2_[0] + "2")
+            {
+               return _loc2_;
+            }
+         }
+         return null;
+      }
+      
+      public function onRelease(param1:Object) : void
+      {
+         var _loc2_:String = param1 ? String(param1.name) : "";
+         var _loc3_:Array = this.bouton(_loc2_);
+         if(_loc3_ && LOCAUX[_loc3_[0]])
+         {
+            this.basculerOption(_loc3_[0]);
+         }
+         else if(_loc3_)
+         {
+            this.send(_loc3_[1]);
+         }
+         else if(_loc2_.indexOf("btn_reduire") == 0 || _loc2_.indexOf("btn_agrandir") == 0)
+         {
+            this._reduit = _loc2_.indexOf("btn_reduire") == 0;
+            this.save();
+            this.apply();
+         }
+         else if(_loc2_.indexOf("btn_rotate") == 0)
+         {
+            this._vertical = !this._vertical;
+            this.save();
+            this.apply();
+         }
+      }
+      
+      public function onRollOver(param1:Object) : void
+      {
+         var _loc3_:String;
+         var _loc2_:Array = this.bouton(param1 ? String(param1.name) : "");
+         if(!_loc2_)
+         {
+            return;
+         }
+         _loc3_ = _loc2_[3];
+         if(LOCAUX[_loc2_[0]])
+         {
+            _loc3_ += this.optionActive(_loc2_[0]) ? " (activé)" : " (désactivé)";
+         }
+         else if(_loc2_[2])
+         {
+            _loc3_ += this._etat[_loc2_[0]] ? " (activé)" : " (désactivé)";
+         }
+         try
+         {
+            this.uiApi.showTooltip(this.uiApi.textTooltipInfo(_loc3_),param1,false,"standard",7,1,3,null,null,null,"TextInfo");
+         }
+         catch(e:Error)
+         {
+         }
+      }
+      
+      public function onRollOut(param1:Object) : void
+      {
+         try
+         {
+            this.uiApi.hideTooltip();
+         }
+         catch(e:Error)
+         {
+         }
+      }
+      
+      public function toggleBar() : void
+      {
+         this._hidden = !this._hidden;
+         this.save();
+         this.apply();
+      }
+      
+      private function optionActive(nom:String) : Boolean
+      {
+         var l:Array = LOCAUX[nom];
+         try
+         {
+            return this.configApi.getConfigProperty("dofus",l[0]) == l[1];
+         }
+         catch(e:Error)
+         {
+         }
+         return false;
+      }
+      
+      private function basculerOption(nom:String) : void
+      {
+         var l:Array = LOCAUX[nom];
+         var actif:Boolean = this.optionActive(nom);
+         try
+         {
+            this.configApi.setConfigProperty("dofus",l[0],actif ? l[2] : l[1]);
+         }
+         catch(e:Error)
+         {
+         }
+         this.peindre();
+      }
+      
+      private function send(param1:String) : void
+      {
+         this.sysApi.sendAction(new ChatTextOutput(param1,0,"",null));
+      }
+      
+      private function save() : void
+      {
+         if(!this._store)
+         {
+            return;
+         }
+         this._store.data.vertical = this._vertical;
+         this._store.data.hidden = this._hidden;
+         this._store.data.reduit = this._reduit;
+         try
+         {
+            this._store.flush();
+         }
+         catch(e:Error)
+         {
+         }
+      }
+      
+      public function main(param1:* = null) : void
+      {
+         var _loc2_:Array = null;
+         var _loc3_:* = undefined;
+         var params:* = param1;
+         try
+         {
+            this._store = SharedObject.getLocal("populusButtons");
+            this._vertical = this._store.data.vertical == true;
+            this._hidden = this._store.data.hidden == true;
+            this._reduit = this._store.data.reduit == true;
+         }
+         catch(e:Error)
+         {
+            this._store = null;
+         }
+         this.apply();
+         this.peindre();
+         for each(_loc2_ in BOUTONS)
+         {
+            for each(_loc3_ in [this["btn_" + _loc2_[0]],this["btn_" + _loc2_[0] + "2"]])
+            {
+               if(_loc3_)
+               {
+                  this.uiApi.addComponentHook(_loc3_,"onRollOver");
+                  this.uiApi.addComponentHook(_loc3_,"onRollOut");
+               }
+            }
+         }
+         try
+         {
+            this.sysApi.addHook(TextInformation,this.onTextInformation);
+         }
+         catch(e:Error)
+         {
+         }
+         try
+         {
+            this._minuteur = new Timer(500);
+            this._minuteur.addEventListener(TimerEvent.TIMER,this.onMinuteur);
+            this._minuteur.start();
+         }
+         catch(e:Error)
+         {
+         }
+         this.horloge();
+      }
+      
+      public function onMinuteur(param1:* = null) : void
+      {
+         this.horloge();
+         this.peindre();
+      }
+      
+      private function horloge() : void
+      {
+         var heure:int = 0;
+         var id:* = undefined;
+         var buff:* = undefined;
+         var etat:int = 0;
+         try
+         {
+            if(this.fightApi)
+            {
+               for each(id in this.fightApi.getFighters())
+               {
+                  if(this.fightApi.getMonsterId(id) == AURORAIRE)
+                  {
+                     for each(buff in this.fightApi.getBuffList(id))
+                     {
+                        etat = 0;
+                        try
+                        {
+                           etat = int(buff.stateId);
+                        }
+                        catch(e2:Error)
+                        {
+                        }
+                        if(etat >= 221 && etat <= 232)
+                        {
+                           heure = etat - 220;
+                        }
+                     }
+                  }
+               }
+            }
+         }
+         catch(e:Error)
+         {
+            heure = 0;
+         }
+         if(!this.ctr_horloge)
+         {
+            return;
+         }
+         this.ctr_horloge.visible = heure > 0;
+         if(heure > 0 && this.lbl_horloge)
+         {
+            this.lbl_horloge.text = "Auroraire : " + HEURES[heure] + " heure";
+         }
+      }
+      
+      private function apply() : void
+      {
+         if(this.ctr_h)
+         {
+            this.ctr_h.visible = !this._hidden && !this._vertical;
+         }
+         if(this.ctr_v)
+         {
+            this.ctr_v.visible = !this._hidden && this._vertical;
+         }
+         for each(var _loc1_ in [this.ctr_h_btns,this.ctr_v_btns,this.ctr_h_bg,this.ctr_v_bg,this.btn_reduire,this.btn_reduire2])
+         {
+            if(_loc1_)
+            {
+               _loc1_.visible = !this._reduit;
+            }
+         }
+         for each(_loc1_ in [this.ctr_h_bg_mini,this.ctr_v_bg_mini,this.btn_agrandir,this.btn_agrandir2])
+         {
+            if(_loc1_)
+            {
+               _loc1_.visible = this._reduit;
+            }
+         }
+      }
+      
+      public function unload() : void
+      {
+         if(this._minuteur)
+         {
+            this._minuteur.stop();
+            this._minuteur.removeEventListener(TimerEvent.TIMER,this.onMinuteur);
+            this._minuteur = null;
+         }
+      }
+   }
+}
+

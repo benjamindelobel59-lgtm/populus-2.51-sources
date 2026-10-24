@@ -156,6 +156,16 @@ namespace Stump.Server.WorldServer.Database.Monsters
             set;
         }
 
+        /// <summary>
+        /// PADGREF 21/10 : drop à taux FIXE (drops repris de DofusDB) : le taux de la base est appliqué tel quel, sans prospection,
+        /// idoles, étoiles, challenges, taux du serveur, VIP ni bonus de territoire.
+        /// </summary>
+        public bool TauxFixe
+        {
+            get;
+            set;
+        }
+
         public void SetDropRate(double rate)
         {
             DropRateForGrade1 = rate;

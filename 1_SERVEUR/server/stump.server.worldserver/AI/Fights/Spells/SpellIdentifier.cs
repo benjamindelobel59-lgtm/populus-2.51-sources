@@ -84,6 +84,7 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
                 case EffectsEnum.Effect_ReviveAndGiveHPToLastDiedAlly:
                     return SpellCategory.Summoning | SpellCategory.Healing;
                 case EffectsEnum.Effect_AddArmorDamageReduction:
+                case EffectsEnum.Effect_AddResistances:   // PADGREF 23/10 : +x% résistances (tous éléments)
                 case EffectsEnum.Effect_AddAirResistPercent:
                 case EffectsEnum.Effect_AddFireResistPercent:
                 case EffectsEnum.Effect_AddEarthResistPercent:
@@ -139,7 +140,6 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
                 case EffectsEnum.Effect_ReflectSpell:
                 case EffectsEnum.Effect_RegainAP:
                 case EffectsEnum.Effect_DamageIntercept:
-                case EffectsEnum.Effect_HealOrMultiply:
                 case EffectsEnum.Effect_IncreaseDamage_138:
                 case EffectsEnum.Effect_AddShieldLevelPercent:
                     return SpellCategory.Buff;
@@ -161,6 +161,7 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
                 case EffectsEnum.Effect_SubDamageBonus:
                 case EffectsEnum.Effect_SubChance:
                 case EffectsEnum.Effect_SubVitality:
+                case EffectsEnum.Effect_1047:   // PADGREF 23/10 : Milépines du Pampactus (-1000 PV 1 tour) jugé sans effet, jamais lancé
                 case EffectsEnum.Effect_SubAgility:
                 case EffectsEnum.Effect_SubIntelligence:
                 case EffectsEnum.Effect_SubWisdom:
@@ -181,6 +182,8 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
                 case EffectsEnum.Effect_SubHealBonus:
                 case EffectsEnum.Effect_SubDamageBonusPercent:
                 case EffectsEnum.Effect_197:
+                case EffectsEnum.Effect_SubResistances:   // PADGREF 23/10 : Décapsulation des Palmifleurs (-100% résistances) jamais lancée
+                case EffectsEnum.Effect_HealOrMultiply:   // PADGREF 23/10 : Pierre qui roule (Craqueleur Poli), lancé sur l'ennemi : malus (avant : bonus -> jamais lancé)
                 case EffectsEnum.Effect_SubEarthResistPercent:
                 case EffectsEnum.Effect_SubWaterResistPercent:
                 case EffectsEnum.Effect_SubAirResistPercent:

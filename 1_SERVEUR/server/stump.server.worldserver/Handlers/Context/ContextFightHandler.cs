@@ -28,6 +28,13 @@ namespace Stump.Server.WorldServer.Handlers.Context
         {
             if (!client.Character.IsFighting())
                 return;
+            // PADGREF 23/10 : combat en pause (.pause) -> aucune action
+            if (client.Character.Fight.EnPause)
+            {
+                client.Character.SendServerMessage("Combat en pause : attends la reprise.");
+                client.Send(new GameActionFightNoSpellCastMessage(0));
+                return;
+            }
 
             var fighter = client.Character.Fighter;
             if (client.Character.Fight.FighterPlaying is CompanionActor)
@@ -59,6 +66,13 @@ namespace Stump.Server.WorldServer.Handlers.Context
         {
             if (!client.Character.IsFighting())
                 return;
+            // PADGREF 23/10 : combat en pause (.pause) -> aucune action
+            if (client.Character.Fight.EnPause)
+            {
+                client.Character.SendServerMessage("Combat en pause : attends la reprise.");
+                client.Send(new GameActionFightNoSpellCastMessage(0));
+                return;
+            }
 
             var fighter = client.Character.Fighter;
 
@@ -97,12 +111,27 @@ namespace Stump.Server.WorldServer.Handlers.Context
             if (!client.Character.IsFighting())
                 return;
 
+            // PADGREF 23/10 : combat en pause (.pause)
+            if (client.Character.Fight.EnPause)
+            {
+                client.Character.SendServerMessage("Combat en pause : attends la reprise.");
+                return;
+            }
+
             // One window : the turn of a controlled character is ended by its master only,
             // its own idle window is flagged AFK by the client and would pass the turn by itself
             var fighter = client.Character.Fighter;
             // Correctif Nekfeu : on ignore seulement le passage AUTOMATIQUE (fenêtre AFK) ;
             // un clic volontaire sur « passer le tour » depuis la fenêtre du perso contrôlé est accepté.
             if (fighter == fighter.Fight.FighterPlaying && fighter.GetOneWindowMaster() != null && message.IsAfk)
+                return;
+            // PADGREF 24/10 (log Comte : Jexos, maître One Window, mort -> le tour d'Otifapu passé tout seul) : la fenêtre d'un maître
+            // (mort ou non) envoie une fin de tour AFK ; sur le tour d'un perso contrôlé elle est ignorée (le minuteur de 45 s gère une
+            // vraie absence). Un vrai clic sur « Passer le tour » (IsAfk = false) reste accepté. Choix utilisateur : le maître mort garde la main.
+            var esclave = fighter.IsSlaveTurn() ? fighter.GetSlave() : null;
+            NLog.LogManager.GetCurrentClassLogger().Info("[Fin de tour] demandée par {0} pour {1} (AFK {2}, maître mort {3})",
+                fighter, esclave ?? fighter.Fight.FighterPlaying, message.IsAfk ? "oui" : "non", esclave != null && !fighter.IsAlive() ? "oui" : "non");
+            if (esclave != null && message.IsAfk)
                 return;
             if (client.Character.Fight.FighterPlaying is CompanionActor)
             {
@@ -143,6 +172,10 @@ namespace Stump.Server.WorldServer.Handlers.Context
         [WorldHandler(GameContextQuitMessage.Id)]
         public static void HandleGameContextQuitMessage(WorldClient client, GameContextQuitMessage message)
         {
+            // PADGREF 23/10 : « Quitter » pendant un replay de combat
+            if (Game.Bugs.ReplayLecteur.Arreter(client.Character))
+                return;
+
             if (client.Character.IsFighting())
                 client.Character.Fighter.LeaveFight();
 
@@ -521,9 +554,10 @@ namespace Stump.Server.WorldServer.Handlers.Context
 
         public static void SendGameActionFightSpellCastMessage(IPacketReceiver client, ActionsEnum actionId, FightActor caster, FightActor target,
                                                                Cell cell, FightSpellCastCriticalEnum critical, bool silentCast,
-                                                               Spell spell, short[] portals)
+                                                               Spell spell, short[] portals, bool verbose = true)
         {
-            client.Send(new GameActionFightSpellCastMessage((ushort)actionId, caster.Id, silentCast, true, target == null ? 0 : target.Id, silentCast ? (short)-1 : cell.Id, (sbyte)(critical),
+            // PADGREF 23/10 : verbose = « X lance <sort> » écrit dans le chat (était toujours vrai, même pour les sorts déclenchés)
+            client.Send(new GameActionFightSpellCastMessage((ushort)actionId, caster.Id, silentCast, verbose, target == null ? 0 : target.Id, silentCast ? (short)-1 : cell.Id, (sbyte)(critical),
                                                              (ushort)spell.Id, (sbyte)spell.CurrentLevel, portals
                                                              ));
         }

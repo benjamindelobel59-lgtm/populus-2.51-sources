@@ -87,7 +87,31 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Summon
                 logger.Info("[WaWobot] Mekattwaction : case {0}, occupee par {1}, cases de zone {2}, peut invoquer {3}",
                     TargetedCell?.Id, Fight.GetOneFighter(TargetedCell), AffectedCells.Count, Caster.CanSummon());
 
-            if (monster.Template.UseSummonSlot && !Caster.CanSummon())
+            // PADGREF 23/10 (retour utilisateur : « il n'y a pas de Monolithe » chez Bethel) : invocation sur des cases FIXES de la carte
+            // (zone « ;302 » : Monolithe, « ;316 » : Dagon, posés par le passif de Bethel lancé sur sa propre case) : la case visée était
+            // celle du lanceur, occupée, avec une seule case de zone -> invocation abandonnée. On prend la 1re case fixe libre, et ces
+            // invocations de décor ne comptent pas dans la limite d'invocations du lanceur.
+            var casesFixes = Effect.CasesFixes;
+            if (casesFixes != null && casesFixes.Length > 0)
+            {
+                var libre = casesFixes.Where(id => id >= 0 && id < Map.Cells.Length).Select(id => Map.Cells[id])
+                    .OrderBy(c => c.Id == TargetedCell?.Id ? 0 : 1)              // copie de l'effet déjà visée sur une case fixe : celle-ci d'abord
+                    .FirstOrDefault(c => c.Walkable && !c.NonWalkableDuringFight && Fight.GetOneFighter(c) == null);
+                // PADGREF 23/10 (journal VPS : Dagon en 316 mais jamais de Monolithe en 302) : case fixe prise ou bloquée en combat ->
+                // case libre la plus proche de la 1re case fixe
+                if (libre == null && casesFixes[0] >= 0 && casesFixes[0] < Map.Cells.Length)
+                {
+                    var voulue = new Maps.Cells.MapPoint(Map.Cells[casesFixes[0]]);
+                    libre = Map.Cells.Where(c => c.Walkable && !c.NonWalkableDuringFight && Fight.GetOneFighter(c) == null)
+                        .OrderBy(c => voulue.ManhattanDistanceTo(new Maps.Cells.MapPoint(c))).FirstOrDefault();
+                }
+                logger.Info("[Invocation case fixe] sort {0} : monstre {1} -> case {2} (voulue {3})", Spell.Id, monster.Template.Id,
+                    libre?.Id.ToString() ?? "aucune", string.Join(",", casesFixes.Take(3)));
+                if (libre == null)
+                    return false;
+                TargetedCell = libre;
+            }
+            else if (monster.Template.UseSummonSlot && !Caster.CanSummon())
                 return false;
 
             // PADGREF 20/10 (schéma de l'utilisateur) : Bonbombe (Péché Mignon de la Reine des Voleurs) « invoquée malgré lui à 2 PO » :

@@ -32,7 +32,9 @@ namespace Stump.Server.WorldServer.Game.Fights.Teams
             {
                 if (Fight.Map.GetRedFightPlacement().Count() < this.Fighters.Count() + 1) return FighterRefusedReasonEnum.TEAM_LIMITED_BY_MAINCHARACTER;
             }
-            return !character.IsGameMaster() ? FighterRefusedReasonEnum.WRONG_ALIGNMENT : base.CanJoin(character);
+            // PADGREF 22/10 (demande utilisateur) : personne ne rejoint l'équipe des monstres par leur épée, même un MJ (avant : MJ
+            // autorisés, ce qui faisait entrer en combat dans une zone bloquée)
+            return FighterRefusedReasonEnum.WRONG_ALIGNMENT;
         }
     }
 }

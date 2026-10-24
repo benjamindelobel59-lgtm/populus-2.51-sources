@@ -48,6 +48,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Armor
             if (damage == null)
                 return;
 
+            // PADGREF 23/10 : Couche Pampars (Pampactus) : la 2e réduction (DCAC) ne vaut que pour les armes de corps à corps, pas les sorts au contact
+            if (buff.Spell.Template.Id == 7195 && trigger == BuffTriggerType.OnDamagedInCloseRange && !damage.IsWeaponAttack)
+                return;
+
             var integerEffect = buff.GenerateEffect();
 
             if (integerEffect == null)

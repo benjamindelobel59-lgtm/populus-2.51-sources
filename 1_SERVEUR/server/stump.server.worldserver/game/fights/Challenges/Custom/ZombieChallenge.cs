@@ -16,6 +16,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
     [ChallengeIdentifier((int)ChallengeEnum.PÈRE_VER__CHALLENGE_2_)]
     [ChallengeIdentifier((int)ChallengeEnum.KORRIANDRE__CHALLENGE_2_)]
     [ChallengeIdentifier((int)ChallengeEnum.BETHEL_AKARNA__CHALLENGE_2_)]
+    [ChallengeIdentifier(425)] // PADGREF 23/10 : succès Eliocalypse (2.74)
     public class ZombieChallenge : DefaultChallenge
     {
         public ZombieChallenge(int id, IFight fight)

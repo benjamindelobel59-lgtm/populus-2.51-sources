@@ -107,9 +107,18 @@ namespace Stump.Server.WorldServer.Core.Network
                 logger.Error("Group {0} not found. Use default group instead !", account.UserGroupId);
         }
 
+        /// <summary>PADGREF 23/10 : reçoit chaque message envoyé à ce client (replay : joueur « témoin » d'un combat).</summary>
+        public Action<Message> Observateur;
+
         public override void OnMessageSent(Message message)
         {
             base.OnMessageSent(message);
+            var o = Observateur;
+            if (o != null)
+            {
+                try { o(message); }
+                catch (Exception ex) { logger.Error("Observateur du client : {0}", ex.Message); }
+            }
         }
 
         protected override void OnMessageReceived(Message message)

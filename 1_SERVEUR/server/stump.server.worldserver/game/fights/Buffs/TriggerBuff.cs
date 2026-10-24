@@ -64,6 +64,13 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
             {"PD", BuffTriggerType.OnPushDamaged},
             {"CDM", BuffTriggerType.OnMakeMeleeDamage},
             {"CDR", BuffTriggerType.OnMakeDistanceDamage},
+            // PADGREF 23/10 (Eliocalypse, Brutalyte) : 2.74 « inflige des dommages au contact » / « par sort »
+            {"CDCAC", BuffTriggerType.OnMakeMeleeDamage},
+            {"CDS", BuffTriggerType.OnMakeDistanceDamage},
+            // PADGREF 23/10 (audit DPLN Eliocalypse, Arbre de Mort) : « TP » = téléporté (équivalent déplacé), « LPU » = soigné (même à PV
+            // pleins) : maladies de Corruption (Terrain fertile, Tétanyte, Aura du Destrier Purulent, Cauchemar de Corruption)
+            {"TP", BuffTriggerType.OnMoved},
+            {"LPU", BuffTriggerType.OnHealed},
             {"CMP", BuffTriggerType.HaveMoveDuringTurn},
             {"PPD", BuffTriggerType.OnInderctlyPush},
             {"PMD", BuffTriggerType.OnPushDamagedInMelee},
@@ -134,10 +141,62 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
             if (m_lastTriggeredSequence != null && m_lastTriggeredSequence.IsChild(fighterTrigger.Fight.CurrentSequence))
                 return;
 
-            m_lastTriggeredSequence = fighterTrigger.Fight.CurrentSequence; 
-            base.Apply();
-            ApplyTrigger?.Invoke(this, fighterTrigger, trigger, token);
+            // PADGREF 23/10 (crash client, Corruption / Arbre de Mort) : un déclencheur qui se relance lui-même (ex. aura « Bouillon de
+            // culture » : état 4074 retiré -> sort relancé -> glyphe -> état 4074 posé puis retiré…) bouclait des centaines de fois
+            // hors séquence de sort (garde ci-dessus inopérante) -> flot de messages, client planté. Pas de relance pendant sa propre
+            // exécution, et au plus MaxDeclenchementsParTour déclenchements par tour de jeu.
+            if (m_enCours)
+                return;
+
+            // PADGREF 23/10 : Carapace gardée de la Lucrane (passif 4746, posé pour l'affichage) : l'Indéplaçable « dégâts de poussée »
+            // du passif dure tout le combat ; c'est LucraneBrain qui le pose pour 1 tour (et coupe la carapace pendant ce tour).
+            if (Spell?.Id == 4746 && EffectHandler?.Effect.EffectId == EffectsEnum.Effect_AddState)
+                return;
+
+            var tour = fighterTrigger.Fight.TimeLine?.RoundNumber ?? 0;
+            if (tour != m_tourDeclenchements)
+            {
+                m_tourDeclenchements = tour;
+                m_declenchementsDuTour = 0;
+            }
+            if (++m_declenchementsDuTour > MaxDeclenchementsParTour)
+                return;
+
+            // PADGREF 23/10 (règle officielle « Aquazomb », Tour de Bethel / Solar) : seulement à partir du tour 2, et UNE fois par fin
+            // de tour du joueur : chaque monstre pose son propre déclencheur sur le joueur, mais un seul lancer applique déjà tout
+            // (+2 PM / +1 PO à tous les monstres et l'effet spécial de chacun) ; avant : 3-4 lancers -> boosts en double.
+            if (Spell?.Id == SortAquazomb)
+            {
+                if (tour < 2)
+                    return;
+                // (celui de Bethel compte aussi : log VPS 23/10, il donne les mêmes boosts -> en l'excluant, boosts en double)
+                var dernier = s_aquazombParCible.GetOrCreateValue(Target);
+                if (dernier.Value == tour && dernier.Fight == Target.Fight)
+                    return;
+                dernier.Value = tour;
+                dernier.Fight = Target.Fight;
+            }
+
+            m_lastTriggeredSequence = fighterTrigger.Fight.CurrentSequence;
+            m_enCours = true;
+            try
+            {
+                base.Apply();
+                ApplyTrigger?.Invoke(this, fighterTrigger, trigger, token);
+            }
+            finally
+            {
+                m_enCours = false;
+            }
         }
+
+        const int MaxDeclenchementsParTour = 30, SortAquazomb = 9451;
+
+        sealed class DernierAquazomb { public int Value = -1; public IFight Fight; }
+        static readonly System.Runtime.CompilerServices.ConditionalWeakTable<FightActor, DernierAquazomb> s_aquazombParCible =
+            new System.Runtime.CompilerServices.ConditionalWeakTable<FightActor, DernierAquazomb>();
+        bool m_enCours;
+        int m_tourDeclenchements = -1, m_declenchementsDuTour;
 
         public void Apply(FightActor fighterTrigger, BuffTriggerType trigger)
         {
@@ -154,24 +213,33 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
         {
             var turnDuration = Delay == 0 ? Duration : Delay;
 
-            var values = Effect.GetValues();
+            var values = ValeursPourClient(Effect);
 
-            // MYSTIC 20/10 (Griffure Ondulante : « 76 à 6080 ») : pour les effets « forceMinMax » (dégâts...), le client 2.51 lit un effet
-            // déclenché comme un lancer de dés : min = p3 + p1, max = p1 × p2 + p3. On envoie donc (1, max - min + 1, min - 1).
-            if (Effect is Effects.Instances.EffectDice de && de.Template != null && de.Template.ForceMinMax && de.Max > 0)
+            return new FightTriggeredEffect((uint)Id, Target.Id, turnDuration,
+                (sbyte)Dispellable,
+                (ushort)ParentSpell.Id, (uint)(EffectFix?.ClientEffectId ?? EffetUidClient), 0,
+                (values.Length > 0 ? Convert.ToInt32(values[0]) : 0),
+                (values.Length > 1 ? Convert.ToInt32(values[1]) : 0),
+                (values.Length > 2 ? Convert.ToInt32(values[2]) : 0),
+                Delay);
+        }
+
+        /// <summary>
+        /// MYSTIC 20/10 (Griffure Ondulante : « 76 à 6080 ») : pour les effets « forceMinMax » (dégâts...), le client 2.51 lit un effet
+        /// déclenché comme un lancer de dés : min = p3 + p1, max = p1 × p2 + p3. On envoie donc (1, max - min + 1, min - 1).
+        /// PADGREF 23/10 (« 190 à 50350 » sur les maladies de Corruption) : commun à tous les buffs envoyés comme effet déclenché
+        /// (SpellBuff, StatBuff, StateBuff n'avaient pas la correction).
+        /// </summary>
+        public static object[] ValeursPourClient(Effects.Instances.EffectBase effet)
+        {
+            var values = effet.GetValues();
+            if (effet is Effects.Instances.EffectDice de && de.Template != null && de.Template.ForceMinMax && de.Max > 0)
             {
                 var min = de.DiceFace == 0 ? de.DiceNum : de.Min;
                 var max = de.Max;
                 values = new object[] { 1, max - min + 1, min - 1 };
             }
-
-            return new FightTriggeredEffect((uint)Id, Target.Id, turnDuration,
-                (sbyte)Dispellable,
-                (ushort)ParentSpell.Id, (uint)(EffectFix?.ClientEffectId ?? Effect.Id), 0,
-                (values.Length > 0 ? Convert.ToInt32(values[0]) : 0),
-                (values.Length > 1 ? Convert.ToInt32(values[1]) : 0),
-                (values.Length > 2 ? Convert.ToInt32(values[2]) : 0),
-                Delay);
+            return values;
         }
 
         public static BuffTrigger GetTriggerFromString(string str)
@@ -197,6 +265,10 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
 
             if (str == "T")
                 return new BuffTrigger(BuffTriggerType.OnTackled);
+
+            // PADGREF 23/10 (Eliocalypse) : « TR<sort> » = le seuil de PV posé par ce sort (effet 2872) vient d'être atteint
+            if (str.StartsWith("TR") && int.TryParse(str.Substring(2), out var sortSeuil))
+                return new BuffTrigger(BuffTriggerType.OnThresholdReached, sortSeuil);
 
             if (str == "P")
                 return new BuffTrigger(BuffTriggerType.OnPushed);

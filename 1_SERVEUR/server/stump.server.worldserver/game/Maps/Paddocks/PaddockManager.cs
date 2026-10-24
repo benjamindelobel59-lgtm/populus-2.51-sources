@@ -137,6 +137,14 @@ namespace Stump.Server.WorldServer.Game.Maps.Paddocks
                 return;
             }
 
+            // PADGREF 21/10 (retour bêta-testeurs : sortie « dans l'enclos » au lieu de devant la porte) : retour EXACT sur la case d'où le
+            // joueur a cliqué la porte. Avant, GetArrivalCell refusait cette case quand le serveur la croyait non praticable ou avec un
+            // déclencheur et prenait une voisine ou le milieu de la map (souvent dans l'enclos public clôturé).
+            if (visit != null && cellId >= 0 && cellId < map.Cells.Length)
+            {
+                character.Teleport(map, map.Cells[cellId]);
+                return;
+            }
             character.Teleport(map, GetArrivalCell(map, cellId));
         }
 

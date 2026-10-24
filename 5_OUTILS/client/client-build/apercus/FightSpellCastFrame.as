@@ -2,6 +2,7 @@ package com.ankamagames.dofus.logic.game.fight.frames
 {
    import com.ankama.dofus.enums.ActionIds;
    import com.ankamagames.atouin.Atouin;
+   import com.ankamagames.dofus.logic.common.managers.PlayerManager;
    import com.ankamagames.atouin.AtouinConstants;
    import com.ankamagames.atouin.data.map.CellData;
    import com.ankamagames.atouin.enums.PlacementStrataEnums;
@@ -1552,6 +1553,13 @@ package com.ankamagames.dofus.logic.game.fight.frames
             }
             lanceur = MapPoint.fromCellId(moi.disposition.cellId);
             reel = this.caseConfuse(target,lanceur,moi.contextualId);
+            // PADGREF 22/10 (demande utilisateur) : case réellement touchée sous confusion (Comte Harebourg) visible seulement par les
+            // admins (hasRights = maître du jeu, envoyé par l'Auth) ; pour les autres, aucun aperçu sous confusion (l'arrivée des
+            // poussées en orange donnerait la vraie case)
+            if(reel != target && !PlayerManager.getInstance().hasRights)
+            {
+               return;
+            }
             if(reel != target)
             {
                s = new Selection();

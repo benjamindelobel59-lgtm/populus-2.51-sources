@@ -598,8 +598,14 @@ namespace Stump.Server.WorldServer.Game.Achievements
                         chall.Initialize();
                         chall.MarkAsAchievementChallenge();
 
-                        if (chall is VolunteerChallenge || chall is ReprieveChallenge)
-                            chall.Target = fighter.Fight.DefendersTeam.GetAllFighters<MonsterFighter>(x => x.Monster.Template.Id == challenge.GetMonsterIdByChallId(challenge.ChallIdentifier)).FirstOrDefault();
+                        // PADGREF 21/10 : Kolosso (challenge 1) = « En dernier (Blérom) » : la cible choisie par ReprieveChallenge (un
+                        // Blérom) est gardée ; avant, elle était remplacée ici par le Kolosso. Cible gardée aussi si le boss est absent.
+                        if ((chall is VolunteerChallenge || chall is ReprieveChallenge) && chall.Id != (int)ChallengeEnum.KOLOSSO__CHALLENGE_1_)
+                        {
+                            var boss = fighter.Fight.DefendersTeam.GetAllFighters<MonsterFighter>(x => x.Monster.Template.Id == challenge.GetMonsterIdByChallId(challenge.ChallIdentifier)).FirstOrDefault();
+                            if (boss != null)
+                                chall.Target = boss;
+                        }
 
                         // Nekfeu : envoi au client pour afficher le succès dans la barre des challenges
                         fighter.Fight.AddChallenge(chall);

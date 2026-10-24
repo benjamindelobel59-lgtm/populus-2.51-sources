@@ -56,7 +56,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
                 return;
 
             m_suivis.Add(fighter);
-            fighter.BeforeDamageInflicted += OnBeforeDamageInflicted;
+            fighter.DamageInflicted += OnDamageInflicted;
             fighter.Dead += OnEnnemiMort;
         }
 
@@ -66,9 +66,11 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
 
         public override bool IsEligible() => Fight.GetAllFighters<MonsterFighter>().Count() > 1;
 
-        void OnBeforeDamageInflicted(FightActor fighter, Damage damage)
+        // PADGREF 23/10 (retour utilisateur : « Blitzkrieg échoue quand je tape le Kralamoure à 900 % de résistances, il prend 0 ») :
+        // un ennemi n'est « attaqué » que s'il perd vraiment des PV (avant : dès qu'un coup partait sur lui, même à 0).
+        void OnDamageInflicted(FightActor fighter, Damage damage)
         {
-            if (damage.Source == null || fighter.IsFriendlyWith(damage.Source))
+            if (damage == null || damage.Source == null || fighter.IsFriendlyWith(damage.Source) || damage.Amount <= 0)
                 return;
 
             m_touches.Add(fighter);
@@ -87,7 +89,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
 
             foreach (var fighter in m_suivis)
             {
-                fighter.BeforeDamageInflicted -= OnBeforeDamageInflicted;
+                fighter.DamageInflicted -= OnDamageInflicted;
                 fighter.Dead -= OnEnnemiMort;
             }
 

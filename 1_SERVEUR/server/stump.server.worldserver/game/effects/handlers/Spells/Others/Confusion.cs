@@ -25,6 +25,8 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
     [EffectHandler(EffectsEnum.Effect_775)]
     public class Confusion : SpellEffectHandler
     {
+        static readonly Random s_tirage = new Random();
+
         public Confusion(EffectDice effect, FightActor caster, SpellCastHandler castHandler, Cell targetedCell, bool critical)
             : base(effect, caster, castHandler, targetedCell, critical)
         {
@@ -41,6 +43,14 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
             // additionnait (1° + 90° + 45° = 136°) et les sorts partaient n'importe où. Seul l'effet Pi/2 (771 / 774) fait tourner ; les autres
             // ne servent qu'à l'affichage de l'envoûtement, avec la valeur officielle (n × 90 degrés, 2n × Pi/4).
             var n = integerEffect.Value;
+            // PADGREF 24/10 (demande utilisateur : « au corps à corps du Comte, les PI doivent être aléatoires, là c'est toujours le même ») :
+            // Pendultimatum (3643) vaut toujours 1 × Pi/2 horaire dans les données 2.51 -> tirage 1, 2 ou 3 × Pi/2 (90°, 180°, 270° horaires :
+            // toutes les orientations possibles, l'affichage « n Pi/2 » reste juste)
+            // PADGREF 24/10 (retour : « les PI ne changent toujours pas ») : un nouvel AsyncRandom à chaque coup avait une graine presque
+            // identique (horloge + compteur) et le premier tirage de graines voisines est le même avec System.Random -> un seul tirage partagé
+            if (Spell.Id == 3643)
+                lock (s_tirage)
+                    n = (short)s_tirage.Next(1, 4);
             var horaire = Effect.EffectId == EffectsEnum.Effect_770 || Effect.EffectId == EffectsEnum.Effect_771 || Effect.EffectId == EffectsEnum.Effect_772;
             // MYSTIC 18/10 : le sort n'accepte qu'UN buff (la dernière écriture remplace les autres) : chaque écriture porte donc la rotation
             var angle = n * Math.PI / 2 * (horaire ? 1 : -1);
@@ -62,7 +72,15 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
             }
 
             // MYSTIC 18/10 : la confusion ne se désenvoûte pas (demande utilisateur)
-            foreach (var actor in GetAffectedActors())
+            // PADGREF 24/10 (retour utilisateur : « porté par le Pandawa au Comte, le perso porté n'a pas sa confusion ») : la Comtoise vise
+            // la case du joueur (masque C = lui-même) ; porté, c'est le porteur qui est trouvé sur la case -> le joueur porté est ajouté
+            var cibles = GetAffectedActors().ToList();
+            if (!cibles.Contains(Caster) && Caster.IsCarried() && IsValidTarget(Caster))
+                cibles.Add(Caster);
+            // PADGREF 24/10 : journal de chaque confusion posée (vérifier en jeu que Pendultimatum change bien de valeur)
+            NLog.LogManager.GetCurrentClassLogger().Info("[Confusion] pose : sort {0} effet {1} n={2} ({3} deg) lanceur {4} -> {5}", Spell.Id,
+                (int)Effect.EffectId, n, angle * 180 / Math.PI, Caster, string.Join(", ", cibles));
+            foreach (var actor in cibles)
                 actor.AddBuff(new ConfusionBuff(actor.PopNextBuffId(), actor, Caster, this, Spell, Critical, FightDispellableEnum.REALLY_NOT_DISPELLABLE, angle, affichage));
 
             return true;
@@ -84,7 +102,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
         public int Valeur { get; }
 
         public override AbstractFightDispellableEffect GetAbstractFightDispellableEffect() =>
-            new FightTemporaryBoostEffect((uint)Id, Target.Id, Duration, (sbyte)Dispellable, (ushort)Spell.Id, (uint)(EffectFix?.ClientEffectId ?? Effect.Id), 0, (short)Valeur);
+            new FightTemporaryBoostEffect((uint)Id, Target.Id, Duration, (sbyte)Dispellable, (ushort)Spell.Id, (uint)(EffectFix?.ClientEffectId ?? EffetUidClient), 0, (short)Valeur);
 
         /// <summary>
         /// Case réellement touchée par un sort de <paramref name="lanceur"/> visant <paramref name="visee"/> : rotation autour du lanceur
@@ -179,6 +197,6 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Others
         }
 
         public override AbstractFightDispellableEffect GetAbstractFightDispellableEffect() =>
-            new FightTemporaryBoostEffect((uint)Id, Target.Id, Duration, (sbyte)Dispellable, (ushort)Spell.Id, (uint)(EffectFix?.ClientEffectId ?? Effect.Id), 0, 0);
+            new FightTemporaryBoostEffect((uint)Id, Target.Id, Duration, (sbyte)Dispellable, (ushort)Spell.Id, (uint)(EffectFix?.ClientEffectId ?? EffetUidClient), 0, 0);
     }
 }

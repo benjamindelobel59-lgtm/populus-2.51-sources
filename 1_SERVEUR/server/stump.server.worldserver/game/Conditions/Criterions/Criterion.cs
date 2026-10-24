@@ -193,6 +193,9 @@ namespace Stump.Server.WorldServer.Game.Conditions.Criterions
                 case LevelCriterion.Identifier:
                     return new LevelCriterion();
 
+                case "Pm": // PADGREF 21/10 : carte du personnage (critères des drops de quête du jeu)
+                    return new MapCriterion();
+
                 case HasManyItemsCriterion.Identifier:
                     return new HasManyItemsCriterion();
                     

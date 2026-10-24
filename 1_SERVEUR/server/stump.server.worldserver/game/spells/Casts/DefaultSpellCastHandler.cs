@@ -107,7 +107,11 @@ namespace Stump.Server.WorldServer.Game.Spells.Casts
 
                     // MYSTIC 17/10 : zone « ;A,B,C… » : une copie de l'effet sur chaque autre case fixe
                     var cases = effect.CasesFixes;
-                    if (cases != null && cases.Length > 1 && Caster.Fight?.Map != null)
+                    // PADGREF 23/10 : sauf les glyphes, posées en UNE marque sur toutes les cases (GlyphSpawn)
+                    // PADGREF 23/10 (journal VPS : Étoile de Mer -4 PA × 53) : ni pour un sort déclenché par une marque (glyphe, aura) : ses
+                    // effets ne touchent que celui qui la déclenche, une seule fois
+                    if (cases != null && cases.Length > 1 && Caster.Fight?.Map != null && !(handler is Effects.Handlers.Spells.Marks.GlyphSpawn) &&
+                        MarkTrigger == null)
                     {
                         foreach (var c in cases.Skip(1))
                         {

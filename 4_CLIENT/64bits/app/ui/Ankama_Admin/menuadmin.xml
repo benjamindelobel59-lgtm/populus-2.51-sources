@@ -1,0 +1,1478 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<menu>
+		<!--MENUADMIN V 1.0 Lucifer (05/05/2022) ADMINISTRATEUR SPONGE 2.61 - adapte Populus 2.51 (commandes absentes retirees)-->
+						<!-- Grade 5 Version-->
+
+
+	<item type="static" label="Menu Administrateur - %p"/>
+
+	<!-- Information Joueur -->
+
+	<item type="menu" label="&lt;font color='#20c830'&gt;Informations Joueurs&lt;/font&gt;">
+		<item type="static" label="Informations sur le Joueur %p"/>
+		<item type="sendChat" label="Info de %p" command=".info player %p"/>
+		<item type="sendChat" label="Où est %p" command=".who %p"/>
+		<item type="sendChat" label="Info Ban de %p" command=".baninfo %p"/>
+		<item type="sendChat" label="Info Jail de %p" command=".jailinfo %p"/>
+		<item type="sendChat" label="Voir l'inventaire" command=".item showinv %p"/>
+		<item type="sendChat" label="Voir la banque" command=".bank open %p"/>
+		<item type="sendChat" label="Ouvrir le mode marchand" command=".merchant show %p"/>
+		<item type="sendChat" label="Info map" command=".info map"/>
+	</item>
+
+	<!-- Modération -->
+
+	<item type="menu" label="&lt;font color='#00FFFB'&gt;Modération&lt;/font&gt;">
+		
+		<!-- Avertissement Joueur -->
+
+		<item type="menu" label="&lt;font color='#FFAE00'&gt;Avertissement&lt;/font&gt;">
+			<item type="static" label="Chat"/>
+		</item>
+
+		<!-- Sanction Joueur -->
+
+		<item type="menu" label="&lt;font color='#e30808'&gt;Sanctions&lt;/font&gt;">
+			<item type="static" label="Raisons générales"/>
+			<item type="menu" label="Non respect des canaux">
+				<item type="batch" label="Mute 15 minutes">
+					<item type="prepareCommand" command="mute %p 15 &quot;Non respect des canaux: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Suite à une mauvaise utilisation des canaux, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Mute 30 minutes">
+					<item type="prepareCommand" command="mute %p 30 &quot;Non respect des canaux: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Suite à une mauvaise utilisation des canaux, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Autre mute ›">
+					<item type="prepareCommand" command="mute %p TIME &quot;Non respect des canaux: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Suite à une mauvaise utilisation des canaux, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Jail 60 minutes">
+					<item type="prepareCommand" command="jail %p 60 &quot;Non respect des canaux: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Suite à une mauvaise utilisation des canaux, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Jail 120 minutes">
+					<item type="prepareCommand" command="jail %p 120 &quot;Non respect des canaux: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Suite à une mauvaise utilisation des canaux, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Autre jail ›">
+					<item type="prepareCommand" command="jail %p TIME &quot;Non respect des canaux: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Suite à une mauvaise utilisation des canaux, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+			</item>
+
+			<item type="menu" label="Flood">
+				<item type="batch" label="Mute 15 minutes">
+					<item type="prepareCommand" command="mute %p 15 &quot;Flood: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Suite à un flood des canaux, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Mute 30 minutes">
+					<item type="prepareCommand" command="mute %p 30 &quot;Flood: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Suite à un flood des canaux, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Autre mute ›">
+					<item type="prepareCommand" command="mute %p TIME &quot;Flood: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Suite à un flood des canaux, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Jail 60 minutes">
+					<item type="prepareCommand" command="jail %p 60 &quot;Flood: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Suite à un flood des canaux, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Jail 120 minutes">
+					<item type="prepareCommand" command="jail %p 120 &quot;Flood: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Suite à un flood des canaux, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Autre jail ›">
+					<item type="prepareCommand" command="jail %p TIME &quot;Flood: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Suite à un flood des canaux, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+			</item>
+
+			<item type="menu" label="Commerce Illégal">
+				<item type="batch" label="Ban 30 jours">
+					<item type="prepareCommand" command="ban %p 43800 &quot;Commerce Inter-Serveur: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;le commerce inter-serveur étant prohibé, tu as enfreint le &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été envoyé en prison.&lt;br&gt;&lt;br&gt;Je t'invite donc à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction définitive.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Ban déf ">
+					<item type="prepareCommand" command="ban %p 999999 &quot;Commerce Inter-Serveur: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Le commerce inter-serveur étant prohibé, tu as enfreint le &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as été envoyé en prison pour une durée infinie suite à une récidive malgré avertissement.&quot; %p"/>
+				</item>
+			</item>
+
+			<item type="menu" label="Insultes">
+			<item type="batch" label="Mute 15 minutes">
+					<item type="prepareCommand" command="mute %p 15 &quot;Insultes: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Les insultes ne sont pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de leur utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as donc été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Mute 30 minutes">
+					<item type="prepareCommand" command="mute %p 30 &quot;Insultes: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Les insultes ne sont pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de leur utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as donc été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Autre mute ›">
+					<item type="prepareCommand" command="mute %p TIME &quot;Insultes: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Les insultes ne sont pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de leur utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as donc été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+
+				<item type="batch" label="Jail 1 heure">
+					<item type="prepareCommand" command="jail %p 60 &quot;Insultes: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Les insultes ne sont pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de leur utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, ceci étant une récidive tu as été envoyé en prison..&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Jail 2 heures">
+					<item type="prepareCommand" command="jail %p 120 &quot;Insultes: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Les insultes ne sont pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de leur utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, ceci étant une récidive tu as été envoyé en prison..&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Jail 24 heures">
+					<item type="prepareCommand" command="jail %p 1440 &quot;Insultes: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Les insultes ne sont pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de leur utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, ceci étant une récidive tu as été envoyé en prison..&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Jail 48 heures">
+					<item type="prepareCommand" command="jail %p 2880 &quot;Insultes: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Les insultes ne sont pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de leur utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, ceci étant une récidive tu as été envoyé en prison..&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Autre jail ›">
+					<item type="prepareCommand" command="jail %p TIME &quot;Insultes: PREUVE&quot; "/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Les insultes ne sont pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de leur utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, tu as donc été privé de parole.&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+			</item>
+
+			<item type="menu" label="Racisme">
+				<item type="batch" label="Jail 1 heure">
+					<item type="prepareCommand" command="jail %p 60 &quot;Racisme: PREUVE&quot;"/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Le racisme n'est pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de son utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, ceci étant une récidive tu as été envoyé en prison..&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Jail 2 heures">
+					<item type="prepareCommand" command="jail %p 120 &quot;Racisme: PREUVE&quot;"/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Le racisme n'est pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de son utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, ceci étant une récidive tu as été envoyé en prison..&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Jail 24 heures">
+					<item type="prepareCommand" command="jail %p 1440 &quot;Racisme: PREUVE&quot;"/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Le racisme n'est pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de son utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, ceci étant une récidive tu as été envoyé en prison..&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Jail 48 heures">
+					<item type="prepareCommand" command="jail %p 2880 &quot;Racisme: PREUVE&quot;"/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Le racisme n'est pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de son utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, ceci étant une récidive tu as été envoyé en prison..&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+				<item type="batch" label="Autre jail ›">
+					<item type="prepareCommand" command="jail %p TIME &quot;Racisme: PREUVE&quot;"/>
+					<item type="sendCommand" label="avert" command="a &quot;Bonjour %p,&lt;br&gt;&lt;br&gt;Le racisme n'est pas autorisées en jeu.&lt;br&gt;&lt;br&gt;Tu es pourtant coupable de son utilisation, ce qui représente un non respect du &lt;u&gt;&lt;a href='https://sponge-game.com/regles-jeu'&gt;règlement&lt;/a&gt;&lt;/u&gt;, ceci étant une récidive tu as été envoyé en prison..&lt;br&gt;&lt;br&gt;Je t'invite à le relire afin d'éviter toute récidive à l'avenir qui entrainerait une sanction plus lourde que celle-ci.&lt;br&gt;&lt;br&gt;Bon jeu à toi.&quot; %p"/>
+				</item>
+			</item>
+
+			<item type="menu" label="Insultes sur Staff">
+				<item type="batch" label="Jail 48 heures ›">
+					<item type="prepareCommand" command="jail %p 2880 &quot;Insultes sur Staff: PREUVE&quot; "/>
+				</item>
+				<item type="batch" label="Jail 1 semaine ›">
+					<item type="prepareCommand" command="jail %p 10080 &quot;Insultes sur Staff: PREUVE&quot; "/>
+				</item>
+				<item type="batch" label="Jail 1 mois ›">
+					<item type="prepareCommand" command="jail %p 43800 &quot;Insultes sur Staff: PREUVE&quot; "/>
+				</item>
+				<item type="batch" label="Jail 2 mois ›">
+					<item type="prepareCommand" command="jail %p 87600 &quot;Insultes sur Staff: PREUVE&quot; "/>
+				</item>
+				<item type="batch" label="A vie /!\ ›">
+					<item type="prepareCommand" command="jail %p 999999 &quot;Insultes sur Staff: PREUVE&quot; "/>
+				</item>
+			</item>
+
+			<item type="static" label="Sanction directe"/>
+			<item type="batch" label="Kick">
+				<item type="sendCommand" label="kick" command="kick %p"/>
+			</item>
+			<item type="batch" label="Anti-jeu">
+				<item type="prepareCommand" label="ban" command="jail %p 1440 &quot;Anti-jeu&quot; "/>
+			</item>
+			<item type="batch" label="Ban déf ">
+				<item type="prepareCommand" command="ban %p 999999 &quot;RAISON: PREUVE&quot; "/>
+			</item>
+			<item type="batch" label="Kick Marchand">
+				<item type="sendCommand" label="&lt;font color='#05C001'&gt;Exclure le mode marchand" command="merchant kick %p"/>
+			</item>
+			<item type="static" label="Map"/>
+			<item type="sendCommand" label="Mute / Unmute" command="mutemap" />
+			<item type="static" label="Pardonner"/>
+			<item type="sendCommand" label="Rendre la parole" command="unmute %p"/>
+			<item type="sendCommand" label="Sortir de prison" command="unjail %p"/>
+		</item>
+	</item>
+
+	<!-- Fight -->
+
+	<item type="menu" label="&lt;font color='#2AFF00'&gt;Fight&lt;/font&gt;">
+		<item type="static" label="Combat de %p"/>
+		<item type="sendChat" label="Fight List" command=".fight list"/>
+        <item type="sendChat" label="Fight Freeze/Unfreeze" command=".fight freeze"/>
+		<item type="sendCommand" label="Terminer Combat" command="fight end "/>
+		<item type="prepareCommand" label="Rejoindre Combat Bleu" command="fight join ID Blue"/>
+		<item type="prepareCommand" label="Rejoindre Combat Rouge" command="fight join ID Red"/>
+		<item type="sendCommand" label="Kick Combat" command="fight kick %p"/>
+		<item type="sendCommand" label="Passer le tour" command="fight pass "/>
+	</item>
+
+	<!-- Téléportation -->
+
+	<item type="menu" label="&lt;font color='#FCFF00'&gt;Téléportation &lt;font color='#FCFF00'&gt;">
+
+		<!-- Téléportation Joueur -->
+
+		<item type="menu" label="&lt;font color='#178BFF'&gt;Téléportation Joueur">
+			<item type="sendCommand" label="&lt;font color='#FCFF00'&gt;Rejoindre" command="goname %p"/>
+			<item type="sendCommand" label="&lt;font color='#FCFF00'&gt;Faire venir" command="namego %p"/>
+			<item type="sendCommand" label="&lt;font color='#FCFF00'&gt;Téléporter au .start" command="go 191105026 %p 260"/>
+			<item type="sendCommand" label="&lt;font color='#FCFF00'&gt;Map Isolé" command="go 76284416 %p 398"/>
+			<item type="sendCommand" label="&lt;font color='#FCFF00'&gt;QG Staff" command="go 188219392 %p 327"/>
+		</item>
+	
+		<!-- Téléportation Donjon -->
+
+		<item type="menu" label="&lt;font color='#178BFF'&gt;Téléportation Donjon">
+
+			<item type="menu" label="Donjons 1 à 50">
+
+				<item type="menu" label="Donjon Kardorim">
+					<item type="sendChat" label="Salle 1" command=".go 152829952 %p 453" />
+					<item type="sendChat" label="Salle 2" command=".go 152830976 %p 453" />
+					<item type="sendChat" label="Salle 3" command=".go 152832000 %p 453" />
+					<item type="sendChat" label="Salle 4" command=".go 152833024 %p 453" />
+					<item type="sendChat" label="Salle 5" command=".go 152834048 %p 453" />
+				</item>
+
+				<item type="menu" label="Donjon Tournesol">
+					<item type="sendChat" label="Salle 1" command=".go 190449664 %p 438" />
+					<item type="sendChat" label="Salle 2" command=".go 190448640 %p 390" />
+					<item type="sendChat" label="Salle 3" command=".go 190316544 %p 453" />
+					<item type="sendChat" label="Salle 4" command=".go 190317568 %p 527" />
+					<item type="sendChat" label="Salle 5" command=".go 190318592 %p 511" />
+				</item>
+
+				<item type="menu" label="Donjon Ensablé">
+					<item type="sendChat" label="Salle 1" command=".go 193725440 %p 438" />
+					<item type="sendChat" label="Salle 2" command=".go 193726464 %p 518" />
+					<item type="sendChat" label="Salle 3" command=".go 193727488 %p 453" />
+					<item type="sendChat" label="Salle 4" command=".go 193728512 %p 449" />
+					<item type="sendChat" label="Salle 5" command=".go 193729536 %p 511" />
+				</item>
+
+				<item type="menu" label="Donjon Bouftou">
+					<item type="sendChat" label="Salle 1" command=".go 121373185 %p 399" />
+					<item type="sendChat" label="Salle 2" command=".go 121374209 %p 399" />
+					<item type="sendChat" label="Salle 3" command=".go 121375233 %p 399" />
+					<item type="sendChat" label="Salle 4" command=".go 121373187 %p 399" />
+					<item type="sendChat" label="Salle 5" command=".go 121374211 %p 399" />
+				</item>
+
+				<item type="menu" label="Donjon Scarafeuilles">
+					<item type="sendChat" label="Salle 1" command=".go 94110720 %p 429" />
+					<item type="sendChat" label="Salle 2" command=".go 94112768 %p 440" />
+					<item type="sendChat" label="Salle 3" command=".go 94113792 %p 356" />
+					<item type="sendChat" label="Salle 4" command=".go 94114816 %p 356" />
+					<item type="sendChat" label="Salle 5" command=".go 94115840 %p 442" />
+				</item>
+
+				<item type="menu" label="Donjon Tofus">
+					<item type="sendChat" label="Salle 1" command=".go 96338946 %p 479" />
+					<item type="sendChat" label="Salle 2" command=".go 96206848 %p 479" />
+					<item type="sendChat" label="Salle 3" command=".go 96207874 %p 479" />
+					<item type="sendChat" label="Salle 4" command=".go 96208898 %p 479" />
+					<item type="sendChat" label="Salle 5" command=".go 96209922 %p 479" />
+				</item>
+
+				<item type="menu" label="Donjon Fantome">
+					<item type="sendChat" label="Salle 1" command=".go 163578368 %p 412" />
+					<item type="sendChat" label="Salle 2" command=".go 163579392 %p 437" />
+					<item type="sendChat" label="Salle 3" command=".go 163580416 %p 256" />
+					<item type="sendChat" label="Salle 4" command=".go 163581440 %p 230" />
+					<item type="sendChat" label="Salle 5" command=".go 163582464 %p 256" />
+				</item>
+
+				<item type="menu" label="Donjon Squelettes">
+					<item type="sendChat" label="Salle 1" command=".go 87033344 %p 432" />
+					<item type="sendChat" label="Salle 2" command=".go 87034368 %p 427" />
+					<item type="sendChat" label="Salle 3" command=".go 87035392 %p 410" />
+					<item type="sendChat" label="Salle 4" command=".go 87032322 %p 442" />
+					<item type="sendChat" label="Salle 5" command=".go 87033346 %p 456" />
+				</item>
+
+				<item type="menu" label="Donjon Kankreblath">
+					<item type="sendChat" label="Salle 1" command=".go 146675712 %p 482" />
+					<item type="sendChat" label="Salle 2" command=".go 146674688 %p 396" />
+					<item type="sendChat" label="Salle 3" command=".go 146673664 %p 357" />
+					<item type="sendChat" label="Salle 4" command=".go 146671616 %p 411" />
+					<item type="sendChat" label="Salle 5" command=".go 146670592 %p 437" />
+				</item>
+
+				<item type="menu" label="Donjon Bwork">
+					<item type="sendChat" label="Salle 1" command=".go 104595969 %p 486" />
+					<item type="sendChat" label="Salle 2" command=".go 104596993 %p 415" />
+					<item type="sendChat" label="Salle 3" command=".go 104598017 %p 425" />
+					<item type="sendChat" label="Salle 4" command=".go 104595971 %p 410" />
+					<item type="sendChat" label="Salle 5" command=".go 104596995 %p 466" />
+				</item>
+
+				<item type="menu" label="Donjon Forgeron">
+					<item type="sendChat" label="Salle 1" command=".go 87295489 %p 383" />
+					<item type="sendChat" label="Salle 2" command=".go 87296513 %p 315" />
+					<item type="sendChat" label="Salle 3" command=".go 87294467 %p 383" />
+					<item type="sendChat" label="Salle 4" command=".go 87295491 %p 439" />
+					<item type="sendChat" label="Salle 5" command=".go 87296515 %p 426" />
+				</item>
+
+				<item type="menu" label="Donjon Shin Larve">
+					<item type="sendChat" label="Salle 1" command=".go 96994817 %p 370" />
+					<item type="sendChat" label="Salle 2" command=".go 96993797 %p 341" />
+					<item type="sendChat" label="Salle 3" command=".go 96998917 %p 441" />
+				</item>
+
+				<item type="menu" label="Grotte Hesque">
+					<item type="sendChat" label="Salle 1" command=".go 5243139 %p 425" />
+					<item type="sendChat" label="Salle 2" command=".go 5244416 %p 425" />
+					<item type="sendChat" label="Salle 3" command=".go 5242883 %p 425" />
+					<item type="sendChat" label="Salle 4" command=".go 5244419 %p 425" />
+					<item type="sendChat" label="Salle 5" command=".go 5242886 %p 425" />
+				</item>
+
+				<item type="menu" label="Donjon Kwakwa">
+					<item type="sendChat" label="Salle 1" command=".go 64749568 %p 412" />
+					<item type="sendChat" label="Salle 2" command=".go 64750592 %p 412" />
+					<item type="sendChat" label="Salle 3" command=".go 64751616 %p 412" />
+					<item type="sendChat" label="Salle 4" command=".go 64752640 %p 412" />
+					<item type="sendChat" label="Salle 5" command=".go 64753664 %p 412" />
+				</item>
+
+				<item type="menu" label="Donjon Bulbig">
+					<item type="sendChat" label="Salle 1" command=".go 17564931 %p 453" />
+					<item type="sendChat" label="Salle 2" command=".go 17565955 %p 424" />
+					<item type="sendChat" label="Salle 3" command=".go 17568003 %p 424" />
+					<item type="sendChat" label="Salle 4" command=".go 17563905 %p 398" />
+					<item type="sendChat" label="Salle 5" command=".go 17565953 %p 424" />
+				</item>
+
+			</item>
+
+			<item type="menu" label="Donjons 51 à 100">
+
+				<item type="menu" label="Donjon Kanniboul">--------------- 
+					<item type="sendChat" label="Salle 1" command=".go 157548544 %p 425" />
+					<item type="sendChat" label="Salle 2" command=".go 157549568 %p 425" />
+					<item type="sendChat" label="Salle 3" command=".go 157550592 %p 425" />
+					<item type="sendChat" label="Salle 4" command=".go 157551616 %p 425" />
+					<item type="sendChat" label="Salle 5" command=".go 157552640 %p 425" />
+				</item>
+
+				<item type="menu" label="Donjon Wabbit">
+					<item type="sendChat" label="Salle 1" command=".go 116392448 %p 425" />
+					<item type="sendChat" label="Salle 2" command=".go 116393472 %p 425" />
+					<item type="sendChat" label="Salle 3" command=".go 116394496 %p 425" />
+					<item type="sendChat" label="Salle 4" command=".go 116395520 %p 425" />
+					<item type="sendChat" label="Salle 5" command=".go 116392450 %p 425" />
+				</item>
+
+				<item type="menu" label="Donjon Blop">
+					<item type="sendChat" label="Salle 1" command=".go 166986752 %p 412" />
+					<item type="sendChat" label="Salle 2" command=".go 166987776 %p 412" />
+					<item type="sendChat" label="Salle 3" command=".go 166988800 %p 412" />
+					<item type="sendChat" label="Salle 4" command=".go 166989824 %p 412" />
+					<item type="sendChat" label="Choix de Boss" command=".go 166990848 %p 412" />
+					<item type="sendChat" label="Blop Griotte" command=".go 166986754 %p 412" />
+					<item type="sendChat" label="Blop Indigo" command=".go 166985730 %p 412" />
+					<item type="sendChat" label="Blop Reinette" command=".go 166987778 %p 412" />
+					<item type="sendChat" label="Blop Coco" command=".go 166988802 %p 412" />
+					<item type="sendChat" label="Blop Multi" command=".go 166990850 %p 412" />
+				</item>
+
+				<item type="menu" label="Donjon Daïgoro">
+					<item type="sendChat" label="Salle 1" command=".go 79430145 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 79431169 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 79432193 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 79433217 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 79434241 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Mastodontes">
+					<item type="sendChat" label="Salle 1" command=".go 174326272 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 174327296 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 174328320 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 174329344 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 174330368 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Ancestral">
+					<item type="sendChat" label="Salle 1" command=".go 149684224 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 149685248 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 149686272 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 149687296 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 149688320 %p" />
+				</item>
+
+				<item type="menu" label="Reine Nyée">
+					<item type="sendChat" label="Salle 1" command=".go 149160960 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 149161984 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 149163008 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 149164032 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 149165056 %p" />
+				</item>
+
+				<item type="menu" label="Donjon D.C">
+					<item type="sendChat" label="Salle 1" command=".go 72353792 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 72355840 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 72357888 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 72358912 %p" />
+					<item type="sendChat" label="Salle Annexe" command=".go 72359936 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 72361984 %p" />
+				</item>
+
+			</item>
+
+			<item type="menu" label="Donjons 101 à 150">
+
+				<item type="menu" label="Donjon Rats brâk">
+					<item type="sendChat" label="Salle 1" command=".go 40108544 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 40109568 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 40111616 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 40110594 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 40110085 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Rats Bonta">
+					<item type="sendChat" label="Salle 1" command=".go 27000832 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 27003904 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 27001858 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 27003906 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 27000836 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Dragoeufs">
+					<item type="sendChat" label="Salle 1" command=".go 27787264 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 27789312 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 27788290 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 27788292 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 27789316 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Royalmouth">
+					<item type="sendChat" label="Salle 1" command=".go 55050240 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 55050242 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 55052290 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 55052288 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 55053312 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Tofu Royal">
+					<item type="sendChat" label="Salle 1" command=".go 96338948 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 96338950 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 96206854 %p" />
+					<item type="sendChat" label="Salle Annexe" command=".go 96207878  %p" />
+					<item type="sendChat" label="Salle 4" command=".go 96208902 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 96209926 %p" />
+				</item>
+
+				<item type="menu" label="Donjon El Piko">
+					<item type="sendChat" label="Salle 1" command=".go 174064128 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 174065664 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 174067200 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 174068736 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 174070272 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Mansot Royal">
+					<item type="sendChat" label="Salle 1" command=".go 56098816 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 56099840 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 56100864 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 56101888 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 56102912 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Chêne Mou">
+					<item type="sendChat" label="Salle 1" command=".go 149423104 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 149424128 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 149425152 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 149426176 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 149427200 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Tynril">
+					<item type="sendChat" label="Salle 1" command=".go 89391104 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 89392128 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 89391106 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 89394178 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 89392130 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Grolandais Violent">
+					<item type="sendChat" label="Salle 1" command=".go 56360960 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 56361984 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 56363008 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 56364032 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 56365056 %p" />
+				</item>
+
+			</item>
+
+			<item type="menu" label="Donjons 151 à 200">
+
+				<item type="menu" label="Donjon Obsidiantre">
+					<item type="sendChat" label="Salle Annexe" command=".go 57148161 %p" />
+					<item type="sendChat" label="Salle 1" command=".go 57149697 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 57151233 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 57152769 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 57154305 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 57155841 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Kanigroula">
+					<item type="sendChat" label="Salle 1" command=".go 125830657 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 125832705 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 125829635 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 125830659 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 125831683 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Givrefoux">
+					<item type="sendChat" label="Salle 1" command=".go 59511808 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 59512832 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 59513856 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 59514880 %p" />
+					<item type="sendChat" label="Salle Tengu" command=".go 59516162 %p" />
+					<item type="sendChat" label="Salle Tengu+Fuji" command=".go 59515904 %p" />
+					<item type="sendChat" label="Choix de Boss" command=".go 59515138 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Korriandre">
+					<item type="sendChat" label="Salle 1" command=".go 62915584 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 62916608 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 62917632 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 62918656 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 62919680 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Bworker">
+					<item type="sendChat" label="Salle 1" command=".go 104333825 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 104334849 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 104335873 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 104336897 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 104333827 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Gloursons">
+					<item type="sendChat" label="Salle Annexe" command=".go 62130696 %p" />
+					<item type="sendChat" label="Salle 1" command=".go 62131720 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 62132744 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 62133768 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 62134792 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 62135816 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Kolosso">
+					<item type="sendChat" label="Hall principal" command=".go 61865984 %p" />
+					<item type="sendChat" label="Salle 1" command=".go 61998084 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 61998082 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 61998338 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 61998340 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 61868036 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Missiz Frizz">
+					<item type="sendChat" label="Salle 1" command=".go 109838849 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 109839873 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 109840897 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 109841921 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 109840899 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Merkator">
+					<item type="sendChat" label="Salle 1" command=".go 119276033 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 119277057 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 119278081 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 119276035 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 119277059 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Tal Kasha">
+					<item type="sendChat" label="Salle 1" command=".go 176160768 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 176161792 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 176162816 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 176163840 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 176164864 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Nileza">
+					<item type="sendChat" label="Salle 1" command=".go 109576705 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 109577729 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 109578753 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 109579777 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 109576707 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Klime">
+					<item type="sendChat" label="Salle 1" command=".go 110362624 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 110363648 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 110364672 %p" />
+					<item type="sendChat" label="Salle Annexe" command=".go 110365696 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 110362626 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 110363650 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Sylargh">
+					<item type="sendChat" label="Salle 1" command=".go 110100480 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 110101504 %p" />
+					<item type="sendChat" label="Salle Annexe" command=".go 110102528  %p" />
+					<item type="sendChat" label="Salle 3" command=".go 110103552 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 110100482 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 110101506 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Dantinéa">
+					<item type="sendChat" label="Salle 1" command=".go 169607168 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 169608192 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 169609216 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 169610240 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 169611264 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Koutoulou">
+					<item type="sendChat" label="Salle 1" command=".go 169345024 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 169346048 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 169347072 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 169348096 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 169349120 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Meno">
+					<item type="sendChat" label="Salle 1" command=".go 169869312 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 169870336 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 169871360 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 169872384 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 169873408 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Katrepat">
+					<item type="sendChat" label="Salle 1" command=".go 182714368 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 182715392 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 182716416 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 182717440 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 182718464 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Dazak">
+					<item type="sendChat" label="Salle 1" command=".go 195035136 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 195036160 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 195037184 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 195038208 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 195039232 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Harebourg">
+					<item type="sendChat" label="Salle 1" command=".go 112198145 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 112199169 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 112200193 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 112201217 %p" />
+					<item type="sendChat" label="Choix Boss" command=".go 112202241 %p" />
+					<item type="sendChat" label="Boss : Comte Harebourg" command=".go 112203523 %p" />
+					<item type="sendChat" label="Duo : Comte + Nileza" command=".go 112203271 %p" />
+					<item type="sendChat" label="Duo : Comte + Sylargh" command=".go 112203521 %p" />
+					<item type="sendChat" label="Duo : Comte + Klime" command=".go 112203265 %p" />
+					<item type="sendChat" label="Duo : Comte + Missiz Frizz" command=".go 112203269 %p" />
+				</item>
+
+			</item>
+
+			<item type="menu" label="&lt;font color='#5CF39F'&gt;Autres donjons 1 (Antre du Kra - Donjon des K)">
+
+				<item type="menu" label="Donjon Antre du Kralamoure Géant">
+					<item type="sendChat" label="Salle 1" command=".go 26738688 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 26739712 %p" />
+					<item type="sendChat" label="Boss : Kralamoure Géant" command=".go 26740736 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 990000011 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Arbre de Moon">
+					<item type="sendChat" label="Salle 1" command=".go 157286400 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 157287424 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 157288448 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 157289472 %p" />
+					<item type="sendChat" label="Boss : Moon" command=".go 157290496 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 157291520 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Arbre de Mort">
+					<item type="sendChat" label="Salle 1" command=".go 202637312 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 202638336 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 202639360 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 202640384 %p" />
+					<item type="sendChat" label="Boss : Corruption" command=".go 202641408 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Bateau du Chouque">
+					<item type="sendChat" label="Salle 1" command=".go 157024256 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 157025280 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 157026304 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 157027328 %p" />
+					<item type="sendChat" label="Boss : Le Chouque" command=".go 157028352 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 157029376 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Belvédère d'Ilyzaelle">
+					<item type="sendChat" label="Salle 1" command=".go 184690945 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 184689921 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 184688385 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 184687361 %p" />
+					<item type="sendChat" label="Boss : Ilyzaelle" command=".go 184686337 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Bibliothèque du Maître Corbac">
+					<item type="sendChat" label="Salle sans combat" command=".go 159124486 %p" />
+					<item type="sendChat" label="Salle 1" command=".go 159121408 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 159122432 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 159123456 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 159123460 %p" />
+					<item type="sendChat" label="Boss : Maître Corbac" command=".go 159125512 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Boyau du Père Ver">
+					<item type="sendChat" label="Salle 1" command=".go 176030208 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 175899136 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 175900160 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 175901184 %p" />
+					<item type="sendChat" label="Boss : Père Ver" command=".go 175902208 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Cale de l'Arche d'Otomaï">
+					<item type="sendChat" label="Salle 1" command=".go 22282240 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 22283264 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 22282242 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 22283266 %p" />
+					<item type="sendChat" label="Boss : Gourlo le Terrible" command=".go 22284290 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 22285314 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Camp du Comte Razof">
+					<item type="sendChat" label="Salle 1" command=".go 179568640 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 179569664 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 179570688 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 179571712 %p" />
+					<item type="sendChat" label="Boss : Comte Razof" command=".go 179572736 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Canopée du Kimbo">
+					<item type="sendChat" label="Salle 1" command=".go 21495808 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 21499904 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 21497856 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 21496834 %p" />
+					<item type="sendChat" label="Boss : Kimbo" command=".go 21497858 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 21498882 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Cave du Toxoliath">
+					<item type="sendChat" label="Boss : Toxoliath" command=".go 136840192 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 136841216 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Caverne de Nowel">
+					<item type="sendChat" label="Salle 1" command=".go 66846720 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 66847744 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 66848768 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 66849792 %p" />
+					<item type="sendChat" label="Boss : Papa Nowel" command=".go 66850816 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 66851840 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Caverne du Koulosse">
+					<item type="sendChat" label="Salle 1" command=".go 107216896 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 107217920 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 107225088 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 107226112 %p" />
+					<item type="sendChat" label="Boss : Koulosse" command=".go 107227136 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 107228160 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Centre du Labyrinthe du Minotoror">
+					<item type="sendChat" label="Boss : Minotoror" command=".go 34473474 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 34473476 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Chapiteau des Magik Riktus">
+					<item type="sendChat" label="Salle 1" command=".go 181665792 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 181666816 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 181667840 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 181668864 %p" />
+					<item type="sendChat" label="Boss : Choudini" command=".go 181669888 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 181670912 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Croquanterie">
+					<item type="sendChat" label="Salle 1" command=".go 197394432 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 197395456 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 197396480 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 197397504 %p" />
+					<item type="sendChat" label="Boss : Croqueleur" command=".go 197398528 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Donjon de la mine de Sakaï">
+					<item type="sendChat" label="Salle 1" command=".go 57934593 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 57935617 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 57936641 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 57937665 %p" />
+					<item type="sendChat" label="Boss : Grolloum" command=".go 57938689 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 57939713 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Donjon de Nowel">
+					<item type="sendChat" label="Salle 1" command=".go 66585088 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 66586112 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 66587136 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 66588160 %p" />
+					<item type="sendChat" label="Boss : Sapik" command=".go 66589184 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 66590208 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Donjon des Firefoux">
+					<item type="sendChat" label="Boss : Péki Péki" command=".go 16516867 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 16515331 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Donjon des Kitsounes">
+					<item type="sendChat" label="Salle 1" command=".go 18088960 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 18089984 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 18091008 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 18088962 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 18087940 %p" />
+					<item type="sendChat" label="Boss : Tanukouï San" command=".go 18088964 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 18089988 %p" />
+				</item>
+
+			</item>
+
+			<item type="menu" label="&lt;font color='#5CF39F'&gt;Autres donjons 2 (Donjon des R - Terrier du W)">
+
+				<item type="menu" label="Donjon Donjon des Rats du Château d'Amakna">
+					<item type="sendChat" label="Salle 1" command=".go 102760961 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 102761985 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 102763009 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 102764033 %p" />
+					<item type="sendChat" label="Boss : Sphincter Cell + Rat Noir + Rat Blanc" command=".go 102760963 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 102761987 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Fers de la Tyrannie">
+					<item type="sendChat" label="Salle 1" command=".go 203161600 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 203162624 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 203163648 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 203164672 %p" />
+					<item type="sendChat" label="Boss : Servitude" command=".go 203165696 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Fonderie des Waddicts">
+					<item type="sendChat" label="Salle 1" command=".go 106430464 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 106431488 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 106432512 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 106433536 %p" />
+					<item type="sendChat" label="Boss : Mawabouaino" command=".go 106434560 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Gelaxième Dimension">
+					<item type="sendChat" label="Salle 1" command=".go 98566657 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 98567681 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 98566659 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 98567683 %p" />
+					<item type="sendChat" label="Boss : Gelée Royale Citron + Gelée Royale Fraise + Gelée Royale Bleue + Gelée Royale Menthe" command=".go 98567687 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 98568705 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Goulet du Rasboul">
+					<item type="sendChat" label="Salle 1" command=".go 22808576 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 22806530 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 22807554 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 22808578 %p" />
+					<item type="sendChat" label="Boss : Silf le Rasboul Majeur" command=".go 22809602 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 22810626 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Laboratoire de Brumen Tinctorias">
+					<item type="sendChat" label="Salle 1" command=".go 176947200 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 176948224 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 176949248 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 176950272 %p" />
+					<item type="sendChat" label="Boss : Nelween" command=".go 176951296 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 176952320 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Maison du Papa Nowel">
+					<item type="sendChat" label="Salle 1" command=".go 66322432 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 66323456 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 66324480 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 66325504 %p" />
+					<item type="sendChat" label="Boss : Père Fwetar" command=".go 66326528 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 66327552 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Miausolée du Pounicheur">
+					<item type="sendChat" label="Boss : Pounicheur" command=".go 161743872 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 161744896 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Pitons Rocheux des Craqueleurs">
+					<item type="sendChat" label="Salle 1" command=".go 106954752 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 106955776 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 106956800 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 106957824 %p" />
+					<item type="sendChat" label="Boss : Craqueleur Légendaire" command=".go 106960896 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 106961920 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Potager d'Halouine">
+					<item type="sendChat" label="Salle 1" command=".go 101188608 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 101189632 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 101190656 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 101191680 %p" />
+					<item type="sendChat" label="Boss : Halouine" command=".go 101193728 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 101192704 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Pyramide d'Ombre">
+					<item type="sendChat" label="Salle 1" command=".go 123207680 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 123208704 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 123209728 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 123210752 %p" />
+					<item type="sendChat" label="Boss : Ombre" command=".go 123212800 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 123213824 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Repaire de Skeunk">
+					<item type="sendChat" label="Salle 1" command=".go 107481088 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 107482112 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 107483136 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 107484160 %p" />
+					<item type="sendChat" label="Boss : Skeunk" command=".go 107485184 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 107486208 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Repaire des Pandikazes">
+					<item type="sendChat" label="Salle 1" command=".go 17302528 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 17304576 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 17307648 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 17308672 %p" />
+					<item type="sendChat" label="Boss : Maître Pandore" command=".go 17309696 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 17310720 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Salle du Minotot">
+					<item type="sendChat" label="Boss : Minotoror + Minotot" command=".go 34472450 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 34472452 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Sentence de la Balance">
+					<item type="sendChat" label="Salle 1" command=".go 203423744 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 203424768 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 203425792 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 203426816 %p" />
+					<item type="sendChat" label="Boss : Misère" command=".go 203427840 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Tanière du Meulou">
+					<item type="sendChat" label="Salle 1" command=".go 155713536 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 155714560 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 155715584 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 155716608 %p" />
+					<item type="sendChat" label="Boss : Meulou" command=".go 155718656 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 155719680 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Temple du dieu Kao">
+					<item type="sendChat" label="Salle 1" command=".go 197656576 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 197657600 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 197658624 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 197659648 %p" />
+					<item type="sendChat" label="Boss : Prêtresse de Kao" command=".go 197660672 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Temple du Grand Ougah">
+					<item type="sendChat" label="Salle 1" command=".go 182327297 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 182326273 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 182323201 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 182322177 %p" />
+					<item type="sendChat" label="Boss : Ougah" command=".go 182192129 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 182193153 %p" />
+					<item type="sendChat" label="Salle 5" command=".go 182324225 %p" />
+					<item type="sendChat" label="Salle 6" command=".go 182325249 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Temple Maudit d'Araknas">
+					<item type="sendChat" label="Salle 1" command=".go 182453248 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 182454272 %p" />
+					<item type="sendChat" label="Boss : Qu'Tan" command=".go 182455296 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 182456320 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Terrier du Wa Wabbit">
+					<item type="sendChat" label="Salle 1" command=".go 116654593 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 116655617 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 116656641 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 116657665 %p" />
+					<item type="sendChat" label="Boss : Wa Wobot" command=".go 116654595 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 116655619 %p" />
+				</item>
+
+			</item>
+
+			<item type="menu" label="&lt;font color='#5CF39F'&gt;Autres donjons 3 (Théâtre de D - Volière de l)">
+
+				<item type="menu" label="Donjon Théâtre de Dramak">
+					<item type="sendChat" label="Salle 1" command=".go 118226944 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 118227968 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 118228992 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 118230016 %p" />
+					<item type="sendChat" label="Boss : Maître des Pantins" command=".go 118231040 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 118232064 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Tour de Bethel">
+					<item type="sendChat" label="Salle 1" command=".go 187432960 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 187433984 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 187435008 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 187436032 %p" />
+					<item type="sendChat" label="Boss : Bethel Akarna" command=".go 187437056 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Tour de Solar">
+					<item type="sendChat" label="Salle 1" command=".go 187957506 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 187957508 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 187957248 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 187957510 %p" />
+					<item type="sendChat" label="Boss : Solar" command=".go 187957512 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Trône de la Cour Sombre">
+					<item type="sendChat" label="Boss : Reine des Voleurs" command=".go 137102336 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 137103360 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Trône de Sang">
+					<item type="sendChat" label="Salle 1" command=".go 202375168 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 202376192 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 202377216 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 202378240 %p" />
+					<item type="sendChat" label="Boss : Guerre" command=".go 202379264 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Ventre de la Baleine">
+					<item type="sendChat" label="Salle 1" command=".go 140771328 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 140772352 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 140774400 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 140775424 %p" />
+					<item type="sendChat" label="Boss : Protozorreur" command=".go 140776448 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 140777472 %p" />
+				</item>
+
+				<item type="menu" label="Donjon Volière de la Haute Truche">
+					<item type="sendChat" label="Salle 1" command=".go 132907008 %p" />
+					<item type="sendChat" label="Salle 2" command=".go 132908032 %p" />
+					<item type="sendChat" label="Salle 3" command=".go 132909056 %p" />
+					<item type="sendChat" label="Salle 4" command=".go 132910080 %p" />
+					<item type="sendChat" label="Boss : Haute Truche" command=".go 132911104 %p" />
+					<item type="sendChat" label="Après le boss" command=".go 132912128 %p" />
+				</item>
+
+			</item>
+
+			<item type="menu" label="&lt;font color='#F39F5C'&gt;Dimensions">
+
+				<item type="menu" label="Srambad">
+					<item type="sendChat" label="Ring Capitaine Ekarlatte" command=".go 136578048 %p" />
+					<item type="sendChat" label="Cour Sombre" command=".go 137101312 %p" />
+				</item>
+
+				<item type="menu" label="Xelorium">
+					<item type="sendChat" label="Donjon Fraktale" command=".go 143138823 %p" />
+					<item type="sendChat" label="Donjon XLII" command=".go 143917569 %p" />
+					<item type="sendChat" label="Donjon Vortex" command=".go 143393281 %p" />
+				</item>
+
+				<item type="menu" label="Ecaflipus">
+					<item type="sendChat" label="Donjon Ush" command=".go 162004992 %p" />
+					<item type="sendChat" label="Donjon Chaloeil" command=".go 160564224 %p" />
+				</item>
+
+				<item type="menu" label="Enutrosor">
+					<item type="sendChat" label="Donjon Malléfisk" command=".go 130286592 %p" />
+					<item type="sendChat" label="Donjon Phossile" command=".go 130548736 %p" />
+					<item type="sendChat" label="Donjon Nidas" command=".go 129500160 %p" />
+				</item>
+			</item>
+
+		</item>
+
+		<!-- Téléportation Map Goultard -->
+
+		<item type="menu" label="&lt;font color='#EFF99E'&gt;Tournois">
+			<item type="menu" label="Tournois des Dix Ans">
+				<item type="menu" label="1">
+					<item type="sendChat" label="A" command=".go 113508865 %p 272" />
+					<item type="sendChat" label="B" command=".go 113510401 %p 272" />
+					<item type="sendChat" label="C" command=".go 113511937 %p 272" />
+					<item type="sendChat" label="D" command=".go 113508868 %p 272" />
+					<item type="sendChat" label="E" command=".go 113510404 %p 272" />
+					<item type="sendChat" label="F" command=".go 113511940 %p 272" />
+					<item type="sendChat" label="G" command=".go 113508871 %p 272" />
+					<item type="sendChat" label="H" command=".go 113510407 %p 272" />
+					<item type="sendChat" label="I" command=".go 113511943 %p 272" />
+					<item type="sendChat" label="J" command=".go 113508874 %p 272" />
+					<item type="sendChat" label="K" command=".go 113510410 %p 272" />
+					<item type="sendChat" label="L" command=".go 113511946 %p 272" />
+					<item type="sendChat" label="M" command=".go 113508877 %p 272" />
+				</item>
+				<item type="menu" label="2">
+					<item type="sendChat" label="A" command=".go 127140353 %p 272" />
+					<item type="sendChat" label="B" command=".go 127141889 %p 272" />
+					<item type="sendChat" label="C" command=".go 127143425 %p 272" />
+					<item type="sendChat" label="D" command=".go 127140356 %p 272" />
+					<item type="sendChat" label="E" command=".go 127141892 %p 272" />
+					<item type="sendChat" label="F" command=".go 127143428 %p 272" />
+					<item type="sendChat" label="G" command=".go 127140359 %p 272" />
+					<item type="sendChat" label="H" command=".go 127141895 %p 272" />
+					<item type="sendChat" label="I" command=".go 127143431 %p 272" />
+					<item type="sendChat" label="J" command=".go 127140362 %p 272" />
+					<item type="sendChat" label="K" command=".go 127141898 %p 272" />
+					<item type="sendChat" label="L" command=".go 127143434 %p 272" />
+					<item type="sendChat" label="M" command=".go 127140365 %p 272" />
+				</item>
+				<item type="menu" label="3">
+					<item type="sendChat" label="A" command=".go 127402497 %p 272" />
+					<item type="sendChat" label="B" command=".go 127404033 %p 272" />
+					<item type="sendChat" label="C" command=".go 127405569 %p 272" />
+					<item type="sendChat" label="D" command=".go 127402500 %p 272" />
+					<item type="sendChat" label="E" command=".go 127404036 %p 272" />
+					<item type="sendChat" label="F" command=".go 127405572 %p 272" />
+					<item type="sendChat" label="G" command=".go 127402503 %p 272" />
+					<item type="sendChat" label="H" command=".go 127404039 %p 272" />
+					<item type="sendChat" label="I" command=".go 127405575 %p 272" />
+					<item type="sendChat" label="J" command=".go 127402506 %p 272" />
+					<item type="sendChat" label="K" command=".go 127404042 %p 272" />
+					<item type="sendChat" label="L" command=".go 127405578 %p 272" />
+					<item type="sendChat" label="M" command=".go 127402509 %p 272" />
+				</item>
+			</item>
+
+			<item type="menu" label="Goultarminator">
+				<item type="menu" label="A">
+					<item type="sendChat" label="1" command=".go 134479872 %p 272" />
+					<item type="sendChat" label="2" command=".go 134480896 %p 272" />
+					<item type="sendChat" label="3" command=".go 134481920 %p 272" />
+					<item type="sendChat" label="4" command=".go 134482944 %p 272" />
+					<item type="sendChat" label="5" command=".go 134483968 %p 272" />
+					<item type="sendChat" label="6" command=".go 134484992 %p 272" />
+					<item type="sendChat" label="7" command=".go 134479874 %p 272" />
+					<item type="sendChat" label="8" command=".go 134480898 %p 272" />
+					<item type="sendChat" label="9" command=".go 134481922 %p 272" />
+					<item type="sendChat" label="10" command=".go 134482946 %p 272" />
+					<item type="sendChat" label="11" command=".go 134483970 %p 272" />
+					<item type="sendChat" label="12" command=".go 134484994 %p 272" />
+					<item type="sendChat" label="13" command=".go 170393600 %p 272" />
+					<item type="sendChat" label="14" command=".go 170394624 %p 272" />
+					<item type="sendChat" label="15" command=".go 170395648 %p 272" />
+					<item type="sendChat" label="16" command=".go 170393602 %p 272" />
+					<item type="sendChat" label="17" command=".go 170394626 %p 272" />
+				</item>
+				<item type="menu" label="B">
+					<item type="sendChat" label="1" command=".go 141033472 %p 272" />
+					<item type="sendChat" label="2" command=".go 141034496 %p 272" />
+					<item type="sendChat" label="3" command=".go 141035520 %p 272" />
+					<item type="sendChat" label="4" command=".go 141036544 %p 272" />
+					<item type="sendChat" label="5" command=".go 141037568 %p 272" />
+					<item type="sendChat" label="6" command=".go 141038592 %p 272" />
+					<item type="sendChat" label="7" command=".go 141033474 %p 272" />
+					<item type="sendChat" label="8" command=".go 141034498 %p 272" />
+					<item type="sendChat" label="9" command=".go 141035522 %p 272" />
+					<item type="sendChat" label="10" command=".go 141036546 %p 272" />
+					<item type="sendChat" label="11" command=".go 141037570 %p 272" />
+					<item type="sendChat" label="12" command=".go 141038594 %p 272" />
+					<item type="sendChat" label="13" command=".go 170393604 %p 272" />
+					<item type="sendChat" label="14" command=".go 170394628 %p 272" />
+					<item type="sendChat" label="15" command=".go 170395652 %p 272" />
+					<item type="sendChat" label="16" command=".go 170393606 %p 272" />
+					<item type="sendChat" label="17" command=".go 170394630 %p 272" />
+				</item>
+				<item type="menu" label="C">
+					<item type="sendChat" label="1" command=".go 141295616 %p 272" />
+					<item type="sendChat" label="2" command=".go 141296640 %p 272" />
+					<item type="sendChat" label="3" command=".go 141297664 %p 272" />
+					<item type="sendChat" label="4" command=".go 141298688 %p 272" />
+					<item type="sendChat" label="5" command=".go 141299712 %p 272" />
+					<item type="sendChat" label="6" command=".go 141300736 %p 272" />
+					<item type="sendChat" label="7" command=".go 141295618 %p 272" />
+					<item type="sendChat" label="8" command=".go 141296642 %p 272" />
+					<item type="sendChat" label="9" command=".go 141297666 %p 272" />
+					<item type="sendChat" label="10" command=".go 141298690 %p 272" />
+					<item type="sendChat" label="11" command=".go 141299714 %p 272" />
+					<item type="sendChat" label="12" command=".go 141300738 %p 272" />
+					<item type="sendChat" label="13" command=".go 170393608 %p 272" />
+					<item type="sendChat" label="14" command=".go 170394632 %p 272" />
+					<item type="sendChat" label="15" command=".go 170395656 %p 272" />
+					<item type="sendChat" label="16" command=".go 170393610 %p 272" />
+					<item type="sendChat" label="17" command=".go 170394634 %p 272" />
+				</item>
+			</item>
+
+			<item type="menu" label="KTA">
+				<item type="sendChat" label="XVIII" command=".go 177603584 %p 272" />
+				<item type="sendChat" label="XIX" command=".go 177471488 %p 272" />
+				<item type="sendChat" label="XX" command=".go 177472512 %p 272" />
+				<item type="sendChat" label="XXI" command=".go 177473536 %p 272" />
+				<item type="sendChat" label="XXII" command=".go 177474560 %p 272" />
+				<item type="sendChat" label="XXIII" command=".go 177475584 %p 272" />
+				<item type="sendChat" label="XXIV" command=".go 177476608 %p 272" />
+				<item type="sendChat" label="XXV" command=".go 177477632 %p 272" />
+				<item type="sendChat" label="XXVI" command=".go 177478656 %p 272" />
+				<item type="sendChat" label="XXVII" command=".go 177479680 %p 272" />
+				<item type="sendChat" label="XXVIII" command=".go 177480704 %p 272" />
+				<item type="sendChat" label="XXIX" command=".go 177481728 %p 272" />
+			</item>
+
+			<item type="menu" label="Écaflipus">
+				<item type="sendChat" label="1" command=".go 162267136 %p 272" />
+				<item type="sendChat" label="2" command=".go 162267138 %p 272" />
+				<item type="sendChat" label="3" command=".go 162267140 %p 272" />
+				<item type="sendChat" label="4" command=".go 162267142 %p 272" />
+				<item type="sendChat" label="5" command=".go 162268160 %p 272" />
+				<item type="sendChat" label="6" command=".go 162268162 %p 272" />
+				<item type="sendChat" label="7" command=".go 162268164 %p 272" />
+			</item>
+
+			<item type="menu" label="Goultard">
+				<item type="sendChat" label="Arène Goultard" command=".go 146801664 %p 260" />
+				<item type="sendChat" label="Map Goultard 1" command=".go 141295616 %p 272" />
+				<item type="sendChat" label="Map Goultard 2" command=".go 141296640 %p 407" />
+				<item type="sendChat" label="Map Goultard 3" command=".go 141297664 %p 435" />
+				<item type="sendChat" label="Map Goultard 4" command=".go 141298688 %p 259" />
+				<item type="sendChat" label="Map Goultard 5" command=".go 141299712 %p 449" />
+				<item type="sendChat" label="Map Goultard 6" command=".go 141300736 %p 408" />
+				<item type="sendChat" label="Map Goultard 7" command=".go 141295618 %p 437" />
+				<item type="sendChat" label="Map Goultard 8" command=".go 141296642 %p 356" />
+				<item type="sendChat" label="Map Goultard 9" command=".go 141297666 %p 408" />
+				<item type="sendChat" label="Map Goultard 10" command=".go 141298690 %p 435" />
+				<item type="sendChat" label="Map Goultard 11" command=".go 141299714 %p 322" />
+				<item type="sendChat" label="Map Goultard 12" command=".go 141300738 %p 422" />
+			</item>
+		</item>
+
+		<!-- Téléportation Prison -->
+
+		<item type="menu" label="&lt;font color='#F36C5C'&gt;Prison">
+			<item type="sendChat" label="Prison Violette" command=".go 105121026 %p 260" />
+			<item type="sendChat" label="Prison Plage" command=".go 105119744 %p 272" />
+			<item type="sendChat" label="Prison Cave" command=".go 105120002 %p 407" />
+		</item>
+
+	</item>
+
+	<!-- Admin -->
+
+		<item type="Static" label="Administration"/>
+	
+			<item type="menu" label="Informations">
+			<item type="static" label="Infos %p"/>
+			<item type="sendChat" label="info" command=".info player %p"/>
+			<item type="sendChat" label="who" command=".who %p"/>
+			<item type="sendChat" label="Info ban" command=".baninfo %p"/>
+			<item type="sendChat" label="Info jail" command=".jailinfo %p"/>
+			<item type="prepareCommand" label="Info ip ›" command="info ip"/>
+			<item type="sendChat" label="Voir l'inventaire" command=".item showinv %p"/>
+			<item type="sendChat" label="Voir la banque" command=".bank open %p"/>
+			<item type="sendChat" label="Ouvrir le mode marchand" command=".merchant show %p"/>
+			<item type="sendChat" label="Info map" command=".info map"/>
+		</item>
+
+        <!-- Mode Admin (Chat/Fight) -->
+		<item type="menu" label="&lt;font color='#FF0000'&gt;God Mod On/Of&lt;/font&gt;">
+			<item type="sendChat" label="&lt;font color='#32FF00'&gt;Activer&lt;/font&gt;" command=".god on %p"/>
+			<item type="sendChat" label="&lt;font color='#FF0000'&gt;Désactiver&lt;/font&gt;" command=".god off %p"/>
+		</item>
+
+		<!-- Gestion Joueur Skin -->
+		<item type="menu" label="&lt;font color='#FB00FF'&gt;Gestion Skin&lt;/font&gt;">
+			<item type="menu" label="Morphs">
+				<item type="sendCommand" label="Lion (Modo)" command="look {1003} %p"/>
+				<item type="sendCommand" label="Ankama (Modo)" command="look {1150|||160} %p"/>
+				<item type="sendCommand" label="{Lucifer}" command="look {1|111,2020,6519,6530,6527|1=16759385,2=12345678,3=12345678,4=10101,5=10101|175|1@0={3192}}"/>
+				<item type="sendChat" label="Demorph" command=".look -demorph player %p"/>
+				<item type="sendChat" label="Invisible/Visible" command=".invisible %p"/>
+			</item>
+			<item type="sendCommand" label="Panel Morph" command="look #look"/>
+		</item>
+
+		<!-- Gestion Joueur Items -->
+		<item type="menu" label="&lt;font color='#FFF300'&gt;Gestion Items / Spell&lt;/font&gt;">
+			<item type="sendCommand" label="&lt;font color='#FFF300'&gt;Ajouter un mobs&lt;/font&gt;" command="monster spawn #monster"/>
+			<item type="sendCommand" label="&lt;font color='#FFF300'&gt;Ajouter un Sort&lt;/font&gt;" command="spell learn #spell"/>
+			<item type="sendCommand" label="&lt;font color='#FFF300'&gt;Ajouter un Item&lt;/font&gt;" command="item add #item"/>
+			<item type="sendCommand" label="&lt;font color='#FFF300'&gt;Ajouter un Look&lt;/font&gt;" command="look #look %p" />
+            <item type="sendCommand" label="&lt;font color='#FFF300'&gt;Ajouter un feu d'artifice&lt;/font&gt;" command="item add #fireworks %p" />
+		</item>
+		
+		<item type="menu" label="Vision Map">
+
+			<item type="sendCommand" label="Mode Tactic On" command="/tacticmode show=true"/>
+			<item type="sendCommand" label="Mode Tactic Off" command="/tacticmode show=false"/>
+			<item type="sendCommand" label="Cell ID" command="/showeverycellid"/>
+
+		</item>
+
+        <!-- Gestion Joueur Alignement -->
+        <item type="menu" label="&lt;font color='#E1CE9A'&gt;Gestion Alignement&lt;/font&gt;">
+			<item type="sendCommand" label="&lt;font color='#97DFC6'&gt;Mettre Neutre" command="align side 0 %p"/>
+			<item type="sendCommand" label="&lt;font color='#FFFFF'&gt;Mettre Bontarien" command="align side 1 %p"/>
+			<item type="sendCommand" label="&lt;font color='#DB1702'&gt;Mettre Brakmarien" command="align side 2 %p"/>
+			<item type="sendCommand" label="&lt;font color='#E1CE9A'&gt;Mettre Sérianne" command="align side 3 %p"/>
+	    </item>
+
+		<!-- Gestion Joueur Ornements / Titres -->
+        <item type="menu" label="&lt;font color='#DDEAE3'&gt;Gestion Ornements / Titres&lt;/font&gt;">
+            <item type="static" label="Give ALL" />
+			<item type="sendCommand" label="All titles" command="title add %p -all" />
+			<item type="sendCommand" label="All ornements" command="ornament add %p -all" />
+		</item>
+
+        <!-- Gestion Staff Rank -->
+        <item type="menu" label="&lt;font color='#5B65FF'&gt;Gestion Staff&lt;/font&gt;">
+
+			<!-- Gestion Admin Ornements / Titres -->
+			<item type="Static" label="Administrateur"/>
+				<item type="batch" label="Give Admin Pour Test">
+					<item type="sendCommand" label="Level 200" command="level 200" />
+					<item type="sendCommand" label="Gelano" command="item add 2469 %p 1 true" />
+					<item type="sendCommand" label="Collier Bavdur" command="item add 22214 %p 1 true" />
+					<item type="sendCommand" label="Vulbis" command="item add 6980 %p 1 true" />
+					<item type="sendCommand" label="Ocre" command="item add 7754 %p 1 true" />
+					<item type="sendCommand" label="Botte Dogue" command="item add 14171 %p 1 true" />
+					<item type="sendCommand" label="Doom de Masse" command="spell add &quot;Doom de masse&quot;" />
+					<item type="sendCommand" label="Doom de Masse" command="spell add &quot;Super placement&quot;" />
+				</item>
+				<item type="batch" label="Paye Admin">
+				<item type="sendCommand" label="100 Ogrines" command="item add 30001 %p 100" />
+				<item type="sendCommand" label="100 Ogrines" command="item add 30001 %p 100" />
+				<item type="sendCommand" label="100 Ogrines" command="item add 30001 %p 100" />
+				<item type="sendCommand" label="100 Ogrines" command="item add 30001 %p 100" />
+				<item type="sendCommand" label="100 Ogrines" command="item add 30001 %p 100" />
+				<item type="sendCommand" label="100 Ogrines" command="item add 30001 %p 100" />
+				<item type="sendCommand" label="100 Ogrines" command="item add 30001 %p 100" />
+				<item type="sendCommand" label="100 Ogrines" command="item add 30001 %p 100" />
+				<item type="sendCommand" label="100 Ogrines" command="item add 30001 %p 100" />
+				<item type="sendCommand" label="100 Ogrines" command="item add 30001 %p 100" />
+			</item>
+
+			<!-- Gestion Maitre de Jeu Ornements / Titres -->
+			<item type="Static" label="Maître de Jeu"/>
+				<item type="batch" label="Give Titre + Ornements Maître de Jeu">
+					<item type="sendCommand" label="Titre Maitre de Jeu" command="title add %p 532" />
+					<item type="sendCommand" label="Ornements Maitre de Jeu (All)" command="ornament add %p -all" />
+				</item>
+				<item type="batch" label="Paye Maitre de Jeu">
+				<item type="sendCommand" label="100 Ogrines" command="item add 30000 %p 5000" />
+			</item>
+
+			<!-- Gestion Modérateur Ornements / Titres -->
+			<item type="Static" label="Modérateur"/>
+				<item type="batch" label="Give Titre + Ornements Modérateur">
+					<item type="sendCommand" label="Titre Modérateur" command="title add %p 533" />
+					<item type="sendCommand" label="Ornements Modérateur (All)" command="ornament add %p -all" />
+				</item>
+				<item type="batch" label="Paye Modérateur">
+				<item type="sendCommand" label="100 Ogrines" command="item add 30000 %p 3000" />
+			</item>
+
+			<!-- Gestion Animateur Ornements / Titres -->
+			<item type="Static" label="Animateur"/>
+				<item type="batch" label="Give Titre + Ornements + Spell + Stuff Animateur">
+					<item type="sendCommand" label="Titre Animateur" command="title add %p 221" />
+					<item type="sendCommand" label="Ornements Animateur (All)" command="ornament add %p -all" />
+					<item type="sendCommand" label="Flamiche" command="spell add 350 %p" />
+					<item type="sendCommand" label="Roulette Ecaflip" command="spell add 12840 %p" />
+					<item type="sendCommand" label="Piège sournois" command="spell add 12906 %p" />
+					<item type="sendCommand" label="Piège fangeux" command="spell add 12916 %p" />
+					<item type="sendCommand" label="Piège mortel" command="spell add 12921 %p" />
+					<item type="sendCommand" label="Piège de masse" command="spell add 12920 %p" />
+					<item type="sendCommand" label="Piège scélérat" command="spell add 12931 %p" />
+					<item type="sendCommand" label="Invisibilité" command="spell add 12913 %p" />
+					<item type="sendCommand" label="Explobombe" command="spell add 13444 %p" />
+					<item type="sendCommand" label="Sismobombe" command="spell add 13491 %p" />
+					<item type="sendCommand" label="Tornabombe" command="spell add 13435 %p" />
+					<item type="sendCommand" label="Super Placement" command="spell add 5598 %p" />
+					<item type="sendCommand" label="Amulette de Shokktoh" command="item add 18004 %p 1 true" />
+					<item type="sendCommand" label="Anneau Anim" command="item add 31260 %p" />
+					<item type="sendCommand" label="Dofus Turquoise" command="item add 739 %p" />
+					<item type="sendCommand" label="Trophée +2PO" command="item add 16336 %p" />
+					<item type="sendCommand" label="Trophée +1PO" command="item add 13831 %p" />
+					<item type="sendCommand" label="Billréole" command="item add 8441 %p 1 true" />
+				</item>
+				<item type="batch" label="Paye Animateur">
+				<item type="sendCommand" label="100 Ogrines" command="item add 30000 %p 3000" />
+			</item>
+
+			<!-- Gestion Game Helper Ornements / Titres -->
+			<item type="Static" label="Game Helper"/>
+				<item type="batch" label="Give Titre + Ornements Game Helper">
+					<item type="sendCommand" label="Titre Game Helper" command="title add %p 511" />
+				</item>
+				<item type="batch" label="Paye Game Helper">
+				<item type="sendCommand" label="100 Ogrines" command="item add 30000 %p 500" />
+			</item>
+
+		</item>
+
+		<!-- Gestion Joueur Level -->
+        <item type="menu" label="&lt;font color='#FF9E00'&gt;Gestion Level&lt;/font&gt;">
+			<item type="Static" label="Bas Niveau (BL)"/>
+				<item type="sendChat" label="Ajouter un Niveau" command=".levelup 1 %p"/>
+				<item type="sendChat" label="Ajouter 10 Niveaux" command=".levelup 10 %p"/>
+				<item type="sendChat" label="Ajouter 20 Niveaux" command=".levelup 20 %p"/>
+				<item type="sendChat" label="Ajouter 30 Niveaux" command=".levelup 30 %p"/>
+				<item type="sendChat" label="Ajouter 40 Niveaux" command=".levelup 40 %p"/>
+				<item type="sendChat" label="Ajouter 50 Niveaux" command=".levelup 50 %p"/>
+				<item type="sendChat" label="Ajouter 60 Niveaux" command=".levelup 60 %p"/>
+				<item type="sendChat" label="Ajouter 70 Niveaux" command=".levelup 70 %p"/>
+				<item type="sendChat" label="Ajouter 80 Niveaux" command=".levelup 80 %p"/>
+			<item type="Static" label="Haut Niveau (HL)"/>
+				<item type="sendChat" label="Ajouter 90 Niveaux" command="..levelup 90 %p"/>
+				<item type="sendChat" label="Ajouter 100 Niveaux" command=".levelup 100 %p"/>
+				<item type="sendChat" label="Ajouter 110 Niveaux" command=".levelup 120 %p"/>
+				<item type="sendChat" label="Ajouter 120 Niveaux" command=".levelup 130 %p"/>
+				<item type="sendChat" label="Ajouter 130 Niveaux" command=".levelup 130 %p"/>
+				<item type="sendChat" label="Ajouter 140 Niveaux" command=".levelup 140 %p"/>
+				<item type="sendChat" label="Ajouter 150 Niveaux" command=".levelup 150 %p"/>
+			<item type="Static" label="Très Haut Niveau (THL)"/>
+				<item type="sendChat" label="Ajouter 160 Niveaux" command=".levelup 160 %p"/>
+				<item type="sendChat" label="Ajouter 170 Niveaux" command=".levelup 170 %p"/>
+				<item type="sendChat" label="Ajouter 180 Niveaux" command=".levelup 180 %p"/>
+				<item type="sendChat" label="Ajouter 190 Niveaux" command=".levelup 190 %p"/>
+				<item type="sendChat" label="Ajouter 199 Niveaux (Up 200)" command=".levelup 200 %p"/>
+        </item>
+
+		<!-- Gestion Serveur -->
+		<item type="menu" label="Gestion Serveur">
+			<item type="static" label="Gestion Reboot"/>
+				<item type="sendChat" label="5 minutes" command=".shutdown 300"/>
+				<item type="sendChat" label="15 minutes" command=".shutdown 900"/>
+				<item type="sendChat" label="30 minutes" command=".shutdown 1800"/>
+				<item type="prepareCommand" label="Autre Reboot" command="shutdown TIME"/>
+				<item type="separator"/>
+				<item type="sendChat" label="Annuler Reboot" command=".shutdown 0 -cancel"/>				
+		<item type="sendCommand" label="Mode Tactic On" command="/tacticmode show=true"/>
+		<item type="sendCommand" label="Mode Tactic Off" command="/tacticmode show=false"/>		
+		<item type="sendCommand" label="Mode Tactic Off" command="/showeverycellids true"/>
+		</item>
+
+	<item type="loadXML" label="&lt;font color='#00FFE4'&gt;Reload XML&lt;/font&gt;"/>
+
+	<item type="menu" label="BAN DEFF INSTANT">
+		<item type="batch" label="Ban déf INSTANT INTERSERV">
+			<item type="sendCommand" command="ban %p 999999 &quot;RAISON: Lucifer + instant (URGENCE INTERSERV)&quot; true true "/>
+		</item>
+		<item type="batch" label="Ban déf INSTANT TRASH">
+			<item type="sendCommand" command="ban %p 999999 &quot;RAISON: Lucifer + instant (URGENCE TRASH)&quot; true true "/>
+		</item>
+		<item type="batch" label="Ban déf INSTANT SCRIPT/BOT">
+			<item type="sendCommand" command="ban %p 999999 &quot;RAISON: Lucifer + instant (URGENCE SCRIPT/BOT)&quot; true true "/>
+		</item>
+	</item>
+	
+</menu>

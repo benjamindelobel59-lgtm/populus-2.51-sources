@@ -281,7 +281,15 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells
 
         public bool IsBuff() => Effect.Duration != 0;
 
-        public bool IsTriggerBuff() => Effect.Duration != 0 && Effect.Triggers != "I";
+        public bool IsTriggerBuff() => Effect.Duration != 0 && Effect.Triggers != "I" && !EstPermanentImmediat();
+
+        /// <summary>PADGREF 23/10 (retour utilisateur : « le Mufafah ne gagne pas les PM de son sort ») : le déclencheur « P » des données
+        /// 2.51 sur un bonus / un état (Rugissement Mufafesque +2 PM, Mêlée, Insaisissable, Struchthio, Écorce agressive, Inébranlable du
+        /// Dagon…) veut dire « posé tout de suite », pas « quand la cible est poussée » : le bonus n'arrivait jamais. Les « lance un
+        /// sort » et les dégâts gardent l'ancien sens.</summary>
+        bool EstPermanentImmediat() => Effect.Triggers == "P" && Effect.EffectId != EffectsEnum.Effect_TriggerBuff &&
+            Effect.EffectId != EffectsEnum.Effect_TriggerBuff_793 && Effect.EffectId != EffectsEnum.Effect_CastSpell_1017 &&
+            Effect.EffectId != EffectsEnum.Effect_DamageAir;
 
         public Buff AddStatBuff(FightActor target, short value, PlayerFields caracteritic, short? customActionId = null)
         {

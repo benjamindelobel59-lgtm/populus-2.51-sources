@@ -89,7 +89,13 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
 
         public TargetCell[] ExpandCellsZone(Cell[] cells, Spell spell)
         {
-            return cells.SelectMany(x => spell.CurrentSpellLevel.Effects.SelectMany(y => ExpandZone(x, y.ZoneShape, (int)y.ZoneMinSize, (int)y.ZoneSize))).Distinct().ToArray();
+            // PADGREF 23/10 (Restouté du Tournoyé jamais lancé) : un sort qui exige une case OCCUPÉE et dont la zone exclut le centre
+            // (croix Q1 : malus aux voisins de la cible) n'était essayé que sur les cases voisines des combattants, presque toujours
+            // vides -> refus à chaque fois. Les cases des combattants eux-mêmes sont aussi essayées.
+            var zone = cells.SelectMany(x => spell.CurrentSpellLevel.Effects.SelectMany(y => ExpandZone(x, y.ZoneShape, (int)y.ZoneMinSize, (int)y.ZoneSize)));
+            if (spell.CurrentSpellLevel.NeedTakenCell)
+                zone = zone.Concat(cells.Select(x => new TargetCell(x)));
+            return zone.Distinct().ToArray();
         }
 
         private IEnumerable<TargetCell> ExpandZone(Cell center, SpellShapeEnum shape, int minRange, int maxRange)
@@ -101,6 +107,14 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
                         EnumerateValidPoints().Select(x => new TargetCell(Fighter.Map.Cells[x.CellId]));
                 case SpellShapeEnum.C:
                     return new LozengeSet(new MapPoint(center), maxRange, minRange).
+                        EnumerateValidPoints().Select(x => new TargetCell(Fighter.Map.Cells[x.CellId]));
+                // PADGREF 23/10 : croix sans centre (Q) et anneau (O) : avant, seule la case de la cible était essayée -> un sort à portée 0
+                // en croix autour du lanceur (Stricannement du Strigide : Q1) n'était jamais lancé (le lanceur ne peut pas être sur la cible)
+                case SpellShapeEnum.Q:
+                    return new CrossSet(new MapPoint(center), maxRange, minRange > 0 ? minRange : 1).
+                        EnumerateValidPoints().Select(x => new TargetCell(Fighter.Map.Cells[x.CellId]));
+                case SpellShapeEnum.O:
+                    return new LozengeSet(new MapPoint(center), maxRange, maxRange).
                         EnumerateValidPoints().Select(x => new TargetCell(Fighter.Map.Cells[x.CellId]));
                 case SpellShapeEnum.L:
                     return new LineSet(new MapPoint(center).GetCellInDirection(DirectionsEnum.DIRECTION_NORTH_EAST, minRange), maxRange, DirectionsEnum.DIRECTION_NORTH_EAST).
@@ -445,13 +459,26 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
                 if (sub?.Effects == null)
                     return;
                 foreach (var subEffect in sub.Effects)
-                    if (subEffect.SpellId != effect.SpellId) // pas de boucle sur soi-même
+                    // PADGREF 23/10 (Darmoclès du Mantiscore jamais lancé : il se relance à ses niveaux 2 / 3) : seul le MÊME niveau est une boucle
+                    if (subEffect.SpellId != effect.SpellId || effect.DiceFace != spell.CurrentLevel) // pas de boucle sur soi-même
                         CumulEffect(subEffect, false, subEffect.EffectId == EffectsEnum.Effect_Kill, ref spellImpact, target, spell, depth + 1);
                 return;
             }
 
             var isFriend = Fighter.Team.Id == target.Team.Id;
             var result = new SpellTarget();
+
+            // PADGREF 23/10 (retour utilisateur : « les Tynril n'échangent pas leur place avec les autres Tynril ») : un échange de
+            // place avec un allié (Forque, cible « g ») est un soutien, pas un malus (avant : -2 sur l'allié -> score nul, jamais lancé)
+            if (isFriend && target != Fighter && (effect.EffectId == EffectsEnum.Effect_SwitchPosition || effect.EffectId == EffectsEnum.Effect_SwitchPosition_1023))
+            {
+                result.Boost += spell.CurrentLevel * 2;
+                if (spellImpact != null)
+                    spellImpact.Add(result);
+                else
+                    spellImpact = result;
+                return;
+            }
 
              var category = SpellIdentifier.GetEffectCategories(effect);
 
@@ -579,6 +606,11 @@ namespace Stump.Server.WorldServer.AI.Fights.Spells
 
                 if (effect.EffectId == EffectsEnum.Effect_SkipTurn) // Let say this effect counts as 2 damage per level of the target
                     ratio = target.Level * 2 * chanceToHappen;
+
+                // PADGREF 23/10 (Glotte du Craqueboule Poli : +200 Puissance ET -50 % résistances sur l'ennemi) : un retrait de % de
+                // résistances dans tous les éléments pèse plus qu'un bonus donné en même temps (avant : 0 au total -> jamais lancé)
+                if (effect.EffectId == EffectsEnum.Effect_SubResistances)
+                    ratio *= 3;
 
                 if (isFriend)
                     result.Curse -= 2 * ratio;

@@ -55,15 +55,24 @@ namespace Stump.Server.WorldServer.Game.Ogrines
             }
         }
 
+        // MYSTIC 21/10 : ExecuteScalar<int?> / <long?> plantait (« Cast non valide de Int32 en Nullable<Int32> » : PetaPoco fait un
+        // Convert.ChangeType qui ne connaît pas les types nullables) : les ogrines du compte n'étaient jamais repris ni lus.
+        // Valeur brute lue puis convertie ; null si aucune ligne.
+        static long? Nombre(string sql, params object[] args)
+        {
+            var v = Database.ExecuteScalar<object>(sql, args);
+            return v == null || v is DBNull ? (long?)null : Convert.ToInt64(v);
+        }
+
         /// <summary>Compte web auquel ce compte de jeu est lié (0 = aucun).</summary>
         public static int CompteWeb(int accountId)
         {
             if (!m_pret) return 0;
-            return Database.ExecuteScalar<int?>($"SELECT CompteWebId FROM {A}.nekfeu_comptes_web_jeu WHERE AccountId = @0", accountId) ?? 0;
+            return (int)(Nombre($"SELECT CompteWebId FROM {A}.nekfeu_comptes_web_jeu WHERE AccountId = @0", accountId) ?? 0);
         }
 
         public static long Solde(int compteWeb) =>
-            !m_pret || compteWeb <= 0 ? 0 : Database.ExecuteScalar<long?>($"SELECT Ogrines FROM {A}.nekfeu_comptes_web WHERE Id = @0", compteWeb) ?? 0;
+            !m_pret || compteWeb <= 0 ? 0 : Nombre($"SELECT Ogrines FROM {A}.nekfeu_comptes_web WHERE Id = @0", compteWeb) ?? 0;
 
         /// <summary>Crédit (delta &gt; 0) ou débit (delta &lt; 0, seulement si le solde suffit). Renvoie le nouveau solde, null si refusé.</summary>
         public static long? Mouvement(int compteWeb, long delta, string origine, string detail)
@@ -91,10 +100,10 @@ namespace Stump.Server.WorldServer.Game.Ogrines
                 if (Database.Execute($@"INSERT IGNORE INTO {A}.nekfeu_ogrines_absorbes (AccountId, Tokens, CompteWebId, Date)
                         SELECT Id, GREATEST(Tokens, 0), @1, NOW() FROM {A}.accounts WHERE Id = @0", compte.Id, web) == 1)
                 {
-                    var anciens = Database.ExecuteScalar<long>($"SELECT Tokens FROM {A}.nekfeu_ogrines_absorbes WHERE AccountId = @0", compte.Id);
+                    var anciens = Nombre($"SELECT Tokens FROM {A}.nekfeu_ogrines_absorbes WHERE AccountId = @0", compte.Id) ?? 0;
                     if (anciens > 0) Mouvement(web, anciens, "anciens ogrines", "compte " + compte.Login);
                 }
-                var offerts = Database.ExecuteScalar<int>($"SELECT NewTokens FROM {A}.accounts WHERE Id = @0", compte.Id);
+                var offerts = (int)(Nombre($"SELECT NewTokens FROM {A}.accounts WHERE Id = @0", compte.Id) ?? 0);
                 if (offerts > 0 && Database.Execute($"UPDATE {A}.accounts SET NewTokens = 0 WHERE Id = @0 AND NewTokens = @1", compte.Id, offerts) == 1)
                     Mouvement(web, offerts, "ogrines offerts", "compte " + compte.Login);
             }

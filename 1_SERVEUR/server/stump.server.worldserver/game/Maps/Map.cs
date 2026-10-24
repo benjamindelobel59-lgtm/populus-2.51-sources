@@ -2131,12 +2131,18 @@ namespace Stump.Server.WorldServer.Game.Maps
                     }
                 }
 
-                if (area.Count >= TailleMiniZoneArrivee)
+                // PADGREF 24/10 (retour utilisateur, map 139784 : « la zone du PNJ a moins de 15 cases, ça téléporte dans la zone de
+                // + de 50 cases ») : une petite zone qui touche un changement de carte est accessible depuis la carte voisine, on la garde
+                if (area.Count >= TailleMiniZoneArrivee || area.Any(ToucheChangementDeCarte))
                     result.UnionWith(area);
             }
 
             return m_landingCells = result;
         }
+
+        bool ToucheChangementDeCarte(short cellId)
+            => new MapPoint(cellId).GetAdjacentCells(id => id >= 0 && id < Cells.Length)
+                .Any(p => Cells[p.CellId].MapChangeData != 0 && Cells[p.CellId].Walkable);
 
         /// <summary>
         /// NEKFEU : case d'arrivee utilisable (teleportation de donjon, entree, sortie) : la case voulue si elle est praticable

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Stump.DofusProtocol.Enums;
 using Stump.Server.WorldServer.Game.Actors.Fight;
 using Stump.Server.WorldServer.Game.Fights;
@@ -14,7 +15,51 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
     /// glyphe à chaque début de tour ; Comtoise = confusion des joueurs selon leurs PV ; Alternance Fuseau / Mi-temps : téléportation
     /// symétrique de l'attaquant, mort si la case est invalide, vulnérable un tour pendant le Mi-temps).
     /// </summary>
-    [BrainIdentifier(3416)] public class ComteHarebourgBrain : BrainPassif { public ComteHarebourgBrain(AIFighter f) : base(f, 3642) { } }
+    [BrainIdentifier(3416)]
+    public class ComteHarebourgBrain : BrainPassif
+    {
+        public ComteHarebourgBrain(AIFighter f) : base(f, 3642) { }
+
+        public override void Play()
+        {
+            Multicomte();
+            base.Play();
+        }
+
+        /// <summary>PADGREF 24/10 (retour utilisateur : « le Comte ne met pas son sort qui le duplique ») : Multicomte (3654 : dommages en
+        /// anneau 3-5 cases autour de la case visée, puis le Comte s'y téléporte et crée ses illusions) demande une case LIBRE ; l'IA ne
+        /// visait que des ennemis, donc jamais lancé. Ici : case libre à 1-6 cases qui place le plus d'ennemis visibles à 3-5 cases.
+        /// Rien sous Enraciné / Pesanteur (téléportation bloquée).</summary>
+        void Multicomte()
+        {
+            const int Sort = 3654;
+            if (!Fighter.IsAlive() || Fighter.TeleportationBloquee() || !Fighter.Spells.TryGetValue(Sort, out var sort) || sort.CurrentSpellLevel == null)
+                return;
+            var ennemis = Fighter.OpposedTeam.Fighters.Where(x => x.IsAlive() && x.IsVisibleFor(Fighter)).ToList();
+            if (ennemis.Count == 0)
+                return;
+            var moi = Fighter.Position.Point;
+            int min = Math.Max(1, (int)sort.CurrentSpellLevel.MinRange), max = (int)sort.CurrentSpellLevel.Range;
+            var cases = Fighter.Fight.Map.Cells
+                .Where(c => c.Walkable && !c.NonWalkableDuringFight && Fighter.Fight.IsCellFree(c))
+                .Select(c => new { c, p = new Stump.Server.WorldServer.Game.Maps.Cells.MapPoint(c) })
+                .Where(x => x.p.ManhattanDistanceTo(moi) >= min && x.p.ManhattanDistanceTo(moi) <= max)
+                .Select(x => new { x.c, n = ennemis.Count(e => { var d = e.Position.Point.ManhattanDistanceTo(x.p); return d >= 3 && d <= 5; }) })
+                .Where(x => x.n > 0)
+                .OrderByDescending(x => x.n)
+                .Take(20);
+            foreach (var x in cases)
+            {
+                if (Fighter.CanCastSpell(sort, x.c) != Stump.Server.WorldServer.Game.Spells.SpellCastResult.OK)
+                    continue;
+                if (Fighter.CastSpell(sort, x.c))
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Info("[Comte] Multicomte : case {0} -> {1} ({2} ennemi(s) touché(s))", moi.CellId, x.c.Id, x.n);
+                    return;
+                }
+            }
+        }
+    }
 
     /// <summary>Nocturlabe : Tactique du Tic Tac (répartit les dommages subis au corps à corps autour de lui).</summary>
     [BrainIdentifier(3415)] public class NocturlabeBrain : BrainPassif { public NocturlabeBrain(AIFighter f) : base(f, 3639) { } }

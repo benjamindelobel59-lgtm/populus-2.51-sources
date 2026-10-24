@@ -15,7 +15,9 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
         public DiscipleDuKimboBrain(AIFighter fighter)
             : base(fighter)
         {
-            fighter.Fight.TurnStarted += OnTurnStarted;
+            // PADGREF 23/10 (retour utilisateur : « le Disciple n'utilise toujours pas son PM ») : la glyphe était lancée sur TurnStarted,
+            // reçu APRÈS que l'IA du Disciple a joué et fini son tour (log : glyphe + 1 PM posés après « fin du tour ») -> PM jamais
+            // utilisé. Elle est maintenant lancée au début de Play(), avant de jouer.
         }
 
         static readonly Random m_hasard = new Random();
@@ -25,6 +27,7 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
         /// </summary>
         public override void Play()
         {
+            LancerGlyphe();
             base.Play();
 
             if (!Fighter.IsAlive() || Fighter.MP <= 0 || !Fighter.CanMove())
@@ -48,10 +51,10 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom.Boss
             Fighter.StartMove(new Path(carte, new[] { Fighter.Cell, carte.Cells[cible] }));
         }
 
-        private void OnTurnStarted(IFight obj, FightActor actor)
+        // MYSTIC 17/10 : seulement au début de SON tour (avant : au début du tour de chaque combattant)
+        private void LancerGlyphe()
         {
-            // MYSTIC 17/10 : seulement au début de SON tour (avant : au début du tour de chaque combattant)
-            if (actor != Fighter || !Fighter.IsAlive())
+            if (!Fighter.IsAlive())
                 return;
 
             if (Fighter.IsSummoned())

@@ -114,11 +114,11 @@ namespace Stump.Server.WorldServer.Game.Fights.Buffs
             }
 
 
-            var values = Effect.GetValues();
+            var values = TriggerBuff.ValeursPourClient(Effect); // PADGREF 23/10 : min / max lisibles par le client
 
             return new FightTriggeredEffect((uint)Id, Target.Id, Delay,
                 (sbyte)Dispellable,
-                (ushort)Spell.Id, (uint)(EffectFix?.ClientEffectId ?? Effect.Id), 0,
+                (ushort)Spell.Id, (uint)(EffectFix?.ClientEffectId ?? EffetUidClient), 0,
                 (values.Length > 0 ? Convert.ToInt32(values[0]) : 0),
                 (values.Length > 1 ? Convert.ToInt32(values[1]) : 0),
                 (values.Length > 2 ? Convert.ToInt32(values[2]) : 0),

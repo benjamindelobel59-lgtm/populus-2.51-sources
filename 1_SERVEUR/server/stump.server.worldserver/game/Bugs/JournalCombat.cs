@@ -143,6 +143,13 @@ namespace Stump.Server.WorldServer.Game.Bugs
         }
 
         /// <summary>Journal du combat en cours du personnage, sinon de son dernier combat terminé (null s'il n'y en a pas).</summary>
+        /// <summary>PADGREF 23/10 (replay) : journal d'un combat encore suivi, sinon null.</summary>
+        public static string TexteCombat(IFight fight) =>
+            fight != null && m_enCours.TryGetValue(fight, out var j) ? Entete(fight, j) + j.Texte() : null;
+
+        /// <summary>PADGREF 23/10 (replay) : journal du dernier combat terminé d'un personnage.</summary>
+        public static string Dernier(int persoId) => m_dernierParPerso.TryGetValue(persoId, out var t) ? t : null;
+
         public static string Pour(Character perso)
         {
             if (perso.IsFighting() && perso.Fight != null && m_enCours.TryGetValue(perso.Fight, out var j))

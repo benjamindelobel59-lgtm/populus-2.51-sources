@@ -57,6 +57,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
     [ChallengeIdentifier((int)ChallengeEnum.KWAKWA__CHALLENGE_DUO_)]
     [ChallengeIdentifier((int)ChallengeEnum.MALLÉFISK__CHALLENGE_DUO_)]
     [ChallengeIdentifier((int)ChallengeEnum.MANSOT_ROYAL__CHALLENGE_DUO_)]
+    [ChallengeIdentifier(401)] // PADGREF 21/10 : Mawabouaino (Duo)
     [ChallengeIdentifier((int)ChallengeEnum.MAÎTRE_CORBAC__CHALLENGE_DUO_)]
     [ChallengeIdentifier((int)ChallengeEnum.MAÎTRE_DES_PANTINS__CHALLENGE_DUO_)]
     [ChallengeIdentifier((int)ChallengeEnum.MAÎTRE_PANDORE__CHALLENGE_DUO_)]
@@ -119,6 +120,10 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
     [ChallengeIdentifier((int)ChallengeEnum.REINE_DES_VOLEURS__CHALLENGE_TRIO_)]
     [ChallengeIdentifier((int)ChallengeEnum.ROI_NIDAS__CHALLENGE_TRIO_)]
     [ChallengeIdentifier((int)ChallengeEnum.VORTEX__CHALLENGE_TRIO_)]
+    [ChallengeIdentifier(424)] // PADGREF 23/10 : succès Eliocalypse (2.74)
+    [ChallengeIdentifier(427)] // PADGREF 23/10 : succès Eliocalypse (2.74)
+    [ChallengeIdentifier(430)] // PADGREF 23/10 : succès Eliocalypse (2.74)
+    [ChallengeIdentifier(433)] // PADGREF 23/10 : succès Eliocalypse (2.74)
     public class DuoChallenge : DefaultChallenge
     {
         private static int[] Trio =

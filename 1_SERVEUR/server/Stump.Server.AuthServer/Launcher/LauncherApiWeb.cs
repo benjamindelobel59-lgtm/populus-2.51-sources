@@ -261,7 +261,32 @@ CREATE TABLE IF NOT EXISTS nekfeu_partages_codes (
                     Echec("ip:" + ip);
                     return 0;
                 }
+                Prolonger(c, session);
                 return Convert.ToInt32(o);
+            }
+        }
+
+        /// <summary>
+        /// PADGREF 23/10 (retour utilisateur : « il faut se reconnecter à chaque fois ») : une session « rester connecté »
+        /// (créée pour plus d'un jour) est renouvelée à chaque utilisation par le launcher (reprise, ticket de jeu, partages…) :
+        /// elle expire 30 jours (DureeSessionJours) après la DERNIÈRE utilisation, plus 30 jours après la connexion.
+        /// Les sessions courtes (12 h, « rester connecté » décoché) ne sont pas prolongées.
+        /// </summary>
+        static void Prolonger(MySqlConnection c, string session)
+        {
+            try
+            {
+                using (var cmd = new MySqlCommand("UPDATE nekfeu_web_sessions SET ExpireLe = DATE_ADD(NOW(), INTERVAL @j DAY) " +
+                                                  "WHERE Empreinte = @e AND TIMESTAMPDIFF(HOUR, CreeLe, ExpireLe) > 24 AND ExpireLe < DATE_ADD(NOW(), INTERVAL @j DAY)", c))
+                {
+                    cmd.Parameters.AddWithValue("@j", DureeSessionJours);
+                    cmd.Parameters.AddWithValue("@e", Sha256(session));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch
+            {
+                // la prolongation ne doit jamais empêcher la connexion
             }
         }
 
@@ -375,8 +400,8 @@ CREATE TABLE IF NOT EXISTS nekfeu_partages_codes (
                 using (var cmd = new MySqlCommand("SELECT COUNT(*) FROM nekfeu_comptes_web_jeu WHERE CompteWebId = @w", c))
                 {
                     cmd.Parameters.AddWithValue("@w", webId);
-                    if (Convert.ToInt32(cmd.ExecuteScalar()) >= 8)
-                        return Erreur("Vous avez déjà 8 comptes de jeu.");
+                    if (Convert.ToInt32(cmd.ExecuteScalar()) >= 40) // PADGREF 24/10 : 8 -> 40 comptes
+                        return Erreur("Vous avez déjà 40 comptes de jeu.");
                 }
                 using (var cmd = new MySqlCommand("SELECT COUNT(*) FROM accounts WHERE LOWER(Nickname) = LOWER(@p)", c))
                 {

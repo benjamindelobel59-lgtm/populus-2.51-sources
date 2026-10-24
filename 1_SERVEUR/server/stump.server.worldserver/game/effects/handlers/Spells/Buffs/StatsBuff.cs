@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using Stump.Server.WorldServer.Game.Fights.Buffs;
 using Stump.DofusProtocol.Enums;
 using Stump.Server.WorldServer.Database.World;
 using Stump.Server.WorldServer.Game.Actors.Fight;
@@ -80,14 +82,50 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Buffs
             if (integerEffect == null)
                 return false;
 
+            var caracteristique = GetEffectCaracteristic();
+
+            // PADGREF 21/10 (Drako du Nessil, retour utilisateur) : renvoi de dommages avec un declencheur "frappe" (D, DR, DM...) :
+            // le moteur en faisait un buff declenche qui ajoutait +X de renvoi APRES chaque coup (cumule, jamais sur le coup recu).
+            // C'est en fait un renvoi actif pendant la duree, limite au type de coup du declencheur (FightActor.RenvoiExclu).
+            // Sorts concernes : Drako, Corps en fusion, Crac boum hue, Scorplosif, Cri de Crocabulia, Champ de Force... (aucun sort de classe).
+            if (caracteristique == PlayerFields.DamageReflection && IsTriggerBuff() && EstDeclencheurDeCoup(Effect.Triggers))
+            {
+                foreach (var actor in GetAffectedActors())
+                {
+                    var buff = AddStatBuffDirectly(actor, (short)integerEffect.Value, caracteristique) as StatBuff;
+                    if (buff != null)
+                        buff.RenvoiLimite = LimiteDuRenvoi(Effect.Triggers);
+                }
+                return true;
+            }
+
             foreach (var actor in GetAffectedActors())
             {
-                AddStatBuff(actor, (short)integerEffect.Value, GetEffectCaracteristic());
+                AddStatBuff(actor, (short)integerEffect.Value, caracteristique);
             }
 
             return true;
         }
         
+        static readonly string[] DeclencheursDeCoup = { "D", "DR", "DM", "DCAC", "DS", "DC", "DN" };
+
+        static bool EstDeclencheurDeCoup(string triggers) =>
+            !string.IsNullOrEmpty(triggers) && triggers.Split('|').All(t => DeclencheursDeCoup.Contains(t));
+
+        /// <summary>null = tous les coups ; sinon "R" distance, "M" contact, "S" sort, "C" arme.</summary>
+        static string LimiteDuRenvoi(string triggers)
+        {
+            switch (triggers)
+            {
+                case "DR": return "R";
+                case "DM":
+                case "DCAC": return "M";
+                case "DS": return "S";
+                case "DC": return "C";
+                default: return null;
+            }
+        }
+
         PlayerFields GetEffectCaracteristic()
         {
             switch (Effect.EffectId)

@@ -49,7 +49,26 @@ namespace Stump.Server.WorldServer.Handlers.Context.RolePlay
             }
             // todo : check with MapChangeData the neighbour validity
             if (neighbourState != MapNeighbour.None && client.Character.Position.Cell.MapChangeData != 0)
-                client.Character.TeleportSuivi(() => client.Character.Teleport(neighbourState));
+            {
+                // PADGREF 24/10 (retour utilisateur, map 72619524 : « Unknown map transition » vers le haut et la gauche) : si le voisin
+                // connu du serveur (world_maps.*NeighbourId) n'est pas la carte que le client demande (voisin écrit dans la carte du
+                // client), on va sur celle du client ; les échecs sont journalisés avec leur cause
+                var carte = client.Character.Map;
+                var voisin = carte.GetNeighbouringMap(neighbourState);
+                var demandee = World.Instance.GetMap((int)message.MapId);
+                bool ok;
+                if (voisin == null || voisin.Id != (int)message.MapId)
+                {
+                    NLog.LogManager.GetCurrentClassLogger().Warn("[Changement de carte] {0} : voisin {1} en base = {2}, le client demande {3} ({4})", carte.Id, neighbourState,
+                        voisin?.Id.ToString() ?? "aucun", message.MapId, demandee == null ? "carte inconnue" : "utilisée");
+                    ok = demandee != null && client.Character.TeleportSuivi(() => client.Character.Teleport(demandee, neighbourState));
+                }
+                else
+                    ok = client.Character.TeleportSuivi(() => client.Character.Teleport(neighbourState));
+                if (!ok)
+                    NLog.LogManager.GetCurrentClassLogger().Warn("[Changement de carte] refusé : {0} case {1} -> {2} ({3}), personnage {4}", carte.Id, client.Character.Cell.Id,
+                        message.MapId, neighbourState, client.Character.Name);
+            }
         }
 
         [WorldHandler(MapInformationsRequestMessage.Id)]

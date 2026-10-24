@@ -40,7 +40,7 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
             if (Spell.Id == 6395)
             {
                 var cible = Fight.GetOneFighter(TargetedCell);
-                if (cible == null || cible == Caster || Caster.IsCarrying() || Caster.GetCarryingActor() != null)
+                if (cible == null || cible == Caster || Caster.TeleportationBloquee() || Caster.IsCarrying() || Caster.GetCarryingActor() != null)
                     return true;
                 var depuis = cible.Position.Point;
                 var contact = depuis.GetNearestCellInDirection(depuis.OrientationTo(Caster.Position.Point, false));
@@ -55,6 +55,10 @@ namespace Stump.Server.WorldServer.Game.Effects.Handlers.Spells.Move
             }
 
             var carryingActor = Caster.GetCarryingActor();
+
+            // PADGREF 24/10 : Enraciné (6) / Pesanteur (7) bloquent les téléportations
+            if (Caster.TeleportationBloquee())
+                return true;
 
             var celltogo = Fight.GetTriggers().Where(x => x is Rune && (x as Rune).CastedSpell.Id == 9900).FirstOrDefault();
 

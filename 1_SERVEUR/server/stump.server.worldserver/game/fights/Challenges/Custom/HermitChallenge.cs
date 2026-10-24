@@ -32,6 +32,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
     [ChallengeIdentifier((int)ChallengeEnum.CAPITAINE_MENO__CHALLENGE_2_)]
     [ChallengeIdentifier((int)ChallengeEnum.LARVE_DE_KOUTOULOU__CHALLENGE_1_)]
     [ChallengeIdentifier((int)ChallengeEnum.ANERICE_LA_SHUSHESS__CHALLENGE_1_)]
+    [ChallengeIdentifier(426)] // PADGREF 23/10 : Guerre (Misanthrope), Eliocalypse 2.74
     public class HermitChallenge : DefaultChallenge
     {
         readonly FightTeam m_team;
@@ -50,6 +51,7 @@ namespace Stump.Server.WorldServer.Game.Fights.Challenges.Custom
             (int)ChallengeEnum.FRAKTALE__CHALLENGE_1_,
             (int)ChallengeEnum.TOXOLIATH__CHALLENGE_2_,
             (int)ChallengeEnum.SYLARGH__CHALLENGE_1_,
+            426,
         };
 
         public HermitChallenge(int id, IFight fight)

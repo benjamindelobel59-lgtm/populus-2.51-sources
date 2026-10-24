@@ -56,6 +56,28 @@ namespace Stump.Server.WorldServer.AI.Fights.Brain.Custom
             }
         }
 
+        /// <summary>PADGREF 23/10 (retour utilisateur + capture : « les tentacules s'invoquent à 3 PO du Krala, normalement c'est vers ici ») :
+        /// salle du boss 26740736, cases entourées par l'utilisateur ; l'IA de base prenait la case libre la plus proche du Kralamoure.</summary>
+        static readonly short[] CasesTentacules = { 411, 425, 397, 398, 412, 426, 439, 440, 453, 454 };
+        const int SalleDuBoss = 26740736;
+        static readonly int[] InvocationsTentacules = { 1107, 1108, 1109, 1110 };
+
+        public override void Play()
+        {
+            // invocation (1 par tour) d'abord sur ces cases ; si aucune n'est possible, l'IA de base invoque comme avant
+            if (Fighter.Fight.Map.Id == SalleDuBoss)
+                foreach (var id in InvocationsTentacules)
+                {
+                    if (!Fighter.Spells.TryGetValue(id, out var sort))
+                        continue;
+                    var cell = CasesTentacules.Select(c => Fighter.Fight.Map.Cells[c])
+                        .FirstOrDefault(c => Fighter.CanCastSpell(sort, c) == Game.Spells.SpellCastResult.OK);
+                    if (cell != null)
+                        Fighter.CastSpell(sort, cell);
+                }
+            base.Play();
+        }
+
         private void Fight_FightStarted(IFight obj)
         {
             Fighter.Stats.Fields.FirstOrDefault(x => x.Key == PlayerFields.SummonLimit).Value.Base = 4;

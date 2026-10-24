@@ -214,7 +214,7 @@ namespace Stump.Server.WorldServer.Game.Alliances
         {
             Character.SetDialog(this);
             Character.Client.Send(new TeleportDestinationsMessage((sbyte)TeleporterTypeEnum.TELEPORTER_PRISM,
-                m_destinations.Where(x => x.Map != null).Select(x => new TeleportDestination((sbyte)TeleporterTypeEnum.TELEPORTER_PRISM, x.MapId,
+                m_destinations.Where(x => x.Map != null && Maps.AccesFrigost.PrismeAutorise(Character, x.Map, false)).Select(x => new TeleportDestination((sbyte)TeleporterTypeEnum.TELEPORTER_PRISM, x.MapId,
                     (ushort)x.SubAreaId, (ushort)x.Map.SubArea.Record.Level, 0)).ToArray()));
         }
 
@@ -228,6 +228,10 @@ namespace Stump.Server.WorldServer.Game.Alliances
         {
             var prisme = m_destinations.FirstOrDefault(x => x.MapId == map.Id);
             if (prisme == null)
+                return;
+
+            // PADGREF 24/10 : quêtes d'accès Frigost / Otomaï et zones de Frigost
+            if (!Maps.AccesFrigost.PrismeAutorise(Character, map, true))
                 return;
 
             var bloque = AvAManager.Instance.ZaapBloque(Character, Character.Map, map);
